@@ -11,43 +11,68 @@ use Goutte\Client;
 
 class ScrapersController {
 
-	public function season_form()
-	{
+	public function season_form() {
 		return view('scrapers.season_form');
 	}
 
-	public function season_scraper(Request $request)
-	{
-		$end_year = $request->input('end_year');
+	public function season_scraper(Request $request) {
+		$endYear = $request->input('end_year');
 
 		$client = new Client();
 
-		$crawler = $client->request('GET', 'http://www.basketball-reference.com/leagues/NBA_'.$end_year.'_games.html');
+		$crawler = $client->request('GET', 'http://www.basketball-reference.com/leagues/NBA_'.$endYear.'_games.html');
+
+		$season = Season::where('end_year', $endYear)->first();
 
 		$status_code = $client->getResponse()->getStatus();
-		
-		if ($status_code == 200) 
-		{
+
+		if ($status_code == 200) {
 			$rowCount = $crawler->filter('table#games > tbody > tr')->count();
 
 			$rowContents = array();
 
-			for ($i=1; $i <= $rowCount; $i++) // nth-child does not start with a zero index
-			{ 
-				for ($n=1; $n <= 8; $n++) // nth-child does not start with a zero index
-				{ 
-					$rowContents[$i][$n] = $crawler->filter('table#games > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->text();
+			$tableNames[1] = 'date';
+			$tableNames[3] = 'road_team';
+			$tableNames[4] = 'road_team_score';
+			$tableNames[5] = 'home_team';
+			$tableNames[6] = 'home_team_score';
+			$tableNames[7] = 'ot_periods';
+			$tableNames[8] = 'notes';
+
+			for ($i=1; $i <= $rowCount; $i++) { // nth-child does not start with a zero index
+				for ($n=1; $n <= 8; $n++) { // nth-child does not start with a zero index
+					if ($n !== 2) {
+						$rowContents[$i][$tableNames[$n]] = $crawler->filter('table#games > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->text();
+					}	
 				}
 
-				return $rowContents;
+				$scrapedDate = $rowContents[$i]['date'];
+				$scrapedDate = substr($scrapedDate, 5);
+				$rowContents[$i]['date'] = date('Y-m-d', strtotime(str_replace('-', '/', $scrapedDate)));
+
+				$scrapedOTField = $rowContents[$i]['ot_periods'];
+				if ($scrapedOTField == '') {
+					$rowContents[$i]['ot_periods'] = 0;
+				} elseif ($scrapedOTField == 'OT') {
+					$rowContents[$i]['ot_periods'] = 1;
+				} elseif ($scrapedOTField != 'OT' && $scrapedOTField != '') {
+					$rowContents[$i]['ot_periods'] = substr($scrapedOTField, 0, 1);
+				}
+
+				$scrapedNotesField = $rowContents[$i]['notes'];
+				if ($scrapedNotesField == '') {
+					$rowContents[$i]['notes'] = null;
+				}
+
+				$rowContents[$i]['season_id'] = $season->id;
+
+				if ($i > 20) { 
+					return $rowContents;
+				}
 			}	
-		}
-		else
-		{
+		} else {
 			return 'Status Code is not 200.';
 		}
-
-		$season = Season::where('end_year', $end_year)->first();
 
 		return $rowContents;
 	}
