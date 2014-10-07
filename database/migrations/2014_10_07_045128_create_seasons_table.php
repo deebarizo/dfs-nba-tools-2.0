@@ -15,8 +15,8 @@ class CreateSeasonsTable extends Migration {
 		Schema::create('seasons', function($table)
 		{
 		    $table->increments('id');
-		    $table->date('start_year');
-		    $table->date('end_year');
+		    $table->integer('start_year')->unsigned;
+		    $table->integer('end_year')->unsigned;
 		});		
 	}
 
