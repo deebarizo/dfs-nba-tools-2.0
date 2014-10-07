@@ -1,7 +1,13 @@
 @extends('master')
 
 @section('content')
+	<h2>{{ $heading }}</h2>
 
-	Season Scraper
+	{{ $season->end_year }}
 
+	{!!	Form::open() !!}
+
+	
+	
+	{!!	Form::close() !!}
 @stop

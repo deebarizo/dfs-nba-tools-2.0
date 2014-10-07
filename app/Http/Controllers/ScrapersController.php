@@ -2,6 +2,8 @@
 
 ini_set('max_execution_time', 10800); // 10800 seconds = 3 hours
 
+use App\Season;
+
 use vendor\symfony\DomCrawler\Symfony\Component\DomCrawler\Crawler;
 use Goutte\Client;
 
@@ -9,7 +11,15 @@ class ScrapersController {
 
 	public function season()
 	{
-		return view('scrapers/season');
+		$heading = 'Scrapers - Season';
+
+		$end_year = 2014;
+
+		$season = Season::where('end_year', $end_year)->first();
+
+		return view('scrapers.season', compact('heading', 'season'));
+
+		
 
 		$client = new Client();
 
