@@ -7,11 +7,13 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 
-	<title>{{ $heading }} | DFS Tools</title>
+	<title>DFS Tools</title>
 </head>
 <body>
-	<h1>DFS Tools</h1>
+	<div class="container">
+		<h1>DFS Tools</h1>
 
-	@yield('content')
+		@yield('content')
+	</div>
 </body>
 </html>

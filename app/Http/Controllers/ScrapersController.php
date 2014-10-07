@@ -4,28 +4,25 @@ ini_set('max_execution_time', 10800); // 10800 seconds = 3 hours
 
 use App\Season;
 
+use Illuminate\Http\Request;
+
 use vendor\symfony\DomCrawler\Symfony\Component\DomCrawler\Crawler;
 use Goutte\Client;
 
 class ScrapersController {
 
-	public function season()
+	public function season_form()
 	{
-		$heading = 'Scrapers - Season';
+		return view('scrapers.season_form');
+	}
 
-		$end_year = 2014;
-
-		$season = Season::where('end_year', $end_year)->first();
-
-		return view('scrapers.season', compact('heading', 'season'));
-
-		
+	public function season_scraper(Request $request)
+	{
+		$end_year = $request->input('end_year');
 
 		$client = new Client();
 
-		$crawler = $client->request('GET', 'http://www.basketball-reference.com/leagues/NBA_2014_games.html');
-
-		$season_id = 1;
+		$crawler = $client->request('GET', 'http://www.basketball-reference.com/leagues/NBA_'.$end_year.'_games.html');
 
 		$status_code = $client->getResponse()->getStatus();
 		
@@ -44,13 +41,13 @@ class ScrapersController {
 
 				return $rowContents;
 			}	
-
-						
 		}
 		else
 		{
 			return 'Status Code is not 200.';
 		}
+
+		$season = Season::where('end_year', $end_year)->first();
 
 		return $rowContents;
 	}
