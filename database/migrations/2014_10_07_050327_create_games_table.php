@@ -25,7 +25,9 @@ class CreateGamesTable extends Migration {
 		    $table->integer('road_team_score')->unsigned();
 		    $table->decimal('vegas_road_team_score', 4, 1);
 		    $table->decimal('pace', 4, 1);
-		    $table->text('type');	    
+		    $table->text('type');	  
+		    $table->integer('ot_periods')->unsigned();
+		    $table->text('notes');
 		});
 	}
 
