@@ -27,7 +27,7 @@ class CreateGamesTable extends Migration {
 		    $table->decimal('pace', 4, 1);
 		    $table->text('type');	  
 		    $table->integer('ot_periods')->unsigned();
-		    $table->text('notes');
+		    $table->text('notes')->nullable();
 		});
 	}
 
