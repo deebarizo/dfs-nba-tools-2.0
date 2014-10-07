@@ -5,13 +5,17 @@ ini_set('max_execution_time', 10800); // 10800 seconds = 3 hours
 use vendor\symfony\DomCrawler\Symfony\Component\DomCrawler\Crawler;
 use Goutte\Client;
 
-class HomeController {
+class ScrapersController {
 
-	public function index()
+	public function season()
 	{
+		return view('scrapers/season');
+
 		$client = new Client();
 
-		$crawler = $client->request('GET', 'http://www.basketball-reference.com/leagues/NBA_2012_games.html');
+		$crawler = $client->request('GET', 'http://www.basketball-reference.com/leagues/NBA_2014_games.html');
+
+		$season_id = 1;
 
 		$status_code = $client->getResponse()->getStatus();
 		
@@ -27,7 +31,11 @@ class HomeController {
 				{ 
 					$rowContents[$i][$n] = $crawler->filter('table#games > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->text();
 				}
-			}				
+
+				return $rowContents;
+			}	
+
+						
 		}
 		else
 		{
