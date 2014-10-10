@@ -21,7 +21,7 @@ class ScrapersController {
 
 		$client = new Client();
 
-		$crawler = $client->request('GET', 'http://www.basketball-reference.com/leagues/NBA_'.$endYear.'_games.html');
+		$crawlerBR = $client->request('GET', 'http://www.basketball-reference.com/leagues/NBA_'.$endYear.'_games.html');
 
 		$season = Season::where('end_year', $endYear)->first();
 		$teams = Team::all();
@@ -29,7 +29,7 @@ class ScrapersController {
 		$status_code = $client->getResponse()->getStatus();
 
 		if ($status_code == 200) {
-			$rowCount = $crawler->filter('table#games > tbody > tr')->count();
+			$rowCount = $crawlerBR->filter('table#games > tbody > tr')->count();
 
 			$rowContents = array();
 
@@ -45,9 +45,9 @@ class ScrapersController {
 			for ($i=1; $i <= $rowCount; $i++) { // nth-child does not start with a zero index
 				for ($n=1; $n <= 8; $n++) { // nth-child does not start with a zero index
 					if ($n !== 2) {
-						$rowContents[$i][$tableNames[$n]] = $crawler->filter('table#games > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->text();
+						$rowContents[$i][$tableNames[$n]] = $crawlerBR->filter('table#games > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->text();
 					} else {
-						$rowContents[$i][$tableNames[$n]] = $crawler->filter('table#games > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->selectLink('Box Score')->link()->getUri();
+						$rowContents[$i][$tableNames[$n]] = $crawlerBR->filter('table#games > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->selectLink('Box Score')->link()->getUri();
 					}
 				}
 
@@ -85,6 +85,24 @@ class ScrapersController {
 				}
 
 				$rowContents[$i]['season_id'] = $season->id;
+
+				$dateSAO = str_replace('-', '', $rowContents[$i]['date']);
+				$linkSAO = "http://www.scoresandodds.com/grid_".$dateSAO.".html";
+
+				$crawlerSAO = $client->request('GET', $linkSAO);
+
+				$rowCountSAO = $crawlerSAO->filter('div#nba')->nextAll('tr.time')->count();
+
+				for ($iSAO=0; $iSAO < $rowCountSAO; $iSAO++) { // nth-child does not start with a zero index
+					$roadTeamsSAO[$iSAO] = $crawlerSAO->filter('div#nba')->nextAll()->filter('tr.odd')->eq($iSAO)->nextAll()->filter('td.name')->text();
+				}
+
+				foreach ($roadTeamsSAO as $index => &$roadTeamSAO) {
+					$roadTeamSAO = preg_replace("/^(\d* )(\D+)/", "$2", $roadTeamSAO);
+					$roadTeamSAO = ucwords(strtolower($roadTeamSAO));
+				}
+
+				unset($roadTeamSAO);
 
 				if ($i > 20) { 
 					return $rowContents;
