@@ -22,11 +22,11 @@ class CreateGamesTable extends Migration {
 		    $table->integer('home_team_id')->unsigned();
 		    $table->foreign('home_team_id')->references('id')->on('teams');
 		    $table->integer('home_team_score')->unsigned();
-		    $table->decimal('vegas_home_team_score', 4, 1);
+		    $table->decimal('vegas_home_team_score', 5, 2);
 		    $table->integer('road_team_id')->unsigned();
 		    $table->foreign('road_team_id')->references('id')->on('teams');
 		    $table->integer('road_team_score')->unsigned();
-		    $table->decimal('vegas_road_team_score', 4, 1);
+		    $table->decimal('vegas_road_team_score', 5, 2);
 		    $table->decimal('pace', 4, 1);
 		    $table->string('type');	  
 		    $table->integer('ot_periods')->unsigned();
