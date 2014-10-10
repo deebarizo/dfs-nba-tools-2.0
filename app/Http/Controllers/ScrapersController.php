@@ -55,14 +55,15 @@ class ScrapersController {
 				$scrapedDate = substr($scrapedDate, 5);
 				$rowContents[$i]['date'] = date('Y-m-d', strtotime(str_replace('-', '/', $scrapedDate)));
 
+				$roadTeam = $rowContents[$i]['road_team_id']; // this is for SAO scraping
+
 				$twoTeams = [
 					'home_team_id',
 					'road_team_id'
 				];
 
 				foreach ($twoTeams as $row) {
-					foreach ($teams as $team)
-					{				    
+					foreach ($teams as $team) {				    
 					    if ($rowContents[$i][$row] == $team->name_br) {
 					    	$rowContents[$i][$row] = $team->id;
 					    	break;
@@ -91,20 +92,76 @@ class ScrapersController {
 
 				$crawlerSAO = $client->request('GET', $linkSAO);
 
-				$rowCountSAO = $crawlerSAO->filter('div#nba')->nextAll('tr.time')->count();
+				$rowCountSAO = $crawlerSAO->filter('div#nba')->nextAll()->filter('tr.time')->count();
 
 				for ($iSAO=0; $iSAO < $rowCountSAO; $iSAO++) { // nth-child does not start with a zero index
-					$roadTeamsSAO[$iSAO] = $crawlerSAO->filter('div#nba')->nextAll()->filter('tr.odd')->eq($iSAO)->nextAll()->filter('td.name')->text();
+					$roadTeamsSAO[$iSAO] = $crawlerSAO->filter('div#nba')->nextAll()->filter('tr.odd > td.name')->eq($iSAO)->text();
 				}
 
-				foreach ($roadTeamsSAO as $index => &$roadTeamSAO) {
+				foreach ($roadTeamsSAO as &$roadTeamSAO) {
 					$roadTeamSAO = preg_replace("/^(\d* )(\D+)/", "$2", $roadTeamSAO);
 					$roadTeamSAO = ucwords(strtolower($roadTeamSAO));
+					$roadTeamSAO = trim($roadTeamSAO);
+
+					if ($roadTeamSAO == 'Portland Trailblazers') {
+						$roadTeamSAO = 'Portland Trail Blazers';
+					}
+
+					if ($roadTeamSAO == 'New Orleans Hornets') {
+						$roadTeamSAO = 'New Orleans Pelicans';
+					}
 				}
 
 				unset($roadTeamSAO);
 
-				if ($i > 20) { 
+				foreach ($roadTeamsSAO as $index => $roadTeamSAO) {
+					if ($roadTeamSAO == $roadTeam) {
+						$rowNumberSAO = $index;
+						break;
+					}
+
+					$rowNumberSAO = "error: no team match in SAO";
+				}
+
+				if (is_numeric($rowNumberSAO) === false) {
+					echo $rowNumberSAO; 
+					dd($rowContents[$i]);
+				}
+
+				$contentsSAO['road_team'] = $crawlerSAO->filter('div#nba')->nextAll()->filter('tr.odd > td.currentline')->eq($rowNumberSAO)->text();
+
+				$contentsSAO['home_team'] = $crawlerSAO->filter('div#nba')->nextAll()->filter('tr.even > td.currentline')->eq($rowNumberSAO)->text();
+
+				foreach ($contentsSAO as &$contentSAO) {
+					$contentSAO = trim($contentSAO);
+					$contentSAO = preg_replace("/(-\S*)( -\S*)$/", "$1", $contentSAO);
+					$contentSAO = preg_replace("/(o\S*)$/", "", $contentSAO);
+					$contentSAO = preg_replace("/(u\S*)$/", "", $contentSAO);
+				}
+
+				unset($contentSAO);
+
+				if ($contentsSAO['road_team'][0] == '-') { // zero index of string is first character
+					$rowContents[$i]['vegas_road_team_score'] = ($contentsSAO['home_team'] - $contentsSAO['road_team']) / 2;
+					$rowContents[$i]['vegas_home_team_score'] = ($contentsSAO['home_team'] + $contentsSAO['road_team']) / 2;					
+				} elseif (($contentsSAO['road_team'][0] == 'P') && ($contentsSAO['road_team'][1] == 'K')) {
+					$rowContents[$i]['vegas_road_team_score'] = ($contentsSAO['home_team'] - 0) / 2;
+					$rowContents[$i]['vegas_home_team_score'] = ($contentsSAO['home_team'] + 0) / 2;
+				} elseif (($contentsSAO['home_team'][0] == 'P') && ($contentsSAO['home_team'][1] == 'K')) {
+					$rowContents[$i]['vegas_road_team_score'] = ($contentsSAO['road_team'] - 0) / 2;
+					$rowContents[$i]['vegas_home_team_score'] = ($contentsSAO['road_team'] + 0) / 2;			
+				} else {
+					$rowContents[$i]['vegas_road_team_score'] = ($contentsSAO['road_team'] + $contentsSAO['home_team']) / 2;
+					$rowContents[$i]['vegas_home_team_score'] = ($contentsSAO['road_team'] - $contentsSAO['home_team']) / 2;	
+				}
+
+				# vegas team score equations
+				## favorite = (total + spread) / 2
+				## underdog = (total - spread) / 2
+
+				# dd($contentsSAO);
+
+				if ($i > 100) { 
 					return $rowContents;
 				}
 			}	
