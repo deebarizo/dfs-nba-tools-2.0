@@ -55,10 +55,20 @@ class ScrapersController {
 				$scrapedDate = substr($scrapedDate, 5);
 				$rowContents[$i]['date'] = date('Y-m-d', strtotime(str_replace('-', '/', $scrapedDate)));
 
-			/*	foreach ($teams as $team)
-				{				    
-				    var_dump($team->name_br);
-				} */
+				$twoTeams = [
+					'home_team_id',
+					'road_team_id'
+				];
+
+				foreach ($twoTeams as $row) {
+					foreach ($teams as $team)
+					{				    
+					    if ($rowContents[$i][$row] == $team->name_br) {
+					    	$rowContents[$i][$row] = $team->id;
+					    	break;
+					    }
+					} 
+				}
 
 				$scrapedOTField = $rowContents[$i]['ot_periods'];
 				if ($scrapedOTField == '') {
