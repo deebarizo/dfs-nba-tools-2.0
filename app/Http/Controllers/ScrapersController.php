@@ -159,7 +159,12 @@ class ScrapersController {
 				## favorite = (total + spread) / 2
 				## underdog = (total - spread) / 2
 
-				# dd($contentsSAO);
+				$crawlerBoxScoreBR = $client->request('GET', $rowContents[$i]['link_br']);
+
+				$contentsBoxScoreBR = $crawlerBoxScoreBR->filter('table#four_factors > tbody > tr > td')->eq(1)->text();
+				$contentsBoxScoreBR = trim($contentsBoxScoreBR);
+
+				$rowContents[$i]['pace'] = $contentsBoxScoreBR;
 
 				if ($i > 100) { 
 					return $rowContents;
