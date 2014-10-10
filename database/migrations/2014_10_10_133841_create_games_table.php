@@ -18,6 +18,7 @@ class CreateGamesTable extends Migration {
 		    $table->integer('season_id')->unsigned();
 		    $table->foreign('season_id')->references('id')->on('seasons');
 		    $table->date('date');
+		    $table->text('link_br')->unique();
 		    $table->integer('home_team_id')->unsigned();
 		    $table->foreign('home_team_id')->references('id')->on('teams');
 		    $table->integer('home_team_score')->unsigned();

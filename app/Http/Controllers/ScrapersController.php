@@ -3,6 +3,7 @@
 ini_set('max_execution_time', 10800); // 10800 seconds = 3 hours
 
 use App\Season;
+use App\Team;
 
 use Illuminate\Http\Request;
 
@@ -23,6 +24,7 @@ class ScrapersController {
 		$crawler = $client->request('GET', 'http://www.basketball-reference.com/leagues/NBA_'.$endYear.'_games.html');
 
 		$season = Season::where('end_year', $endYear)->first();
+		$teams = Team::all();
 
 		$status_code = $client->getResponse()->getStatus();
 
@@ -33,9 +35,9 @@ class ScrapersController {
 
 			$tableNames[1] = 'date';
 			$tableNames[2] = 'link_br';
-			$tableNames[3] = 'road_team';
+			$tableNames[3] = 'road_team_id';
 			$tableNames[4] = 'road_team_score';
-			$tableNames[5] = 'home_team';
+			$tableNames[5] = 'home_team_id';
 			$tableNames[6] = 'home_team_score';
 			$tableNames[7] = 'ot_periods';
 			$tableNames[8] = 'notes';
@@ -52,6 +54,11 @@ class ScrapersController {
 				$scrapedDate = $rowContents[$i]['date'];
 				$scrapedDate = substr($scrapedDate, 5);
 				$rowContents[$i]['date'] = date('Y-m-d', strtotime(str_replace('-', '/', $scrapedDate)));
+
+			/*	foreach ($teams as $team)
+				{				    
+				    var_dump($team->name_br);
+				} */
 
 				$scrapedOTField = $rowContents[$i]['ot_periods'];
 				if ($scrapedOTField == '') {
