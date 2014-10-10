@@ -21,7 +21,7 @@ class CreateBoxScoreLinesTable extends Migration {
 		    $table->foreign('team_id')->references('id')->on('teams');
 		    $table->integer('player_id')->unsigned();
 		    $table->foreign('player_id')->references('id')->on('players');
-		    $table->text('role');
+		    $table->string('role');
 		    $table->decimal('mp', 4, 2);
 		    $table->integer('fg')->unsigned();
     		$table->integer('fga')->unsigned();
