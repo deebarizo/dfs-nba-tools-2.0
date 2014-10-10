@@ -21,6 +21,8 @@ class CreateSeasonsTeamsPlayersTable extends Migration {
 		    $table->foreign('player_id')->references('id')->on('players');
 		    $table->integer('season_id')->unsigned();
 		    $table->foreign('season_id')->references('id')->on('seasons');
+		    $table->date('created_at');
+		    $table->date('updated_at');
 		});
 	}
 

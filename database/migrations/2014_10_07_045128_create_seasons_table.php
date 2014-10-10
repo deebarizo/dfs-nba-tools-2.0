@@ -17,6 +17,8 @@ class CreateSeasonsTable extends Migration {
 		    $table->increments('id');
 		    $table->integer('start_year')->unsigned;
 		    $table->integer('end_year')->unsigned;
+		    $table->date('created_at');
+		    $table->date('updated_at');
 		});		
 	}
 

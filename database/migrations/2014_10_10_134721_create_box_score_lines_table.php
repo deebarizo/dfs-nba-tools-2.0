@@ -49,6 +49,8 @@ class CreateBoxScoreLinesTable extends Migration {
     		$table->decimal('usg', 4, 1);
     		$table->integer('off_rating')->unsigned();
     		$table->integer('def_rating')->unsigned();
+		    $table->date('created_at');
+		    $table->date('updated_at');
 		});
 	}
 

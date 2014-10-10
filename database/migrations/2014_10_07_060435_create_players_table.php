@@ -15,7 +15,9 @@ class CreatePlayersTable extends Migration {
 		Schema::create('players', function($table)
 		{
 		    $table->increments('id');
-		    $table->string('name');	    
+		    $table->string('name');	 
+		    $table->date('created_at');
+		    $table->date('updated_at');   
 		});
 	}
 

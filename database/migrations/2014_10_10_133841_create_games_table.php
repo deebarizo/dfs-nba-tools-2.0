@@ -18,7 +18,8 @@ class CreateGamesTable extends Migration {
 		    $table->integer('season_id')->unsigned();
 		    $table->foreign('season_id')->references('id')->on('seasons');
 		    $table->date('date');
-		    $table->string('link_br')->unique();
+		    $table->string('link_br');
+		    $table->unique('link_br');
 		    $table->integer('home_team_id')->unsigned();
 		    $table->foreign('home_team_id')->references('id')->on('teams');
 		    $table->integer('home_team_score')->unsigned();
@@ -31,6 +32,8 @@ class CreateGamesTable extends Migration {
 		    $table->string('type');	  
 		    $table->integer('ot_periods')->unsigned();
 		    $table->text('notes')->nullable();
+		    $table->date('created_at');
+		    $table->date('updated_at');
 		});
 	}
 

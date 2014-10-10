@@ -16,6 +16,8 @@ class CreateTeamsTable extends Migration {
 		{
 		    $table->increments('id');
 		    $table->string('name_br');	    
+		    $table->date('created_at');
+		    $table->date('updated_at');
 		});
 	}
 
