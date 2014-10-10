@@ -18,12 +18,12 @@ class CreateGamesTable extends Migration {
 		    $table->integer('season_id')->unsigned();
 		    $table->foreign('season_id')->references('id')->on('seasons');
 		    $table->date('date');
-		    $table->tinyInteger('home_team_id')->unsigned();
-		    $table->tinyInteger('home_team_id')->references('id')->on('teams');;
+		    $table->integer('home_team_id')->unsigned();
+		    $table->foreign('home_team_id')->references('id')->on('teams');
 		    $table->integer('home_team_score')->unsigned();
 		    $table->decimal('vegas_home_team_score', 4, 1);
-		    $table->tinyInteger('road_team_id')->unsigned();
-		    $table->tinyInteger('road_team_id')->references('id')->on('teams');;
+		    $table->integer('road_team_id')->unsigned();
+		    $table->foreign('road_team_id')->references('id')->on('teams');
 		    $table->integer('road_team_score')->unsigned();
 		    $table->decimal('vegas_road_team_score', 4, 1);
 		    $table->decimal('pace', 4, 1);
