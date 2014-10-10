@@ -32,6 +32,7 @@ class ScrapersController {
 			$rowContents = array();
 
 			$tableNames[1] = 'date';
+			$tableNames[2] = 'link_br';
 			$tableNames[3] = 'road_team';
 			$tableNames[4] = 'road_team_score';
 			$tableNames[5] = 'home_team';
@@ -43,7 +44,9 @@ class ScrapersController {
 				for ($n=1; $n <= 8; $n++) { // nth-child does not start with a zero index
 					if ($n !== 2) {
 						$rowContents[$i][$tableNames[$n]] = $crawler->filter('table#games > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->text();
-					}	
+					} else {
+						$rowContents[$i][$tableNames[$n]] = $crawler->filter('table#games > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->selectLink('Box Score')->link()->getUri();
+					}
 				}
 
 				$scrapedDate = $rowContents[$i]['date'];
