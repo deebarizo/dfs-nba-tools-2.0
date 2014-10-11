@@ -47,7 +47,7 @@ class ScrapersController {
 					case 'playoffs':
 						$tableIDinBR = 'games_playoffs';
 						break;
-				}
+				} 
 
 				$rowCount = $crawlerBR->filter('table#'.$tableIDinBR.' > tbody > tr')->count();
 
