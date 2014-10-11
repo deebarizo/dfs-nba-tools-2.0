@@ -4,6 +4,7 @@ ini_set('max_execution_time', 10800); // 10800 seconds = 3 hours
 
 use App\Season;
 use App\Team;
+use App\Game;
 
 use Illuminate\Http\Request;
 
@@ -25,6 +26,7 @@ class ScrapersController {
 
 		$season = Season::where('end_year', $endYear)->first();
 		$teams = Team::all();
+		$games = Game::all();
 
 		$gameTypes = [
 			'regular',
@@ -34,6 +36,8 @@ class ScrapersController {
 		$status_code = $client->getResponse()->getStatus();
 
 		if ($status_code == 200) {
+			$savedGameCount = 0;
+
 			foreach ($gameTypes as $gameType) {
 				switch ($gameType) {
 					case 'regular':
@@ -184,14 +188,46 @@ class ScrapersController {
 
 					$rowContents[$i]['type'] = $gameType;
 
-					if ($i > 1) { return $rowContents; }
+					$duplicateGameToggle = false;
+
+					foreach ($games as $game) {				    
+					    if ($rowContents[$i]['link_br'] == $game->link_br) {
+					    	$duplicateGameToggle = true;
+
+					    	break;
+					    }
+					} 
+
+					if ($duplicateGameToggle === false) {
+						$game = new Game;
+
+						$game->season_id = $rowContents[$i]['season_id'];
+						$game->date = $rowContents[$i]['date'];
+						$game->link_br = $rowContents[$i]['link_br'];
+						$game->home_team_id = $rowContents[$i]['home_team_id'];
+						$game->home_team_score = $rowContents[$i]['home_team_score'];
+						$game->vegas_home_team_score = $rowContents[$i]['vegas_home_team_score'];
+						$game->road_team_id = $rowContents[$i]['road_team_id'];
+						$game->road_team_score = $rowContents[$i]['road_team_score'];
+						$game->vegas_road_team_score = $rowContents[$i]['vegas_road_team_score'];
+						$game->pace = $rowContents[$i]['pace'];
+						$game->type = $rowContents[$i]['type'];
+						$game->ot_periods = $rowContents[$i]['ot_periods'];
+						$game->notes = $rowContents[$i]['notes'];
+
+						$game->save();
+
+						$savedGameCount++; 
+					}
+
+					if ($savedGameCount >= 100) { return '100 games were saved.'; }
 				}	
 			}	
 		} else {
 			return 'Status Code is not 200.';
 		}
 
-		return $rowContents;
+		return $savedGameCount.' games were saved.';
 	}
 
 }
