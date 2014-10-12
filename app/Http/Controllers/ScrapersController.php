@@ -38,7 +38,7 @@ class ScrapersController {
 
 		$season = Season::where('end_year', $endYear)->first();
 		$teams = Team::all();
-		$games = Game::where('type', $gameType)->get();
+		$games = Game::whereRaw('type = "'.$gameType.'" and season_id = '.$season->id)->get();
 
 		$status_code = $client->getResponse()->getStatus();
 
