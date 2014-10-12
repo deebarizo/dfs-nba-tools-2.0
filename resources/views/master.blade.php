@@ -15,7 +15,11 @@
 </head>
 <body>
 	<div class="container">
-		<h1>DFS Tools</h1>
+		<div class="row">
+			<div class="col-lg-12">
+				<h1>DFS Tools</h1>
+			</div>
+		</div>
 
 		@yield('content')
 	</div>
