@@ -87,7 +87,7 @@ class ScrapersController {
 				$scrapedDate = substr($scrapedDate, 5);
 				$rowContents[$i]['date'] = date('Y-m-d', strtotime(str_replace('-', '/', $scrapedDate)));
 
-				$roadTeam = $rowContents[$i]['road_team_id']; // this is for SAO scraping
+
 
 				$twoTeams = [
 					'home_team_id',
@@ -95,7 +95,13 @@ class ScrapersController {
 				];
 
 				foreach ($twoTeams as $row) {
-					foreach ($teams as $team) {				    
+					if ($rowContents[$i][$row] == 'New Orleans Hornets') {
+							$rowContents[$i][$row] = 'New Orleans Pelicans';
+					}
+
+					$roadTeam = $rowContents[$i]['road_team_id']; // this is for SAO scraping
+
+					foreach ($teams as $team) {			
 					    if ($rowContents[$i][$row] == $team->name_br) {
 					    	$rowContents[$i][$row] = $team->id;
 					    	break;
