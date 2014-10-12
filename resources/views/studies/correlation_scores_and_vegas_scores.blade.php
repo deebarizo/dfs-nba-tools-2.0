@@ -3,7 +3,8 @@
 @section('content')
 	<h2>Correlation - Scores and Vegas Scores</h2>
 
-	Correlation: {{ $data['correlation'] }}
+	<p>Correlation: {{ $data['correlation'] }}</p>
+	<p>Calculate Predicted Score: {{ $data['calculatePredictedScore'] }}</p>
 
 	<div id="container" style="width:100%; height:800px;"></div>
 

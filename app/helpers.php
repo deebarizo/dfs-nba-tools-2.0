@@ -66,11 +66,14 @@ function calculateCorrelation($xArray, $yArray, $xVar, $yVar) {
 		$lineOfBestFitJSON[] = [$x, $y];
 	}
 
+	$calculatePredictedScore = '(Vegas Score - '.$bNaught.') / '.$bOne; 
+
 	$data = [
 		'correlation' => $correlation,
 		'dataSetsJSON' => $dataSetsJSON,
 		'perfectLineJSON' => $perfectLineJSON,
-		'lineOfBestFitJSON' => $lineOfBestFitJSON
+		'lineOfBestFitJSON' => $lineOfBestFitJSON,
+		'calculatePredictedScore' => $calculatePredictedScore
 	];
 
 	return $data;
