@@ -7,6 +7,15 @@
 		</div>
 	</div>
 	<div class="row">
+		@if(Session::has('message'))
+		    <div class="col-lg-12">
+				<div class="alert alert-info fade in" role="alert" style="width: 50%">
+					<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+					{{ Session::get('message') }}
+				</div>
+		    </div>
+		@endif
+
 		{!!	Form::open(['url' => 'scrapers/season_scraper']) !!}
 		<div class="col-lg-2"> 
 			<div class="form-group">

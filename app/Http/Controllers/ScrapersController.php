@@ -29,8 +29,6 @@ class ScrapersController {
 		$teams = Team::all();
 		$games = Game::where('type', $gameType)->get();
 
-		dd(count($games));
-
 		$status_code = $client->getResponse()->getStatus();
 
 		if ($status_code == 200) {
@@ -47,6 +45,22 @@ class ScrapersController {
 			} 
 
 			$rowCount = $crawlerBR->filter('table#'.$tableIDinBR.' > tbody > tr')->count();
+
+			if ($rowCount == count($games)) {
+				switch ($gameType) {
+					case 'regular':
+						$gameTypeInMsg = 'regular season';
+						break;
+					
+					case 'playoffs':
+						$gameTypeInMsg = 'playoff';
+						break;
+				}
+
+				$message = 'All the '.$gameTypeInMsg.' games were already scraped and saved.';
+
+				return redirect('scrapers/season_form')->with('message', $message);
+			}
 
 			$rowContents = array();
 
