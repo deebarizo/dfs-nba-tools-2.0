@@ -20,6 +20,17 @@ class ScrapersController {
 	public function season_scraper(Request $request) {
 		$endYear = $request->input('end_year');
 		$gameType = $request->input('type');
+		$indexOfStartingGameBR = $request->input('game_groups');
+
+		switch ($gameType) {
+			case 'regular':
+				$gameTypeInMsg = 'regular season';
+				break;
+			
+			case 'playoffs':
+				$gameTypeInMsg = 'playoff';
+				break;
+		}
 
 		$client = new Client();
 
@@ -47,16 +58,6 @@ class ScrapersController {
 			$rowCount = $crawlerBR->filter('table#'.$tableIDinBR.' > tbody > tr')->count();
 
 			if ($rowCount == count($games)) {
-				switch ($gameType) {
-					case 'regular':
-						$gameTypeInMsg = 'regular season';
-						break;
-					
-					case 'playoffs':
-						$gameTypeInMsg = 'playoff';
-						break;
-				}
-
 				$message = 'All the '.$gameTypeInMsg.' games were already scraped and saved.';
 
 				return redirect('scrapers/season_form')->with('message', $message);
@@ -73,7 +74,7 @@ class ScrapersController {
 			$tableNames[7] = 'ot_periods';
 			$tableNames[8] = 'notes';
 
-			for ($i=1; $i <= $rowCount; $i++) { // nth-child does not start with a zero index
+			for ($i = $indexOfStartingGameBR; $i <= $rowCount; $i++) { // nth-child does not start with a zero index
 				for ($n=1; $n <= 8; $n++) { // nth-child does not start with a zero index
 					if ($n !== 2) {
 						$rowContents[$i][$tableNames[$n]] = $crawlerBR->filter('table#'.$tableIDinBR.' > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->text();
@@ -231,14 +232,16 @@ class ScrapersController {
 					$savedGameCount++; 
 				}
 
-				if ($savedGameCount >= 100) { return '100 games were saved.'; }
+				if ($savedGameCount >= 105) { break; }
 			}	
 
 		} else {
 			return 'Status Code is not 200.';
 		}
 
-		return $savedGameCount.' games were saved.';
+		$message = $savedGameCount.' '.$gameTypeInMsg.' games were saved.';
+					
+		return redirect('scrapers/season_form')->with('message', $message);
 	}
 
 }

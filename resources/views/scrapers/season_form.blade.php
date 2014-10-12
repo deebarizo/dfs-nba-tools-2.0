@@ -31,6 +31,33 @@
 			</div>
 		</div>
 
+		<div class="col-lg-2"> 
+			<div class="form-group">
+				{!! Form::label('game_groups', 'Game Groups:') !!}
+				{!! Form::select(
+						  'game_groups', 
+						  array(
+						  	'1' => '1-100', 
+						  	'101' => '101-200',
+						  	'201' => '201-300',
+						  	'301' => '301-400',
+						  	'401' => '401-500',
+						  	'501' => '501-600',
+						  	'601' => '601-700',
+						  	'701' => '701-800',
+						  	'801' => '801-900',
+						  	'901' => '901-1000',
+						  	'1001' => '1001-1100',
+						  	'1101' => '1101-1200',
+						  	'1201' => '1201-1300',
+						  	'1301' => '1301-1400',
+						  ), 
+						  null, 
+						  ['class' => 'form-control']) 
+				!!}
+			</div>
+		</div>
+
 		<div class="col-lg-12"> 
 			{!! Form::submit('Scrape Season Data', ['class' => 'btn btn-primary']) !!}
 		</div>
