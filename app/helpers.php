@@ -42,7 +42,25 @@ function calculateCorrelation($xArray, $yArray, $xVar, $yVar) {
 
 	$correlation = $axbSum / (sqrt($aSquaredSum * $bSquaredSum));
 
-	return $correlation;
+	$dataSetsJSON = [];
+
+	foreach ($dataSets['Scores'] as $index => $dataSet) {
+		$dataSetsJSON[] = [$dataSet, (float)($dataSets['Vegas Scores'][$index])];
+	}
+
+	$perfectLineJSON = [];
+
+	for ($i=60; $i <= 150 ; $i++) { 
+		$perfectLineJSON[] = [$i, $i];
+	}
+
+	$data = [
+		'correlation' => $correlation,
+		'dataSetsJSON' => $dataSetsJSON,
+		'perfectLineJSON' => $perfectLineJSON
+	];
+
+	return $data;
 }
 
 function calculateMeanOfArray($arr) {

@@ -33,9 +33,9 @@ class StudiesController {
 			}
 		}
 
-		$correlation = calculateCorrelation($scores, $vegasScores, 'Scores', 'Vegas Scores');
+		$data = calculateCorrelation($scores, $vegasScores, 'Scores', 'Vegas Scores');
 
-		return view('studies/correlation_scores_and_vegas_scores', compact('correlation'));
+		return view('studies/correlation_scores_and_vegas_scores', compact('data'));
 	}
 	
 }
