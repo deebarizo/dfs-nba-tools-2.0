@@ -10,10 +10,6 @@
 	<script>
 		$(function () {
 		    $('#container').highcharts({
-		        chart: {
-		            type: 'scatter',
-		            zoomType: 'xy'
-		        },
 		        title: {
 		            text: 'Scores vs Vegas Scores'
 		        },
@@ -55,9 +51,15 @@
 		            }
 		        },
 		        series: [{
+		        	type: 'scatter',
 		        	name: 'Actual Results',
 		            data: <?php echo json_encode($data['dataSetsJSON']); ?>
 		        }, {
+		            type: 'scatter',
+		            name: 'Line of Best Fit',
+		            data: <?php echo json_encode($data['lineOfBestFitJSON']); ?>,
+		        }, {
+		        	type: 'scatter',
 		        	name: 'Perfect Correlation',
 		        	data: <?php echo json_encode($data['perfectLineJSON']); ?>
 		        }]

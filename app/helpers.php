@@ -50,14 +50,27 @@ function calculateCorrelation($xArray, $yArray, $xVar, $yVar) {
 
 	$perfectLineJSON = [];
 
-	for ($i=60; $i <= 150 ; $i++) { 
-		$perfectLineJSON[] = [$i, $i];
+	for ($x=40; $x <= 150 ; $x++) { 
+		$y = $x;
+		$perfectLineJSON[] = [$x, $y];
+	}
+
+	// https://www.youtube.com/watch?v=JvS2triCgOY Line of Best Fit
+	// http://www.mathopenref.com/coordequation.html Calculate Points on the Line of Best Fit
+
+	$bOne = $axbSum / $aSquaredSum;
+	$bNaught = $mean[$yVar] - ($mean[$xVar] * $bOne);
+
+	for ($x=40; $x <= 150 ; $x++) { 
+		$y = ($bOne * $x) + $bNaught;
+		$lineOfBestFitJSON[] = [$x, $y];
 	}
 
 	$data = [
 		'correlation' => $correlation,
 		'dataSetsJSON' => $dataSetsJSON,
-		'perfectLineJSON' => $perfectLineJSON
+		'perfectLineJSON' => $perfectLineJSON,
+		'lineOfBestFitJSON' => $lineOfBestFitJSON
 	];
 
 	return $data;
