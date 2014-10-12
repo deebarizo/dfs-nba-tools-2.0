@@ -42,7 +42,7 @@ function calculateCorrelation($xArray, $yArray, $xVar, $yVar) {
 
 	$correlation = $axbSum / (sqrt($aSquaredSum * $bSquaredSum));
 
-	echo $correlation;
+	return $correlation;
 }
 
 function calculateMeanOfArray($arr) {
