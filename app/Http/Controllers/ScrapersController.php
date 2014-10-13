@@ -6,6 +6,7 @@ use App\Season;
 use App\Team;
 use App\Game;
 use App\Player;
+use App\BoxScoreLine;
 
 use Illuminate\Http\Request;
 
@@ -14,12 +15,107 @@ use Goutte\Client;
 
 class ScrapersController {
 
-	public function player_scraper() {
-		$teams_abbr_br = Team::all(['abbr_br'])->toArray();
+	public function box_score_line_scraper() {
+		$games = Game::all();
+		$teams = Team::all();
+		$players = Player::all();
 
 		$client = new Client();
 
-		foreach ($teams_abbr_br as $array) {
+		foreach ($games as $key => $game) {
+			$metadata = [];
+
+			$crawlerBR = $client->request('GET', $game->link_br);
+
+			$metadata['game_id'] = $game->id;
+
+			$twoTeamsID = [
+				'home_team_id',
+				'road_team_id'
+			];			
+
+			foreach ($twoTeamsID as $teamID) {
+				$metadata['team_id'] = $game->$teamID;
+
+				$abbrBR = '';
+
+				foreach ($teams as $team) {
+					if ($team->id == $game->$teamID) {
+						$abbrBR = $team->abbr_br;
+
+						break;
+					}
+				}
+
+				$basicStats[1] = 'name';
+				$basicStats[2] = 'mp';
+				$basicStats[3] = 'fg';
+				$basicStats[4] = 'fga';
+				$basicStats[6] = 'threep';
+				$basicStats[7] = 'threepa';
+				$basicStats[9] = 'ft';
+				$basicStats[10] = 'fta';
+				$basicStats[12] = 'orb';
+				$basicStats[13] = 'drb';
+				$basicStats[14] = 'trb';
+				$basicStats[15] = 'ast';
+				$basicStats[16] = 'stl';
+				$basicStats[17] = 'blk';
+				$basicStats[18] = 'tov';
+				$basicStats[19] = 'pf';
+				$basicStats[20] = 'pts';
+				$basicStats[21] = 'plus_minus';
+
+				$advStats[5] = 'orb_percent';
+				$advStats[6] = 'drb_percent';
+				$advStats[7] = 'trb_percent';
+				$advStats[8] = 'ast_percent';
+				$advStats[9] = 'stl_percent';
+				$advStats[10] = 'blk_percent';
+				$advStats[11] = 'tov_percent';
+				$advStats[12] = 'usg';
+				$advStats[13] = 'off_rating';
+				$advStats[14] = 'def_rating';
+
+				// Starters
+
+				for ($i=1; $i <= 5; $i++) { 
+					$rowContents[$i]['role'] = 'starter';
+
+					for ($n=1; $n <= 21; $n++) { 
+						if (isset($basicStats[$n])) {
+							$rowContents[$i][$basicStats[$n]] = $crawlerBR->filter('table#'.$abbrBR.'_basic > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->text();
+						}
+					}
+
+					foreach ($players as $player) {
+						if ($player->name == $rowContents[$i]['name']) {
+							$rowContents[$i]['player_id'] = $player->id;
+
+							break;
+						}
+					}
+
+					for ($n=5; $n <= 14; $n++) { 
+						$rowContents[$i][$advStats[$n]] = $crawlerBR->filter('table#'.$abbrBR.'_advanced > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->text();
+					}
+				}
+
+				// Reserves
+
+				$row
+
+				dd($rowContents);
+			}
+		}
+	}
+
+	public function player_scraper() {
+		$teamsAbbrBR = Team::all(['abbr_br'])->toArray();
+
+		$client = new Client();
+
+		foreach ($teamsAbbrBR as $array) {
 			$players = Player::all();
 
 			$crawlerBR = $client->request('GET', 'http://www.basketball-reference.com/teams/'.$array['abbr_br'].'/2014.html');
