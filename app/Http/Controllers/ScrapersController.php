@@ -5,6 +5,7 @@ ini_set('max_execution_time', 10800); // 10800 seconds = 3 hours
 use App\Season;
 use App\Team;
 use App\Game;
+use App\Player;
 
 use Illuminate\Http\Request;
 
@@ -12,6 +13,41 @@ use vendor\symfony\DomCrawler\Symfony\Component\DomCrawler\Crawler;
 use Goutte\Client;
 
 class ScrapersController {
+
+	public function player_scraper() {
+		$teams_abbr_br = Team::all(['abbr_br'])->toArray();
+
+		$client = new Client();
+
+		foreach ($teams_abbr_br as $array) {
+			$players = Player::all();
+
+			$crawlerBR = $client->request('GET', 'http://www.basketball-reference.com/teams/'.$array['abbr_br'].'/2014.html');
+
+			$rowCount = $crawlerBR->filter('table#roster > tbody > tr')->count();
+
+			for ($n=1; $n <= $rowCount; $n++) { // nth-child does not start with a zero index
+				$name = $crawlerBR->filter('table#roster > tbody > tr:nth-child('.$n.') > td:nth-child(2)')->text();
+				$name = trim($name);
+
+				$duplicate = false;
+
+				foreach ($players as $player) {
+					if ($player->name == $name) {
+						$duplicate = true;
+					}
+				}
+
+				if ($duplicate === false) {
+					$player = new Player;
+
+					$player->name = $name;
+
+					$player->save();						
+				}
+			}			
+		}
+	}
 
 	public function season_form() {
 		return view('scrapers.season_form');
