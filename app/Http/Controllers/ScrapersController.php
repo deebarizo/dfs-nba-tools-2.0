@@ -90,25 +90,7 @@ class ScrapersController {
 				for ($i=1; $i <= 5; $i++) { 
 					$rowContents[$location][$i]['role'] = 'starter';
 
-					for ($n=1; $n <= 21; $n++) { 
-						if (isset($basicStats[$n])) {
-							$rowContents[$location][$i][$basicStats[$n]] = $crawlerBR->filter('table#'.$abbrBR.'_basic > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->text();
-						}
-					}
-
-					for ($n=5; $n <= 14; $n++) { 
-						$rowContents[$location][$i][$advStats[$n]] = $crawlerBR->filter('table#'.$abbrBR.'_advanced > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->text();
-					}
-
-					foreach ($players as $player) {
-						if ($player->name == $rowContents[$location][$i]['name']) {
-							$rowContents[$location][$i]['player_id'] = $player->id;
-
-							break;
-						}
-					}
-
-					$rowContents[$location][$i]['team_id'] = $game->$teamID;
+					$rowContents = scrapeBoxLineScoreBR($rowContents, $players, $game, $location, $teamID, $crawlerBR, $abbrBR, $i, $basicStats, $advStats);
 				}
 
 				// Reserves
@@ -118,41 +100,7 @@ class ScrapersController {
 				for ($i=7; $i <= $rowCount; $i++) { 
 					$rowContents[$location][$i]['role'] = 'reserve';
 					
-					$dnpCheck = $crawlerBR->filter('table#'.$abbrBR.'_basic > tbody > tr:nth-child('.$i.') > td:nth-child(2)')->text();
-
-					if ($dnpCheck == 'Did Not Play') {
-						for ($n=1; $n <= 21; $n++) { 
-							if (isset($basicStats[$n]) && $n != 1) {
-								$rowContents[$location][$i][$basicStats[$n]] = 0;
-							} elseif ($n === 1) { // player name
-								$rowContents[$location][$i][$basicStats[$n]] = $crawlerBR->filter('table#'.$abbrBR.'_basic > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->text();
-							}
-						}
-
-						for ($n=5; $n <= 14; $n++) { 
-							$rowContents[$location][$i][$advStats[$n]] = 0;
-						}
-					} else {
-						for ($n=1; $n <= 21; $n++) { 
-							if (isset($basicStats[$n])) {
-								$rowContents[$location][$i][$basicStats[$n]] = $crawlerBR->filter('table#'.$abbrBR.'_basic > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->text();
-							}
-						}
-
-						for ($n=5; $n <= 14; $n++) { 
-							$rowContents[$location][$i][$advStats[$n]] = $crawlerBR->filter('table#'.$abbrBR.'_advanced > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->text();
-						}				
-					}
-
-					foreach ($players as $player) {
-						if ($player->name == $rowContents[$location][$i]['name']) {
-							$rowContents[$location][$i]['player_id'] = $player->id;
-
-							break;
-						}
-					}
-
-					$rowContents[$location][$i]['team_id'] = $game->$teamID;
+					$rowContents = scrapeBoxLineScoreBR($rowContents, $players, $game, $location, $teamID, $crawlerBR, $abbrBR, $i, $basicStats, $advStats);
 				}
 			}
 
