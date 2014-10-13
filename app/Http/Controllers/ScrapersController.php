@@ -10,13 +10,15 @@ use App\BoxScoreLine;
 
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Facades\DB;
+
 use vendor\symfony\DomCrawler\Symfony\Component\DomCrawler\Crawler;
 use Goutte\Client;
 
 class ScrapersController {
 
 	public function box_score_line_scraper() {
-		$games = Game::all();
+		$games = DB::table('games')->get();
 		$teams = Team::all();
 		$players = Player::all();
 
@@ -24,20 +26,20 @@ class ScrapersController {
 
 		$savedGameCount = 0;
 
-		foreach ($games as $key => $game) {
-			$duplicateGameToggle = false;
+		for ($y=0; $y < count($games); $y++) { 
+			$dupCheck = BoxScoreLine::where('game_id', '=', $games[$y]->id)->first();
 
-			$dupCheck = BoxScoreLine::where('game_id', '=', $game->id)->exists();
+			if ($dupCheck !== null) {
+				echo 'Dup Game ID: '.$games[$y]->id.'<br><br>';
 
-			if ($dupCheck) {
-				continue;
+			 	continue;
 			}
 
 			$metadata = [];
 
-			$crawlerBR = $client->request('GET', $game->link_br);
+			$crawlerBR = $client->request('GET', $games[$y]->link_br);
 
-			$metadata['game_id'] = $game->id;
+			$metadata['game_id'] = $games[$y]->id;
 
 			$twoTeamsID = [
 				'home_team' => 'home_team_id',
@@ -48,7 +50,7 @@ class ScrapersController {
 				$abbrBR = '';
 
 				foreach ($teams as $team) {
-					if ($team->id == $game->$teamID) {
+					if ($team->id == $games[$y]->$teamID) {
 						$abbrBR = $team->abbr_br;
 
 						break;
@@ -90,7 +92,7 @@ class ScrapersController {
 				for ($i=1; $i <= 5; $i++) { 
 					$rowContents[$location][$i]['role'] = 'starter';
 
-					$rowContents = scrapeBoxLineScoreBR($rowContents, $players, $game, $location, $teamID, $crawlerBR, $abbrBR, $i, $basicStats, $advStats);
+					$rowContents = scrapeBoxLineScoreBR($y, $rowContents, $players, $games, $location, $teamID, $crawlerBR, $abbrBR, $i, $basicStats, $advStats);
 				}
 
 				// Reserves
@@ -100,7 +102,7 @@ class ScrapersController {
 				for ($i=7; $i <= $rowCount; $i++) { 
 					$rowContents[$location][$i]['role'] = 'reserve';
 					
-					$rowContents = scrapeBoxLineScoreBR($rowContents, $players, $game, $location, $teamID, $crawlerBR, $abbrBR, $i, $basicStats, $advStats);
+					$rowContents = scrapeBoxLineScoreBR($y, $rowContents, $players, $games, $location, $teamID, $crawlerBR, $abbrBR, $i, $basicStats, $advStats);
 				}
 			}
 
@@ -113,6 +115,7 @@ class ScrapersController {
 					$boxScoreLine->team_id = $playerData['team_id'];
 					$boxScoreLine->player_id = $playerData['player_id'];
 					$boxScoreLine->role = $playerData['role'];
+					$boxScoreLine->status = $playerData['status'];
 					$boxScoreLine->mp = $playerData['mp'];
 					$boxScoreLine->fg = $playerData['fg'];
 					$boxScoreLine->fga = $playerData['fga'];
@@ -144,12 +147,14 @@ class ScrapersController {
 				}
 			}
 
-			dd($rowContents);
-
 			$savedGameCount++;
 
+			echo 'Game ID: '.$games[$y]->id.'<br>';
+			echo 'Saved Game Count: '.$savedGameCount.'<br><br>';
+
 			if ($savedGameCount == 100) {
-				return 'The box score lines of 100 games were saved.';
+				echo 'The box score lines of 100 games were saved.';
+				exit();
 			}
 		}
 	}

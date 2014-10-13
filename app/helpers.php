@@ -1,8 +1,8 @@
 <?php
 
-function scrapeBoxLineScoreBR($rowContents, $players, $game, $location, $teamID, $crawlerBR, $abbrBR, $i, $basicStats, $advStats) {
+function scrapeBoxLineScoreBR($y, $rowContents, $players, $games, $location, $teamID, $crawlerBR, $abbrBR, $i, $basicStats, $advStats) {
 
-	$rowContents[$location][$i]['team_id'] = $game->$teamID;	
+	$rowContents[$location][$i]['team_id'] = $games[$y]->$teamID;	
 	
 	$dnpCheck = $crawlerBR->filter('table#'.$abbrBR.'_basic > tbody > tr:nth-child('.$i.') > td:nth-child(2)')->text();
 
