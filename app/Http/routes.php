@@ -6,3 +6,4 @@ $router->get('scrapers/season_form', 'ScrapersController@season_form');
 $router->post('scrapers/season_scraper', 'ScrapersController@season_scraper');
 
 $router->get('studies/correlations/scores_and_vegas_scores', 'StudiesController@correlationScoresAndVegasScores');
+$router->get('studies/histogram/scores', 'StudiesController@histogramScores');
