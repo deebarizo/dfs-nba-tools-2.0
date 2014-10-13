@@ -25,8 +25,10 @@ class ScrapersController {
 		foreach ($games as $key => $game) {
 			$duplicateGameToggle = false;
 
-			if (BoxScoreLine::exists()) {
-				$dupCheck = BoxScoreLine::where('game_id', '=', $game->id)->firstOrFail();
+			$dupCheck = BoxScoreLine::where('game_id', '=', $game->id)->exists();
+
+			if ($dupCheck) {
+				continue;
 			}
 
 			$metadata = [];
@@ -148,46 +150,46 @@ class ScrapersController {
 						}
 					}
 				}
+			}
 
-				$boxScoreLine = new BoxScoreLine;
+			foreach ($rowContents as $location) {
+				foreach ($location as $playerData) {
+					$boxScoreLine = new BoxScoreLine;
 
-				$boxScoreLine->game_id = $metadata['game_id'];
-				$boxScoreLine->team_id = $metadata['team_id'];
+					$boxScoreLine->game_id = $metadata['game_id'];
+					$boxScoreLine->team_id = $metadata['team_id'];
 
-				foreach ($rowContents as $location) {
-					foreach ($location as $playerData) {
-						$boxScoreLine->player_id = $playerData['player_id'];
-						$boxScoreLine->role = $playerData['role'];
-						$boxScoreLine->mp = $playerData['mp'];
-						$boxScoreLine->fg = $playerData['fg'];
-						$boxScoreLine->fga = $playerData['fga'];
-						$boxScoreLine->threep = $playerData['threep'];
-						$boxScoreLine->threepa = $playerData['threepa'];
-						$boxScoreLine->ft = $playerData['ft'];
-						$boxScoreLine->fta = $playerData['fta'];
-						$boxScoreLine->orb = $playerData['orb'];
-						$boxScoreLine->drb = $playerData['drb'];
-						$boxScoreLine->trb = $playerData['trb'];
-						$boxScoreLine->ast = $playerData['ast'];
-						$boxScoreLine->stl = $playerData['stl'];
-						$boxScoreLine->blk = $playerData['blk'];
-						$boxScoreLine->tov = $playerData['tov'];
-						$boxScoreLine->pf = $playerData['pf'];
-						$boxScoreLine->pts = $playerData['pts'];
-						$boxScoreLine->plus_minus = $playerData['plus_minus'];
-						$boxScoreLine->orb_percent = $playerData['orb_percent'];
-						$boxScoreLine->drb_percent = $playerData['drb_percent'];
-						$boxScoreLine->trb_percent = $playerData['trb_percent'];
-						$boxScoreLine->ast_percent = $playerData['ast_percent'];
-						$boxScoreLine->stl_percent = $playerData['stl_percent'];
-						$boxScoreLine->blk_percent = $playerData['blk_percent'];
-						$boxScoreLine->tov_percent = $playerData['tov_percent'];
-						$boxScoreLine->off_rating = $playerData['off_rating'];
-						$boxScoreLine->def_rating = $playerData['def_rating'];
-					}
+					$boxScoreLine->player_id = $playerData['player_id'];
+					$boxScoreLine->role = $playerData['role'];
+					$boxScoreLine->mp = $playerData['mp'];
+					$boxScoreLine->fg = $playerData['fg'];
+					$boxScoreLine->fga = $playerData['fga'];
+					$boxScoreLine->threep = $playerData['threep'];
+					$boxScoreLine->threepa = $playerData['threepa'];
+					$boxScoreLine->ft = $playerData['ft'];
+					$boxScoreLine->fta = $playerData['fta'];
+					$boxScoreLine->orb = $playerData['orb'];
+					$boxScoreLine->drb = $playerData['drb'];
+					$boxScoreLine->trb = $playerData['trb'];
+					$boxScoreLine->ast = $playerData['ast'];
+					$boxScoreLine->stl = $playerData['stl'];
+					$boxScoreLine->blk = $playerData['blk'];
+					$boxScoreLine->tov = $playerData['tov'];
+					$boxScoreLine->pf = $playerData['pf'];
+					$boxScoreLine->pts = $playerData['pts'];
+					$boxScoreLine->plus_minus = $playerData['plus_minus'];
+					$boxScoreLine->orb_percent = $playerData['orb_percent'];
+					$boxScoreLine->drb_percent = $playerData['drb_percent'];
+					$boxScoreLine->trb_percent = $playerData['trb_percent'];
+					$boxScoreLine->ast_percent = $playerData['ast_percent'];
+					$boxScoreLine->stl_percent = $playerData['stl_percent'];
+					$boxScoreLine->blk_percent = $playerData['blk_percent'];
+					$boxScoreLine->tov_percent = $playerData['tov_percent'];
+					$boxScoreLine->off_rating = $playerData['off_rating'];
+					$boxScoreLine->def_rating = $playerData['def_rating'];
+
+					$boxScoreLine->save();
 				}
-
-				# $boxScoreLine->save();
 			}
 
 			dd($rowContents);
