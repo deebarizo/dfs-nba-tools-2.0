@@ -23,6 +23,12 @@ class ScrapersController {
 		$client = new Client();
 
 		foreach ($games as $key => $game) {
+			$duplicateGameToggle = false;
+
+			if (BoxScoreLine::exists()) {
+				$dupCheck = BoxScoreLine::where('game_id', '=', $game->id)->firstOrFail();
+			}
+
 			$metadata = [];
 
 			$crawlerBR = $client->request('GET', $game->link_br);
@@ -30,11 +36,11 @@ class ScrapersController {
 			$metadata['game_id'] = $game->id;
 
 			$twoTeamsID = [
-				'home_team_id',
-				'road_team_id'
+				'home_team' => 'home_team_id',
+				'road_team' => 'road_team_id'
 			];			
 
-			foreach ($twoTeamsID as $teamID) {
+			foreach ($twoTeamsID as $location => $teamID) {
 				$metadata['team_id'] = $game->$teamID;
 
 				$abbrBR = '';
@@ -80,21 +86,21 @@ class ScrapersController {
 				// Starters
 
 				for ($i=1; $i <= 5; $i++) { 
-					$rowContents[$i]['role'] = 'starter';
+					$rowContents[$location][$i]['role'] = 'starter';
 
 					for ($n=1; $n <= 21; $n++) { 
 						if (isset($basicStats[$n])) {
-							$rowContents[$i][$basicStats[$n]] = $crawlerBR->filter('table#'.$abbrBR.'_basic > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->text();
+							$rowContents[$location][$i][$basicStats[$n]] = $crawlerBR->filter('table#'.$abbrBR.'_basic > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->text();
 						}
 					}
 
 					for ($n=5; $n <= 14; $n++) { 
-						$rowContents[$i][$advStats[$n]] = $crawlerBR->filter('table#'.$abbrBR.'_advanced > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->text();
+						$rowContents[$location][$i][$advStats[$n]] = $crawlerBR->filter('table#'.$abbrBR.'_advanced > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->text();
 					}
 
 					foreach ($players as $player) {
-						if ($player->name == $rowContents[$i]['name']) {
-							$rowContents[$i]['player_id'] = $player->id;
+						if ($player->name == $rowContents[$location][$i]['name']) {
+							$rowContents[$location][$i]['player_id'] = $player->id;
 
 							break;
 						}
@@ -106,43 +112,85 @@ class ScrapersController {
 				$rowCount = $crawlerBR->filter('table#'.$abbrBR.'_basic > tbody > tr')->count();
 
 				for ($i=7; $i <= $rowCount; $i++) { 
-					$rowContents[$i]['role'] = 'reserve';
+					$rowContents[$location][$i]['role'] = 'reserve';
 					
 					$dnpCheck = $crawlerBR->filter('table#'.$abbrBR.'_basic > tbody > tr:nth-child('.$i.') > td:nth-child(2)')->text();
 
 					if ($dnpCheck == 'Did Not Play') {
 						for ($n=1; $n <= 21; $n++) { 
 							if (isset($basicStats[$n]) && $n != 1) {
-								$rowContents[$i][$basicStats[$n]] = 0;
-							} elseif ($n === 1) {
-								$rowContents[$i][$basicStats[$n]] = $crawlerBR->filter('table#'.$abbrBR.'_basic > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->text();
-							}
-						}
-					} else {
-						for ($n=1; $n <= 21; $n++) { 
-							if (isset($basicStats[$n])) {
-								$rowContents[$i][$basicStats[$n]] = $crawlerBR->filter('table#'.$abbrBR.'_basic > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->text();
+								$rowContents[$location][$i][$basicStats[$n]] = 0;
+							} elseif ($n === 1) { // player name
+								$rowContents[$location][$i][$basicStats[$n]] = $crawlerBR->filter('table#'.$abbrBR.'_basic > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->text();
 							}
 						}
 
 						for ($n=5; $n <= 14; $n++) { 
-							$rowContents[$i][$advStats[$n]] = $crawlerBR->filter('table#'.$abbrBR.'_advanced > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->text();
+							$rowContents[$location][$i][$advStats[$n]] = 0;
+						}
+					} else {
+						for ($n=1; $n <= 21; $n++) { 
+							if (isset($basicStats[$n])) {
+								$rowContents[$location][$i][$basicStats[$n]] = $crawlerBR->filter('table#'.$abbrBR.'_basic > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->text();
+							}
+						}
+
+						for ($n=5; $n <= 14; $n++) { 
+							$rowContents[$location][$i][$advStats[$n]] = $crawlerBR->filter('table#'.$abbrBR.'_advanced > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->text();
 						}				
 					}
 
 					foreach ($players as $player) {
-						if ($player->name == $rowContents[$i]['name']) {
-							$rowContents[$i]['player_id'] = $player->id;
+						if ($player->name == $rowContents[$location][$i]['name']) {
+							$rowContents[$location][$i]['player_id'] = $player->id;
 
 							break;
 						}
 					}
 				}
 
-				dd($rowContents);
+				$boxScoreLine = new BoxScoreLine;
+
+				$boxScoreLine->game_id = $metadata['game_id'];
+				$boxScoreLine->team_id = $metadata['team_id'];
+
+				foreach ($rowContents as $location) {
+					foreach ($location as $playerData) {
+						$boxScoreLine->player_id = $playerData['player_id'];
+						$boxScoreLine->role = $playerData['role'];
+						$boxScoreLine->mp = $playerData['mp'];
+						$boxScoreLine->fg = $playerData['fg'];
+						$boxScoreLine->fga = $playerData['fga'];
+						$boxScoreLine->threep = $playerData['threep'];
+						$boxScoreLine->threepa = $playerData['threepa'];
+						$boxScoreLine->ft = $playerData['ft'];
+						$boxScoreLine->fta = $playerData['fta'];
+						$boxScoreLine->orb = $playerData['orb'];
+						$boxScoreLine->drb = $playerData['drb'];
+						$boxScoreLine->trb = $playerData['trb'];
+						$boxScoreLine->ast = $playerData['ast'];
+						$boxScoreLine->stl = $playerData['stl'];
+						$boxScoreLine->blk = $playerData['blk'];
+						$boxScoreLine->tov = $playerData['tov'];
+						$boxScoreLine->pf = $playerData['pf'];
+						$boxScoreLine->pts = $playerData['pts'];
+						$boxScoreLine->plus_minus = $playerData['plus_minus'];
+						$boxScoreLine->orb_percent = $playerData['orb_percent'];
+						$boxScoreLine->drb_percent = $playerData['drb_percent'];
+						$boxScoreLine->trb_percent = $playerData['trb_percent'];
+						$boxScoreLine->ast_percent = $playerData['ast_percent'];
+						$boxScoreLine->stl_percent = $playerData['stl_percent'];
+						$boxScoreLine->blk_percent = $playerData['blk_percent'];
+						$boxScoreLine->tov_percent = $playerData['tov_percent'];
+						$boxScoreLine->off_rating = $playerData['off_rating'];
+						$boxScoreLine->def_rating = $playerData['def_rating'];
+					}
+				}
+
+				# $boxScoreLine->save();
 			}
 
-			# Box score lines for the game is saved
+			dd($rowContents);
 		}
 	}
 
