@@ -22,6 +22,8 @@ class ScrapersController {
 
 		$client = new Client();
 
+		$savedGameCount = 0;
+
 		foreach ($games as $key => $game) {
 			$duplicateGameToggle = false;
 
@@ -43,8 +45,6 @@ class ScrapersController {
 			];			
 
 			foreach ($twoTeamsID as $location => $teamID) {
-				$metadata['team_id'] = $game->$teamID;
-
 				$abbrBR = '';
 
 				foreach ($teams as $team) {
@@ -107,6 +107,8 @@ class ScrapersController {
 							break;
 						}
 					}
+
+					$rowContents[$location][$i]['team_id'] = $game->$teamID;
 				}
 
 				// Reserves
@@ -149,6 +151,8 @@ class ScrapersController {
 							break;
 						}
 					}
+
+					$rowContents[$location][$i]['team_id'] = $game->$teamID;
 				}
 			}
 
@@ -157,8 +161,8 @@ class ScrapersController {
 					$boxScoreLine = new BoxScoreLine;
 
 					$boxScoreLine->game_id = $metadata['game_id'];
-					$boxScoreLine->team_id = $metadata['team_id'];
 
+					$boxScoreLine->team_id = $playerData['team_id'];
 					$boxScoreLine->player_id = $playerData['player_id'];
 					$boxScoreLine->role = $playerData['role'];
 					$boxScoreLine->mp = $playerData['mp'];
@@ -193,6 +197,12 @@ class ScrapersController {
 			}
 
 			dd($rowContents);
+
+			$savedGameCount++;
+
+			if ($savedGameCount == 100) {
+				return 'The box score lines of 100 games were saved.';
+			}
 		}
 	}
 
