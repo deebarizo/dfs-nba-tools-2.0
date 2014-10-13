@@ -26,7 +26,7 @@ class ScrapersController {
 
 		$savedGameCount = 0;
 
-		for ($y=0; $y < count($games); $y++) { 
+		for ($y=616; $y < count($games); $y++) { 
 			$dupCheck = BoxScoreLine::where('game_id', '=', $games[$y]->id)->first();
 
 			if ($dupCheck !== null) {
@@ -152,8 +152,8 @@ class ScrapersController {
 			echo 'Game ID: '.$games[$y]->id.'<br>';
 			echo 'Saved Game Count: '.$savedGameCount.'<br><br>';
 
-			if ($savedGameCount == 100) {
-				echo 'The box score lines of 100 games were saved.';
+			if ($savedGameCount >= 75) {
+				echo 'The box score lines of '.$savedGameCount.' games were saved.';
 				exit();
 			}
 		}
