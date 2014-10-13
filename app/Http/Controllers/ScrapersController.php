@@ -88,6 +88,10 @@ class ScrapersController {
 						}
 					}
 
+					for ($n=5; $n <= 14; $n++) { 
+						$rowContents[$i][$advStats[$n]] = $crawlerBR->filter('table#'.$abbrBR.'_advanced > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->text();
+					}
+
 					foreach ($players as $player) {
 						if ($player->name == $rowContents[$i]['name']) {
 							$rowContents[$i]['player_id'] = $player->id;
@@ -95,18 +99,50 @@ class ScrapersController {
 							break;
 						}
 					}
-
-					for ($n=5; $n <= 14; $n++) { 
-						$rowContents[$i][$advStats[$n]] = $crawlerBR->filter('table#'.$abbrBR.'_advanced > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->text();
-					}
 				}
 
 				// Reserves
 
-				$row
+				$rowCount = $crawlerBR->filter('table#'.$abbrBR.'_basic > tbody > tr')->count();
+
+				for ($i=7; $i <= $rowCount; $i++) { 
+					$rowContents[$i]['role'] = 'reserve';
+					
+					$dnpCheck = $crawlerBR->filter('table#'.$abbrBR.'_basic > tbody > tr:nth-child('.$i.') > td:nth-child(2)')->text();
+
+					if ($dnpCheck == 'Did Not Play') {
+						for ($n=1; $n <= 21; $n++) { 
+							if (isset($basicStats[$n]) && $n != 1) {
+								$rowContents[$i][$basicStats[$n]] = 0;
+							} elseif ($n === 1) {
+								$rowContents[$i][$basicStats[$n]] = $crawlerBR->filter('table#'.$abbrBR.'_basic > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->text();
+							}
+						}
+					} else {
+						for ($n=1; $n <= 21; $n++) { 
+							if (isset($basicStats[$n])) {
+								$rowContents[$i][$basicStats[$n]] = $crawlerBR->filter('table#'.$abbrBR.'_basic > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->text();
+							}
+						}
+
+						for ($n=5; $n <= 14; $n++) { 
+							$rowContents[$i][$advStats[$n]] = $crawlerBR->filter('table#'.$abbrBR.'_advanced > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->text();
+						}				
+					}
+
+					foreach ($players as $player) {
+						if ($player->name == $rowContents[$i]['name']) {
+							$rowContents[$i]['player_id'] = $player->id;
+
+							break;
+						}
+					}
+				}
 
 				dd($rowContents);
 			}
+
+			# Box score lines for the game is saved
 		}
 	}
 
