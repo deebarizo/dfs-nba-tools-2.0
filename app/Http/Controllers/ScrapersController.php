@@ -26,14 +26,16 @@ class ScrapersController {
 
 		$savedGameCount = 0;
 
-		for ($y=616; $y < count($games); $y++) { 
-			$dupCheck = BoxScoreLine::where('game_id', '=', $games[$y]->id)->first();
+		ddAll($games);
 
-			if ($dupCheck !== null) {
-				echo 'Dup Game ID: '.$games[$y]->id.'<br><br>';
+		for ($y=1319; $y < count($games); $y++) { 
+			# $dupCheck = BoxScoreLine::where('game_id', '=', $games[$y]->id)->first();
 
-			 	continue;
-			}
+			# if ($dupCheck !== null) {
+			# 	echo 'Dup Game ID: '.$games[$y]->id.'<br><br>';
+
+			#  	continue;
+			# }
 
 			$metadata = [];
 
@@ -167,7 +169,7 @@ class ScrapersController {
 		foreach ($teamsAbbrBR as $array) {
 			$players = Player::all();
 
-			$crawlerBR = $client->request('GET', 'http://www.basketball-reference.com/teams/'.$array['abbr_br'].'/2014.html');
+			$crawlerBR = $client->request('GET', 'http://www.basketball-reference.com/teams/'.$array['abbr_br'].'/2013.html');
 
 			$rowCount = $crawlerBR->filter('table#roster > tbody > tr')->count();
 
