@@ -18,40 +18,32 @@ use Goutte\Client;
 class ScrapersController {
 
 	public function one_time() {
-		$games = DB::table('games')->where('id', '>=', 0)->where('id', '<=', 1000)->get();
-		$boxScoreLines = DB::table('box_score_lines')->where('game_id', '>=', 0)->where('game_id', '<=', 1000)->get();
+		$games = DB::table('games')->where('id', '>=', 2000)->where('id', '<=', 3000)->get();
+		$boxScoreLines = DB::table('box_score_lines')->where('game_id', '>=', 2000)->where('game_id', '<=', 3000)->get();
 
 		foreach ($games as $key => $game) {
-			$teamIDSInGame = [];
+			$playerIDSInGame = [];
 
 			foreach ($boxScoreLines as $boxScoreLine) {
 				if ($boxScoreLine->game_id == $game->id) {
-					$teamIDSInGame[] = $boxScoreLine->team_id;
+					$playerIDSInGame[] = $boxScoreLine->player_id;
 				}
 			}
-
-			$teamIDSNoDups = [];
-
-			$teamIDSNoDups = array_unique($teamIDSInGame);
-
-			if (count($teamIDSNoDups) !== 2) {
-				echo 'Game ID: '.$game->id.'<br>';
 				
-				$teamIDSCount = array_count_values($teamIDSInGame);
+			$playerIDSCount = array_count_values($playerIDSInGame);
 
-				echo 'Team IDS Count: <br><pre>';
-				var_dump($teamIDSCount);
-				echo '</pre>';
-				echo '<hr>';
+			foreach ($playerIDSCount as $player_id => $value) {
+				if ($value > 1) {
+					echo 'Game ID: '.$game->id.'<br>';
 
-				foreach ($teamIDSCount as $team_id => $value) {
-					if ($value < 5) {
-						DB::table('box_score_lines')->where('game_id', '=', $game->id)->where('team_id', '=', $team_id)->delete();
-					}
+					echo 'Player IDS Count: <br><pre>';
+					var_dump($playerIDSCount);
+					echo '</pre>';
+					echo '<hr>';
+
+					break;
 				}
 			}
-
-			$teamIDSNoDups = [];
 		}
 	}
 
@@ -65,7 +57,7 @@ class ScrapersController {
 		$savedGameCount = 0;
 
 		foreach ($games as $index => $game) { 
-			if ($game->id == 2580) {
+			if ($game->id >= 2603) {
 				$metadata = [];
 
 				$crawlerBR = $client->request('GET', $game->link_br);
@@ -142,8 +134,6 @@ class ScrapersController {
 						$rowContents = scrapeBoxLineScoreBR($rowContents, $players, $game, $location, $teamID, $crawlerBR, $abbrBR, $i, $basicStats, $advStats);
 					}
 				}
-
-				# dd($rowContents);
 
 				foreach ($rowContents as $location) {
 					foreach ($location as $playerData) {
