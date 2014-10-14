@@ -18,7 +18,7 @@ use Goutte\Client;
 class ScrapersController {
 
 	public function box_score_line_scraper() {
-		$games = DB::table('games')->get();
+		$games = Game::all();
 		$teams = Team::all();
 		$players = Player::all();
 
@@ -26,22 +26,16 @@ class ScrapersController {
 
 		$savedGameCount = 0;
 
-		ddAll($games);
-
-		for ($y=1319; $y < count($games); $y++) { 
-			# $dupCheck = BoxScoreLine::where('game_id', '=', $games[$y]->id)->first();
-
-			# if ($dupCheck !== null) {
-			# 	echo 'Dup Game ID: '.$games[$y]->id.'<br><br>';
-
-			#  	continue;
-			# }
+		foreach ($games as $index => $game) { 
+			if ($index <= 2599) {
+				continue;
+			}		
 
 			$metadata = [];
 
-			$crawlerBR = $client->request('GET', $games[$y]->link_br);
+			$crawlerBR = $client->request('GET', $game->link_br);
 
-			$metadata['game_id'] = $games[$y]->id;
+			$metadata['game_id'] = $game->id;
 
 			$twoTeamsID = [
 				'home_team' => 'home_team_id',
@@ -52,7 +46,7 @@ class ScrapersController {
 				$abbrBR = '';
 
 				foreach ($teams as $team) {
-					if ($team->id == $games[$y]->$teamID) {
+					if ($team->id == $game->$teamID) {
 						$abbrBR = $team->abbr_br;
 
 						break;
@@ -89,12 +83,18 @@ class ScrapersController {
 				$advStats[13] = 'off_rating';
 				$advStats[14] = 'def_rating';
 
+				// name change: Hornets Pelicans
+
+				if ($abbrBR == 'NOP') {
+					$abbrBR = 'NOH';
+				}
+
 				// Starters
 
 				for ($i=1; $i <= 5; $i++) { 
 					$rowContents[$location][$i]['role'] = 'starter';
 
-					$rowContents = scrapeBoxLineScoreBR($y, $rowContents, $players, $games, $location, $teamID, $crawlerBR, $abbrBR, $i, $basicStats, $advStats);
+					$rowContents = scrapeBoxLineScoreBR($rowContents, $players, $game, $location, $teamID, $crawlerBR, $abbrBR, $i, $basicStats, $advStats);
 				}
 
 				// Reserves
@@ -104,7 +104,7 @@ class ScrapersController {
 				for ($i=7; $i <= $rowCount; $i++) { 
 					$rowContents[$location][$i]['role'] = 'reserve';
 					
-					$rowContents = scrapeBoxLineScoreBR($y, $rowContents, $players, $games, $location, $teamID, $crawlerBR, $abbrBR, $i, $basicStats, $advStats);
+					$rowContents = scrapeBoxLineScoreBR($rowContents, $players, $game, $location, $teamID, $crawlerBR, $abbrBR, $i, $basicStats, $advStats);
 				}
 			}
 
@@ -151,8 +151,10 @@ class ScrapersController {
 
 			$savedGameCount++;
 
-			echo 'Game ID: '.$games[$y]->id.'<br>';
+			echo 'Game ID: '.$game->id.'<br>';
 			echo 'Saved Game Count: '.$savedGameCount.'<br><br>';
+
+			unset($rowContents);
 
 			if ($savedGameCount >= 75) {
 				echo 'The box score lines of '.$savedGameCount.' games were saved.';

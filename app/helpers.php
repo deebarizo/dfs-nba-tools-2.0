@@ -1,9 +1,9 @@
 <?php
 
-function scrapeBoxLineScoreBR($y, $rowContents, $players, $games, $location, $teamID, $crawlerBR, $abbrBR, $i, $basicStats, $advStats) {
+function scrapeBoxLineScoreBR($rowContents, $players, $game, $location, $teamID, $crawlerBR, $abbrBR, $i, $basicStats, $advStats) {
 
-	$rowContents[$location][$i]['team_id'] = $games[$y]->$teamID;	
-	
+	$rowContents[$location][$i]['team_id'] = $game->$teamID;	
+
 	$dnpCheck = $crawlerBR->filter('table#'.$abbrBR.'_basic > tbody > tr:nth-child('.$i.') > td:nth-child(2)')->text();
 
 	if (is_numeric($dnpCheck[0]) === false) {
@@ -24,8 +24,15 @@ function scrapeBoxLineScoreBR($y, $rowContents, $players, $games, $location, $te
 		$rowContents[$location][$i]['status'] = 'Played';
 
 		for ($n=1; $n <= 21; $n++) { 
-			if (isset($basicStats[$n])) {
+			if (isset($basicStats[$n]) and $n != 2) {
 				$rowContents[$location][$i][$basicStats[$n]] = $crawlerBR->filter('table#'.$abbrBR.'_basic > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->text();
+			} elseif (isset($basicStats[$n]) and $n == 2) {
+				$mpRawData = $crawlerBR->filter('table#'.$abbrBR.'_basic > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->text();
+
+				$minutes = preg_replace("/(\d*)(:)(\d\d)/", "$1", $mpRawData);
+				$seconds = preg_replace("/(\d*)(:)(\d\d)/", "$3", $mpRawData);
+
+				$rowContents[$location][$i][$basicStats[$n]] = $minutes + ($seconds / 60);
 			}
 		}
 
