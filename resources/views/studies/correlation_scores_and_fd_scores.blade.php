@@ -1,10 +1,10 @@
 @extends('master')
 
 @section('content')
-	<h2>Correlation - Scores and Vegas Scores</h2>
+	<h2>Correlation - Scores and FD Scores</h2>
 
 	<p><strong>Correlation:</strong> {{ $data['correlation'] }}</p>
-	<p><strong>Slope:</strong> {{ $data['slope'] }}</p>
+	<p><strong>Calculate Predicted FD Score:</strong> {{ $data['calculatePredictedFDScore']  }}</p>
 
 	<div id="container" style="width:100%; height:800px;"></div>
 

@@ -45,6 +45,8 @@ class StudiesController {
 
 		$data['perfectLineJSON'] = $perfectLineJSON;
 
+		$data['calculatePredictedFDScore'] = '(Score * '.$data['bOne'].') + '.$data['bNaught']; 
+
 		return view('studies/correlation_scores_and_fd_scores', compact('data'));
 	}
 
