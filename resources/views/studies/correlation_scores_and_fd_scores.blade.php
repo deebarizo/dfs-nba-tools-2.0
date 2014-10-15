@@ -4,7 +4,7 @@
 	<h2>Correlation - Scores and Vegas Scores</h2>
 
 	<p><strong>Correlation:</strong> {{ $data['correlation'] }}</p>
-	<p><strong>Calculate Predicted Score:</strong> {{ $data['calculatePredictedScore'] }}</p>
+	<p><strong>Slope:</strong> {{ $data['slope'] }}</p>
 
 	<div id="container" style="width:100%; height:800px;"></div>
 
@@ -12,7 +12,7 @@
 		$(function () {
 		    $('#container').highcharts({
 		        title: {
-		            text: 'Scores and Vegas Scores'
+		            text: 'Scores and FD Scores'
 		        },
 		        xAxis: {
 		            title: {
@@ -25,7 +25,7 @@
 		        },
 		        yAxis: {
 		            title: {
-		                text: 'Vegas Scores'
+		                text: 'FD Scores'
 		            }
 		        },
 		        plotOptions: {
@@ -47,7 +47,7 @@
 		                    }
 		                },
 		                tooltip: {
-		                    pointFormat: '{point.x} Score, {point.y} Vegas Score'
+		                    pointFormat: '{point.x} Score, {point.y} FD Score'
 		                }
 		            }
 		        },

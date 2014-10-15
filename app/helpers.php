@@ -83,9 +83,9 @@ function calculateCorrelation($xArray, $yArray, $xVar, $yVar) {
 	];
 
 	foreach ($dataSetsAB['Scores'] as $index => $value) {
-		$dataSetsAB2['axb'][] = $value * $dataSetsAB['Vegas Scores'][$index];
+		$dataSetsAB2['axb'][] = $value * $dataSetsAB[$yVar][$index];
 		$dataSetsAB2['aSquared'][] = $value * $value;
-		$dataSetsAB2['bSquared'][] = $dataSetsAB['Vegas Scores'][$index] * $dataSetsAB['Vegas Scores'][$index];
+		$dataSetsAB2['bSquared'][] = $dataSetsAB[$yVar][$index] * $dataSetsAB[$yVar][$index];
 	}
 
 	$axbSum = array_sum($dataSetsAB2['axb']);
@@ -97,14 +97,7 @@ function calculateCorrelation($xArray, $yArray, $xVar, $yVar) {
 	$dataSetsJSON = [];
 
 	foreach ($dataSets['Scores'] as $index => $dataSet) {
-		$dataSetsJSON[] = [$dataSet, (float)($dataSets['Vegas Scores'][$index])];
-	}
-
-	$perfectLineJSON = [];
-
-	for ($x=40; $x <= 150 ; $x++) { 
-		$y = $x;
-		$perfectLineJSON[] = [$x, $y];
+		$dataSetsJSON[] = [$dataSet, (float)($dataSets[$yVar][$index])];
 	}
 
 	// https://www.youtube.com/watch?v=JvS2triCgOY Line of Best Fit
@@ -113,19 +106,11 @@ function calculateCorrelation($xArray, $yArray, $xVar, $yVar) {
 	$bOne = $axbSum / $aSquaredSum;
 	$bNaught = $mean[$yVar] - ($mean[$xVar] * $bOne);
 
-	for ($x=40; $x <= 150 ; $x++) { 
-		$y = ($bOne * $x) + $bNaught;
-		$lineOfBestFitJSON[] = [$x, $y];
-	}
-
-	$calculatePredictedScore = '(Vegas Score - '.$bNaught.') / '.$bOne; 
-
 	$data = [
 		'correlation' => $correlation,
 		'dataSetsJSON' => $dataSetsJSON,
-		'perfectLineJSON' => $perfectLineJSON,
-		'lineOfBestFitJSON' => $lineOfBestFitJSON,
-		'calculatePredictedScore' => $calculatePredictedScore
+		'bOne' => $bOne,
+		'bNaught' => $bNaught
 	];
 
 	return $data;
