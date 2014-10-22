@@ -13,5 +13,9 @@ $router->get('studies/correlations/scores_and_vegas_scores', 'StudiesController@
 $router->get('studies/histograms/scores', 'StudiesController@histogramScores');
 $router->get('studies/correlations/scores_and_fd_scores', 'StudiesController@correlationScoresAndFDScores');
 
-$router->get('/', 'PagesController@home');
-$router->get('/studies', 'PagesController@studies');
+$router->get('/', function() {
+	return View::make('pages/home');
+});
+$router->get('/studies', function() {
+	return View::make('pages/studies');
+});
