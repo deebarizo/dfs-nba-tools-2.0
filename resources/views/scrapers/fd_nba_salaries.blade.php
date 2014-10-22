@@ -7,19 +7,24 @@
 		</div>
 	</div>
 	<div class="row">
+		<?php $errors = Session::get('errors') ? : $errors; ?>
 
 		{!!	Form::open(['url' => 'scrapers/fd_nba_salaries_scraper']) !!}
 		<div class="col-lg-6"> 
-			<div class="form-group">
+			<div class="form-group {{ $errors->has('url') ? 'has-error' : '' }}">
 				{!! Form::label('url', 'URL:') !!}
 				{!! Form::text('url', null, ['class' => 'form-control']) !!}
+				{!! $errors->first('url', '<span class="help-block">:message</span>') !!}
 			</div>
 		</div>
 
-		<div class="col-lg-2"> 
-			<div class="form-group">
-				{!! Form::label('time_period', 'Time Period:') !!}
-				{!! Form::select('time_period', array('All Day' => 'All Day', 'Early' => 'Early', 'Late' => 'Late'), null, ['class' => 'form-control']) !!}
+		<div class="col-lg-3"> 
+			<div class="form-group {{ $errors->has('time_period') ? 'has-error' : '' }}">
+				{!! Form::label('time_period', 'Time Period:') !!}<br>
+				{!! Form::radio('time_period', 'All Day') !!} All Day &nbsp;
+				{!! Form::radio('time_period', 'Early') !!} Early &nbsp;
+				{!! Form::radio('time_period', 'Late') !!} Late
+				{!! $errors->first('time_period', '<span class="help-block">:message</span>') !!}
 			</div>
 		</div>
 

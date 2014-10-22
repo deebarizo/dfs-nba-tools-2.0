@@ -4,6 +4,7 @@ ini_set('max_execution_time', 10800); // 10800 seconds = 3 hours
 
 $router->get('one_time', 'ScrapersController@one_time');
 
+$router->post('scrapers/fd_nba_salaries_scraper', 'ScrapersController@fd_nba_salaries_scraper');
 $router->post('scrapers/season_scraper', 'ScrapersController@season_scraper');
 $router->get('scrapers/player_scraper', 'ScrapersController@player_scraper');
 $router->get('scrapers/box_score_line_scraper', 'ScrapersController@box_score_line_scraper');

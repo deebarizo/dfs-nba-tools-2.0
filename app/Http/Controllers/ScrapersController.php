@@ -9,6 +9,7 @@ use App\Player;
 use App\BoxScoreLine;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\RunFDNBASalariesScraperRequest;
 
 use Illuminate\Support\Facades\DB;
 
@@ -16,6 +17,10 @@ use vendor\symfony\DomCrawler\Symfony\Component\DomCrawler\Crawler;
 use Goutte\Client;
 
 class ScrapersController {
+
+	public function fd_nba_salaries_scraper(RunFDNBASalariesScraperRequest $request) {
+		dd($request);
+	}
 
 	public function one_time() {
 		$games = DB::table('games')->where('id', '>=', 2000)->where('id', '<=', 3000)->get();
