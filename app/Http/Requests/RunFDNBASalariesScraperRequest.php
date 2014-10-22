@@ -12,7 +12,8 @@ class RunFDNBASalariesScraperRequest extends FormRequest {
 	public function rules()
 	{
 		return [
-			'url' => 'required',
+			'date' => 'required|date_format:"Y-m-d"',
+			'url' => 'required|url',
 			'time_period' => 'required'
 		];
 	}

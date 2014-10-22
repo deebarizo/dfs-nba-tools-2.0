@@ -7,6 +7,7 @@ use App\Team;
 use App\Game;
 use App\Player;
 use App\BoxScoreLine;
+use App\PlayerPool;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\RunFDNBASalariesScraperRequest;
@@ -19,37 +20,15 @@ use Goutte\Client;
 class ScrapersController {
 
 	public function fd_nba_salaries_scraper(RunFDNBASalariesScraperRequest $request) {
-		dd($request);
-	}
+		$dataToSave['date'] = $request->input('date');
+		$dataToSave['time_period'] = $request->input('time_period');
+		$dataToSave['site'] = 'FD';
+		$dataToSave['url'] = $request->input('url');
 
-	public function one_time() {
-		$games = DB::table('games')->where('id', '>=', 2000)->where('id', '<=', 3000)->get();
-		$boxScoreLines = DB::table('box_score_lines')->where('game_id', '>=', 2000)->where('game_id', '<=', 3000)->get();
+		$client = new Client();
+		$crawlerFD = $client->request('GET', $dataToSave['url']);		
 
-		foreach ($games as $key => $game) {
-			$playerIDSInGame = [];
-
-			foreach ($boxScoreLines as $boxScoreLine) {
-				if ($boxScoreLine->game_id == $game->id) {
-					$playerIDSInGame[] = $boxScoreLine->player_id;
-				}
-			}
-				
-			$playerIDSCount = array_count_values($playerIDSInGame);
-
-			foreach ($playerIDSCount as $player_id => $value) {
-				if ($value > 1) {
-					echo 'Game ID: '.$game->id.'<br>';
-
-					echo 'Player IDS Count: <br><pre>';
-					var_dump($playerIDSCount);
-					echo '</pre>';
-					echo '<hr>';
-
-					break;
-				}
-			}
-		}
+		dd($dataToSave);
 	}
 
 	public function box_score_line_scraper() {
