@@ -13,16 +13,16 @@ $router->get('studies/correlations/scores_and_vegas_scores', 'StudiesController@
 $router->get('studies/histograms/scores', 'StudiesController@histogramScores');
 $router->get('studies/correlations/scores_and_fd_scores', 'StudiesController@correlationScoresAndFDScores');
 
-$router->get('/scrapers/fd_nba_salaries', function() {
+$router->get('scrapers/fd_nba_salaries', function() {
 	return View::make('scrapers/fd_nba_salaries');
 });
-$router->get('/scrapers/br_season', function() {
+$router->get('scrapers/br_season', function() {
 	return View::make('scrapers/br_season');
 });
-$router->get('/scrapers', function() {
+$router->get('scrapers', function() {
 	return View::make('pages/scrapers');
 });
-$router->get('/studies', function() {
+$router->get('studies', function() {
 	return View::make('pages/studies');
 });
 $router->get('/', function() {

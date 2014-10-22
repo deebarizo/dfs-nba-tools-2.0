@@ -10,8 +10,16 @@
 		<?php $today_date = date('Y-m-d'); ?>
 		<?php $errors = Session::get('errors') ? : $errors; ?>
 
-		{!!	Form::open(['url' => 'scrapers/fd_nba_salaries_scraper']) !!}
+		@if(Session::has('message'))
+		    <div class="col-lg-12">
+				<div class="alert alert-{{ Session::get('alert') }} fade in" role="alert" style="width: 50%">
+					<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+					{{ Session::get('message') }}
+				</div>
+		    </div>
+		@endif
 
+		{!!	Form::open(['url' => 'scrapers/fd_nba_salaries_scraper']) !!}
 			<div class="col-lg-2"> 
 				<div class="form-group {{ $errors->has('date') ? 'has-error' : '' }}">
 					{!! Form::label('date', 'Date:') !!}
@@ -41,7 +49,6 @@
 			<div class="col-lg-12"> 
 				{!! Form::submit('Submit', ['class' => 'btn btn-primary']) !!}
 			</div>
-		
 		{!!	Form::close() !!}
 	</div>
 @stop

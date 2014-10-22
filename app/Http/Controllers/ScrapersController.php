@@ -17,6 +17,8 @@ use Illuminate\Support\Facades\DB;
 use vendor\symfony\DomCrawler\Symfony\Component\DomCrawler\Crawler;
 use Goutte\Client;
 
+use Illuminate\Support\Facades\Session;
+
 class ScrapersController {
 
 	public function fd_nba_salaries_scraper(RunFDNBASalariesScraperRequest $request) {
@@ -25,10 +27,46 @@ class ScrapersController {
 		$dataToSave['site'] = 'FD';
 		$dataToSave['url'] = $request->input('url');
 
+		$dupCheck = PlayerPool::whereRaw('date = "'.$dataToSave['date'].'" and time_period = "'.$dataToSave['time_period'].'" and site = "FD"')->first();
+
+		if ($dupCheck !== null) {
+			$message = 'This player pool has already been scraped and saved.';
+			Session::flash('alert', 'info');
+
+			return redirect('scrapers/fd_nba_salaries')->with('message', $message);			
+		}
+
+		$players = Player::all();
+
 		$client = new Client();
 		$crawlerFD = $client->request('GET', $dataToSave['url']);		
 
-		dd($dataToSave);
+		$rowCount = $crawlerFD->filter('table.player-list-table > tbody > tr')->count();
+
+		for ($i = 1; $i <= $rowCount; $i++) { // nth-child does not start with a zero index
+			$rowContents[$i]['position'] = $crawlerFD->filter('table.player-list-table > tbody > tr:nth-child('.$i.') > td.player-position')->text();
+			$rawName = $crawlerFD->filter('table.player-list-table > tbody > tr:nth-child('.$i.') > td.player-name')->text();
+
+			$rawName = preg_replace("/(O)$/", "", $rawName);
+			$name = preg_replace("/(GTD)$/", "", $rawName);
+
+			foreach ($players as $player) {
+				if ($player->name == $name) {
+					$rowContents[$i]['player_id'] = $player->id;
+
+					break;
+				}
+			}
+
+			if (isset($rowContents[$i]['player_id']) === false) {
+				$message = 'No player ID match for '.$name.'.';
+				Session::flash('alert', 'danger');
+
+				return redirect('scrapers/fd_nba_salaries')->with('message', $message);	
+			}
+		}	
+
+		dd($rowContents);
 	}
 
 	public function box_score_line_scraper() {
@@ -253,7 +291,7 @@ class ScrapersController {
 			if ($rowCount == count($games)) {
 				$message = 'All the '.$gameTypeInMsg.' games were already scraped and saved.';
 
-				return redirect('scrapers/season_form')->with('message', $message);
+				return redirect('scrapers/br_season')->with('message', $message);
 			}
 
 			$rowContents = array();
@@ -440,7 +478,7 @@ class ScrapersController {
 
 		$message = $savedGameCount.' '.$gameTypeInMsg.' games were saved.';
 					
-		return redirect('scrapers/season_form')->with('message', $message);
+		return redirect('scrapers/br_season')->with('message', $message);
 	}
 
 }
