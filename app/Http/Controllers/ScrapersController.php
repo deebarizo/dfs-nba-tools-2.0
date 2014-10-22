@@ -226,10 +226,6 @@ class ScrapersController {
 		}
 	}
 
-	public function season_form() {
-		return view('scrapers.season_form');
-	}
-
 	public function season_scraper(Request $request) {
 		$endYear = $request->input('end_year');
 		$gameType = $request->input('type');
