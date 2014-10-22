@@ -14,3 +14,4 @@ $router->get('studies/histograms/scores', 'StudiesController@histogramScores');
 $router->get('studies/correlations/scores_and_fd_scores', 'StudiesController@correlationScoresAndFDScores');
 
 $router->get('/', 'PagesController@home');
+$router->get('/studies', 'PagesController@studies');

@@ -1,5 +1,9 @@
 <?php
 
+function setActive($path, $active = 'active') {
+	return Request::is($path) ? $active : '';
+}
+
 function scrapeBoxLineScoreBR($rowContents, $players, $game, $location, $teamID, $crawlerBR, $abbrBR, $i, $basicStats, $advStats) {
 
 	$rowContents[$location][$i]['team_id'] = $game->$teamID;	

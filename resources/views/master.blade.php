@@ -22,8 +22,8 @@
 			</div>
 			<div class="collapse navbar-collapse">
 				<ul class="nav navbar-nav">
-					<li class="active"><a href="/">Home</a></li>
-					<li><a href="/studies">Studies</a></li>
+					<li class="{!! setActive('/') !!}"><a href="/">Home</a></li>
+					<li class="{!! setActive('studies*') !!}"><a href="/studies">Studies</a></li>
 				</ul>
 			</div><!--/.nav-collapse -->
 		</div>
