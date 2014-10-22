@@ -9,18 +9,26 @@
 
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+	<style>body { padding-top: 50px; }</style>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 
-	<title>DFS Tools</title>
+	<title>DFS NBA Tools</title>
 </head>
 <body>
-	<div class="container">
-		<div class="row">
-			<div class="col-lg-12">
-				<h1>DFS Tools</h1>
+	<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+		<div class="container">
+			<div class="navbar-header">
+				<a class="navbar-brand" href="/">DFS NBA Tools</a>
 			</div>
+			<div class="collapse navbar-collapse">
+				<ul class="nav navbar-nav">
+					<li class="active"><a href="/">Home</a></li>
+					<li><a href="/studies">Studies</a></li>
+				</ul>
+			</div><!--/.nav-collapse -->
 		</div>
-
+    </div>
+	<div class="container">
 		@yield('content')
 	</div>
 </body>

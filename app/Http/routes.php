@@ -12,3 +12,5 @@ $router->get('scrapers/box_score_line_scraper', 'ScrapersController@box_score_li
 $router->get('studies/correlations/scores_and_vegas_scores', 'StudiesController@correlationScoresAndVegasScores');
 $router->get('studies/histograms/scores', 'StudiesController@histogramScores');
 $router->get('studies/correlations/scores_and_fd_scores', 'StudiesController@correlationScoresAndFDScores');
+
+$router->get('/', 'PagesController@home');
