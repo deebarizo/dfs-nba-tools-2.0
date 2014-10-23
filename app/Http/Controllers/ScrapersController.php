@@ -8,6 +8,7 @@ use App\Game;
 use App\Player;
 use App\BoxScoreLine;
 use App\PlayerPool;
+use App\PlayerFd;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\RunFDNBASalariesScraperRequest;
@@ -22,12 +23,12 @@ use Illuminate\Support\Facades\Session;
 class ScrapersController {
 
 	public function fd_nba_salaries_scraper(RunFDNBASalariesScraperRequest $request) {
-		$dataToSave['date'] = $request->input('date');
-		$dataToSave['time_period'] = $request->input('time_period');
-		$dataToSave['site'] = 'FD';
-		$dataToSave['url'] = $request->input('url');
+		$metadata['date'] = $request->input('date');
+		$metadata['time_period'] = $request->input('time_period');
+		$metadata['site'] = 'FD';
+		$metadata['url'] = $request->input('url');
 
-		$dupCheck = PlayerPool::whereRaw('date = "'.$dataToSave['date'].'" and time_period = "'.$dataToSave['time_period'].'" and site = "FD"')->first();
+		$dupCheck = PlayerPool::whereRaw('date = "'.$metadata['date'].'" and time_period = "'.$metadata['time_period'].'" and site = "FD"')->first();
 
 		if ($dupCheck !== null) {
 			$message = 'This player pool has already been scraped and saved.';
@@ -37,9 +38,10 @@ class ScrapersController {
 		}
 
 		$players = Player::all();
+		$teams = Team::all();
 
 		$client = new Client();
-		$crawlerFD = $client->request('GET', $dataToSave['url']);		
+		$crawlerFD = $client->request('GET', $metadata['url']);		
 
 		$rowCount = $crawlerFD->filter('table.player-list-table > tbody > tr')->count();
 
@@ -48,7 +50,8 @@ class ScrapersController {
 			$rawName = $crawlerFD->filter('table.player-list-table > tbody > tr:nth-child('.$i.') > td.player-name')->text();
 
 			$rawName = preg_replace("/(O)$/", "", $rawName);
-			$name = preg_replace("/(GTD)$/", "", $rawName);
+			$rawName = preg_replace("/(GTD)$/", "", $rawName);
+			$name = fd_name_fix($rawName);
 
 			foreach ($players as $player) {
 				if ($player->name == $name) {
@@ -63,10 +66,84 @@ class ScrapersController {
 				Session::flash('alert', 'danger');
 
 				return redirect('scrapers/fd_nba_salaries')->with('message', $message);	
+
+				# $player = new Player;
+				# $player->name = $name;
+				# $player->save();	
 			}
+
+			$rawSalary = $crawlerFD->filter('table.player-list-table > tbody > tr:nth-child('.$i.') > td.player-salary')->text();
+
+			$rawSalary = preg_replace("/\\$/", "", $rawSalary);
+			$rowContents[$i]['salary'] = preg_replace("/,/", "", $rawSalary);			
+
+			$abbrFD = $crawlerFD->filter('table.player-list-table > tbody > tr:nth-child('.$i.') > td.player-fixture > b')->text();
+
+			foreach ($teams as $team) {
+				if ($team->abbr_fd == $abbrFD) {
+					$rowContents[$i]['team_id'] = $team->id;
+
+					break;					
+				}
+			}
+
+			if (isset($rowContents[$i]['team_id']) === false) {
+				$message = 'No team ID match for '.$abbrFD.'.';
+				Session::flash('alert', 'danger');
+
+				return redirect('scrapers/fd_nba_salaries')->with('message', $message);	
+			}			
+
+			$rawOppAbbrFD = $crawlerFD->filter('table.player-list-table > tbody > tr:nth-child('.$i.') > td.player-fixture')->text();
+
+			$rawOppAbbrFD = preg_replace("/@/", "", $rawOppAbbrFD);
+			$OppAbbrFD = preg_replace("/".$abbrFD."/", "", $rawOppAbbrFD);
+
+			foreach ($teams as $team) {
+				if ($team->abbr_fd == $OppAbbrFD) {
+					$rowContents[$i]['opp_team_id'] = $team->id;
+
+					break;					
+				}
+			}
+
+			if (isset($rowContents[$i]['opp_team_id']) === false) {
+				$message = 'No team ID match for '.$OppAbbrFD.'.';
+				Session::flash('alert', 'danger');
+
+				return redirect('scrapers/fd_nba_salaries')->with('message', $message);	
+			}			
+
+			$rowContents[$i]['top_play_index'] = null;
 		}	
 
-		dd($rowContents);
+		$playerPool = new PlayerPool;
+
+		$playerPool->date = $metadata['date'];
+		$playerPool->time_period = $metadata['time_period'];
+		$playerPool->site = $metadata['site'];
+		$playerPool->url = $metadata['url'];
+
+		$playerPool->save();
+
+		foreach ($rowContents as $row) {
+			$playerFD = new PlayerFd;
+
+			$playerFD->player_id = $row['player_id'];
+			$playerFD->position = $row['position'];
+			$playerFD->salary = $row['salary'];
+			$playerFD->team_id = $row['team_id'];
+			$playerFD->opp_team_id = $row['opp_team_id'];
+			$playerFD->top_play_index = $row['top_play_index'];
+			$playerFD->player_pool_id = $playerPool->id;
+
+			$playerFD->save();
+		}
+
+		$message = 'Success!';
+		Session::flash('alert', 'info');
+
+		return redirect('scrapers/fd_nba_salaries')->with('message', $message);			 
 	}
 
 	public function box_score_line_scraper() {
