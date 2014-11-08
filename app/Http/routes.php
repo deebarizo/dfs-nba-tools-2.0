@@ -12,10 +12,10 @@ $router->get('studies/histograms/scores', 'StudiesController@histogramScores');
 $router->get('studies/correlations/scores_and_fd_scores', 'StudiesController@correlationScoresAndFDScores');
 
 $router->get('scrapers/fd_nba_salaries', function() {
-	return View::make('pages/scrapers/fd_nba_salaries');
+	return View::make('scrapers/fd_nba_salaries');
 });
 $router->get('scrapers/br_nba_games', function() {
-	return View::make('pages/scrapers/br_nba_games');
+	return View::make('scrapers/br_nba_games');
 });
 $router->get('scrapers', function() {
 	return View::make('pages/scrapers');
