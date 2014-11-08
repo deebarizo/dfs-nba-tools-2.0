@@ -26,17 +26,113 @@ class ScrapersController {
 		$endYear = $request->input('season');
 		$season = Season::where('end_year', $endYear)->first();
 
-		$boxScoreLines = DB::table('games')
+		$gamesWithBoxScoreLines = DB::table('games')
             ->join('box_score_lines', 'games.id', '=', 'box_score_lines.game_id')
             ->select('*')
             ->where('games.season_id', '=', $season->id)
             ->groupBy('game_id')
             ->get();
-        $boxScoreLinesCount = count($boxScoreLines);
+        $gamesWithBoxScoreLinesCount = count($gamesWithBoxScoreLines);
 
-	    dd($boxScoreLinesCount);
+        $gamesCount = Game::where('season_id', '=', $season->id)->count();
 
+        $unscrapedGamesCount = $gamesCount - $gamesWithBoxScoreLinesCount;
 
+	    if ($unscrapedGamesCount > 0) {
+	    	if ($gamesWithBoxScoreLinesCount == 0) {
+				$games = Game::where('season_id', '=', $season->id)->get();
+				$players = Player::all();
+				$teams = Team::all();
+
+				$client = new Client();
+
+				$count = 0;
+
+				foreach ($games as $game) {
+					$count++;
+
+					$metadata = [];
+
+					$crawlerBR = $client->request('GET', $game->link_br);
+
+					$metadata['game_id'] = $game->id;
+
+					$twoTeamsID = [
+						'home_team' => 'home_team_id',
+						'road_team' => 'road_team_id'
+					];	
+
+					foreach ($twoTeamsID as $location => $teamID) {
+						$abbrBR = '';
+
+						foreach ($teams as $team) {
+							if ($team->id == $game->$teamID) {
+								$abbrBR = $team->abbr_br;
+
+								break;
+							}
+						}
+
+						$basicStats[1] = 'name';
+						$basicStats[2] = 'mp';
+						$basicStats[3] = 'fg';
+						$basicStats[4] = 'fga';
+						$basicStats[6] = 'threep';
+						$basicStats[7] = 'threepa';
+						$basicStats[9] = 'ft';
+						$basicStats[10] = 'fta';
+						$basicStats[12] = 'orb';
+						$basicStats[13] = 'drb';
+						$basicStats[14] = 'trb';
+						$basicStats[15] = 'ast';
+						$basicStats[16] = 'stl';
+						$basicStats[17] = 'blk';
+						$basicStats[18] = 'tov';
+						$basicStats[19] = 'pf';
+						$basicStats[20] = 'pts';
+						$basicStats[21] = 'plus_minus';
+
+						$advStats[5] = 'orb_percent';
+						$advStats[6] = 'drb_percent';
+						$advStats[7] = 'trb_percent';
+						$advStats[8] = 'ast_percent';
+						$advStats[9] = 'stl_percent';
+						$advStats[10] = 'blk_percent';
+						$advStats[11] = 'tov_percent';
+						$advStats[12] = 'usg';
+						$advStats[13] = 'off_rating';
+						$advStats[14] = 'def_rating';
+
+						// Starters
+
+						for ($i=1; $i <= 5; $i++) { 
+							$rowContents[$location][$i]['role'] = 'starter';
+
+							$rowContents = scrapeBoxLineScoreBR($rowContents, $players, $game, $location, $teamID, $crawlerBR, $abbrBR, $i, $basicStats, $advStats);
+						}
+
+						// Reserves
+
+						$rowCount = $crawlerBR->filter('table#'.$abbrBR.'_basic > tbody > tr')->count();
+
+						for ($i=7; $i <= $rowCount; $i++) { 
+							$rowContents[$location][$i]['role'] = 'reserve';
+							
+							$rowContents = scrapeBoxLineScoreBR($rowContents, $players, $game, $location, $teamID, $crawlerBR, $abbrBR, $i, $basicStats, $advStats);
+						}
+					}
+
+					if ($count <= 20) {
+						echo '<pre>';
+						echo 'Count: '.$count;
+						var_dump($rowContents);
+						echo '</pre>';
+					} else {
+						exit();
+					}
+				}
+	    	}
+	    }
 	}
 
 	public function br_nba_games(Request $request) {
