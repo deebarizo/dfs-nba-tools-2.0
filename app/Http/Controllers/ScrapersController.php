@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\Session;
 
 class ScrapersController {
 
-	public function br_nba_Games(Request $request) {
+	public function br_nba_games(Request $request) {
 		$endYear = $request->input('season');
 		$gameType = $request->input('game_type');
 
@@ -53,10 +53,39 @@ class ScrapersController {
 				dd('Figure out how to not double save a game.');
 			}
 
-			dd($rowCount);
+			$rowContents = scrapeForGamesTable($client, $crawler, $tableIDinBR, $teams, $season->id, $gamesCount, $rowCount);
 
+			foreach ($rowContents as $row) {
+				$game = new Game;
+
+				$game->season_id = $season->id;
+				$game->date = $row['date'];
+				$game->link_br = $row['link_br'];
+				$game->home_team_id = $row['home_team_id'];
+				$game->home_team_score = $row['home_team_score'];
+				$game->vegas_home_team_score = $row['vegas_home_team_score'];
+				$game->road_team_id = $row['road_team_id'];
+				$game->road_team_score = $row['road_team_score'];
+				$game->vegas_road_team_score = $row['vegas_road_team_score'];
+				$game->pace = $row['pace'];
+				$game->type = $gameType;
+				$game->ot_periods = $row['ot_periods'];
+				$game->notes = $row['notes'];
+
+				$game->save();
+			}
+
+			unset($row);
+
+			$message = 'Success!';
+			Session::flash('alert', 'info');
+
+			return redirect('scrapers/br_nba_games')->with('message', $message);	
 		} else {
-			// error message 'The Basketball Reference page is not loading';
+			$message = 'The Basketball Reference page is not loading.';
+			Session::flash('alert', 'danger');
+
+			return redirect('scrapers/br_nba_games')->with('message', $message);
 		}
 	}
 
@@ -181,7 +210,7 @@ class ScrapersController {
 		$message = 'Success!';
 		Session::flash('alert', 'info');
 
-		return redirect('scrapers/fd_nba_salaries')->with('message', $message);			 
+		return redirect('scrapers/fd_nba_salaries')->with('message', $message);	 
 	}
 
 	public function box_score_line_scraper() {
