@@ -38,121 +38,132 @@ class ScrapersController {
 
         $unscrapedGamesCount = $gamesCount - $gamesWithBoxScoreLinesCount;
 
-        dd($unscrapedGamesCount);
-
 	    if ($unscrapedGamesCount > 0) {
-	    	if ($gamesWithBoxScoreLinesCount == 0) {
-				$games = Game::where('season_id', '=', $season->id)->get();
-				$players = Player::all();
-				$teams = Team::all();
+	    	$indexStart = $gamesCount - $unscrapedGamesCount;
 
-				$client = new Client();
+	    	$games = DB::table('games')->skip($indexStart)->take($unscrapedGamesCount)->where('games.season_id', $season->id)->get();
 
-				$gamesWithDataCount = 0;
+			$players = Player::all();
+			$teams = Team::all();
 
-				foreach ($games as $game) {
-					$gamesWithDataCount++;
+			$client = new Client();
 
-					$crawlerBR = $client->request('GET', $game->link_br);
+			$gamesWithDataCount = 0;
 
-					$twoTeamsID = [
-						'home_team' => 'home_team_id',
-						'road_team' => 'road_team_id'
-					];	
+			foreach ($games as $game) {
+				$gamesWithDataCount++;
 
-					foreach ($twoTeamsID as $location => $teamID) {
-						$abbrBR = '';
+				$crawlerBR = $client->request('GET', $game->link_br);
 
-						foreach ($teams as $team) {
-							if ($team->id == $game->$teamID) {
-								$abbrBR = $team->abbr_br;
+				$twoTeamsID = [
+					'home_team' => 'home_team_id',
+					'road_team' => 'road_team_id'
+				];	
 
-								break;
-							}
-						}
+				foreach ($twoTeamsID as $location => $teamID) {
+					$abbrBR = '';
 
-						$basicStats[1] = 'name';
-						$basicStats[2] = 'mp';
-						$basicStats[3] = 'fg';
-						$basicStats[4] = 'fga';
-						$basicStats[6] = 'threep';
-						$basicStats[7] = 'threepa';
-						$basicStats[9] = 'ft';
-						$basicStats[10] = 'fta';
-						$basicStats[12] = 'orb';
-						$basicStats[13] = 'drb';
-						$basicStats[14] = 'trb';
-						$basicStats[15] = 'ast';
-						$basicStats[16] = 'stl';
-						$basicStats[17] = 'blk';
-						$basicStats[18] = 'tov';
-						$basicStats[19] = 'pf';
-						$basicStats[20] = 'pts';
-						$basicStats[21] = 'plus_minus';
+					foreach ($teams as $team) {
+						if ($team->id == $game->$teamID) {
+							$abbrBR = $team->abbr_br;
 
-						$advStats[5] = 'orb_percent';
-						$advStats[6] = 'drb_percent';
-						$advStats[7] = 'trb_percent';
-						$advStats[8] = 'ast_percent';
-						$advStats[9] = 'stl_percent';
-						$advStats[10] = 'blk_percent';
-						$advStats[11] = 'tov_percent';
-						$advStats[12] = 'usg';
-						$advStats[13] = 'off_rating';
-						$advStats[14] = 'def_rating';
-
-						// Starters
-
-						for ($i=1; $i <= 5; $i++) { 
-							$rowContents[$location][$i]['role'] = 'starter';
-
-							$rowContents = scrapeBoxLineScoreBR($rowContents, $players, $game, $location, $teamID, $crawlerBR, $abbrBR, $i, $basicStats, $advStats);
-						}
-
-						// Reserves
-
-						$rowCount = $crawlerBR->filter('table#'.$abbrBR.'_basic > tbody > tr')->count();
-
-						for ($i=7; $i <= $rowCount; $i++) { 
-							$rowContents[$location][$i]['role'] = 'reserve';
-							
-							$rowContents = scrapeBoxLineScoreBR($rowContents, $players, $game, $location, $teamID, $crawlerBR, $abbrBR, $i, $basicStats, $advStats);
+							break;
 						}
 					}
 
-					foreach ($rowContents as $location => &$row) {
-						foreach ($row as &$playerData) {
-							$playerData['game_id'] = $game->id;
-						}
+					$basicStats[1] = 'name';
+					$basicStats[2] = 'mp';
+					$basicStats[3] = 'fg';
+					$basicStats[4] = 'fga';
+					$basicStats[6] = 'threep';
+					$basicStats[7] = 'threepa';
+					$basicStats[9] = 'ft';
+					$basicStats[10] = 'fta';
+					$basicStats[12] = 'orb';
+					$basicStats[13] = 'drb';
+					$basicStats[14] = 'trb';
+					$basicStats[15] = 'ast';
+					$basicStats[16] = 'stl';
+					$basicStats[17] = 'blk';
+					$basicStats[18] = 'tov';
+					$basicStats[19] = 'pf';
+					$basicStats[20] = 'pts';
+					$basicStats[21] = 'plus_minus';
+
+					$advStats[5] = 'orb_percent';
+					$advStats[6] = 'drb_percent';
+					$advStats[7] = 'trb_percent';
+					$advStats[8] = 'ast_percent';
+					$advStats[9] = 'stl_percent';
+					$advStats[10] = 'blk_percent';
+					$advStats[11] = 'tov_percent';
+					$advStats[12] = 'usg';
+					$advStats[13] = 'off_rating';
+					$advStats[14] = 'def_rating';
+
+					// Starters
+
+					for ($i=1; $i <= 5; $i++) { 
+						$rowContents[$location][$i]['role'] = 'starter';
+
+						$rowContents = scrapeBoxLineScoreBR($rowContents, $players, $game, $location, $teamID, $crawlerBR, $abbrBR, $i, $basicStats, $advStats);
 					}
 
-					unset($row);
-					unset($playerData);
+					// Reserves
 
-					$dataToSave[] = $rowContents;
+					$rowCount = $crawlerBR->filter('table#'.$abbrBR.'_basic > tbody > tr')->count();
 
-					if ($gamesWithDataCount == 20) {
-						break;
-					} 
+					for ($i=7; $i <= $rowCount; $i++) { 
+						$rowContents[$location][$i]['role'] = 'reserve';
+						
+						$rowContents = scrapeBoxLineScoreBR($rowContents, $players, $game, $location, $teamID, $crawlerBR, $abbrBR, $i, $basicStats, $advStats);
+					}
 				}
-	    	}
+
+				foreach ($rowContents as $location => &$row) {
+					foreach ($row as &$playerData) {
+						$playerData['game_id'] = $game->id;
+					}
+				}
+
+				unset($row);
+				unset($playerData);
+
+				$dataToSave[] = $rowContents;
+
+				if ($gamesWithDataCount == 20) {
+					break;
+				} 
+			}
+	    } else {
+			$message = 'All the box score lines have been scraped.';
+			Session::flash('alert', 'info');
+
+			return redirect('scrapers/br_nba_box_score_lines')->with('message', $message);	    	
 	    }
 
 	    unset($game);
 	    unset($team);
 
-	    foreach ($dataToSave as $game) {
-	    	foreach ($game as $location => $team) {
-	    		foreach ($team as $playerData) {
+	    foreach ($dataToSave as &$game) {
+	    	foreach ($game as $location => &$team) {
+	    		foreach ($team as &$playerData) {
 	    			if (isset($playerData['player_id']) === false) {
-						$message = 'No player id found for '.$playerData['name'].'.';
-						Session::flash('alert', 'danger');
+						$player = new Player;
 
-						return redirect('scrapers/br_nba_box_score_lines')->with('message', $message);
+						$player->name = $playerData['name'];
+
+						$player->save();	
+
+						$playerData['player_id'] = $player->id;
 					}
 	    		}
 	    	}
 	    }
+
+	    unset($game);
+	    unset($team);
+	    unset($playerData);
 
 	    foreach ($dataToSave as $game) {
 	    	foreach ($game as $location => $team) {
