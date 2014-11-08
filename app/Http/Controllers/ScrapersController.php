@@ -22,6 +22,23 @@ use Illuminate\Support\Facades\Session;
 
 class ScrapersController {
 
+	public function br_nba_box_score_lines(Request $request) {
+		$endYear = $request->input('season');
+		$season = Season::where('end_year', $endYear)->first();
+
+		$boxScoreLines = DB::table('games')
+            ->join('box_score_lines', 'games.id', '=', 'box_score_lines.game_id')
+            ->select('*')
+            ->where('games.season_id', '=', $season->id)
+            ->groupBy('game_id')
+            ->get();
+        $boxScoreLinesCount = count($boxScoreLines);
+
+	    dd($boxScoreLinesCount);
+
+
+	}
+
 	public function br_nba_games(Request $request) {
 		$endYear = $request->input('season');
 		$gameType = $request->input('game_type');
@@ -222,150 +239,6 @@ class ScrapersController {
 		Session::flash('alert', 'info');
 
 		return redirect('scrapers/fd_nba_salaries')->with('message', $message);	 
-	}
-
-	public function box_score_line_scraper() {
-		$games = Game::all();
-		$teams = Team::all();
-		$players = Player::all();
-
-		$client = new Client();
-
-		$savedGameCount = 0;
-
-		foreach ($games as $index => $game) { 
-			if ($game->id >= 2603) {
-				$metadata = [];
-
-				$crawlerBR = $client->request('GET', $game->link_br);
-
-				$metadata['game_id'] = $game->id;
-
-				$twoTeamsID = [
-					'home_team' => 'home_team_id',
-					'road_team' => 'road_team_id'
-				];			
-
-				foreach ($twoTeamsID as $location => $teamID) {
-					$abbrBR = '';
-
-					foreach ($teams as $team) {
-						if ($team->id == $game->$teamID) {
-							$abbrBR = $team->abbr_br;
-
-							break;
-						}
-					}
-
-					$basicStats[1] = 'name';
-					$basicStats[2] = 'mp';
-					$basicStats[3] = 'fg';
-					$basicStats[4] = 'fga';
-					$basicStats[6] = 'threep';
-					$basicStats[7] = 'threepa';
-					$basicStats[9] = 'ft';
-					$basicStats[10] = 'fta';
-					$basicStats[12] = 'orb';
-					$basicStats[13] = 'drb';
-					$basicStats[14] = 'trb';
-					$basicStats[15] = 'ast';
-					$basicStats[16] = 'stl';
-					$basicStats[17] = 'blk';
-					$basicStats[18] = 'tov';
-					$basicStats[19] = 'pf';
-					$basicStats[20] = 'pts';
-					$basicStats[21] = 'plus_minus';
-
-					$advStats[5] = 'orb_percent';
-					$advStats[6] = 'drb_percent';
-					$advStats[7] = 'trb_percent';
-					$advStats[8] = 'ast_percent';
-					$advStats[9] = 'stl_percent';
-					$advStats[10] = 'blk_percent';
-					$advStats[11] = 'tov_percent';
-					$advStats[12] = 'usg';
-					$advStats[13] = 'off_rating';
-					$advStats[14] = 'def_rating';
-
-					// name change: Hornets Pelicans
-
-					if ($abbrBR == 'NOP') {
-						$abbrBR = 'NOH';
-					}
-
-					// Starters
-
-					for ($i=1; $i <= 5; $i++) { 
-						$rowContents[$location][$i]['role'] = 'starter';
-
-						$rowContents = scrapeBoxLineScoreBR($rowContents, $players, $game, $location, $teamID, $crawlerBR, $abbrBR, $i, $basicStats, $advStats);
-					}
-
-					// Reserves
-
-					$rowCount = $crawlerBR->filter('table#'.$abbrBR.'_basic > tbody > tr')->count();
-
-					for ($i=7; $i <= $rowCount; $i++) { 
-						$rowContents[$location][$i]['role'] = 'reserve';
-						
-						$rowContents = scrapeBoxLineScoreBR($rowContents, $players, $game, $location, $teamID, $crawlerBR, $abbrBR, $i, $basicStats, $advStats);
-					}
-				}
-
-				foreach ($rowContents as $location) {
-					foreach ($location as $playerData) {
-						$boxScoreLine = new BoxScoreLine;
-
-						$boxScoreLine->game_id = $metadata['game_id'];
-
-						$boxScoreLine->team_id = $playerData['team_id'];
-						$boxScoreLine->player_id = $playerData['player_id'];
-						$boxScoreLine->role = $playerData['role'];
-						$boxScoreLine->status = $playerData['status'];
-						$boxScoreLine->mp = $playerData['mp'];
-						$boxScoreLine->fg = $playerData['fg'];
-						$boxScoreLine->fga = $playerData['fga'];
-						$boxScoreLine->threep = $playerData['threep'];
-						$boxScoreLine->threepa = $playerData['threepa'];
-						$boxScoreLine->ft = $playerData['ft'];
-						$boxScoreLine->fta = $playerData['fta'];
-						$boxScoreLine->orb = $playerData['orb'];
-						$boxScoreLine->drb = $playerData['drb'];
-						$boxScoreLine->trb = $playerData['trb'];
-						$boxScoreLine->ast = $playerData['ast'];
-						$boxScoreLine->stl = $playerData['stl'];
-						$boxScoreLine->blk = $playerData['blk'];
-						$boxScoreLine->tov = $playerData['tov'];
-						$boxScoreLine->pf = $playerData['pf'];
-						$boxScoreLine->pts = $playerData['pts'];
-						$boxScoreLine->plus_minus = $playerData['plus_minus'];
-						$boxScoreLine->orb_percent = $playerData['orb_percent'];
-						$boxScoreLine->drb_percent = $playerData['drb_percent'];
-						$boxScoreLine->trb_percent = $playerData['trb_percent'];
-						$boxScoreLine->ast_percent = $playerData['ast_percent'];
-						$boxScoreLine->stl_percent = $playerData['stl_percent'];
-						$boxScoreLine->blk_percent = $playerData['blk_percent'];
-						$boxScoreLine->tov_percent = $playerData['tov_percent'];
-						$boxScoreLine->off_rating = $playerData['off_rating'];
-						$boxScoreLine->def_rating = $playerData['def_rating'];
-
-						$boxScoreLine->save();
-					}
-				}
-
-				$savedGameCount++;
-
-				echo 'Game ID: '.$game->id.'<br>';
-				echo 'Saved Game Count: '.$savedGameCount.'<br><br>';
-
-				unset($rowContents);
-
-				if ($savedGameCount >= 75) {
-					echo 'The box score lines of '.$savedGameCount.' games were saved.';
-					exit();
-				}				
-			}	
-		}
 	}
 
 	public function player_scraper() {
