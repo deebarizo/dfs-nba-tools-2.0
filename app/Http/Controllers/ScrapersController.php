@@ -22,6 +22,33 @@ use Illuminate\Support\Facades\Session;
 
 class ScrapersController {
 
+	public function br_nba_Games(Request $request) {
+		$endYear = $request->input('season');
+
+		$teams = Team::all();
+
+		$season = Season::where('end_year', $endYear)->first();
+		$gamesCount = Game::where('season_id', '=', $season->id)->count();
+
+		$client = new Client();
+		$crawler = $client->request('GET', 'http://www.basketball-reference.com/leagues/NBA_'.$endYear.'_games.html');
+
+		$status_code = $client->getResponse()->getStatus();
+
+		if ($status_code == 200) {
+			if ($gamesCount == 0) {
+				$rowCount = $crawler->filter('table#games > tbody > tr > td:nth-child(2) > a')->count();
+			} else {
+				dd('Figure out how to not double save a game.');
+			}
+
+			dd($rowCount);
+
+		} else {
+			// error message 'The Basketball Reference page is not loading';
+		}
+	}
+
 	public function fd_nba_salaries(RunFDNBASalariesScraperRequest $request) {
 		$metadata['date'] = $request->input('date');
 		$metadata['time_period'] = $request->input('time_period');

@@ -22,8 +22,8 @@
 			<div class="col-lg-2"> 
 				<div class="form-group {{ $errors->has('date') ? 'has-error' : '' }}">
 					{!! Form::label('season', 'Date:') !!}<br>
-					{!! Form::select('season', ['2014-2015'], null, ['class' => 'form-control']) !!}
-					{!! $errors->first('date', '<span class="help-block">:message</span>') !!}
+					{!! Form::select('season', ['2015' => '2014-2015'], null, ['class' => 'form-control']) !!}
+					{!! $errors->first('season', '<span class="help-block">:message</span>') !!}
 				</div>
 			</div>
 
