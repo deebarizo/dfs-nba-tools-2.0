@@ -22,7 +22,10 @@
 			"App\\": "app/"
 		},
 		"files": [
-			"app/helpers.php"
+			"app/Helpers/calculations.php",
+			"app/Helpers/general.php",
+			"app/Helpers/name_fixes.php",
+			"app/Helpers/scrapers.php"
 		]
 	},
 	"scripts": {
