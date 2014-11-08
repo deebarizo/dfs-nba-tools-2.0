@@ -330,15 +330,16 @@ class ScrapersController {
 				}
 			}
 
+			unset($player);
+
 			if (isset($rowContents[$i]['player_id']) === false) {
-				$message = 'No player ID match for '.$name.'.';
-				Session::flash('alert', 'danger');
+				$player = new Player;
 
-				return redirect('scrapers/fd_nba_salaries')->with('message', $message);	
+				$player->name = $name;
 
-				# $player = new Player;
-				# $player->name = $name;
-				# $player->save();	
+				$player->save();	
+
+				$rowContents[$i]['player_id'] = $player->id;
 			}
 
 			$rawSalary = $crawlerFD->filter('table.player-list-table > tbody > tr:nth-child('.$i.') > td.player-salary')->text();
