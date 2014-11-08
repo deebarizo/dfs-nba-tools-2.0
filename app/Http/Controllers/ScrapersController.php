@@ -38,6 +38,8 @@ class ScrapersController {
 
         $unscrapedGamesCount = $gamesCount - $gamesWithBoxScoreLinesCount;
 
+        dd($unscrapedGamesCount);
+
 	    if ($unscrapedGamesCount > 0) {
 	    	if ($gamesWithBoxScoreLinesCount == 0) {
 				$games = Game::where('season_id', '=', $season->id)->get();
@@ -46,16 +48,12 @@ class ScrapersController {
 
 				$client = new Client();
 
-				$count = 0;
+				$gamesWithDataCount = 0;
 
 				foreach ($games as $game) {
-					$count++;
-
-					$metadata = [];
+					$gamesWithDataCount++;
 
 					$crawlerBR = $client->request('GET', $game->link_br);
-
-					$metadata['game_id'] = $game->id;
 
 					$twoTeamsID = [
 						'home_team' => 'home_team_id',
@@ -122,17 +120,88 @@ class ScrapersController {
 						}
 					}
 
-					if ($count <= 20) {
-						echo '<pre>';
-						echo 'Count: '.$count;
-						var_dump($rowContents);
-						echo '</pre>';
-					} else {
-						exit();
+					foreach ($rowContents as $location => &$row) {
+						foreach ($row as &$playerData) {
+							$playerData['game_id'] = $game->id;
+						}
 					}
+
+					unset($row);
+					unset($playerData);
+
+					$dataToSave[] = $rowContents;
+
+					if ($gamesWithDataCount == 20) {
+						break;
+					} 
 				}
 	    	}
 	    }
+
+	    unset($game);
+	    unset($team);
+
+	    foreach ($dataToSave as $game) {
+	    	foreach ($game as $location => $team) {
+	    		foreach ($team as $playerData) {
+	    			if (isset($playerData['player_id']) === false) {
+						$message = 'No player id found for '.$playerData['name'].'.';
+						Session::flash('alert', 'danger');
+
+						return redirect('scrapers/br_nba_box_score_lines')->with('message', $message);
+					}
+	    		}
+	    	}
+	    }
+
+	    foreach ($dataToSave as $game) {
+	    	foreach ($game as $location => $team) {
+	    		foreach ($team as $playerData) {
+					$boxScoreLine = new BoxScoreLine;
+
+					$boxScoreLine->game_id = $playerData['game_id'];
+
+					$boxScoreLine->team_id = $playerData['team_id'];
+					$boxScoreLine->player_id = $playerData['player_id'];
+					$boxScoreLine->role = $playerData['role'];
+					$boxScoreLine->status = $playerData['status'];
+					$boxScoreLine->mp = $playerData['mp'];
+					$boxScoreLine->fg = $playerData['fg'];
+					$boxScoreLine->fga = $playerData['fga'];
+					$boxScoreLine->threep = $playerData['threep'];
+					$boxScoreLine->threepa = $playerData['threepa'];
+					$boxScoreLine->ft = $playerData['ft'];
+					$boxScoreLine->fta = $playerData['fta'];
+					$boxScoreLine->orb = $playerData['orb'];
+					$boxScoreLine->drb = $playerData['drb'];
+					$boxScoreLine->trb = $playerData['trb'];
+					$boxScoreLine->ast = $playerData['ast'];
+					$boxScoreLine->stl = $playerData['stl'];
+					$boxScoreLine->blk = $playerData['blk'];
+					$boxScoreLine->tov = $playerData['tov'];
+					$boxScoreLine->pf = $playerData['pf'];
+					$boxScoreLine->pts = $playerData['pts'];
+					$boxScoreLine->plus_minus = $playerData['plus_minus'];
+					$boxScoreLine->orb_percent = $playerData['orb_percent'];
+					$boxScoreLine->drb_percent = $playerData['drb_percent'];
+					$boxScoreLine->trb_percent = $playerData['trb_percent'];
+					$boxScoreLine->ast_percent = $playerData['ast_percent'];
+					$boxScoreLine->stl_percent = $playerData['stl_percent'];
+					$boxScoreLine->blk_percent = $playerData['blk_percent'];
+					$boxScoreLine->tov_percent = $playerData['tov_percent'];
+					$boxScoreLine->usg = $playerData['usg'];
+					$boxScoreLine->off_rating = $playerData['off_rating'];
+					$boxScoreLine->def_rating = $playerData['def_rating'];
+
+					$boxScoreLine->save();
+	    		}
+	    	}
+	    }
+
+		$message = 'Success! The box score lines of '.$gamesWithDataCount.' games were scraped and saved.';
+		Session::flash('alert', 'info');
+
+		return redirect('scrapers/br_nba_box_score_lines')->with('message', $message);
 	}
 
 	public function br_nba_games(Request $request) {
