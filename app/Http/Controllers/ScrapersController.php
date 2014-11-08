@@ -47,40 +47,51 @@ class ScrapersController {
 		$status_code = $client->getResponse()->getStatus();
 
 		if ($status_code == 200) {
+			$rowCount = $crawler->filter('table#'.$tableIDinBR.' > tbody > tr > td:nth-child(2) > a')->count();
+
 			if ($gamesCount == 0) {
-				$rowCount = $crawler->filter('table#'.$tableIDinBR.' > tbody > tr > td:nth-child(2) > a')->count();
+				$scrapeGamesToggle = true;
+			} elseif ($gamesCount == $rowCount) {
+				$scrapeGamesToggle = false;
 			} else {
-				dd('Figure out how to not double save a game.');
+				dd('Figure out how not to double save games.');
 			}
 
-			$rowContents = scrapeForGamesTable($client, $crawler, $tableIDinBR, $teams, $season->id, $gamesCount, $rowCount);
+			if ($scrapeGamesToggle === true) {
+				$rowContents = scrapeForGamesTable($client, $crawler, $tableIDinBR, $teams, $season->id, $gamesCount, $rowCount);
 
-			foreach ($rowContents as $row) {
-				$game = new Game;
+				foreach ($rowContents as $row) {
+					$game = new Game;
 
-				$game->season_id = $season->id;
-				$game->date = $row['date'];
-				$game->link_br = $row['link_br'];
-				$game->home_team_id = $row['home_team_id'];
-				$game->home_team_score = $row['home_team_score'];
-				$game->vegas_home_team_score = $row['vegas_home_team_score'];
-				$game->road_team_id = $row['road_team_id'];
-				$game->road_team_score = $row['road_team_score'];
-				$game->vegas_road_team_score = $row['vegas_road_team_score'];
-				$game->pace = $row['pace'];
-				$game->type = $gameType;
-				$game->ot_periods = $row['ot_periods'];
-				$game->notes = $row['notes'];
+					$game->season_id = $season->id;
+					$game->date = $row['date'];
+					$game->link_br = $row['link_br'];
+					$game->home_team_id = $row['home_team_id'];
+					$game->home_team_score = $row['home_team_score'];
+					$game->vegas_home_team_score = $row['vegas_home_team_score'];
+					$game->road_team_id = $row['road_team_id'];
+					$game->road_team_score = $row['road_team_score'];
+					$game->vegas_road_team_score = $row['vegas_road_team_score'];
+					$game->pace = $row['pace'];
+					$game->type = $gameType;
+					$game->ot_periods = $row['ot_periods'];
+					$game->notes = $row['notes'];
 
-				$game->save();
+					$game->save();
+				}
+
+				unset($row);
+
+				$message = 'Success!';
+				Session::flash('alert', 'info');
+
+				return redirect('scrapers/br_nba_games')->with('message', $message);
+			} else {
+				$message = 'All the games have been scraped.';
+				Session::flash('alert', 'info');
+
+				return redirect('scrapers/br_nba_games')->with('message', $message);
 			}
-
-			unset($row);
-
-			$message = 'Success!';
-			Session::flash('alert', 'info');
-
-			return redirect('scrapers/br_nba_games')->with('message', $message);	
 		} else {
 			$message = 'The Basketball Reference page is not loading.';
 			Session::flash('alert', 'danger');
