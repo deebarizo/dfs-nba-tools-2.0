@@ -24,6 +24,17 @@ class ScrapersController {
 
 	public function br_nba_Games(Request $request) {
 		$endYear = $request->input('season');
+		$gameType = $request->input('game_type');
+
+		switch ($gameType) {
+			case 'regular':
+				$tableIDinBR = 'games';
+				break;
+			
+			case 'playoffs':
+				$tableIDinBR = 'games_playoffs';
+				break;
+		}
 
 		$teams = Team::all();
 
@@ -37,7 +48,7 @@ class ScrapersController {
 
 		if ($status_code == 200) {
 			if ($gamesCount == 0) {
-				$rowCount = $crawler->filter('table#games > tbody > tr > td:nth-child(2) > a')->count();
+				$rowCount = $crawler->filter('table#'.$tableIDinBR.' > tbody > tr > td:nth-child(2) > a')->count();
 			} else {
 				dd('Figure out how to not double save a game.');
 			}

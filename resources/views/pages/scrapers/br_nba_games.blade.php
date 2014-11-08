@@ -3,7 +3,7 @@
 @section('content')
 	<div class="row">
 		<div class="col-lg-12">
-			<h2>Scrapers - BR NBA Salaries</h2>
+			<h2>Scrapers - BR NBA Scraper</h2>
 		</div>
 	</div>
 	<div class="row">
@@ -24,6 +24,13 @@
 					{!! Form::label('season', 'Date:') !!}<br>
 					{!! Form::select('season', ['2015' => '2014-2015'], null, ['class' => 'form-control']) !!}
 					{!! $errors->first('season', '<span class="help-block">:message</span>') !!}
+				</div>
+			</div>
+
+			<div class="col-lg-2"> 
+				<div class="form-group">
+					{!! Form::label('game_type', 'Type:') !!}
+					{!! Form::select('game_type', array('regular' => 'Regular Season', 'playoffs' => 'Playoffs'), null, ['class' => 'form-control']) !!}
 				</div>
 			</div>
 
