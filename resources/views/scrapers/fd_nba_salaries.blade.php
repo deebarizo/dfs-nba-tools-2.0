@@ -19,7 +19,7 @@
 		    </div>
 		@endif
 
-		{!!	Form::open(['url' => 'scrapers/fd_nba_salaries_scraper']) !!}
+		{!!	Form::open(['url' => 'scrapers/fd_nba_salaries']) !!}
 			<div class="col-lg-2"> 
 				<div class="form-group {{ $errors->has('date') ? 'has-error' : '' }}">
 					{!! Form::label('date', 'Date:') !!}

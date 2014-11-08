@@ -242,12 +242,10 @@ class ScrapersController {
 		if ($status_code == 200) {
 			$rowCount = $crawler->filter('table#'.$tableIDinBR.' > tbody > tr > td:nth-child(2) > a')->count();
 
-			if ($gamesCount == 0) {
-				$scrapeGamesToggle = true;
-			} elseif ($gamesCount == $rowCount) {
+			if ($gamesCount == $rowCount) {
 				$scrapeGamesToggle = false;
 			} else {
-				dd('Figure out how not to double save games.');
+				$scrapeGamesToggle = true;
 			}
 
 			if ($scrapeGamesToggle === true) {
