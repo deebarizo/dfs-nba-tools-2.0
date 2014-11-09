@@ -131,6 +131,8 @@ class ScrapersController {
 
 				$dataToSave[] = $rowContents;
 
+				unset($rowContents);
+
 				if ($gamesWithDataCount == 20) {
 					break;
 				} 
