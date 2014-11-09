@@ -35,6 +35,28 @@ class DailyController {
             ->orderBy('players_fd.id', 'asc')
             ->get();	
 
+        $teams = Team::all();
+
+        foreach ($players as &$player) {
+            foreach ($teams as $team) {
+                if ($player->team_id == $team->id) {
+                    $player->team_name = $team->name_br;
+                    $player->team_abbr = $team->abbr_br;
+                }
+
+                if ($player->opp_team_id == $team->id) {
+                    $player->opp_team_name = $team->name_br;
+                    $player->opp_team_abbr = $team->abbr_br;
+                }
+
+                if (isset($player->team_name) && isset($player->opp_team_name)) {
+                    break;
+                }
+            }
+        }
+
+        unset($player);
+
         foreach ($players as $player) {
 			$playerStats[$player->player_id] = DB::table('box_score_lines')
 	            ->join('games', 'box_score_lines.game_id', '=', 'games.id')
@@ -126,6 +148,21 @@ class DailyController {
         }
 
         unset($player);
+
+        foreach ($players as &$player) {
+            $player->vr = $player->fppg / ($player->salary / 1000);
+            $player->vr_minus_1sd = ($player->fppg - $player->sd) / ($player->salary / 1000);
+        }
+
+        unset($player);
+
+        $client = new Client;
+
+        foreach ($players as &$player) {
+            $vegasScore = scrapeForOdds($client, $player->date, $player->team_name, $player->opp_team_name);
+
+            dd($vegasScore);
+        }
 
         ddAll($players);
 

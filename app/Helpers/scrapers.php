@@ -1,5 +1,81 @@
 <?php
 
+function scrapeForOdds($client, $date, $team_name, $opp_team_name) {
+	$dateSAO = str_replace('-', '', $date);
+	$linkSAO = "http://www.scoresandodds.com/grid_".$dateSAO.".html";
+
+	$crawlerSAO = $client->request('GET', $linkSAO);
+
+	$rowCountSAO = $crawlerSAO->filter('div#nba')->nextAll()->filter('tr.team')->count();
+
+	for ($i = 0; $i < $rowCountSAO; $i++) { // nth-child does not start with a zero index
+		$teamsSAO[$i] = $crawlerSAO->filter('div#nba')->nextAll()->filter('tr > td.name')->eq($i)->text();
+	}
+
+	foreach ($teamsSAO as &$teamSAO) {
+		$teamSAO = preg_replace("/^(\d* )(\D+)/", "$2", $teamSAO);
+		$teamSAO = ucwords(strtolower($teamSAO));
+		$teamSAO = trim($teamSAO);
+
+		if ($teamSAO == 'Portland Trailblazers') {
+			$teamSAO = 'Portland Trail Blazers'; // to match BR team name
+		}
+	}
+
+	unset($teamSAO);
+
+	foreach ($teamsSAO as $index => $teamSAO) {
+		if ($teamSAO == $team_name) {
+			$rowNumberSAO['team'] = $index;
+		}
+
+		if ($teamSAO == $opp_team_name) {
+			$rowNumberSAO['opp_team'] = $index;
+		}
+	}
+
+	if (isset($rowNumberSAO['team']) === false && isset($rowNumberSAO['opp_team']) === false) {
+		echo 'error: no team match in SAO<br>';
+		echo $team_name.' vs '.$opp_team_name;
+		exit();
+	}
+
+	$contentsSAO['team'] = $crawlerSAO->filter('div#nba')->nextAll()->filter('tr.team > td.currentline')->eq($rowNumberSAO['team'])->text();
+
+	$contentsSAO['opp_team'] = $crawlerSAO->filter('div#nba')->nextAll()->filter('tr.team > td.currentline')->eq($rowNumberSAO['opp_team'])->text();
+
+	foreach ($contentsSAO as &$contentSAO) {
+		$contentSAO = trim($contentSAO);
+		$contentSAO = preg_replace("/(-\S*)( -\S*)$/", "$1", $contentSAO);
+		$contentSAO = preg_replace("/(o\S*)$/", "", $contentSAO);
+		$contentSAO = preg_replace("/(u\S*)$/", "", $contentSAO);
+	}
+
+	unset($contentSAO);
+
+	# vegas team score equations
+	## favorite = (total + spread) / 2
+	## underdog = (total - spread) / 2
+
+	if ($contentsSAO['team'][0] == '-') { // zero index of string is first character
+		$vegasScore['team'] = ($contentsSAO['team'] - $contentsSAO['opp_team']) / 2; // not plus because spread is negative
+		$vegasScore['opp_team'] = ($contentsSAO['team'] + $contentsSAO['opp_team']) / 2;	
+	} elseif (($contentsSAO['team'][0] == 'P') && ($contentsSAO['team'][1] == 'K')) {
+		$vegasScore['team'] = ($contentsSAO['opp_team'] + 0) / 2;
+		$vegasScore['opp_team'] = ($contentsSAO['opp_team'] + 0) / 2;
+	} elseif (($contentsSAO['opp_team'][0] == 'P') && ($contentsSAO['opp_team'][1] == 'K')) {
+		$vegasScore['team'] = ($contentsSAO['team'] + 0) / 2;
+		$vegasScore['opp_team'] = ($contentsSAO['team'] + 0) / 2;		
+	} elseif ($contentsSAO['opp_team'][0] == '-') {
+		$vegasScore['team'] = ($contentsSAO['team'] + $contentsSAO['opp_team']) / 2;
+		$vegasScore['opp_team'] = ($contentsSAO['team'] - $contentsSAO['opp_team']) / 2;	
+	} else {
+		dd('Problems with scraping SAO.');
+	}
+
+	return $vegasScore;
+}
+
 function scrapeForGamesTable($client, $crawler, $tableIDinBR, $teams, $seasonId, $gamesCount, $rowCount) {
 	$rowContents = array();
 
@@ -134,7 +210,7 @@ function scrapeForGamesTable($client, $crawler, $tableIDinBR, $teams, $seasonId,
 
 		if ($contentsSAO['road_team'][0] == '-') { // zero index of string is first character
 			$row['vegas_road_team_score'] = ($contentsSAO['home_team'] - $contentsSAO['road_team']) / 2;
-			$row['vegas_home_team_score'] = ($contentsSAO['home_team'] + $contentsSAO['road_team']) / 2;					
+			$row['vegas_home_team_score'] = ($contentsSAO['home_team'] + $contentsSAO['road_team']) / 2;	
 		} elseif (($contentsSAO['road_team'][0] == 'P') && ($contentsSAO['road_team'][1] == 'K')) {
 			$row['vegas_road_team_score'] = ($contentsSAO['home_team'] - 0) / 2;
 			$row['vegas_home_team_score'] = ($contentsSAO['home_team'] + 0) / 2;
