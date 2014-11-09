@@ -35,6 +35,13 @@ class DailyController {
             ->orderBy('players_fd.id', 'asc')
             ->get();	
 
+        if (empty($players)) {
+            $message = 'Please scrape FD and BR.';
+            Session::flash('alert', 'info');
+
+            return view('daily_fd_nba')->with('message', $message);                
+        }
+
         $teams = Team::all();
 
         foreach ($players as &$player) {
@@ -99,9 +106,9 @@ class DailyController {
         	}
 
         	if ($gamesPlayed > 0) {
-        		$player->fppg = $totalFp / $gamesPlayed;
+        		$player->fppg = number_format(round($totalFp / $gamesPlayed, 2), 2);
         	} else {
-        		$player->fppg = 0;
+        		$player->fppg = number_format(0, 2);
         	}
 
         	$totalSquaredDiff = 0; // For SD
@@ -112,10 +119,10 @@ class DailyController {
 
         	if ($player->fppg != 0) {
         		$player->sd = sqrt($totalSquaredDiff / $gamesPlayed);
-        		$player->cv = ($player->sd / $player->fppg) * 100;
+        		$player->cv = number_format(round(($player->sd / $player->fppg) * 100, 2), 2);
         	} else {
-        		$player->sd = 0;
-        		$player->cv = 0;
+        		$player->sd = number_format(0, 2);
+        		$player->cv = number_format(0, 2);
         	}
 
             // CV for Fppm
@@ -150,8 +157,8 @@ class DailyController {
         unset($player);
 
         foreach ($players as &$player) {
-            $player->vr = $player->fppg / ($player->salary / 1000);
-            $player->vr_minus_1sd = ($player->fppg - $player->sd) / ($player->salary / 1000);
+            $player->vr = number_format(round($player->fppg / ($player->salary / 1000), 2), 2);
+            $player->vr_minus_1sd = number_format(round(($player->fppg - $player->sd) / ($player->salary / 1000), 2), 2);
         }
 
         unset($player);
@@ -163,11 +170,11 @@ class DailyController {
         foreach ($players as &$player) {
             foreach ($vegasScores as $vegasScore) {
                 if ($player->team_name == $vegasScore['team']) {
-                    $player->vegas_score_team = $vegasScore['score'];
+                    $player->vegas_score_team = number_format(round($vegasScore['score'], 2), 2);
                 }
 
                 if ($player->opp_team_name == $vegasScore['team']) {
-                    $player->vegas_score_opp_team = $vegasScore['score'];
+                    $player->vegas_score_opp_team = number_format(round($vegasScore['score'], 2), 2);
                 }                
             }
 
@@ -180,9 +187,9 @@ class DailyController {
 
         unset($player);
 
-        ddAll($players);
+        $timePeriod = $players[0]->time_period;
 
-		return view('daily_fd_nba');
+		return view('daily_fd_nba', compact('date', 'timePeriod', 'players'));
 	}
 
 }
