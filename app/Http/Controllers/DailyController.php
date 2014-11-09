@@ -158,11 +158,27 @@ class DailyController {
 
         $client = new Client;
 
-        foreach ($players as &$player) {
-            $vegasScore = scrapeForOdds($client, $player->date, $player->team_name, $player->opp_team_name);
+        $vegasScores = scrapeForOdds($client, $date);
 
-            dd($vegasScore);
+        foreach ($players as &$player) {
+            foreach ($vegasScores as $vegasScore) {
+                if ($player->team_name == $vegasScore['team']) {
+                    $player->vegas_score_team = $vegasScore['score'];
+                }
+
+                if ($player->opp_team_name == $vegasScore['team']) {
+                    $player->vegas_score_opp_team = $vegasScore['score'];
+                }                
+            }
+
+            if (isset($player->vegas_score_team) === false || isset($player->vegas_score_opp_team) === false) {
+                echo 'error: no team match in SAO<br>';
+                echo $player->team_name.' vs '.$player->opp_team_name;
+                exit();
+            }
         }
+
+        unset($player);
 
         ddAll($players);
 
