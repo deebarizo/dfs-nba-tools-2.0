@@ -68,6 +68,8 @@ class DailyController {
         foreach ($players as &$player) {
         	$gamesPlayed = count($playerStats[$player->player_id]);
 
+            // CV for Fppg
+
         	$totalFp = 0;
 
         	foreach ($playerStats[$player->player_id] as $gameLog) {
@@ -93,6 +95,34 @@ class DailyController {
         		$player->sd = 0;
         		$player->cv = 0;
         	}
+
+            // CV for Fppm
+
+            $totalFppm = 0;
+
+            foreach ($playerStats[$player->player_id] as $gameLog) {
+                $totalFppm += $gameLog->fppm;
+            }
+
+            if ($gamesPlayed > 0) {
+                $player->fppmPerGame = $totalFppm / $gamesPlayed;
+            } else {
+                $player->fppmPerGame = 0;
+            }
+
+            $totalSquaredDiff = 0; // For SD
+
+            foreach ($playerStats[$player->player_id] as $gameLog) {
+                $totalSquaredDiff = $totalSquaredDiff + pow($gameLog->fppm - $player->fppmPerGame, 2);
+            }
+
+            if ($player->fppmPerGame != 0) {
+                $player->sdFppm = sqrt($totalSquaredDiff / $gamesPlayed);
+                $player->cvFppm = ($player->sdFppm / $player->fppmPerGame) * 100;
+            } else {
+                $player->sdFppm = 0;
+                $player->cvFppm = 0;
+            }
         }
 
         unset($player);
