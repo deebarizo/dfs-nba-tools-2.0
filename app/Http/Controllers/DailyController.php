@@ -193,7 +193,7 @@ class DailyController {
 
         $timePeriod = $players[0]->time_period;
 
-        # ddAll($players);
+        ddAll($players);
 
 		return view('daily_fd_nba', compact('date', 'timePeriod', 'players'));
 	}
