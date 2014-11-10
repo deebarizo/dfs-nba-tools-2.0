@@ -31,7 +31,7 @@ class DailyController {
             ->join('players_fd', 'player_pools.id', '=', 'players_fd.player_pool_id')
             ->join('players', 'players_fd.player_id', '=', 'players.id')
             ->select('*')
-            ->whereRaw('player_pools.date = "'.$date.'" AND players_fd.status = 1')
+            ->whereRaw('player_pools.date = "'.$date.'"')
             ->orderBy('players_fd.id', 'asc')
             ->get();	
 
