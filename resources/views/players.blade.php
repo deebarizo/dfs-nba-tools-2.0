@@ -44,7 +44,7 @@
 					    	<td>{{ $stats2015->home_team_score }}</td>
 					    	<td>{{ $stats2015->road_team_abbr }}</td>
 					    	<td>{{ $stats2015->road_team_score }}</td>
-					    	<td></td>
+					    	<td><a href="">PM</a></td>
 					    	<td>{{ $stats2015->vr_minus_1sd }}</td>
 					    	<td>{{ $stats2015->cv }}</td>
 					    	<td>{{ $stats2015->fppmPerGame }}</td>
