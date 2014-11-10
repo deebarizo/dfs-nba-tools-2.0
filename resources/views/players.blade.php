@@ -9,6 +9,7 @@
 	</div>
 
 	@foreach ($stats as $yearKey => $year)
+		@if (empty($year) === false)
 			<div class="row">
 				<div class="col-lg-12">
 					<h3>{{ $yearKey }}</h3>
@@ -81,5 +82,6 @@
 					</table>
 				</div>
 			</div>
+		@endif
 	@endforeach
 @stop

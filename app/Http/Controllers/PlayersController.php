@@ -51,6 +51,15 @@ class PlayersController {
 
         // Overviews
 
+        $statsPlayed['All'] = DB::table('box_score_lines') // All end years >= 2014
+            ->join('games', 'box_score_lines.game_id', '=', 'games.id')
+            ->join('seasons', 'games.season_id', '=', 'seasons.id')
+            ->join('players', 'box_score_lines.player_id', '=', 'players.id')
+            ->select('*', 'box_score_lines.status as bs_status')
+            ->whereRaw('players.id = '.$player_id.' AND seasons.end_year >= 2014 AND box_score_lines.status = "Played"')
+            ->orderBy('date', 'desc')
+            ->get();
+
         foreach ($endYears as $endYear) {
             $statsPlayed[$endYear] = DB::table('box_score_lines')
                 ->join('games', 'box_score_lines.game_id', '=', 'games.id')
@@ -70,24 +79,72 @@ class PlayersController {
         unset($year);
         unset($row);
 
-        foreach ($statsPlayed as $endYear => $boxScoreLines) {
+        foreach ($statsPlayed as $timePeriod => $boxScoreLines) {
             $gamesPlayed = count($boxScoreLines);
-            $totalMp = 0;
 
-            foreach ($boxScoreLines as $boxScoreLine) {
-                $totalMp += $boxScoreLine->mp;
+            if ($gamesPlayed > 0) {
+                $totalMp = 0;
+                $totalUsg = 0;
+                $totalFp = 0;
+                $totalFppm = 0;
+                
+
+                foreach ($boxScoreLines as $boxScoreLine) {
+                    $totalMp += $boxScoreLine->mp;
+                    $totalUsg += $boxScoreLine->usg;
+                    $totalFp += $boxScoreLine->pts_fd;
+                    $totalFppm += $boxScoreLine->fppm;
+                }
+
+                $overviews[$timePeriod]['mppg'] = numFormat($totalMp / $gamesPlayed);
+                $overviews[$timePeriod]['usg'] = numFormat($totalUsg / $gamesPlayed);
+                $overviews[$timePeriod]['fppg'] = numFormat($totalFp / $gamesPlayed);
+
+                // CV for FPPG
+
+                $totalSquaredDiff = 0; 
+
+                $fppg = numFormat($totalFp / $gamesPlayed);
+
+                foreach ($boxScoreLines as $boxScoreLine) {
+                    $totalSquaredDiff += pow($boxScoreLine->pts_fd - $fppg, 2);
+                }
+
+                if ($fppg != 0) {
+                    $overviews[$timePeriod]['sd'] = numFormat(sqrt($totalSquaredDiff / $gamesPlayed));
+                    $overviews[$timePeriod]['cv'] = numFormat(($overviews[$timePeriod]['sd'] / $fppg) * 100);
+                } else {
+                    $overviews[$timePeriod]['sd'] = numFormat(0);
+                    $overviews[$timePeriod]['cv'] = numFormat(0);
+                } 
+
+                // CV for FPPM
+
+                $totalSquaredDiff = 0; 
+
+                $fppm = numFormat($totalFppm / $gamesPlayed);
+
+                foreach ($boxScoreLines as $boxScoreLine) {
+                    $totalSquaredDiff += pow($boxScoreLine->fppm - $fppm, 2);
+                }                
+
+                if ($fppm != 0) {
+                    $overviews[$timePeriod]['sd_fppm'] = numFormat(sqrt($totalSquaredDiff / $gamesPlayed));
+                    $overviews[$timePeriod]['cv_fppm'] = numFormat(($overviews[$timePeriod]['sd_fppm'] / $fppm) * 100);
+                } else {
+                    $overviews[$timePeriod]['sd_fppm'] = numFormat(0);
+                    $overviews[$timePeriod]['cv_fppm'] = numFormat(0);
+                }    
             }
-
-            $overview[$endYear]['mppg'] = numFormat($totalMp / $gamesPlayed);
         }
 
-        ddAll($overview);
+        ddAll($overviews);
 
         // Player Name
 
-        $name = $stats[2015][0]->name;
+        $name = $stats[$endYears[0]][0]->name;
 
-        return view('players', compact('stats', 'overview', 'name'));
+        return view('players', compact('stats', 'overviews', 'name'));
 	}
 
 	private function modStats($row, $teams) {
@@ -110,6 +167,12 @@ class PlayersController {
     				   ($row->blk * 2) +
     				   ($row->tov * -1);
         $row->pts_fd = number_format(round($row->pts_fd, 2), 2);
+
+        if ($row->pts_fd != 0) {
+            $row->fppm = $row->pts_fd / $row->mp;
+        } else {
+            $row->fppm = 0;
+        }
 
     	$row->date_pm = preg_replace("/-/", "", $row->date);
 
