@@ -45,7 +45,7 @@
 				<tbody>
 					@foreach ($players as $player)
 					    <tr>
-					    	<td>{{ $player->name }}</td>
+					    	<td><a target="_blank" href="players/{{ $player->player_id }}">{{ $player->name }}</a></td>
 					    	<td>{{ $player->team_abbr }}</td>
 					    	<td>{{ $player->opp_team_abbr }}</td>
 					    	<td>{{ $player->position }}</td>
