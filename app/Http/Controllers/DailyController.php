@@ -31,7 +31,7 @@ class DailyController {
             ->join('players_fd', 'player_pools.id', '=', 'players_fd.player_pool_id')
             ->join('players', 'players_fd.player_id', '=', 'players.id')
             ->select('*')
-            ->where('player_pools.date', '=', $date)
+            ->whereRaw('player_pools.date = "'.$date.'" AND players_fd.status = 1')
             ->orderBy('players_fd.id', 'asc')
             ->get();	
 
@@ -193,7 +193,7 @@ class DailyController {
 
         $timePeriod = $players[0]->time_period;
 
-        ddAll($players);
+        # ddAll($players);
 
 		return view('daily_fd_nba', compact('date', 'timePeriod', 'players'));
 	}
