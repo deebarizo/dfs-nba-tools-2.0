@@ -143,7 +143,7 @@ class PlayersController {
 
         // Player Name
 
-        $name = $stats[$endYears[0]][0]->name;
+        $name = $statsPlayed['all'][0]->name;
 
         return view('players', compact('stats', 'overviews', 'name'));
 	}

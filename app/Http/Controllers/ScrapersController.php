@@ -177,6 +177,7 @@ class ScrapersController {
 					$boxScoreLine->team_id = $playerData['team_id'];
 					$boxScoreLine->player_id = $playerData['player_id'];
 					$boxScoreLine->role = $playerData['role'];
+					$boxScoreLine->status = $playerData['status'];
 					$boxScoreLine->mp = $playerData['mp'];
 					$boxScoreLine->fg = $playerData['fg'];
 					$boxScoreLine->fga = $playerData['fga'];
