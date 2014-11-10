@@ -134,9 +134,9 @@ class DailyController {
             }
 
             if ($gamesPlayed > 0) {
-                $player->fppmPerGame = $totalFppm / $gamesPlayed;
+                $player->fppmPerGame = number_format(round($totalFppm / $gamesPlayed, 2), 2);
             } else {
-                $player->fppmPerGame = 0;
+                $player->fppmPerGame = number_format(0, 2);
             }
 
             $totalSquaredDiff = 0; // For SD
@@ -147,18 +147,22 @@ class DailyController {
 
             if ($player->fppmPerGame != 0) {
                 $player->sdFppm = sqrt($totalSquaredDiff / $gamesPlayed);
-                $player->cvFppm = ($player->sdFppm / $player->fppmPerGame) * 100;
+                $player->cvFppm = number_format(round(($player->sdFppm / $player->fppmPerGame) * 100, 2), 2);
             } else {
                 $player->sdFppm = 0;
-                $player->cvFppm = 0;
+                $player->cvFppm = number_format(0, 2);
             }
-        }
+        }   
 
         unset($player);
 
         foreach ($players as &$player) {
             $player->vr = number_format(round($player->fppg / ($player->salary / 1000), 2), 2);
             $player->vr_minus_1sd = number_format(round(($player->fppg - $player->sd) / ($player->salary / 1000), 2), 2);
+
+            $player->fppg_minus_1sd = number_format(round($player->fppg - $player->sd, 2), 2);
+
+            $player->fppm_minus_1sd = number_format(round($player->fppmPerGame - $player->sdFppm, 2), 2);
         }
 
         unset($player);
@@ -188,6 +192,8 @@ class DailyController {
         unset($player);
 
         $timePeriod = $players[0]->time_period;
+
+        # ddAll($players);
 
 		return view('daily_fd_nba', compact('date', 'timePeriod', 'players'));
 	}

@@ -7,12 +7,21 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
 	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.4/css/jquery.dataTables.css">
 
-	<style>body { padding-top: 50px; }</style>
-
+	<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-	<script src="{{ URL::asset('js/jquery-2.1.1.min.js') }}"></script>
+	<script src="http://code.highcharts.com/highcharts.js"></script>
 	<script src="https://cdn.datatables.net/1.10.4/js/jquery.dataTables.min.js"></script>
 	<script src="https://cdn.datatables.net/plug-ins/9dcbecd42ad/integration/bootstrap/3/dataTables.bootstrap.js"></script>
+
+	<style>
+		body { padding-top: 50px; }
+
+		tfoot input {
+	        width: 100%;
+    	    padding: 3px;
+        	box-sizing: border-box;
+    	}
+	</style>
 
 	<title>DFS NBA Tools</title>
 </head>

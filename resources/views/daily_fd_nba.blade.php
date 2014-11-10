@@ -30,12 +30,16 @@
 						<th>Pos</th>
 						<th>Salary</th>
 						<th>VR</th>
-						<th>VR -1SD</th>
+						<th>VR-1</th>
 						<th>CV</th>
+						<th>FPPM</th>
+						<th>CVPM</th>
+						<th>FPPM-1</th>
 						<th>FPPG</th>
-						<th>ST</th>
+						<th>FPPG-1</th>
+					<!--<th>ST</th>
 						<th>VST</th>
-						<th>VSOT</th>
+						<th>VSOT</th> -->
 					</tr>
 				</thead>
 				<tbody>
@@ -49,10 +53,14 @@
 					    	<td>{{ $player->vr }}</td>
 					    	<td>{{ $player->vr_minus_1sd }}</td>
 					    	<td>{{ $player->cv }}</td>
+					    	<td>{{ $player->fppmPerGame }}</td>
+					    	<td>{{ $player->cvFppm }}</td>
+					    	<td>{{ $player->fppm_minus_1sd }}</td>
 					    	<td>{{ $player->fppg }}</td>
-					    	<td>100</td>
+					    	<td>{{ $player->fppg_minus_1sd }}</td>
+					    <!--<td>100</td>
 					    	<td>{{ $player->vegas_score_team }}</td>
-					    	<td>{{ $player->vegas_score_opp_team }}</td>
+					    	<td>{{ $player->vegas_score_opp_team }}</td> -->
 					    </tr>
 					@endforeach
 				</tbody>
@@ -65,8 +73,8 @@
     		$('#daily').dataTable({
     			"scrollY": "600px",
     			"paging": false,
-    			"order": [[4, "desc"]]
+    			"order": [[6, "desc"]]
     		});
-		} );
+		});
 	</script>
 @stop
