@@ -22,8 +22,35 @@ date_default_timezone_set('America/Chicago');
 
 class PlayersController {
 
-	public function getPlayerStats($id) {
-		echo $id;
+	public function getPlayerStats($player_id) {
+		$stats2015 = DB::table('box_score_lines')
+            ->join('games', 'box_score_lines.game_id', '=', 'games.id')
+            ->join('seasons', 'games.season_id', '=', 'seasons.id')
+			->join('players', 'box_score_lines.player_id', '=', 'players.id')
+            ->select('*')
+            ->whereRaw('players.id = '.$player_id.' AND seasons.end_year = 2015')
+            ->orderBy('date', 'desc')
+            ->get();
+
+        $teams = Team::all();
+
+        foreach ($stats2015 as &$row) {
+        	foreach ($teams as $team) {
+        		if ($row->home_team_id == $team->id) {
+        			$row->home_team_abbr = $team->abbr_br;
+        		}
+
+        		if ($row->road_team_id == $team->id) {
+        			$row->road_team_abbr = $team->abbr_br;
+        		}
+        	}
+        }
+
+        unset($row);
+
+		ddAll($stats2015);
+
+        return view('players', compact('stats2015'));
 	}
 
 }
