@@ -16,11 +16,9 @@
 	<style>
 		body { padding-top: 50px; }
 
-		tfoot input {
-	        width: 100%;
-    	    padding: 3px;
-        	box-sizing: border-box;
-    	}
+		hr {
+			border-color: #333;
+		}
 	</style>
 
 	<title>DFS NBA Tools</title>

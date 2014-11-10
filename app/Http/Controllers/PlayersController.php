@@ -51,7 +51,7 @@ class PlayersController {
 
         // Overviews
 
-        $statsPlayed['All'] = DB::table('box_score_lines') // All end years >= 2014
+        $statsPlayed['all'] = DB::table('box_score_lines') // All end years >= 2014
             ->join('games', 'box_score_lines.game_id', '=', 'games.id')
             ->join('seasons', 'games.season_id', '=', 'seasons.id')
             ->join('players', 'box_score_lines.player_id', '=', 'players.id')
@@ -122,7 +122,8 @@ class PlayersController {
 
                 $totalSquaredDiff = 0; 
 
-                $fppm = numFormat($totalFppm / $gamesPlayed);
+                $overviews[$timePeriod]['fppm'] = numFormat($totalFppm / $gamesPlayed);
+                $fppm = $overviews[$timePeriod]['fppm'];
 
                 foreach ($boxScoreLines as $boxScoreLine) {
                     $totalSquaredDiff += pow($boxScoreLine->fppm - $fppm, 2);
@@ -138,7 +139,7 @@ class PlayersController {
             }
         }
 
-        ddAll($overviews);
+        # ddAll($overviews[2015]);
 
         // Player Name
 
