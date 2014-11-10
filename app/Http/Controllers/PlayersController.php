@@ -27,7 +27,7 @@ class PlayersController {
             ->join('games', 'box_score_lines.game_id', '=', 'games.id')
             ->join('seasons', 'games.season_id', '=', 'seasons.id')
 			->join('players', 'box_score_lines.player_id', '=', 'players.id')
-            ->select('*')
+            ->select('*', 'box_score_lines.status as bs_status')
             ->whereRaw('players.id = '.$player_id.' AND seasons.end_year = 2015')
             ->orderBy('date', 'desc')
             ->get();
@@ -37,20 +37,33 @@ class PlayersController {
         foreach ($stats2015 as &$row) {
         	foreach ($teams as $team) {
         		if ($row->home_team_id == $team->id) {
-        			$row->home_team_abbr = $team->abbr_br;
+        			$row->home_team_abbr_br = $team->abbr_br;
+        			$row->home_team_abbr_pm = $team->abbr_pm;
         		}
 
         		if ($row->road_team_id == $team->id) {
-        			$row->road_team_abbr = $team->abbr_br;
+        			$row->road_team_abbr_br = $team->abbr_br;
+        			$row->road_team_abbr_pm = $team->abbr_pm;
         		}
         	}
+
+        	$row->pts_fd = $row->pts + 
+        				   ($row->trb * 1.2) +
+        				   ($row->ast * 1.5) +
+        				   ($row->stl * 2) +
+        				   ($row->blk * 2) +
+        				   ($row->tov * -1);
+
+        	$row->date_pm = preg_replace("/-/", "", $row->date);
         }
 
         unset($row);
 
-		ddAll($stats2015);
+        $name = $stats2015[0]->name;
 
-        return view('players', compact('stats2015'));
+		# ddAll($stats2015);
+
+        return view('players', compact('stats2015', 'name'));
 	}
 
 }
