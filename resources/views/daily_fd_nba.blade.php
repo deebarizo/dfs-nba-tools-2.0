@@ -21,7 +21,7 @@
 		<div class="col-lg-12">
 			<h3>{{ $date }} {{ $timePeriod }}</h3>
 
-			<table class="table table-striped table-bordered table-hover table-condensed">
+			<table id="daily" class="table table-striped table-bordered table-hover table-condensed">
 				<thead>
 					<tr>
 						<th>Name</th>
@@ -59,4 +59,14 @@
 			</table>
 		</div>
 	</div>
+
+	<script type="text/javascript">
+		$(document).ready(function() {
+    		$('#daily').dataTable({
+    			"scrollY": "600px",
+    			"paging": false,
+    			"order": [[4, "desc"]]
+    		});
+		} );
+	</script>
 @stop
