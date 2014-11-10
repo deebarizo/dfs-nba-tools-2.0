@@ -1,15 +1,21 @@
 @extends('master')
 
 @section('content')
+
 	<div class="row">
 		<div class="col-lg-12">
 			<h2>Players ({{ $name }})</h2>
 		</div>
 	</div>
+
 	@foreach ($stats as $yearKey => $year)
 			<div class="row">
 				<div class="col-lg-12">
-					<h3>{{ $yearKey }} Game Log</h3>
+					<h3>{{ $yearKey }}</h3>
+
+					<h4>Overview</h4>
+
+					<h4>Game Log</h4>
 
 					<table id="game-log-{{ $yearKey }}" class="table table-striped table-bordered table-hover table-condensed">
 						<thead>

@@ -23,38 +23,71 @@ date_default_timezone_set('America/Chicago');
 class PlayersController {
 
 	public function getPlayerStats($player_id) {
-		$stats[2015] = DB::table('box_score_lines')
-            ->join('games', 'box_score_lines.game_id', '=', 'games.id')
-            ->join('seasons', 'games.season_id', '=', 'seasons.id')
-			->join('players', 'box_score_lines.player_id', '=', 'players.id')
-            ->select('*', 'box_score_lines.status as bs_status')
-            ->whereRaw('players.id = '.$player_id.' AND seasons.end_year = 2015')
-            ->orderBy('date', 'desc')
-            ->get();
 
-		$stats[2014] = DB::table('box_score_lines')
-            ->join('games', 'box_score_lines.game_id', '=', 'games.id')
-            ->join('seasons', 'games.season_id', '=', 'seasons.id')
-			->join('players', 'box_score_lines.player_id', '=', 'players.id')
-            ->select('*', 'box_score_lines.status as bs_status')
-            ->whereRaw('players.id = '.$player_id.' AND seasons.end_year = 2014')
-            ->orderBy('date', 'desc')
-            ->get();
+        // Box Score Lines
+
+        $endYears = [2015, 2014];
+
+        foreach ($endYears as $endYear) {
+            $stats[$endYear] = DB::table('box_score_lines')
+                ->join('games', 'box_score_lines.game_id', '=', 'games.id')
+                ->join('seasons', 'games.season_id', '=', 'seasons.id')
+                ->join('players', 'box_score_lines.player_id', '=', 'players.id')
+                ->select('*', 'box_score_lines.status as bs_status')
+                ->whereRaw('players.id = '.$player_id.' AND seasons.end_year = "'.$endYear.'"')
+                ->orderBy('date', 'desc')
+                ->get();
+        }
 
         $teams = Team::all();
 
-        foreach ($stats as $year) {
+        foreach ($stats as &$year) {
         	foreach ($year as &$row) {
         		$row = $this->modStats($row, $teams);
         	}
         }
+        unset($year);
         unset($row);
+
+        // Overviews
+
+        foreach ($endYears as $endYear) {
+            $statsPlayed[$endYear] = DB::table('box_score_lines')
+                ->join('games', 'box_score_lines.game_id', '=', 'games.id')
+                ->join('seasons', 'games.season_id', '=', 'seasons.id')
+                ->join('players', 'box_score_lines.player_id', '=', 'players.id')
+                ->select('*', 'box_score_lines.status as bs_status')
+                ->whereRaw('players.id = '.$player_id.' AND seasons.end_year = "'.$endYear.'" AND box_score_lines.status = "Played"')
+                ->orderBy('date', 'desc')
+                ->get();
+        }
+
+        foreach ($statsPlayed as &$year) {
+            foreach ($year as &$row) {
+                $row = $this->modStats($row, $teams);
+            }
+        }
+        unset($year);
+        unset($row);
+
+        foreach ($statsPlayed as $endYear => $boxScoreLines) {
+            $gamesPlayed = count($boxScoreLines);
+            $totalMp = 0;
+
+            foreach ($boxScoreLines as $boxScoreLine) {
+                $totalMp += $boxScoreLine->mp;
+            }
+
+            $overview[$endYear]['mppg'] = numFormat($totalMp / $gamesPlayed);
+        }
+
+        ddAll($overview);
+
+        // Player Name
 
         $name = $stats[2015][0]->name;
 
-		# ddAll($stats);
-
-        return view('players', compact('stats', 'name'));
+        return view('players', compact('stats', 'overview', 'name'));
 	}
 
 	private function modStats($row, $teams) {
@@ -76,6 +109,7 @@ class PlayersController {
     				   ($row->stl * 2) +
     				   ($row->blk * 2) +
     				   ($row->tov * -1);
+        $row->pts_fd = number_format(round($row->pts_fd, 2), 2);
 
     	$row->date_pm = preg_replace("/-/", "", $row->date);
 
