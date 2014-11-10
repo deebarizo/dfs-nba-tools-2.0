@@ -7,6 +7,7 @@
 		</div>
 	</div>
 	<div class="row">
+		<?php date_default_timezone_set('America/Chicago'); ?>
 		<?php $today_date = date('Y-m-d'); ?>
 		<?php $errors = Session::get('errors') ? : $errors; ?>
 

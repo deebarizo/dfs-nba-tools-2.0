@@ -154,6 +154,7 @@ class ScrapersController {
 						$player = new Player;
 
 						$player->name = $playerData['name'];
+						$player->status = 1;
 
 						$player->save();	
 
@@ -327,6 +328,7 @@ class ScrapersController {
 			foreach ($players as $player) {
 				if ($player->name == $name) {
 					$rowContents[$i]['player_id'] = $player->id;
+					$rowContents[$i]['status'] = $player->status;
 
 					break;
 				}
@@ -338,10 +340,12 @@ class ScrapersController {
 				$player = new Player;
 
 				$player->name = $name;
+				$player->status = 1;
 
 				$player->save();	
 
 				$rowContents[$i]['player_id'] = $player->id;
+				$rowContents[$i]['status'] = $player->status;
 			}
 
 			$rawSalary = $crawlerFD->filter('table.player-list-table > tbody > tr:nth-child('.$i.') > td.player-salary')->text();
@@ -406,6 +410,7 @@ class ScrapersController {
 			$playerFD->salary = $row['salary'];
 			$playerFD->team_id = $row['team_id'];
 			$playerFD->opp_team_id = $row['opp_team_id'];
+			$playerFD->status = $row['status'];
 			$playerFD->top_play_index = $row['top_play_index'];
 			$playerFD->player_pool_id = $playerPool->id;
 
@@ -446,6 +451,7 @@ class ScrapersController {
 					$player = new Player;
 
 					$player->name = $name;
+					$player->status = 1;
 
 					$player->save();						
 				}
