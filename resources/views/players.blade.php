@@ -6,7 +6,7 @@
 		<div class="col-lg-12">
 			<h2>Players ({{ $name }}</a>)</h2>
 
-			<p><strong>Links:</strong> <a target="_blank" href="http://www.google.com/search?q={{ $name }}+Rotoworld">RT</a> | <a target="_blank" href="http://www.google.com/search?q={{ $name }}+Basketball+Reference">BR</a></p>
+			<p><strong>Links:</strong> <a target="_blank" href="http://www.google.com/search?q={{ $name }}+Rotoworld">RT</a> | <a target="_blank" href="http://www.google.com/search?q={{ $name }}+Basketball+Reference">BR</a> | <a target="_blank" href="http://www.google.com/search?q={{ $name }}+ESPN">ESPN</a></p>
 		</div>
 	</div>
 
@@ -44,7 +44,7 @@
 	<hr>
 
 	@foreach ($stats as $yearKey => $year)
-		@if (empty($year) === false)
+		@if (empty($year) === false && isset($overviews[$yearKey]) === true)
 			<div class="row">
 				<div class="col-lg-12">
 					<h3>{{ $yearKey }}</h3>
@@ -134,7 +134,7 @@
 								    	<td>{{ $row->usg }}</td>
 								    	<td>{{ $row->pts_fd }}</td>
 								    @else
-								    	<td style="text-align: center" colspan="15">{{ $row->bs_status }}</td>
+								    	<td style="text-align: center" colspan="16">{{ $row->bs_status }}</td>
 								    @endif
 							    </tr>
 							@endforeach
