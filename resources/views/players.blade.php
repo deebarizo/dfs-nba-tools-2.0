@@ -4,7 +4,9 @@
 
 	<div class="row">
 		<div class="col-lg-12">
-			<h2>Players ({{ $name }})</h2>
+			<h2>Players ({{ $name }}</a>)</h2>
+
+			<p><strong>Links:</strong> <a target="_blank" href="http://www.google.com/search?q={{ $name }}+Rotoworld">RT</a> | <a target="_blank" href="http://www.google.com/search?q={{ $name }}+Basketball+Reference">BR</a></p>
 		</div>
 	</div>
 
@@ -86,6 +88,7 @@
 								<th>PM</th>
 								<th>Role</th>
 								<th>MP</th>
+								<th>OT</th>
 								<th>FGM-FGA</th>
 								<th>3PM-3PA</th>
 								<th>FTM-FTA</th>
@@ -115,6 +118,7 @@
 							    	<td>{{ $row->role }}</td>
 							    	@if ($row->bs_status == 'Played')
 								    	<td>{{ $row->mp }}</td>
+								    	<td>{{ $row->ot_periods }}</td>
 								    	<td>{{ $row->fg }}-{{ $row->fga }}</td>
 								    	<td>{{ $row->threep }}-{{ $row->threepa }}</td>
 								    	<td>{{ $row->ft }}-{{ $row->fta }}</td>
