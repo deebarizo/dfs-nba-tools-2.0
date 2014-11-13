@@ -35,4 +35,6 @@ $router->get('/', function() {
 	return View::make('pages/home');
 });
 
+$router->resource('daily_fd_filters', 'DailyFdFiltersController');
+
 $router->get('one_time', 'ScrapersController@one_time');
