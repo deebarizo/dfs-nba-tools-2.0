@@ -79,7 +79,7 @@ class DailyFdFiltersController {
             ->orderBy('created_at', 'desc')
             ->get();	
 
-        dd($dailyFdFilter);
+        # dd($dailyFdFilter);
 
 		return view('daily_fd_filters/edit', compact('dailyFdFilter', 'player'));
 	}

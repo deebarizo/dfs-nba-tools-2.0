@@ -22,7 +22,7 @@ class CreateDailyFdFiltersTable extends Migration {
    		    $table->string('fppg_source')->nullable();
    		    $table->string('fppm source')->nullable();
    		    $table->string('cv_source')->nullable();
-   		    $table->decimal('mp_ot_filter', 4, 2)->nullable();
+   		    $table->integer('mp_ot_filter');
    		    $table->integer('dnp_games');
    		    $table->text('notes')->nullable();
 		    $table->dateTime('created_at');
