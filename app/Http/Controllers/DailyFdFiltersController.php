@@ -1,8 +1,25 @@
 <?php namespace App\Http\Controllers;
 
+use App\Season;
+use App\Team;
+use App\Game;
+use App\Player;
+use App\BoxScoreLine;
+use App\PlayerPool;
+use App\PlayerFd;
+use App\DailyFdFilter;
+
+use Illuminate\Support\Facades\DB;
+
 date_default_timezone_set('America/Chicago');
 
 class DailyFdFiltersController {
+
+	private $dailyFdFilter;
+
+	public function __construct(DailyFdFilter $dailyFdFilter) {
+		$this->daily_fd_filter = $dailyFdFilter;
+	}
 
 	/**
 	 * Display a listing of the resource.
@@ -51,9 +68,20 @@ class DailyFdFiltersController {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function edit($id)
+	public function edit($player_id)
 	{
-		//
+		$dailyFdFilter = 
+			$this->daily_fd_filter->where('player_id', $player_id)->orderBy('created_at', 'desc')->first();
+		
+		$player = DB::table('players')
+            ->select('*')
+            ->whereRaw('id = '.$player_id)
+            ->orderBy('created_at', 'desc')
+            ->get();	
+
+        dd($dailyFdFilter);
+
+		return view('daily_fd_filters/edit', compact('dailyFdFilter', 'player'));
 	}
 
 	/**
