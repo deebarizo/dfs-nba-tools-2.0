@@ -45,7 +45,7 @@
 				<tbody>
 					@foreach ($players as $player)
 					    <tr>
-					    	<td><a target="_blank" href="/players/{{ $player->player_id }}">{{ $player->name }}</a></td>
+					    	<td><a target="_blank" href="/players/{{ $player->player_id }}">{{ $player->name }}</a> <a target="_blank" href="/daily_fd_filters/{{ $player->player_id }}/create"><span class="glyphicon glyphicon-filter" aria-hidden="true"></span></a></td>
 					    	<td>{{ $player->team_abbr }}</td>
 					    	<td>{{ $player->opp_team_abbr }}</td>
 					    	<td>{{ $player->position }}</td>
