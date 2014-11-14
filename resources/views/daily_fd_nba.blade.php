@@ -44,24 +44,29 @@
 				</thead>
 				<tbody>
 					@foreach ($players as $player)
-					    <tr>
-					    	<td><a target="_blank" href="/players/{{ $player->player_id }}">{{ $player->name }}</a> <a target="_blank" href="/daily_fd_filters/{{ $player->player_id }}/create"><span class="glyphicon glyphicon-filter" aria-hidden="true"></span></a></td>
-					    	<td>{{ $player->team_abbr }}</td>
-					    	<td>{{ $player->opp_team_abbr }}</td>
-					    	<td>{{ $player->position }}</td>
-					    	<td>{{ $player->salary }}</td>
-					    	<td>{{ $player->vr }}</td>
-					    	<td>{{ $player->vr_minus_1sd }}</td>
-					    	<td>{{ $player->cv }}</td>
-					    	<td>{{ $player->fppmPerGame }}</td>
-					    	<td>{{ $player->cvFppm }}</td>
-					    	<td>{{ $player->fppm_minus_1sd }}</td>
-					    	<td>{{ $player->fppg }}</td>
-					    	<td>{{ $player->fppg_minus_1sd }}</td>
-					    <!--<td>100</td>
-					    	<td>{{ $player->vegas_score_team }}</td>
-					    	<td>{{ $player->vegas_score_opp_team }}</td> -->
-					    </tr>
+						@if (isset($player->filter->playing) === false || $player->filter->playing != 0)
+							
+							<?php $noFilter = ''; if (isset($player->filter->playing) === false) { $noFilter = 'style="color: red"'; } ?>
+
+						    <tr>
+						    	<td><a target="_blank" href="/players/{{ $player->player_id }}">{{ $player->name }}</a> <a target="_blank" href="/daily_fd_filters/{{ $player->player_id }}/create"><span {!! $noFilter !!} class="glyphicon glyphicon-filter" aria-hidden="true"></span></a></td>
+						    	<td>{{ $player->team_abbr }}</td>
+						    	<td>{{ $player->opp_team_abbr }}</td>
+						    	<td>{{ $player->position }}</td>
+						    	<td>{{ $player->salary }}</td>
+						    	<td>{{ $player->vr }}</td>
+						    	<td>{{ $player->vr_minus_1sd }}</td>
+						    	<td>{{ $player->cv }}</td>
+						    	<td>{{ $player->fppmPerGame }}</td>
+						    	<td>{{ $player->cvFppm }}</td>
+						    	<td>{{ $player->fppm_minus_1sd }}</td>
+						    	<td>{{ $player->fppg }}</td>
+						    	<td>{{ $player->fppg_minus_1sd }}</td>
+						    <!--<td>100</td>
+						    	<td>{{ $player->vegas_score_team }}</td>
+						    	<td>{{ $player->vegas_score_opp_team }}</td> -->
+						    </tr>
+						@endif
 					@endforeach
 				</tbody>
 			</table>

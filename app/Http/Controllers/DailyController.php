@@ -7,6 +7,7 @@ use App\Player;
 use App\BoxScoreLine;
 use App\PlayerPool;
 use App\PlayerFd;
+use App\DailyFdFilter;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\RunFDNBASalariesScraperRequest;
@@ -32,7 +33,6 @@ class DailyController {
             ->join('players', 'players_fd.player_id', '=', 'players.id')
             ->select('*')
             ->whereRaw('player_pools.date = "'.$date.'"')
-            ->orderBy('players_fd.id', 'asc')
             ->get();	
 
         if (empty($players)) {
@@ -72,6 +72,22 @@ class DailyController {
 	            ->whereRaw('box_score_lines.status = "Played" AND seasons.id >= 10 AND player_id = '.$player->player_id)
 	            ->get();	        	
         }
+
+        $dailyFdFilters = DB::select('SELECT t1.* FROM daily_fd_filters AS t1
+                                         JOIN (
+                                            SELECT player_id, MAX(created_at) AS latest FROM daily_fd_filters GROUP BY player_id
+                                         ) AS t2
+                                         ON t1.player_id = t2.player_id AND t1.created_at = t2.latest');
+
+        foreach ($players as &$player) {
+            foreach ($dailyFdFilters as $filter) {
+                if ($player->player_id == $filter->player_id) {
+                    $player->filter = $filter;
+                }
+            }
+        }
+
+        unset($player);
 
         foreach ($playerStats as &$gameLogs) {
         	foreach ($gameLogs as &$gameLog) {
