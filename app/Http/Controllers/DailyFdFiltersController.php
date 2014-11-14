@@ -11,6 +11,10 @@ use App\DailyFdFilter;
 
 use Illuminate\Support\Facades\DB;
 
+use Illuminate\Http\Request;
+
+use Illuminate\Support\Facades\Session;
+
 date_default_timezone_set('America/Chicago');
 
 class DailyFdFiltersController {
@@ -90,9 +94,25 @@ class DailyFdFiltersController {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function update($id)
+	public function update($id, Request $request)
 	{
-		//
+		$dailyFdFilter = $this->daily_fd_filter->where('id', $id)->first();
+
+		$dailyFdFilter->filter = $request->get('filter');
+		$dailyFdFilter->playing = $request->get('playing');
+		$dailyFdFilter->fppg_source = (trim($request->get('fppg_source')) == '' ? null : trim($request->get('fppg_source')));
+		$dailyFdFilter->fppm_source = (trim($request->get('fppm_source')) == '' ? null : trim($request->get('fppm_source')));
+		$dailyFdFilter->cv_source = (trim($request->get('cv_source')) == '' ? null : trim($request->get('cv_source')));
+		$dailyFdFilter->mp_ot_filter = $request->get('mp_ot_filter');
+		$dailyFdFilter->dnp_games = $request->get('dnp_games');
+		$dailyFdFilter->notes = (trim($request->get('notes')) == '' ? null : trim($request->get('notes')));
+
+		$dailyFdFilter->save();
+
+		$message = 'Success!';
+		Session::flash('alert', 'info');
+
+		return redirect('daily_fd_filters/'.$dailyFdFilter->player_id.'/edit')->with('message', $message);
 	}
 
 	/**

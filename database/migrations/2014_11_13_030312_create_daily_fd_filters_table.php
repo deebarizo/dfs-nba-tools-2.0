@@ -20,7 +20,7 @@ class CreateDailyFdFiltersTable extends Migration {
 		    $table->boolean('filter');
 		    $table->boolean('playing');
    		    $table->string('fppg_source')->nullable();
-   		    $table->string('fppm source')->nullable();
+   		    $table->string('fppm_source')->nullable();
    		    $table->string('cv_source')->nullable();
    		    $table->integer('mp_ot_filter');
    		    $table->integer('dnp_games');
