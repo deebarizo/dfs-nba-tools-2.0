@@ -40,9 +40,15 @@ class DailyFdFiltersController {
 	 *
 	 * @return Response
 	 */
-	public function create()
+	public function create($player_id)
 	{
-		//
+		$player = DB::table('players')
+            ->select('*')
+            ->whereRaw('id = '.$player_id)
+            ->orderBy('created_at', 'desc')
+            ->get();	
+
+		return view('daily_fd_filters/create', compact('player'));
 	}
 
 	/**
@@ -50,9 +56,28 @@ class DailyFdFiltersController {
 	 *
 	 * @return Response
 	 */
-	public function store()
+	public function store(Request $request)
 	{
-		//
+		# dd($request);
+
+		$dailyFdFilter = new DailyFdFilter;
+
+		$dailyFdFilter->player_id = $request->get('player_id');
+		$dailyFdFilter->filter = $request->get('filter');
+		$dailyFdFilter->playing = $request->get('playing');
+		$dailyFdFilter->fppg_source = (trim($request->get('fppg_source')) == '' ? null : trim($request->get('fppg_source')));
+		$dailyFdFilter->fppm_source = (trim($request->get('fppm_source')) == '' ? null : trim($request->get('fppm_source')));
+		$dailyFdFilter->cv_source = (trim($request->get('cv_source')) == '' ? null : trim($request->get('cv_source')));
+		$dailyFdFilter->mp_ot_filter = $request->get('mp_ot_filter');
+		$dailyFdFilter->dnp_games = $request->get('dnp_games');
+		$dailyFdFilter->notes = (trim($request->get('notes')) == '' ? null : trim($request->get('notes')));
+
+		$dailyFdFilter->save();
+
+		$message = 'Success!';
+		Session::flash('alert', 'info');
+
+		return redirect('daily_fd_filters/'.$dailyFdFilter->player_id.'/edit')->with('message', $message);		
 	}
 
 	/**
@@ -82,8 +107,6 @@ class DailyFdFiltersController {
             ->whereRaw('id = '.$player_id)
             ->orderBy('created_at', 'desc')
             ->get();	
-
-        # dd($dailyFdFilter);
 
 		return view('daily_fd_filters/edit', compact('dailyFdFilter', 'player'));
 	}

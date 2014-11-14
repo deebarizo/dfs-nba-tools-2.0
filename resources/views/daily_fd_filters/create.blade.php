@@ -3,7 +3,7 @@
 @section('content')
 	<div class="row">
 		<div class="col-lg-12">
-			<h2>Daily FD Filters - Edit</h2>
+			<h2>Daily FD Filters - Create</h2>
 		</div>
 	</div>
 
@@ -23,19 +23,21 @@
 		    </div>
 		@endif
 
-		{!!	Form::model($dailyFdFilter, ['url' => 'daily_fd_filters/'.$dailyFdFilter->id, 'method' => 'PATCH']) !!}
+		{!!	Form::open(['route' => 'daily_fd_filters.store']) !!}
+
+			{!! Form::hidden('player_id', $player[0]->id); !!}
 
 			<div class="col-lg-2">
 				<div class="form-group">
 					{!! Form::label('filter', 'Filter:') !!}
-					{!! Form::select('filter', array(0 => 'No', 1 => 'Yes'), null, ['class' => 'form-control']) !!}
+					{!! Form::select('filter', array(0 => 'No', 1 => 'Yes'), 0, ['class' => 'form-control']) !!}
 				</div>
 			</div>
 
 			<div class="col-lg-2">
 				<div class="form-group">
 					{!! Form::label('playing', 'Playing:') !!}
-					{!! Form::select('playing', array(0 => 'No', 1 => 'Yes'), null, ['class' => 'form-control']) !!}
+					{!! Form::select('playing', array(0 => 'No', 1 => 'Yes'), 1, ['class' => 'form-control']) !!}
 				</div>
 			</div>
 
@@ -63,14 +65,14 @@
 			<div class="col-lg-2">
 				<div class="form-group">
 					{!! Form::label('mp_ot_filter', 'MP OT Filter:') !!}
-					{!! Form::text('mp_ot_filter', null, ['class' => 'form-control']) !!}
+					{!! Form::text('mp_ot_filter', 0, ['class' => 'form-control']) !!}
 				</div>
 			</div>
 
 			<div class="col-lg-2">
 				<div class="form-group">
 					{!! Form::label('dnp_games', 'DNP Games:') !!}
-					{!! Form::text('dnp_games', null, ['class' => 'form-control']) !!}
+					{!! Form::text('dnp_games', 0, ['class' => 'form-control']) !!}
 				</div>
 			</div>
 
@@ -82,7 +84,7 @@
 			</div>
 
 			<div class="col-lg-12"> 
-				{!! Form::submit('Edit Filter', ['class' => 'btn btn-primary']) !!}
+				{!! Form::submit('Create Filter', ['class' => 'btn btn-primary']) !!}
 			</div>
 
 		{!!	Form::close() !!}
