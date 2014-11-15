@@ -30,7 +30,7 @@
 			<div class="col-lg-2">
 				<div class="form-group">
 					{!! Form::label('filter', 'Filter:') !!}
-					{!! Form::select('filter', array(0 => 'No', 1 => 'Yes'), 0, ['class' => 'form-control']) !!}
+					{!! Form::select('filter', array(0 => 'No', 1 => 'Yes'), 1, ['class' => 'form-control']) !!}
 				</div>
 			</div>
 
