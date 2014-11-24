@@ -146,7 +146,7 @@ class DailyController {
         foreach ($players as $player) {
             if (isset($player->filter)) {
                 if ($player->filter->filter == 1) {
-                    if ($player->filter->fppg_source == 'fp cs' || $player->filter->fppg_source == 'mp cs') {
+                    if ($player->filter->fppg_source == 'fp cs' || $player->filter->fppg_source[0] == 'm') {
                         $playerStats[$player->player_id]['cs'] = getBoxScoreLinesForPlayer($startingSeasonId = 11, $player->player_id, $endDate);
                     }
                 }
@@ -178,11 +178,6 @@ class DailyController {
 
             $player = calculateFppg($player, $playerStats[$player->player_id]['all']);
 
-            if (isset($mpCs)) {
-                $player->fppg = $mpCs * $player->fppmPerGame;
-                $player->fppgWithVegasFilter = numFormat(($player->fppg * $player->vegas_filter) + $player->fppg);                
-            }
-
             // CV FPPG
 
             if ( !isset($player->cv) ) {
@@ -193,9 +188,27 @@ class DailyController {
 
             $player = calculateFppm($player, $playerStats[$player->player_id]['all']);
 
+            if ( isset($player->filter->fppm_source) ) {
+                if ($player->filter->fppm_source == 'cs') {
+                    $player = calculateFppm($player, $playerStats[$player->player_id]['cs']);
+                } 
+
+                if ( is_numeric($player->filter->fppm_source) ) {
+                    $player->fppmPerGame = $player->filter->fppm_source;
+                    $player->fppmPerGameWithVegasFilter = numFormat(($player->fppmPerGame * $player->vegas_filter) + $player->fppmPerGame);               
+                }
+            }
+
             // CV FPPM
 
             $player = calculateCvForFppm($player, $playerStats[$player->player_id]['all']);
+
+            // MP CS
+
+            if (isset($mpCs)) {
+                $player->fppg = $mpCs * $player->fppmPerGame;
+                $player->fppgWithVegasFilter = numFormat(($player->fppg * $player->vegas_filter) + $player->fppg);                
+            }
 
             // MP OT FILTER
 
