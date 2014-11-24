@@ -1,5 +1,27 @@
 <?php
 
+function testYo() {
+	dd('bob');
+}
+
+function calculateMpCs($gameLogs, $date) {
+	$totalGames = 0;
+	$totalMinutes = 0;
+
+	foreach ($gameLogs as $gameLog) {
+		if ($gameLog->season_id != 11) {
+			continue;
+		}
+
+		if ($gameLog->status == 'Played') {
+			$totalGames++;
+			$totalMinutes += $gameLog->mp;			
+		}
+	}
+
+	return $totalMinutes / $totalGames;
+}
+
 function calculateCorrelation($xArray, $yArray, $xVar, $yVar) {
 
 	$dataSets = [
