@@ -89,9 +89,9 @@
 								<th>Role</th>
 								<th>MP</th>
 								<th>OT</th>
-								<th>FGM-FGA</th>
-								<th>3PM-3PA</th>
-								<th>FTM-FTA</th>
+								<th>FG</th>
+								<th>3P</th>
+								<th>FT</th>
 								<th>ORB</th>
 								<th>DRB</th>
 								<th>TRB</th>
@@ -103,6 +103,7 @@
 								<th>PTS</th>
 								<th>USG</th>
 								<th>FD</th>
+								<th>FDPM</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -133,8 +134,9 @@
 								    	<td>{{ $row->pts }}</td>
 								    	<td>{{ $row->usg }}</td>
 								    	<td>{{ $row->pts_fd }}</td>
+								    	<td>{{ numFormat($row->pts_fd / $row->mp, 2) }}</td>
 								    @else
-								    	<td style="text-align: center" colspan="16">{{ $row->bs_status }}</td>
+								    	<td style="text-align: center" colspan="17">{{ $row->bs_status }}</td>
 								    @endif
 							    </tr>
 							@endforeach

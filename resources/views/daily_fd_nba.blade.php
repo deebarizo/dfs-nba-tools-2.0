@@ -27,16 +27,15 @@
 						<th>Name</th>
 						<th>Team</th>
 						<th>Opp</th>
+						<th>Line</th>
 						<th>Pos</th>
 						<th>Salary</th>
 						<th>VR</th>
 						<th>VR-1</th>
-						<th>CV</th>
-						<th>FPPM</th>
-						<th>CVPM</th>
-						<th>FPPM-1</th>
 						<th>FPPG</th>
 						<th>FPPG-1</th>
+						<th>FPPM</th>
+
 					<!--<th>ST</th>
 						<th>VST</th>
 						<th>VSOT</th> -->
@@ -52,16 +51,14 @@
 						    	<td><a target="_blank" href="/players/{{ $player->player_id }}">{{ $player->name }}</a> <a target="_blank" href="/daily_fd_filters/{{ $player->player_id }}/create"><span {!! $noFilter !!} class="glyphicon glyphicon-filter" aria-hidden="true"></span></a> <a target="_blank" href="/daily_fd_filters/{{ $player->player_id }}/edit">E</a></td>
 						    	<td>{{ $player->team_abbr }}</td>
 						    	<td>{{ $player->opp_team_abbr }}</td>
+						    	<td>{{ $player->vegas_score_opp_team - $player->vegas_score_team }}</td>
 						    	<td>{{ $player->position }}</td>
 						    	<td>{{ $player->salary }}</td>
 						    	<td>{{ $player->vr }}</td>
 						    	<td>{{ $player->vr_minus_1sd }}</td>
-						    	<td>{{ $player->cv }}</td>
-						    	<td>{{ $player->fppmPerGameWithVegasFilter }}</td>
-						    	<td>{{ $player->cvFppm }}</td>
-						    	<td>{{ $player->fppm_minus_1sd }}</td>
 						    	<td>{{ $player->fppgWithVegasFilter }}</td>
 						    	<td>{{ $player->fppg_minus_1sd }}</td>
+						    	<td>{{ $player->fppmPerGameWithVegasFilter }}</td>
 						    <!--<td>100</td>
 						    	<td>{{ $player->vegas_score_team }}</td>
 						    	<td>{{ $player->vegas_score_opp_team }}</td> -->
@@ -78,7 +75,7 @@
     		$('#daily').dataTable({
     			"scrollY": "600px",
     			"paging": false,
-    			"order": [[6, "desc"]]
+    			"order": [[7, "desc"]]
     		});
 		});
 	</script>

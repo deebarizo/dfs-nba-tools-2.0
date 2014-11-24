@@ -147,12 +147,12 @@ class DailyController {
             if (isset($player->filter)) {
                 if ($player->filter->filter == 1) {
                     if ( $player->filter->fppg_source == 'fp cs' || $player->filter->fppg_source[0] == 'm' || is_numeric($player->filter->fppg_source) ) {
-                        $playerStats[$player->player_id]['cs'] = getBoxScoreLinesForPlayer($startingSeasonId = 11, $player->player_id, $endDate);
+                        $playerStats[$player->player_id]['cs'] = getBoxScoreLinesForPlayer(11, $player->player_id, $endDate);
                     }
                 }
             }
 
-            $playerStats[$player->player_id]['all'] = getBoxScoreLinesForPlayer($startingSeasonId = 10, $player->player_id, $endDate);
+            $playerStats[$player->player_id]['all'] = getBoxScoreLinesForPlayer(10, $player->player_id, $endDate);
         }
 
         // calculate stats
@@ -223,12 +223,6 @@ class DailyController {
             if (isset($player->mp_mod)) {
                 $player->fppg = $player->mp_mod * $player->fppmPerGame;
                 $player->fppgWithVegasFilter = numFormat(($player->fppg * $player->vegas_filter) + $player->fppg);                
-            }
-
-            // MP OT FILTER
-
-            if ( isset($player->filter->mp_ot_filter) && $player->filter->mp_ot_filter > 0 ) {
-                $player->fppg -= ($player->fppmPerGame * $player->filter->mp_ot_filter * $player->vegas_filter) + ($player->fppmPerGame * $player->filter->mp_ot_filter);
             }
         }   
 

@@ -9,6 +9,23 @@ function calculateFppg($player, $gameLogs) {
 	    $totalFp += $gameLog->fd_score;
 	}
 
+    if ( isset($player->filter->mp_ot_filter) && $player->filter->mp_ot_filter > 0 ) {
+	    $totalFppm = 0;
+
+	    foreach ($gameLogs as $gameLog) {
+	        $totalFppm += $gameLog->fppm;
+	    }
+
+	    if ($gamesPlayed > 0) {
+	    	$fppmPerGame = numFormat($totalFppm / $gamesPlayed);
+	        $fppmPerGameWithVegasFilter = numFormat(($fppmPerGame * $player->vegas_filter) + $fppmPerGame);
+	    } else {
+	        $fppmPerGameWithVegasFilter = number_format(0, 2);
+	    }
+
+        $totalFp -= $fppmPerGameWithVegasFilter * $player->filter->mp_ot_filter;
+    }
+
 	if ($gamesPlayed > 0) {
 	    $player->fppg = numFormat($totalFp / $gamesPlayed);
 	    $player->fppgWithVegasFilter = numFormat( ($player->fppg * $player->vegas_filter) + $player->fppg );
