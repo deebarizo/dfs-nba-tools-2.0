@@ -134,7 +134,11 @@
 								    	<td>{{ $row->pts }}</td>
 								    	<td>{{ $row->usg }}</td>
 								    	<td>{{ $row->pts_fd }}</td>
-								    	<td>{{ numFormat($row->pts_fd / $row->mp, 2) }}</td>
+								    	@if ($row->mp != 0)
+									    	<td>{{ numFormat($row->pts_fd / $row->mp) }}</td>
+									   	@else
+									   		<td>0.00</td>
+									   	@endif
 								    @else
 								    	<td style="text-align: center" colspan="17">{{ $row->bs_status }}</td>
 								    @endif
