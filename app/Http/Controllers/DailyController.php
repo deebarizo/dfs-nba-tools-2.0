@@ -8,6 +8,7 @@ use App\BoxScoreLine;
 use App\PlayerPool;
 use App\PlayerFd;
 use App\DailyFdFilter;
+use App\TeamFilter;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\RunFDNBASalariesScraperRequest;
@@ -28,6 +29,8 @@ class DailyController {
 			$date = date('Y-m-d', time());
 		}
 
+        // fetch all players for the date
+
 		$players = DB::table('player_pools')
             ->join('players_fd', 'player_pools.id', '=', 'players_fd.player_pool_id')
             ->join('players', 'players_fd.player_id', '=', 'players.id')
@@ -41,6 +44,8 @@ class DailyController {
 
             return view('daily_fd_nba')->with('message', $message);                
         }
+
+        // match each player to a team id
 
         $teams = Team::all();
 
@@ -64,14 +69,7 @@ class DailyController {
 
         unset($player);
 
-        foreach ($players as $player) {
-			$playerStats[$player->player_id] = DB::table('box_score_lines')
-	            ->join('games', 'box_score_lines.game_id', '=', 'games.id')
-	            ->join('seasons', 'games.season_id', '=', 'seasons.id')
-	            ->select(DB::raw('*'))
-	            ->whereRaw('box_score_lines.status = "Played" AND seasons.id >= 10 AND player_id = '.$player->player_id)
-	            ->get();	        	
-        }
+        // fetch player filters
 
         $dailyFdFilters = DB::select('SELECT t1.* FROM daily_fd_filters AS t1
                                          JOIN (
@@ -83,11 +81,76 @@ class DailyController {
             foreach ($dailyFdFilters as $filter) {
                 if ($player->player_id == $filter->player_id) {
                     $player->filter = $filter;
+
+                    break;
                 }
             }
         }
 
         unset($player);
+
+        // fetch vegas scores
+
+        set_time_limit(0);
+
+        $client = new Client;
+
+        $vegasScores = scrapeForOdds($client, $date);
+
+        foreach ($players as &$player) {
+            foreach ($vegasScores as $vegasScore) {
+                if ($player->team_name == $vegasScore['team']) {
+                    $player->vegas_score_team = number_format(round($vegasScore['score'], 2), 2);
+                }
+
+                if ($player->opp_team_name == $vegasScore['team']) {
+                    $player->vegas_score_opp_team = number_format(round($vegasScore['score'], 2), 2);
+                }                
+            }
+
+            if (isset($player->vegas_score_team) === false || isset($player->vegas_score_opp_team) === false) {
+                echo 'error: no team match in SAO<br>';
+                echo $player->team_name.' vs '.$player->opp_team_name;
+                exit();
+            }
+        }
+
+        unset($player);
+
+        // fetch team filters and calculate vegas filter
+
+        $teamFilters = DB::select('SELECT t1.* FROM team_filters AS t1
+                                         JOIN (
+                                            SELECT team_id, MAX(created_at) AS latest FROM team_filters GROUP BY team_id
+                                         ) AS t2
+                                         ON t1.team_id = t2.team_id AND t1.created_at = t2.latest');
+
+        foreach ($players as &$player) {
+            foreach ($teamFilters as $teamFilter) {
+                if ($player->team_id == $teamFilter->team_id) {
+                    $player->team_ppg = $teamFilter->ppg;
+
+                    $player->vegas_filter = ($player->vegas_score_team - $player->team_ppg) / $player->team_ppg;
+
+                    break;
+                }
+            }
+        }
+
+        unset($player);
+
+        // fetch box score lines up to the date for each player
+
+        foreach ($players as $player) {
+            $playerStats[$player->player_id] = DB::table('box_score_lines')
+                ->join('games', 'box_score_lines.game_id', '=', 'games.id')
+                ->join('seasons', 'games.season_id', '=', 'seasons.id')
+                ->select(DB::raw('*'))
+                ->whereRaw('box_score_lines.status = "Played" AND seasons.id >= 10 AND player_id = '.$player->player_id.' AND games.date <= "'.$date.'"')
+                ->get();                
+        }
+
+        // translate box score lines to FD points including FD points per minute
 
         foreach ($playerStats as &$gameLogs) {
         	foreach ($gameLogs as &$gameLog) {
@@ -109,6 +172,8 @@ class DailyController {
 
         unset($gameLogs);
         unset($gameLog);
+
+        // calculate stats
 
         foreach ($players as &$player) {
         	$gamesPlayed = count($playerStats[$player->player_id]);
@@ -173,43 +238,26 @@ class DailyController {
         unset($player);
 
         foreach ($players as &$player) {
-            $player->vr = number_format(round($player->fppg / ($player->salary / 1000), 2), 2);
-            $player->vr_minus_1sd = number_format(round(($player->fppg - $player->sd) / ($player->salary / 1000), 2), 2);
+            $vrNoVegasFilter = $player->fppg / ($player->salary / 1000);
+            $player->vr = numFormat(($vrNoVegasFilter * $player->vegas_filter) + $vrNoVegasFilter);
 
-            $player->fppg_minus_1sd = number_format(round($player->fppg - $player->sd, 2), 2);
+            $vrMinus1NoVegasFilter = ($player->fppg - $player->sd) / ($player->salary / 1000);
+            $player->vr_minus_1sd = numFormat(($vrMinus1NoVegasFilter * $player->vegas_filter) + $vrMinus1NoVegasFilter);
 
-            $player->fppm_minus_1sd = number_format(round($player->fppmPerGame - $player->sdFppm, 2), 2);
+            $fppgMinus1NoVegasFilter = $player->fppg - $player->sd;
+            $player->fppg_minus_1sd = numFormat(($fppgMinus1NoVegasFilter * $player->vegas_filter) + $fppgMinus1NoVegasFilter);
+
+            $fppmMinus1NoVegasFilter = $player->fppmPerGame - $player->sdFppm;
+            $player->fppm_minus_1sd = numFormat(($fppmMinus1NoVegasFilter * $player->vegas_filter) + $fppmMinus1NoVegasFilter);
         }
 
         unset($player);
 
-        $client = new Client;
+        ddAll($players);
 
-        $vegasScores = scrapeForOdds($client, $date);
-
-        foreach ($players as &$player) {
-            foreach ($vegasScores as $vegasScore) {
-                if ($player->team_name == $vegasScore['team']) {
-                    $player->vegas_score_team = number_format(round($vegasScore['score'], 2), 2);
-                }
-
-                if ($player->opp_team_name == $vegasScore['team']) {
-                    $player->vegas_score_opp_team = number_format(round($vegasScore['score'], 2), 2);
-                }                
-            }
-
-            if (isset($player->vegas_score_team) === false || isset($player->vegas_score_opp_team) === false) {
-                echo 'error: no team match in SAO<br>';
-                echo $player->team_name.' vs '.$player->opp_team_name;
-                exit();
-            }
-        }
-
-        unset($player);
+        // fetch DFS time period (example: all day, early, late)
 
         $timePeriod = $players[0]->time_period;
-
-        # ddAll($players);
 
 		return view('daily_fd_nba', compact('date', 'timePeriod', 'players'));
 	}
