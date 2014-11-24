@@ -1,7 +1,7 @@
 <?php
 
 function calculateFppg($player, $gameLogs) {
-	$gamesPlayed = count($gameLogs);
+	$gamesPlayed = count($gameLogs) - ( isset($player->filter->dnp_games) ? $player->filter->dnp_games : 0 );
 
 	$totalFp = 0;
 
@@ -11,7 +11,7 @@ function calculateFppg($player, $gameLogs) {
 
 	if ($gamesPlayed > 0) {
 	    $player->fppg = numFormat($totalFp / $gamesPlayed);
-	    # $player->fppgWithVegasFilter = numFormat(($player->fppg * $player->vegas_filter) + $player->fppg);
+	    $player->fppgWithVegasFilter = numFormat(($player->fppg * $player->vegas_filter) + $player->fppg);
 	} else {
 	    $player->fppg = numFormat(0, 2);
 	    $player->fppgWithVegasFilter = numFormat(0, 2);
@@ -21,7 +21,7 @@ function calculateFppg($player, $gameLogs) {
 }
 
 function calculateCvForFppg($player, $gameLogs) {
-	$gamesPlayed = count($gameLogs);
+	$gamesPlayed = count($gameLogs) - ( isset($player->filter->dnp_games) ? $player->filter->dnp_games : 0 );
 
 	$totalFp = 0;
 
@@ -53,7 +53,7 @@ function calculateCvForFppg($player, $gameLogs) {
 }
 
 function calculateFppm($player, $gameLogs) {
-	$gamesPlayed = count($gameLogs);
+	$gamesPlayed = count($gameLogs) - ( isset($player->filter->dnp_games) ? $player->filter->dnp_games : 0 );
     
     $totalFppm = 0;
 
@@ -63,7 +63,7 @@ function calculateFppm($player, $gameLogs) {
 
     if ($gamesPlayed > 0) {
         $player->fppmPerGame = numFormat($totalFppm / $gamesPlayed);
-        # $player->fppmPerGameWithVegasFilter = numFormat(($player->fppmPerGame * $player->vegas_filter) + $player->fppmPerGame);
+        $player->fppmPerGameWithVegasFilter = numFormat(($player->fppmPerGame * $player->vegas_filter) + $player->fppmPerGame);
     } else {
         $player->fppmPerGame = number_format(0, 2);
         $player->fppmPerGameWithVegasFilter = number_format(0, 2);
@@ -73,7 +73,7 @@ function calculateFppm($player, $gameLogs) {
 }
 
 function calculateCvForFppm($player, $gameLogs) {
-	$gamesPlayed = count($gameLogs);
+	$gamesPlayed = count($gameLogs) - ( isset($player->filter->dnp_games) ? $player->filter->dnp_games : 0 );
     
     $totalFppm = 0;
 

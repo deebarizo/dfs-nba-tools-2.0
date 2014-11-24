@@ -90,7 +90,7 @@ class DailyController {
         unset($player);
 
         // fetch vegas scores
-/*
+
         set_time_limit(0);
 
         $client = new Client;
@@ -138,7 +138,7 @@ class DailyController {
         }
 
         unset($player);
-*/
+
         // fetch box score lines up to the date for each player
 
         $endDate = $date;
@@ -174,32 +174,46 @@ class DailyController {
                 } 
             }
 
+            // FPPG
+
             $player = calculateFppg($player, $playerStats[$player->player_id]['all']);
-
-            if ( !isset($player->sd) ) {
-                $player = calculateCvForFppg($player, $playerStats[$player->player_id]['all']);
-            }
-
-            $player = calculateFppm($player, $playerStats[$player->player_id]['all']);
-
-            $player = calculateCvForFppm($player, $playerStats[$player->player_id]['all']);
 
             if (isset($mpCs)) {
                 $player->fppg = $mpCs * $player->fppmPerGame;
-                # $player->fppgWithVegasFilter = numFormat(($player->fppg * $player->vegas_filter) + $player->fppg);                
+                $player->fppgWithVegasFilter = numFormat(($player->fppg * $player->vegas_filter) + $player->fppg);                
+            }
+
+            // CV FPPG
+
+            if ( !isset($player->cv) ) {
+                $player = calculateCvForFppg($player, $playerStats[$player->player_id]['all']);
+            }
+
+            // FPPM
+
+            $player = calculateFppm($player, $playerStats[$player->player_id]['all']);
+
+            // CV FPPM
+
+            $player = calculateCvForFppm($player, $playerStats[$player->player_id]['all']);
+
+            // MP OT FILTER
+
+            if ( isset($player->filter->mp_ot_filter) && $player->filter->mp_ot_filter > 0 ) {
+                $player->fppg -= ($player->fppmPerGame * $player->filter->mp_ot_filter * $player->vegas_filter) + ($player->fppmPerGame * $player->filter->mp_ot_filter);
             }
         }   
 
         unset($player);
 
         foreach ($players as &$player) {
-            # $player->vr = $player->fppgWithVegasFilter / ($player->salary / 1000);
+            $player->vr = $player->fppgWithVegasFilter / ($player->salary / 1000);
 
-            # $player->vr_minus_1sd = ($player->fppgWithVegasFilter - $player->sd) / ($player->salary / 1000);
+            $player->vr_minus_1sd = ($player->fppgWithVegasFilter - $player->sd) / ($player->salary / 1000);
 
-            # $player->fppg_minus_1sd = $player->fppgWithVegasFilter - $player->sd;
+            $player->fppg_minus_1sd = $player->fppgWithVegasFilter - $player->sd;
 
-            # $player->fppm_minus_1sd = $player->fppmPerGameWithVegasFilter - $player->sdFppm;
+            $player->fppm_minus_1sd = $player->fppmPerGameWithVegasFilter - $player->sdFppm;
         }
 
         unset($player);
