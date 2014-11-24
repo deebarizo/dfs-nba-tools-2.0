@@ -23,6 +23,7 @@
 		},
 		"files": [
 			"app/Helpers/calculations.php",
+			"app/Helpers/database.php",
 			"app/Helpers/general.php",
 			"app/Helpers/name_fixes.php",
 			"app/Helpers/scrapers.php"

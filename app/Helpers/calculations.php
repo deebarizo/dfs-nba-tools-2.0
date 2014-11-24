@@ -1,9 +1,5 @@
 <?php
 
-function testYo() {
-	dd('bob');
-}
-
 function calculateMpCs($gameLogs, $date) {
 	$totalGames = 0;
 	$totalMinutes = 0;
@@ -13,10 +9,8 @@ function calculateMpCs($gameLogs, $date) {
 			continue;
 		}
 
-		if ($gameLog->status == 'Played') {
-			$totalGames++;
-			$totalMinutes += $gameLog->mp;			
-		}
+		$totalGames++;
+		$totalMinutes += $gameLog->mp;			
 	}
 
 	return $totalMinutes / $totalGames;
