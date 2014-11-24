@@ -4,9 +4,9 @@
 
 	<div class="row">
 		<div class="col-lg-12">
-			<h2>Players ({{ $name }}</a>)</h2>
+			<h2>Players ({{ $playerInfo['name'] }}</a>)</h2>
 
-			<p><strong>Links:</strong> <a target="_blank" href="http://www.google.com/search?q={{ $name }}+Rotoworld">RT</a> | <a target="_blank" href="http://www.google.com/search?q={{ $name }}+Basketball+Reference">BR</a> | <a target="_blank" href="http://www.google.com/search?q={{ $name }}+ESPN">ESPN</a></p>
+			<p><strong>Links:</strong> <a target="_blank" href="http://www.google.com/search?q={{ $playerInfo['name'] }}+Rotoworld">RT</a> | <a target="_blank" href="http://www.google.com/search?q={{ $playerInfo['name'] }}+Basketball+Reference">BR</a> | <a target="_blank" href="http://www.google.com/search?q={{ $playerInfo['name'] }}+ESPN">ESPN</a> -- <a target="_blank" href="/daily_fd_filters/{{ $playerInfo['player_id'] }}/create"><span class="glyphicon glyphicon-filter" aria-hidden="true"></span></a> <a target="_blank" href="/daily_fd_filters/{{ $playerInfo['player_id'] }}/edit">E</a></p>
 		</div>
 	</div>
 

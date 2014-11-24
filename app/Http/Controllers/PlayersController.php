@@ -139,13 +139,14 @@ class PlayersController {
             }
         }
 
-        # ddAll($overviews);
+        // Player Info
 
-        // Player Name
+        $playerInfo['name'] = $statsPlayed['all'][0]->name;
+        $playerInfo['player_id'] = $statsPlayed['all'][0]->player_id;
 
-        $name = $statsPlayed['all'][0]->name;
+        # ddAll($statsPlayed);
 
-        return view('players', compact('stats', 'overviews', 'name'));
+        return view('players', compact('stats', 'overviews', 'playerInfo'));
 	}
 
 	private function modStats($row, $teams) {
@@ -169,13 +170,15 @@ class PlayersController {
     				   ($row->tov * -1);
         $row->pts_fd = number_format(round($row->pts_fd, 2), 2);
 
-        if ($row->pts_fd != 0) {
+        if ($row->mp != 0) {
             $row->fppm = $row->pts_fd / $row->mp;
         } else {
             $row->fppm = 0;
         }
 
     	$row->date_pm = preg_replace("/-/", "", $row->date);
+
+        # ddAll($row);
 
     	return $row;
 	}

@@ -21,7 +21,12 @@
 		}
 	</style>
 
-	<title>DFS NBA Tools</title>
+	<?php 
+		if (isset($name)) { $titleTag = $name.' | '; }
+		else { $titleTag = ''; }
+	?>
+
+	<title>{{ $titleTag }}DFS NBA Tools</title>
 </head>
 <body>
 	<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
