@@ -145,10 +145,10 @@ class DailyController {
 
         foreach ($players as $player) {
             if (isset($player->filter)) {
-                if ($player->filter->filter == 1 && $player->filter->fppg_source == 'fp cs') {
-                    $playerStats[$player->player_id]['cs'] = getBoxScoreLinesForPlayer($startingSeasonId = 11, $player->player_id, $endDate);
-
-                    continue;
+                if ($player->filter->filter == 1) {
+                    if ($player->filter->fppg_source == 'fp cs' || $player->filter->fppg_source == 'mp cs') {
+                        $playerStats[$player->player_id]['cs'] = getBoxScoreLinesForPlayer($startingSeasonId = 11, $player->player_id, $endDate);
+                    }
                 }
             }
 
@@ -158,84 +158,35 @@ class DailyController {
         // calculate stats
 
         foreach ($players as &$player) {
-            if ( !isset($player->filter) !! ( isset($player->filter) && $player->filter->filter == 0) ) {
-
-                calculateCV($player);
-
-                $gamesPlayed = count($playerStats[$player->player_id]['all']);
-
-                // CV for Fppg
-
-                $totalFp = 0;
-
-                foreach ($playerStats[$player->player_id] as $gameLog) {
-                    $totalFp += $gameLog->fd_score;
-                }
-
-                if ($gamesPlayed > 0) {
-                    $player->fppg = numFormat($totalFp / $gamesPlayed);
-                    # $player->fppgWithVegasFilter = numFormat(($player->fppg * $player->vegas_filter) + $player->fppg);
-                } else {
-                    $player->fppg = numFormat(0, 2);
-                    $player->fppgWithVegasFilter = numFormat(0, 2);
-                }
-
-                $totalSquaredDiff = 0; // For SD
-
-                foreach ($playerStats[$player->player_id] as $gameLog) {
-                    $totalSquaredDiff = $totalSquaredDiff + pow($gameLog->fd_score - $player->fppg, 2);
-                }
-
-                if ($player->fppg != 0) {
-                    $player->sd = sqrt($totalSquaredDiff / $gamesPlayed);
-                    $player->cv = number_format(round(($player->sd / $player->fppg) * 100, 2), 2);
-                } else {
-                    $player->sd = number_format(0, 2);
-                    $player->cv = number_format(0, 2);
-                }
-
-                // CV for Fppm
-
-                $totalFppm = 0;
-
-                foreach ($playerStats[$player->player_id] as $gameLog) {
-                    $totalFppm += $gameLog->fppm;
-                }
-
-                if ($gamesPlayed > 0) {
-                    $player->fppmPerGame = numFormat($totalFppm / $gamesPlayed);
-                    # $player->fppmPerGameWithVegasFilter = numFormat(($player->fppmPerGame * $player->vegas_filter) + $player->fppmPerGame);
-                } else {
-                    $player->fppmPerGame = number_format(0, 2);
-                    $player->fppmPerGameWithVegasFilter = number_format(0, 2);
-                }
-
-                $totalSquaredDiff = 0; // For SD
-
-                foreach ($playerStats[$player->player_id] as $gameLog) {
-                    $totalSquaredDiff = $totalSquaredDiff + pow($gameLog->fppm - $player->fppmPerGame, 2);
-                }
-
-                if ($player->fppmPerGame != 0) {
-                    $player->sdFppm = sqrt($totalSquaredDiff / $gamesPlayed);
-                    $player->cvFppm = number_format(round(($player->sdFppm / $player->fppmPerGame) * 100, 2), 2);
-                } else {
-                    $player->sdFppm = 0;
-                    $player->cvFppm = number_format(0, 2);
-                }                
-            }
-
             if (isset($player->filter)) {
-                if ($player->filter->filter == 1 && $player->filter->fppg_source[0] == 'm' && $player->filter->fppg_source[1] == 'p') {
-                    if ($player->filter->fppg_source == 'mp cs') {
-                        if (is_null($player->filter->fppm_source)) {
-                            $mpCs = calculateMpCs($playerStats[$player->player_id], $date);
+                if ($player->filter->filter == 1) {
+                    if ($player->filter->cv_source == 'cs') {
+                        $player = calculateCvForFppg($player, $playerStats[$player->player_id]['cs']);
+                    }
 
-                            $player->fppg = $mpCs * $player->fppmPerGame;
-                            # $player->fppgWithVegasFilter = numFormat(($player->fppg * $player->vegas_filter) + $player->fppg);
+                    if ($player->filter->fppg_source[0] == 'm' && $player->filter->fppg_source[1] == 'p') {
+                        if ($player->filter->fppg_source == 'mp cs') {
+                            if (is_null($player->filter->fppm_source)) {
+                                $mpCs = calculateMpCs($playerStats[$player->player_id]['cs'], $date);
+                            }
                         }
                     }
-                }
+                } 
+            }
+
+            $player = calculateFppg($player, $playerStats[$player->player_id]['all']);
+
+            if ( !isset($player->sd) ) {
+                $player = calculateCvForFppg($player, $playerStats[$player->player_id]['all']);
+            }
+
+            $player = calculateFppm($player, $playerStats[$player->player_id]['all']);
+
+            $player = calculateCvForFppm($player, $playerStats[$player->player_id]['all']);
+
+            if (isset($mpCs)) {
+                $player->fppg = $mpCs * $player->fppmPerGame;
+                # $player->fppgWithVegasFilter = numFormat(($player->fppg * $player->vegas_filter) + $player->fppg);                
             }
         }   
 
@@ -253,7 +204,7 @@ class DailyController {
 
         unset($player);
 
-        ddAll($playerStats);
+        ddAll($players);
 
         // fetch DFS time period (example: all day, early, late)
 

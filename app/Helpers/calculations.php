@@ -1,5 +1,109 @@
 <?php
 
+function calculateFppg($player, $gameLogs) {
+	$gamesPlayed = count($gameLogs);
+
+	$totalFp = 0;
+
+	foreach ($gameLogs as $gameLog) {
+	    $totalFp += $gameLog->fd_score;
+	}
+
+	if ($gamesPlayed > 0) {
+	    $player->fppg = numFormat($totalFp / $gamesPlayed);
+	    # $player->fppgWithVegasFilter = numFormat(($player->fppg * $player->vegas_filter) + $player->fppg);
+	} else {
+	    $player->fppg = numFormat(0, 2);
+	    $player->fppgWithVegasFilter = numFormat(0, 2);
+	}
+
+	return $player;
+}
+
+function calculateCvForFppg($player, $gameLogs) {
+	$gamesPlayed = count($gameLogs);
+
+	$totalFp = 0;
+
+	foreach ($gameLogs as $gameLog) {
+	    $totalFp += $gameLog->fd_score;
+	}
+
+	if ($gamesPlayed > 0) {
+	    $fppg = numFormat($totalFp / $gamesPlayed);
+	} else {
+	    $fppg = numFormat(0, 2);
+	}
+
+	$totalSquaredDiff = 0; // For SD
+
+	foreach ($gameLogs as $gameLog) {
+	    $totalSquaredDiff = $totalSquaredDiff + pow($gameLog->fd_score - $fppg, 2);
+	}
+
+	if ($fppg != 0) {
+	    $player->sd = sqrt($totalSquaredDiff / $gamesPlayed);
+	    $player->cv = numFormat( ($player->sd / $fppg) * 100 );
+	} else {
+	    $player->sd = number_format(0, 2);
+	    $player->cv = number_format(0, 2);
+	}
+
+	return $player;
+}
+
+function calculateFppm($player, $gameLogs) {
+	$gamesPlayed = count($gameLogs);
+    
+    $totalFppm = 0;
+
+    foreach ($gameLogs as $gameLog) {
+        $totalFppm += $gameLog->fppm;
+    }
+
+    if ($gamesPlayed > 0) {
+        $player->fppmPerGame = numFormat($totalFppm / $gamesPlayed);
+        # $player->fppmPerGameWithVegasFilter = numFormat(($player->fppmPerGame * $player->vegas_filter) + $player->fppmPerGame);
+    } else {
+        $player->fppmPerGame = number_format(0, 2);
+        $player->fppmPerGameWithVegasFilter = number_format(0, 2);
+    }
+
+    return $player;
+}
+
+function calculateCvForFppm($player, $gameLogs) {
+	$gamesPlayed = count($gameLogs);
+    
+    $totalFppm = 0;
+
+    foreach ($gameLogs as $gameLog) {
+        $totalFppm += $gameLog->fppm;
+    }
+
+    if ($gamesPlayed > 0) {
+        $fppmPerGame = numFormat($totalFppm / $gamesPlayed);
+    } else {
+        $fppmPerGame = number_format(0, 2);
+    }
+
+    $totalSquaredDiff = 0; // For SD
+
+    foreach ($gameLogs as $gameLog) {
+        $totalSquaredDiff = $totalSquaredDiff + pow($gameLog->fppm - $fppmPerGame, 2);
+    }
+
+    if ($fppmPerGame != 0) {
+        $player->sdFppm = sqrt($totalSquaredDiff / $gamesPlayed);
+        $player->cvFppm = number_format(round(($player->sdFppm / $fppmPerGame) * 100, 2), 2);
+    } else {
+        $player->sdFppm = 0;
+        $player->cvFppm = number_format(0, 2);
+    }   
+
+    return $player;
+}
+
 function calculateMpCs($gameLogs, $date) {
 	$totalGames = 0;
 	$totalMinutes = 0;
