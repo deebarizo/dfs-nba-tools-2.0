@@ -11,7 +11,7 @@ function calculateFppg($player, $gameLogs) {
 
 	if ($gamesPlayed > 0) {
 	    $player->fppg = numFormat($totalFp / $gamesPlayed);
-	    $player->fppgWithVegasFilter = numFormat(($player->fppg * $player->vegas_filter) + $player->fppg);
+	    $player->fppgWithVegasFilter = numFormat( ($player->fppg * $player->vegas_filter) + $player->fppg );
 	} else {
 	    $player->fppg = numFormat(0, 2);
 	    $player->fppgWithVegasFilter = numFormat(0, 2);
@@ -104,15 +104,11 @@ function calculateCvForFppm($player, $gameLogs) {
     return $player;
 }
 
-function calculateMpCs($gameLogs, $date) {
+function calculateMpMod($gameLogs, $date) {
 	$totalGames = 0;
 	$totalMinutes = 0;
 
 	foreach ($gameLogs as $gameLog) {
-		if ($gameLog->season_id != 11) {
-			continue;
-		}
-
 		$totalGames++;
 		$totalMinutes += $gameLog->mp;			
 	}

@@ -49,7 +49,7 @@
 							<?php $noFilter = ''; if (isset($player->filter->playing) === false) { $noFilter = 'style="color: red"'; } ?>
 
 						    <tr>
-						    	<td><a target="_blank" href="/players/{{ $player->player_id }}">{{ $player->name }}</a> <a target="_blank" href="/daily_fd_filters/{{ $player->player_id }}/create"><span {!! $noFilter !!} class="glyphicon glyphicon-filter" aria-hidden="true"></span></a></td>
+						    	<td><a target="_blank" href="/players/{{ $player->player_id }}">{{ $player->name }}</a> <a target="_blank" href="/daily_fd_filters/{{ $player->player_id }}/create"><span {!! $noFilter !!} class="glyphicon glyphicon-filter" aria-hidden="true"></span></a> <a target="_blank" href="/daily_fd_filters/{{ $player->player_id }}/edit">E</a></td>
 						    	<td>{{ $player->team_abbr }}</td>
 						    	<td>{{ $player->opp_team_abbr }}</td>
 						    	<td>{{ $player->position }}</td>
