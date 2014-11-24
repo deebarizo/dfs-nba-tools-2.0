@@ -187,9 +187,11 @@ class DailyController {
         	}
 
         	if ($gamesPlayed > 0) {
-        		$player->fppg = number_format(round($totalFp / $gamesPlayed, 2), 2);
+        		$player->fppg = numFormat($totalFp / $gamesPlayed);
+                $player->fppgWithVegasFilter = numFormat(($player->fppg * $player->vegas_filter) + $player->fppg);
         	} else {
-        		$player->fppg = number_format(0, 2);
+        		$player->fppg = numFormat(0, 2);
+                $player->fppgWithVegasFilter = numFormat(0,2);
         	}
 
         	$totalSquaredDiff = 0; // For SD
@@ -215,9 +217,11 @@ class DailyController {
             }
 
             if ($gamesPlayed > 0) {
-                $player->fppmPerGame = number_format(round($totalFppm / $gamesPlayed, 2), 2);
+                $player->fppmPerGame = numFormat($totalFppm / $gamesPlayed);
+                $player->fppmPerGameWithVegasFilter = numFormat(($player->fppmPerGame * $player->vegas_filter) + $player->fppmPerGame);
             } else {
                 $player->fppmPerGame = number_format(0, 2);
+                $player->fppmPerGameWithVegasFilter = number_format(0, 2);
             }
 
             $totalSquaredDiff = 0; // For SD
@@ -238,17 +242,13 @@ class DailyController {
         unset($player);
 
         foreach ($players as &$player) {
-            $vrNoVegasFilter = $player->fppg / ($player->salary / 1000);
-            $player->vr = numFormat(($vrNoVegasFilter * $player->vegas_filter) + $vrNoVegasFilter);
+            $player->vr = $player->fppgWithVegasFilter / ($player->salary / 1000);
 
-            $vrMinus1NoVegasFilter = ($player->fppg - $player->sd) / ($player->salary / 1000);
-            $player->vr_minus_1sd = numFormat(($vrMinus1NoVegasFilter * $player->vegas_filter) + $vrMinus1NoVegasFilter);
+            $player->vr_minus_1sd = ($player->fppgWithVegasFilter - $player->sd) / ($player->salary / 1000);
 
-            $fppgMinus1NoVegasFilter = $player->fppg - $player->sd;
-            $player->fppg_minus_1sd = numFormat(($fppgMinus1NoVegasFilter * $player->vegas_filter) + $fppgMinus1NoVegasFilter);
+            $player->fppg_minus_1sd = $player->fppgWithVegasFilter - $player->sd;
 
-            $fppmMinus1NoVegasFilter = $player->fppmPerGame - $player->sdFppm;
-            $player->fppm_minus_1sd = numFormat(($fppmMinus1NoVegasFilter * $player->vegas_filter) + $fppmMinus1NoVegasFilter);
+            $player->fppm_minus_1sd = $player->fppmPerGameWithVegasFilter - $player->sdFppm;
         }
 
         unset($player);

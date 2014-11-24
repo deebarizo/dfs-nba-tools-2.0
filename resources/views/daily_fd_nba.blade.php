@@ -57,10 +57,10 @@
 						    	<td>{{ $player->vr }}</td>
 						    	<td>{{ $player->vr_minus_1sd }}</td>
 						    	<td>{{ $player->cv }}</td>
-						    	<td>{{ $player->fppmPerGame }}</td>
+						    	<td>{{ $player->fppmPerGameWithVegasFilter }}</td>
 						    	<td>{{ $player->cvFppm }}</td>
 						    	<td>{{ $player->fppm_minus_1sd }}</td>
-						    	<td>{{ $player->fppg }}</td>
+						    	<td>{{ $player->fppgWithVegasFilter }}</td>
 						    	<td>{{ $player->fppg_minus_1sd }}</td>
 						    <!--<td>100</td>
 						    	<td>{{ $player->vegas_score_team }}</td>
