@@ -10,6 +10,9 @@ function fd_name_fix($rawName) {
 
 		case 'Luc Richard Mbah a Moute':
 			return 'Luc Mbah a Moute';
+
+		case 'Dennis Schroeder':
+			return 'Dennis Schröder';
 		
 		default:
 			return $rawName;

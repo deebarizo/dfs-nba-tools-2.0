@@ -4,9 +4,17 @@
 
 	<div class="row">
 		<div class="col-lg-12">
+			<?php
+				$noFilterSpan = ''; 
+
+				if (!isset($player->filter)) { 
+					$noFilterSpan = 'style="color: red"'; 
+				} 
+			?>
+
 			<h2>Players ({{ $playerInfo['name'] }}</a>)</h2>
 
-			<p><strong>Links:</strong> <a target="_blank" href="http://www.google.com/search?q={{ $playerInfo['name'] }}+Rotoworld">RT</a> | <a target="_blank" href="http://www.google.com/search?q={{ $playerInfo['name'] }}+Basketball+Reference">BR</a> | <a target="_blank" href="http://www.google.com/search?q={{ $playerInfo['name'] }}+ESPN">ESPN</a> -- <a target="_blank" href="/daily_fd_filters/{{ $playerInfo['player_id'] }}/create"><span class="glyphicon glyphicon-filter" aria-hidden="true"></span></a> <a target="_blank" href="/daily_fd_filters/{{ $playerInfo['player_id'] }}/edit">E</a></p>
+			<p><strong>Links:</strong> <a target="_blank" href="http://www.google.com/search?q={{ $playerInfo['name'] }}+Rotoworld">RT</a> | <a target="_blank" href="http://www.google.com/search?q={{ $playerInfo['name'] }}+Basketball+Reference">BR</a> | <a target="_blank" href="http://www.google.com/search?q={{ $playerInfo['name'] }}+ESPN">ESPN</a> -- <a target="_blank" href="/daily_fd_filters/{{ $playerInfo['player_id'] }}/create"><span {!! $noFilterSpan !!} class="glyphicon glyphicon-filter" aria-hidden="true"></span></a> <a target="_blank" href="/daily_fd_filters/{{ $playerInfo['player_id'] }}/edit">E</a></p>
 		</div>
 	</div>
 
@@ -20,15 +28,31 @@
 				    <th>FPPG</th>
 				    <th>FPPM</th>
 				    <th>CV</th>
+				    <th>MP OT</th>
+				    <th>DNP</th>
 				    <th>Notes</th>
 			  	</tr>
-			  	<tr>
-				    <td>{{ $player->filter->filter }}</td>
-				    <td>{{ $player->filter->fppg_source }}</td>
-				    <td>{{ $player->filter->fppm_source }}</td>
-				    <td>{{ $player->filter->cv_source }}</td>
-				    <td>{{ $player->filter->notes }}</td>
-			  	</tr>
+			  	@if (isset($player->filter))
+				  	<tr>
+					    <td>{{ $player->filter->filter }}</td>
+					    <td>{{ $player->filter->fppg_source }}</td>
+					    <td>{{ $player->filter->fppm_source }}</td>
+					    <td>{{ $player->filter->cv_source }}</td>
+					    <td>{{ $player->filter->mp_ot_filter }}</td>
+					    <td>{{ $player->filter->dnp_games }}</td>
+					    <td>{{ $player->filter->notes }}</td>
+				  	</tr>
+			  	@else
+				  	<tr>
+					    <td>None</td>
+					    <td>None</td>
+					    <td>None</td>
+					    <td>None</td>
+					    <td>None</td>
+					    <td>None</td>
+					    <td>None</td>
+				  	</tr>
+			  	@endif
 			</table>	
 		</div>
 	</div>
