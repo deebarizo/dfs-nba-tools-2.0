@@ -42,11 +42,11 @@
 							
 							<?php 
 								$noFilterQtip = 'class="player-filter"';
-								$noFilterSpan = ''; 
+								$spanFilterLink = ''; 
 	
 								if (!isset($player->filter->playing)) { 
 									$noFilterQtip = '';
-									$noFilterSpan = 'style="color: red"'; 
+									$spanFilterLink = 'style="color: red"'; 
 								} 
 
 								if (isset($player->vegas_score_team)) {
@@ -54,13 +54,17 @@
 								} else {
 									$line = 'None';
 								}
+
+								if (isset($player->filter) && !is_null($player->filter->notes)) {
+									$spanFilterLink = 'style="color: blueviolet"';
+								}
 							?>
 
 						    <tr>
 						    	<td>
 						    		<a target="_blank" href="/players/{{ $player->player_id }}">{{ $player->name }}</a> 
 						    		<a {!! $noFilterQtip !!} target="_blank" href="/daily_fd_filters/{{ $player->player_id }}/create">
-						    			<span {!! $noFilterSpan !!} class="glyphicon glyphicon-filter" aria-hidden="true"></span>
+						    			<span {!! $spanFilterLink !!} class="glyphicon glyphicon-filter" aria-hidden="true"></span>
 					    			</a> 
 					    			@if (isset($player->filter))
 					    			<div class="player-filter-tooltip">
