@@ -12,6 +12,29 @@
 
 	<div class="row">
 		<div class="col-lg-12">
+			<h3>Current Player Filter</h3>
+
+			<table class="table table-striped table-bordered table-hover table-condensed">
+			  	<tr>
+				    <th>Filter</th>
+				    <th>FPPG</th>
+				    <th>FPPM</th>
+				    <th>CV</th>
+				    <th>Notes</th>
+			  	</tr>
+			  	<tr>
+				    <td>{{ $player->filter->filter }}</td>
+				    <td>{{ $player->filter->fppg_source }}</td>
+				    <td>{{ $player->filter->fppm_source }}</td>
+				    <td>{{ $player->filter->cv_source }}</td>
+				    <td>{{ $player->filter->notes }}</td>
+			  	</tr>
+			</table>	
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-lg-12">
 			<h3>All</h3>
 
 			<h4>Overview</h4>

@@ -139,6 +139,24 @@ class PlayersController {
             }
         }
 
+        // Player Filter
+
+        $player = new Player;
+
+        $dailyFdFilters = DB::select('SELECT t1.* FROM daily_fd_filters AS t1
+                                         JOIN (
+                                            SELECT player_id, MAX(created_at) AS latest FROM daily_fd_filters GROUP BY player_id
+                                         ) AS t2
+                                         ON t1.player_id = t2.player_id AND t1.created_at = t2.latest');
+
+        foreach ($dailyFdFilters as $filter) {
+            if ($statsPlayed['all'][0]->player_id == $filter->player_id) {
+                $player->filter = $filter;
+
+                break;
+            }
+        }
+
         // Player Info
 
         $playerInfo['name'] = $statsPlayed['all'][0]->name;
@@ -146,7 +164,7 @@ class PlayersController {
 
         # ddAll($statsPlayed);
 
-        return view('players', compact('stats', 'overviews', 'playerInfo'));
+        return view('players', compact('stats', 'overviews', 'playerInfo', 'player'));
 	}
 
 	private function modStats($row, $teams) {
