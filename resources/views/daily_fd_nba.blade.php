@@ -56,28 +56,26 @@
 						    		<a {!! $noFilterQtip !!} target="_blank" href="/daily_fd_filters/{{ $player->player_id }}/create">
 						    			<span {!! $noFilterSpan !!} class="glyphicon glyphicon-filter" aria-hidden="true"></span>
 					    			</a> 
+					    			@if ( isset($player->filter) )
 					    			<div class="player-filter-tooltip">
-										<table>
+										<table class="player-filter-tooltip-table">
 										  	<tr>
-											    <th>Test</th>
-											    <th></th>
-											    <th></th>
-											    <th></th>
-											    <th></th>
-											    <th></th>
-											    <th></th>
+											    <th>Filter</th>
+											    <th>FPPG</th>
+											    <th>FPPM</th>
+											    <th>CV</th>
+											    <th>Notes</th>
 										  	</tr>
 										  	<tr>
-											    <td>Test</td>
-											    <td></td>
-											    <td></td>
-											    <td></td>
-											    <td></td>
-											    <td></td>
-											    <td></td>
+											    <td>{{ $player->filter->filter }}</td>
+											    <td>{{ $player->filter->fppg_source }}</td>
+											    <td>{{ $player->filter->fppm_source }}</td>
+											    <td>{{ $player->filter->cv_source }}</td>
+											    <td>{{ $player->filter->notes }}</td>
 										  	</tr>
 										</table>
 									</div>
+									@endif
 					    			<a target="_blank" href="/daily_fd_filters/{{ $player->player_id }}/edit">E</a>
 				    			</td>
 						    	<td>{{ $player->team_abbr }}</td>

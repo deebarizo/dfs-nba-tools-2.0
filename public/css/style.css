@@ -1,0 +1,30 @@
+/* GENERAL */
+
+body { 
+	padding-top: 50px; 
+}
+
+hr {
+	border-color: #333;
+}
+
+/* PLAYER FILTER TOOLTIPS */
+
+.player-filter-tooltip {
+	display: none;
+}
+
+.player-filter-tooltip-table th 
+{
+	background-color: #FFEBCC;
+	border: 1px solid #DDDDDD;
+	padding: 4px;
+	text-align: left;
+}
+
+.player-filter-tooltip-table td
+{
+	padding: 4px;
+	text-align: left;
+	border: 1px solid #DDDDDD;
+}
