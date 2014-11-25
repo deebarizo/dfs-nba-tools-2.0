@@ -192,8 +192,12 @@ class DailyController {
                         }
                     }
 
-                    if ( is_numeric($player->filter->fppg_source) )  {
+                    if (is_numeric($player->filter->fppg_source))  {
                         $player->mp_mod = $player->filter->fppg_source;
+                    }
+
+                    if (is_numeric($player->filter->cv_source)) {
+                        $player->cv = $player->filter->cv_source;
                     }
                 } 
             }
@@ -244,6 +248,8 @@ class DailyController {
             $player->vr = numFormat( $player->fppgWithVegasFilter / ($player->salary / 1000) );
 
             $player->vr_minus_1sd = numFormat( ($player->fppgWithVegasFilter - ($player->fppgWithVegasFilter * ($player->cv / 100) )  ) / ($player->salary / 1000) );
+
+            $player->fppgMinus1WithVegasFilter = numFormat($player->vr_minus_1sd * ($player->salary / 1000), 2);
         }
 
         unset($player);

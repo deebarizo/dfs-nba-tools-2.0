@@ -33,6 +33,7 @@
 						<th>VR</th>
 						<th>VR-1</th>
 						<th>FPPG</th>
+						<th>FPPG-1</th>
 						<th>FPPM</th>
 					</tr>
 				</thead>
@@ -96,6 +97,7 @@
 						    	<td>{{ $player->vr }}</td>
 						    	<td>{{ $player->vr_minus_1sd }}</td>
 						    	<td>{{ $player->fppgWithVegasFilter }}</td>
+						    	<td>{{ $player->fppgMinus1WithVegasFilter }}</td>
 						    	<td>{{ $player->fppmPerGameWithVegasFilter }}</td>
 						    </tr>
 
