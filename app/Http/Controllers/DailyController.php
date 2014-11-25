@@ -168,6 +168,10 @@ class DailyController {
                         $player = calculateCvForFppg($player, $playerStats[$player->player_id]['cs']);
                     }
 
+                    if ($player->filter->cv_source == 'fppm cs') {
+                        $player = calculateCvForFppm($player, $playerStats[$player->player_id]['cs']);
+                    }
+
                     if ($player->filter->fppg_source == 'mp cs') {
                         $player->mp_mod = calculateMpMod($playerStats[$player->player_id]['cs'], $date);
 
@@ -185,12 +189,6 @@ class DailyController {
             // FPPG
             if ( !isset($player->fppgWithVegasFilter) ) {
                 $player = calculateFppg($player, $playerStats[$player->player_id]['all']);
-            }
-
-            // CV FPPG
-
-            if ( !isset($player->cv) ) {
-                $player = calculateCvForFppg($player, $playerStats[$player->player_id]['all']);
             }
 
             // FPPM
@@ -214,9 +212,11 @@ class DailyController {
                 }
             }
 
-            // CV FPPM
+            // CV
 
-            $player = calculateCvForFppm($player, $playerStats[$player->player_id]['all']);
+            if ( !isset($player->cv) ) {
+                $player = calculateCvForFppg($player, $playerStats[$player->player_id]['all']);
+            }
 
             // MP MOD
 
@@ -231,11 +231,7 @@ class DailyController {
         foreach ($players as &$player) {
             $player->vr = numFormat( $player->fppgWithVegasFilter / ($player->salary / 1000) );
 
-            $player->vr_minus_1sd = numFormat( ($player->fppgWithVegasFilter - $player->sd) / ($player->salary / 1000) );
-
-            $player->fppg_minus_1sd = numFormat($player->fppgWithVegasFilter - $player->sd);
-
-            $player->fppm_minus_1sd = numFormat($player->fppmPerGameWithVegasFilter - $player->sdFppm);
+            $player->vr_minus_1sd = numFormat( ($player->fppgWithVegasFilter - ($player->fppgWithVegasFilter * ($player->cv / 100) )  ) / ($player->salary / 1000) );
         }
 
         unset($player);
