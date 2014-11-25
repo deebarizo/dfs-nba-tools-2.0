@@ -131,6 +131,7 @@
 								<th>HS</th>
 								<th>Road</th>
 								<th>RS</th>
+								<th>Line</th>
 								<th>BR</th>
 								<th>PM</th>
 								<th>Role</th>
@@ -161,6 +162,7 @@
 							    	<td>{{ $row->home_team_score }}</td>
 							    	<td>{{ $row->road_team_abbr_br }}</td>
 							    	<td>{{ $row->road_team_score }}</td>
+							    	<td>{{ $row->line }}</td>
 							    	<td><a target="_blank" href="{!! $row->link_br !!}">BR</a></td>
 							    	<td><a target="_blank" href="http://popcornmachine.net/gf?date={!! $row->date_pm !!}&game={!! $row->road_team_abbr_pm !!}{!! $row->home_team_abbr_pm !!}">PM</a></td>
 							    	<td>{{ $row->role }}</td>
@@ -187,7 +189,7 @@
 									   		<td>0.00</td>
 									   	@endif
 								    @else
-								    	<td style="text-align: center" colspan="17">{{ $row->bs_status }}</td>
+								    	<td style="text-align: center" colspan="18">{{ $row->bs_status }}</td>
 								    @endif
 							    </tr>
 							@endforeach

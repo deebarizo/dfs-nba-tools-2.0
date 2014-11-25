@@ -33,7 +33,7 @@ class PlayersController {
                 ->join('games', 'box_score_lines.game_id', '=', 'games.id')
                 ->join('seasons', 'games.season_id', '=', 'seasons.id')
                 ->join('players', 'box_score_lines.player_id', '=', 'players.id')
-                ->select('*', 'box_score_lines.status as bs_status')
+                ->selectRaw('*, box_score_lines.status as bs_status, (vegas_road_team_score - vegas_home_team_score) as line')
                 ->whereRaw('players.id = '.$player_id.' AND seasons.end_year = "'.$endYear.'"')
                 ->orderBy('date', 'desc')
                 ->get();
@@ -55,7 +55,7 @@ class PlayersController {
             ->join('games', 'box_score_lines.game_id', '=', 'games.id')
             ->join('seasons', 'games.season_id', '=', 'seasons.id')
             ->join('players', 'box_score_lines.player_id', '=', 'players.id')
-            ->select('*', 'box_score_lines.status as bs_status')
+            ->selectRaw('*, box_score_lines.status as bs_status, (vegas_road_team_score - vegas_home_team_score) as line')
             ->whereRaw('players.id = '.$player_id.' AND seasons.end_year >= 2014 AND box_score_lines.status = "Played"')
             ->orderBy('date', 'desc')
             ->get();
@@ -65,7 +65,7 @@ class PlayersController {
                 ->join('games', 'box_score_lines.game_id', '=', 'games.id')
                 ->join('seasons', 'games.season_id', '=', 'seasons.id')
                 ->join('players', 'box_score_lines.player_id', '=', 'players.id')
-                ->select('*', 'box_score_lines.status as bs_status')
+                ->selectRaw('*, box_score_lines.status as bs_status, (vegas_road_team_score - vegas_home_team_score) as line')
                 ->whereRaw('players.id = '.$player_id.' AND seasons.end_year = "'.$endYear.'" AND box_score_lines.status = "Played"')
                 ->orderBy('date', 'desc')
                 ->get();
@@ -162,7 +162,7 @@ class PlayersController {
         $playerInfo['name'] = $statsPlayed['all'][0]->name;
         $playerInfo['player_id'] = $statsPlayed['all'][0]->player_id;
 
-        # ddAll($statsPlayed);
+        # ddAll($stats);
 
         return view('players', compact('stats', 'overviews', 'playerInfo', 'player'));
 	}

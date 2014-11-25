@@ -65,7 +65,7 @@
 			<div class="col-lg-2">
 				<div class="form-group">
 					{!! Form::label('mp_ot_filter', 'MP OT Filter:') !!}
-					{!! Form::text('mp_ot_filter', 0, ['class' => 'form-control']) !!}
+					{!! Form::text('mp_ot_filter', $mpOtFilter, ['class' => 'form-control']) !!}
 				</div>
 			</div>
 
