@@ -44,10 +44,16 @@
 								$noFilterQtip = 'class="player-filter"';
 								$noFilterSpan = ''; 
 	
-								if (isset($player->filter->playing) === false) { 
+								if (!isset($player->filter->playing)) { 
 									$noFilterQtip = '';
 									$noFilterSpan = 'style="color: red"'; 
 								} 
+
+								if (isset($player->vegas_score_team)) {
+									$line = $player->vegas_score_opp_team - $player->vegas_score_team;
+								} else {
+									$line = 'None';
+								}
 							?>
 
 						    <tr>
@@ -56,7 +62,7 @@
 						    		<a {!! $noFilterQtip !!} target="_blank" href="/daily_fd_filters/{{ $player->player_id }}/create">
 						    			<span {!! $noFilterSpan !!} class="glyphicon glyphicon-filter" aria-hidden="true"></span>
 					    			</a> 
-					    			@if ( isset($player->filter) )
+					    			@if (isset($player->filter))
 					    			<div class="player-filter-tooltip">
 										<table class="player-filter-tooltip-table">
 										  	<tr>
@@ -80,7 +86,7 @@
 				    			</td>
 						    	<td>{{ $player->team_abbr }}</td>
 						    	<td>{{ $player->opp_team_abbr }}</td>
-						    	<td>{{ $player->vegas_score_opp_team - $player->vegas_score_team }}</td>
+						    	<td>{{ $line }}</td>
 						    	<td>{{ $player->position }}</td>
 						    	<td>{{ $player->salary }}</td>
 						    	<td>{{ $player->vr }}</td>
@@ -88,6 +94,9 @@
 						    	<td>{{ $player->fppgWithVegasFilter }}</td>
 						    	<td>{{ $player->fppmPerGameWithVegasFilter }}</td>
 						    </tr>
+
+						    <?php unset($line); ?>
+
 						@endif
 					@endforeach
 				</tbody>

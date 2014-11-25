@@ -97,47 +97,59 @@ class DailyController {
 
         $vegasScores = scrapeForOdds($client, $date);
 
-        foreach ($players as &$player) {
-            foreach ($vegasScores as $vegasScore) {
-                if ($player->team_name == $vegasScore['team']) {
-                    $player->vegas_score_team = number_format(round($vegasScore['score'], 2), 2);
+        if ($vegasScores != 'No lines yet.') {
+            foreach ($players as &$player) {
+                foreach ($vegasScores as $vegasScore) {
+                    if ($player->team_name == $vegasScore['team']) {
+                        $player->vegas_score_team = number_format(round($vegasScore['score'], 2), 2);
+                    }
+
+                    if ($player->opp_team_name == $vegasScore['team']) {
+                        $player->vegas_score_opp_team = number_format(round($vegasScore['score'], 2), 2);
+                    }                
                 }
 
-                if ($player->opp_team_name == $vegasScore['team']) {
-                    $player->vegas_score_opp_team = number_format(round($vegasScore['score'], 2), 2);
-                }                
-            }
-
-            if (isset($player->vegas_score_team) === false || isset($player->vegas_score_opp_team) === false) {
-                echo 'error: no team match in SAO<br>';
-                echo $player->team_name.' vs '.$player->opp_team_name;
-                exit();
-            }
-        }
-
-        unset($player);
-
-        // fetch team filters and calculate vegas filter
-
-        $teamFilters = DB::select('SELECT t1.* FROM team_filters AS t1
-                                         JOIN (
-                                            SELECT team_id, MAX(created_at) AS latest FROM team_filters GROUP BY team_id
-                                         ) AS t2
-                                         ON t1.team_id = t2.team_id AND t1.created_at = t2.latest');
-
-        foreach ($players as &$player) {
-            foreach ($teamFilters as $teamFilter) {
-                if ($player->team_id == $teamFilter->team_id) {
-                    $player->team_ppg = $teamFilter->ppg;
-
-                    $player->vegas_filter = ($player->vegas_score_team - $player->team_ppg) / $player->team_ppg;
-
-                    break;
+                if (isset($player->vegas_score_team) === false || isset($player->vegas_score_opp_team) === false) {
+                    echo 'error: no team match in SAO<br>';
+                    echo $player->team_name.' vs '.$player->opp_team_name;
+                    exit();
                 }
             }
+
+            unset($player);
+
+            // fetch team filters and calculate vegas filter
+
+            $teamFilters = DB::select('SELECT t1.* FROM team_filters AS t1
+                                             JOIN (
+                                                SELECT team_id, MAX(created_at) AS latest FROM team_filters GROUP BY team_id
+                                             ) AS t2
+                                             ON t1.team_id = t2.team_id AND t1.created_at = t2.latest');
+
+            foreach ($players as &$player) {
+                foreach ($teamFilters as $teamFilter) {
+                    if ($player->team_id == $teamFilter->team_id) {
+                        $player->team_ppg = $teamFilter->ppg;
+
+                        $player->vegas_filter = ($player->vegas_score_team - $player->team_ppg) / $player->team_ppg;
+
+                        break;
+                    }
+                }
+            }
+
+            unset($player); 
+
+            $areThereVegasScores = true;       
         }
 
-        unset($player);
+        if ($vegasScores == 'No lines yet.') {
+            foreach ($players as &$player) {   
+                $player->vegas_filter = 0;
+            }
+
+            $areThereVegasScores = false;
+        }
 
         // fetch box score lines up to the date for each player
 

@@ -10,7 +10,11 @@ function scrapeForOdds($client, $date) {
 
 	for ($i = 0; $i < $rowCountSAO; $i++) { // nth-child does not start with a zero index
 		$vegasScores[$i]['team'] = $crawlerSAO->filter('div#nba')->nextAll()->filter('tr.team > td.name')->eq($i)->text();
+
 		$vegasScores[$i]['line'] = $crawlerSAO->filter('div#nba')->nextAll()->filter('tr.team > td.currentline')->eq($i)->text();
+		if ($vegasScores[$i]['line'] == '') {
+			return 'No lines yet.';
+		}
 	}
 
 	foreach ($vegasScores as &$vegasScore) {
