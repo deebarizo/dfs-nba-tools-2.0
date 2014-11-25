@@ -6,15 +6,15 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
 	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.4/css/jquery.dataTables.css">
-	<link rel="stylesheet" href="css/jquery.qtip.min.css">
-	<link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="/css/jquery.qtip.min.css">
+	<link rel="stylesheet" href="/css/style.css">
 
 	<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 	<script src="http://code.highcharts.com/highcharts.js"></script>
 	<script src="https://cdn.datatables.net/1.10.4/js/jquery.dataTables.min.js"></script>
 	<script src="https://cdn.datatables.net/plug-ins/9dcbecd42ad/integration/bootstrap/3/dataTables.bootstrap.js"></script>
-	<script src="js/jquery.qtip.min.js"></script>
+	<script src="/js/jquery.qtip.min.js"></script>
 
 	<?php 
 		if (isset($name)) { $titleTag = $name.' | '; }
