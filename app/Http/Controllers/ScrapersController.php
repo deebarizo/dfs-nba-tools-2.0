@@ -194,7 +194,7 @@ class ScrapersController {
 					$boxScoreLine->tov = $playerData['tov'];
 					$boxScoreLine->pf = $playerData['pf'];
 					$boxScoreLine->pts = $playerData['pts'];
-					$boxScoreLine->plus_minus = $playerData['plus_minus'];
+					# $boxScoreLine->plus_minus = $playerData['plus_minus'];
 					$boxScoreLine->orb_percent = $playerData['orb_percent'];
 					$boxScoreLine->drb_percent = $playerData['drb_percent'];
 					$boxScoreLine->trb_percent = $playerData['trb_percent'];
