@@ -11,44 +11,44 @@ function getPlayersByPostion($date) {
         ->orderBy('vr_minus1', 'desc')
         ->get();
 
-    $players['pg'] = DB::table('player_pools')
+    $players['PG'] = DB::table('player_pools')
         ->join('players_fd', 'player_pools.id', '=', 'players_fd.player_pool_id')
         ->join('players', 'players_fd.player_id', '=', 'players.id')
         ->select('*')
-        ->whereRaw('player_pools.date = "'.$date.'" AND players_fd.position = "pg"')
-        ->orderBy('vr_minus1', 'desc')
+        ->whereRaw('player_pools.date = "'.$date.'" AND players_fd.position = "PG"')
+        ->orderBy('fppg_minus1', 'desc')
         ->get();
 
-    $players['sg'] = DB::table('player_pools')
+    $players['SG'] = DB::table('player_pools')
         ->join('players_fd', 'player_pools.id', '=', 'players_fd.player_pool_id')
         ->join('players', 'players_fd.player_id', '=', 'players.id')
         ->select('*')
-        ->whereRaw('player_pools.date = "'.$date.'" AND players_fd.position = "sg"')
-        ->orderBy('vr_minus1', 'desc')
+        ->whereRaw('player_pools.date = "'.$date.'" AND players_fd.position = "SG"')
+        ->orderBy('fppg_minus1', 'desc')
         ->get();
 
-    $players['sf'] = DB::table('player_pools')
+    $players['SF'] = DB::table('player_pools')
         ->join('players_fd', 'player_pools.id', '=', 'players_fd.player_pool_id')
         ->join('players', 'players_fd.player_id', '=', 'players.id')
         ->select('*')
-        ->whereRaw('player_pools.date = "'.$date.'" AND players_fd.position = "sf"')
-        ->orderBy('vr_minus1', 'desc')
+        ->whereRaw('player_pools.date = "'.$date.'" AND players_fd.position = "SF"')
+        ->orderBy('fppg_minus1', 'desc')
         ->get();
 
-    $players['pf'] = DB::table('player_pools')
+    $players['PF'] = DB::table('player_pools')
         ->join('players_fd', 'player_pools.id', '=', 'players_fd.player_pool_id')
         ->join('players', 'players_fd.player_id', '=', 'players.id')
         ->select('*')
-        ->whereRaw('player_pools.date = "'.$date.'" AND players_fd.position = "pf"')
-        ->orderBy('vr_minus1', 'desc')
+        ->whereRaw('player_pools.date = "'.$date.'" AND players_fd.position = "PF"')
+        ->orderBy('fppg_minus1', 'desc')
         ->get();
 
-    $players['c'] = DB::table('player_pools')
+    $players['C'] = DB::table('player_pools')
         ->join('players_fd', 'player_pools.id', '=', 'players_fd.player_pool_id')
         ->join('players', 'players_fd.player_id', '=', 'players.id')
         ->select('*')
-        ->whereRaw('player_pools.date = "'.$date.'" AND players_fd.position = "c"')
-        ->orderBy('vr_minus1', 'desc')
+        ->whereRaw('player_pools.date = "'.$date.'" AND players_fd.position = "C"')
+        ->orderBy('fppg_minus1', 'desc')
         ->get();	
 
     return $players;

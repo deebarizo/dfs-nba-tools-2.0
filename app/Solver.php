@@ -15,6 +15,10 @@ class Solver {
 
 			# ddAll($algorithmOrders);
 
+			for ($i=0; $i < $firstPlayerIndex; $i++) { 
+				unset($players['all'][$i]); 
+			}
+
 			foreach ($algorithmOrders as $order) {
 				$lineup = array();
 				$avgSalaryLeft = 0;
@@ -48,6 +52,59 @@ class Solver {
 						continue;
 					}
 
+					$skippedOne = false;
+
+					if ($nthPlayerInLineup == 9) {
+						$position = $this->figureOutLastPosition($lineup);
+
+						# ddAll($avgSalaryLeft);
+						# ddAll($players[$position]);
+
+						foreach ($players[$position] as $playerIndex => &$player) {
+							if ($player->salary > $avgSalaryLeft) {
+								continue;
+							}
+
+							foreach ($lineup as $rosterSpot) {
+								if ($player->player_id == $rosterSpot->player_id) {
+									continue;
+								}
+							}
+
+							if ($firstOrSecond == 1 && !$skippedOne) {
+								unset($lineup[$nthPlayerInLineup]);
+								unset($player);
+
+								$skippedOne = true;
+
+								continue;
+							}
+
+							foreach ($players['all'] as $value) {
+								if ($player->player_id == $value->player_id) {
+									list($players[$position], $lineup) = 
+										$this->addPlayertoLineup($players[$position], 
+																 $players[$position][$playerIndex], 
+																 $playerIndex,
+																 $nthPlayerInLineup,
+																 $lineup);
+
+									break;						
+								}
+							}
+
+							if(count($lineup) != 9) {
+								continue;
+							}
+
+							break;
+						}
+
+						unset($player);
+
+						break;
+					}
+
 					foreach ($players['all'] as $playerIndex => &$player) {
 						if ($salaryToggle == 'lower') {
 							if ($player->salary > $avgSalaryLeft) {
@@ -77,16 +134,28 @@ class Solver {
 							continue;							
 						}
 
-						$avgSalaryLeft = (60000 - $lineup[$nthPlayerInLineup]->salary) / (9 - $nthPlayerInLineup);
+						if ($firstOrSecond == 1 && !$skippedOne) {
+							unset($lineup[$nthPlayerInLineup]);
+							unset($player);
+
+							$skippedOne = true;
+
+							continue;
+						}
+
+						$avgSalaryLeft = $this->calculateAvgSalaryLeft($lineup);
+
+						if ($avgSalaryLeft < 3500) {
+							unset($lineup[$nthPlayerInLineup]);
+							unset($player);
+
+							continue;							
+						}
 
 						if ($avgSalaryLeft <= 6700) {
 							$salaryToggle = 'lower';
 						} else {
 							$salaryToggle = 'higher';
-						}
-
-						if ($nthPlayerInLineup == 3) {
-							ddAll($lineup);
 						}
 
 						break;
@@ -106,11 +175,17 @@ class Solver {
 				$lineup['salary_total'] = $salaryTotal;
 				$lineup['fppg_minus1_total'] = $fppgMinus1Total;
 
-				ddAll($lineup);	
+				$lineups[] = $lineup;	
+
+				unset($lineup);
+
+				$players = $originalPlayers;
 			}
+
+			$players = $originalPlayers;
 		}
 
-
+		ddAll($lineups);
 
 		return $lineups;
 	}
@@ -122,6 +197,37 @@ class Solver {
 
 		return array($players, $lineup);
 	}	
+
+	private function figureOutLastPosition($lineup) {
+		$maxPositions['PG'] = 2;
+		$maxPositions['SG'] = 2;
+		$maxPositions['SF'] = 2;
+		$maxPositions['PF'] = 2;
+		$maxPositions['C'] = 1;
+
+		foreach ($lineup as $rosterSpot) {
+			$maxPositions[$rosterSpot->position]--;
+		}
+
+		foreach ($maxPositions as $position => $numPlayers) {
+			if ($numPlayers == 1) {
+				return $position;
+			}	
+		}
+	}
+
+	private function calculateAvgSalaryLeft($lineup) {
+		$totalSalaryUsed = 0;
+		$rosterSpotCount = 0;
+
+		foreach ($lineup as $rosterSpot) {
+			$totalSalaryUsed += $rosterSpot->salary;
+
+			$rosterSpotCount++;
+		}
+
+		return (60000 - $totalSalaryUsed) / (9 - $rosterSpotCount);
+	}
 
 	private function checkForMaxPositions($lineup) {
 		$maxPositions['PG'] = 2;
