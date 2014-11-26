@@ -254,7 +254,30 @@ class DailyController {
 
         unset($player);
 
-        ddAll($players);
+        # ddAll($players);
+
+        // update database table
+
+        $dbPlayers = DB::table('player_pools')
+            ->join('players_fd', 'player_pools.id', '=', 'players_fd.player_pool_id')
+            ->join('players', 'players_fd.player_id', '=', 'players.id')
+            ->select('*')
+            ->whereRaw('player_pools.date = "'.$date.'"')
+            ->get();    
+
+        foreach ($players as $player) {
+            foreach ($dbPlayers as $dbPlayer) {
+                if ($player->player_id == $dbPlayer->player_id) {
+                    if ($player->vr_minus_1sd != $dbPlayer->vr_minus1) {
+                        DB::table('players_fd')
+                            ->whereRaw('player_id = '.$player->player_id.' AND player_pool_id = '.$player->player_pool_id)
+                            ->update(array('vr_minus1' => $player->vr_minus_1sd, 'fppg_minus1' => $player->fppgMinus1WithVegasFilter));
+
+                        break;
+                    }
+                }
+            }      
+        }
 
         // fetch DFS time period (example: all day, early, late)
 
