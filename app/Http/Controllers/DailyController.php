@@ -254,7 +254,7 @@ class DailyController {
 
         unset($player);
 
-        # ddAll($players);
+        ddAll($players);
 
         // fetch DFS time period (example: all day, early, late)
 
