@@ -233,7 +233,7 @@ class Solver {
 
 		unset($lineup);
 
-		ddAll($lineups);
+		# ddAll($lineups);
 
 		return $lineups;
 	}

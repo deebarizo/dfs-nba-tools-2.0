@@ -235,7 +235,7 @@ function scrapeBoxLineScoreBR($rowContents, $players, $game, $location, $teamID,
 	if (is_numeric($dnpCheck[0]) === false) {
 		$rowContents[$location][$i]['status'] = $dnpCheck;
 
-		for ($n=1; $n <= 21; $n++) { 
+		for ($n=1; $n <= 20; $n++) { 
 			if (isset($basicStats[$n]) && $n != 1) {
 				$rowContents[$location][$i][$basicStats[$n]] = 0;
 			} elseif ($n === 1) { // player name
@@ -249,7 +249,7 @@ function scrapeBoxLineScoreBR($rowContents, $players, $game, $location, $teamID,
 	} else {
 		$rowContents[$location][$i]['status'] = 'Played';
 
-		for ($n=1; $n <= 21; $n++) { 
+		for ($n=1; $n <= 20; $n++) { 
 			if (isset($basicStats[$n]) and $n != 2) {
 				$rowContents[$location][$i][$basicStats[$n]] = $crawlerBR->filter('table#'.$abbrBR.'_basic > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->text();
 			} elseif (isset($basicStats[$n]) and $n == 2) {
