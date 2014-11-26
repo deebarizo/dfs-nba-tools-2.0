@@ -35,6 +35,9 @@ $router->get('/', function() {
 	return View::make('pages/home');
 });
 
+$router->get('solver_fd_nba', 'SolverFdNbaController@solverFdNba');
+$router->get('solver_fd_nba/{date}', 'SolverFdNbaController@solverFdNba');
+
 $router->resource('daily_fd_filters', 'DailyFdFiltersController', ['except' => ['create']]);
 $router->get('daily_fd_filters/{player_id}/create', 'DailyFdFiltersController@create');
 
