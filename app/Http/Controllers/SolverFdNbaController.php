@@ -36,7 +36,11 @@ class SolverFdNbaController {
 
         $lineups = $solver->buildFdNbaLineups($players);
 
-        ddAll($lineups);
+        $timePeriod = $lineups[0][1]->time_period;
+
+        # ddAll($lineups);
+
+        return view('solver_fd_nba', compact('date', 'timePeriod', 'lineups'));
 	}
 
 }

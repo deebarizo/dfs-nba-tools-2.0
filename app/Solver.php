@@ -227,9 +227,59 @@ class Solver {
 
 		array_multisort($fppg_minus1_total, SORT_DESC, $lineups);
 
+		foreach ($lineups as &$lineup) {
+			$lineup = $this->reorderLineupByPositionAndFPPG($lineup);
+		}
+
+		unset($lineup);
+
 		ddAll($lineups);
 
 		return $lineups;
+	}
+
+	private function reorderLineupByPositionAndFPPG($lineup) {
+		$dupLineup = $lineup;
+
+		$lineup = array();
+
+		# ddAll($lineup);
+
+		$positions = [1 => 'PG', 
+					  2 => 'SG', 
+					  3 => 'SF', 
+					  4 => 'PF', 
+					  5 => 'C'];
+
+		$count = 0;
+
+		foreach ($positions as $key =>$position) {
+			foreach ($dupLineup as $key2 => $dupRosterSpot) {
+				if (is_numeric($key2)) {
+					if ($position == $dupRosterSpot->position) {
+						$index = $count++;
+
+						$lineup[$index] = $dupRosterSpot;
+						$lineup[$index]->position_number = $key;
+					}					
+				}
+			}	
+		}
+
+		foreach ($lineup as $key => $rosterSpot) {
+			if (is_numeric($key)) {
+				$positionNumber[$key] = $rosterSpot->position_number;
+				$fppg_minus1[$key] = $rosterSpot->fppg_minus1;
+			}
+		}
+
+		array_multisort($positionNumber, SORT_ASC, $fppg_minus1, SORT_DESC, $lineup);
+
+		$lineup['salary_total'] = $dupLineup['salary_total'];
+		$lineup['fppg_minus1_total'] = $dupLineup['fppg_minus1_total'];
+		$lineup['hash_total'] = $dupLineup['hash_total'];
+
+		return $lineup;
 	}
 
 	private function addPlayertoLineup($players, $player, $playerIndex, $nthPlayerInLineup, $lineup) {

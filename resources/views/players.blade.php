@@ -23,36 +23,40 @@
 			<h3>Current Player Filter</h3>
 
 			<table class="table table-striped table-bordered table-hover table-condensed">
-			  	<tr>
-				    <th>Filter</th>
-				    <th>FPPG</th>
-				    <th>FPPM</th>
-				    <th>CV</th>
-				    <th>MP OT</th>
-				    <th>DNP</th>
-				    <th>Notes</th>
-			  	</tr>
-			  	@if (isset($player->filter))
+			  	<thead>
 				  	<tr>
-					    <td>{{ $player->filter->filter }}</td>
-					    <td>{{ $player->filter->fppg_source }}</td>
-					    <td>{{ $player->filter->fppm_source }}</td>
-					    <td>{{ $player->filter->cv_source }}</td>
-					    <td>{{ $player->filter->mp_ot_filter }}</td>
-					    <td>{{ $player->filter->dnp_games }}</td>
-					    <td>{{ $player->filter->notes }}</td>
+					    <th>Filter</th>
+					    <th>FPPG</th>
+					    <th>FPPM</th>
+					    <th>CV</th>
+					    <th>MP OT</th>
+					    <th>DNP</th>
+					    <th>Notes</th>
 				  	</tr>
-			  	@else
-				  	<tr>
-					    <td>None</td>
-					    <td>None</td>
-					    <td>None</td>
-					    <td>None</td>
-					    <td>None</td>
-					    <td>None</td>
-					    <td>None</td>
-				  	</tr>
-			  	@endif
+				</thead>
+				<tbody>
+				  	@if (isset($player->filter))
+					  	<tr>
+						    <td>{{ $player->filter->filter }}</td>
+						    <td>{{ $player->filter->fppg_source }}</td>
+						    <td>{{ $player->filter->fppm_source }}</td>
+						    <td>{{ $player->filter->cv_source }}</td>
+						    <td>{{ $player->filter->mp_ot_filter }}</td>
+						    <td>{{ $player->filter->dnp_games }}</td>
+						    <td>{{ $player->filter->notes }}</td>
+					  	</tr>
+				  	@else
+					  	<tr>
+						    <td>None</td>
+						    <td>None</td>
+						    <td>None</td>
+						    <td>None</td>
+						    <td>None</td>
+						    <td>None</td>
+						    <td>None</td>
+					  	</tr>
+				  	@endif
+			  	</tbody>
 			</table>	
 		</div>
 	</div>
