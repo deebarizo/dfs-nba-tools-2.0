@@ -49,7 +49,42 @@ function getPlayersByPostion($date) {
         ->select('*')
         ->whereRaw('player_pools.date = "'.$date.'" AND players_fd.position = "C"')
         ->orderBy('fppg_minus1', 'desc')
-        ->get();	
+        ->get();
+
+    $dailyFdFilters = DB::select('SELECT t1.* FROM daily_fd_filters AS t1
+                                     JOIN (
+                                        SELECT player_id, MAX(created_at) AS latest FROM daily_fd_filters GROUP BY player_id
+                                     ) AS t2
+                                     ON t1.player_id = t2.player_id AND t1.created_at = t2.latest');
+
+    foreach ($players as &$position) {
+        foreach ($position as $key => &$player) {
+            foreach ($dailyFdFilters as $filter) {
+                if ($player->player_id == $filter->player_id) {
+                    if ($filter->playing == 0) {
+                        unset($position[$key]);
+
+                        break;
+                    }
+
+                    $player->filter = $filter;
+
+                    break;
+                }
+            }
+        }
+    }
+
+    unset($position);
+    unset($player);	
+
+    foreach ($players as &$position) {
+        $position = array_values($position);    
+    }
+
+    unset($position);
+
+    # ddAll($players);
 
     return $players;
 }

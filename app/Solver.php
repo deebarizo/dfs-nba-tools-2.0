@@ -10,7 +10,7 @@ class Solver {
 	public function buildFdNbaLineups($players) {
 		$originalPlayers = $players;
 
-		for ($firstPlayerIndex = 0; $firstPlayerIndex <= 8; $firstPlayerIndex++) { 
+		for ($firstPlayerIndex = 0; $firstPlayerIndex < 10; $firstPlayerIndex++) { 
 			$algorithmOrders = $this->setAlgorithmOrders($firstPlayerIndex);
 
 			# ddAll($algorithmOrders);
@@ -166,24 +166,66 @@ class Solver {
 
 				$salaryTotal = 0;
 				$fppgMinus1Total = 0;
+				$hashTotal = 0;
 
 				foreach ($lineup as $rosterSpot) {
 					$salaryTotal += $rosterSpot->salary;
 					$fppgMinus1Total += $rosterSpot->fppg_minus1;
+					$hashTotal += $rosterSpot->player_id +
+										$rosterSpot->salary +
+										$rosterSpot->team_id +
+										$rosterSpot->opp_team_id +
+										$rosterSpot->vr_minus1 +
+										$rosterSpot->fppg_minus1;
 				}
 
 				$lineup['salary_total'] = $salaryTotal;
 				$lineup['fppg_minus1_total'] = $fppgMinus1Total;
+				$lineup['hash_total'] = $hashTotal;
 
 				$lineups[] = $lineup;	
 
 				unset($lineup);
 
 				$players = $originalPlayers;
+
+				for ($i=0; $i < $firstPlayerIndex; $i++) { 
+					unset($players['all'][$i]); 
+				}
 			}
 
 			$players = $originalPlayers;
 		}
+
+		// remove duplicate lineups
+
+		foreach ($lineups as $lineup) {
+			$hashTotals[] = $lineup['hash_total'];
+		}
+
+		$hashTotals = array_unique($hashTotals);
+
+		foreach ($hashTotals as $hashTotal) {
+			$count = 0;
+
+			foreach ($lineups as $key => $lineup) {
+				if ($hashTotal == $lineup['hash_total']) {
+					$count++;
+
+					if ($count > 1) {
+						unset($lineups[$key]);
+					}
+				}
+			}
+		}
+
+		// sort lineups by FPPG-1
+
+		foreach ($lineups as $key => $lineup) {
+			$fppg_minus1_total[$key] = $lineup['fppg_minus1_total'];
+		}
+
+		array_multisort($fppg_minus1_total, SORT_DESC, $lineups);
 
 		ddAll($lineups);
 
