@@ -9,6 +9,7 @@ use App\PlayerPool;
 use App\PlayerFd;
 use App\DailyFdFilter;
 use App\TeamFilter;
+use App\Solver;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\RunFDNBASalariesScraperRequest;
@@ -29,16 +30,15 @@ class SolverFdNbaController {
 			$date = date('Y-m-d', time());
 		}
 
-        // fetch all players for the date
-
-		$players = DB::table('player_pools')
-            ->join('players_fd', 'player_pools.id', '=', 'players_fd.player_pool_id')
-            ->join('players', 'players_fd.player_id', '=', 'players.id')
-            ->select('*')
-            ->whereRaw('player_pools.date = "'.$date.'"')
-            ->get();
+        $players = getPlayersByPostion($date);
 
         ddAll($players);
+
+        $solver = new Solver;
+
+        $lineups = $solver->buildFdNbaLineups($players);
+
+        ddAll($lineups);
 	}
 
 }
