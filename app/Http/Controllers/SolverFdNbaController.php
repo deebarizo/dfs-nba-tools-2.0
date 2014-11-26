@@ -32,8 +32,6 @@ class SolverFdNbaController {
 
         $players = getPlayersByPostion($date);
 
-        ddAll($players);
-
         $solver = new Solver;
 
         $lineups = $solver->buildFdNbaLineups($players);
