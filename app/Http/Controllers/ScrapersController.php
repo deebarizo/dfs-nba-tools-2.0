@@ -371,6 +371,10 @@ class ScrapersController {
 			$rawOppAbbrFD = preg_replace("/@/", "", $rawOppAbbrFD);
 			$OppAbbrFD = preg_replace("/".$abbrFD."/", "", $rawOppAbbrFD);
 
+			if ($OppAbbrFD == 'C') {
+				$OppAbbrFD = 'SAC';
+			}
+
 			foreach ($teams as $team) {
 				if ($team->abbr_fd == $OppAbbrFD) {
 					$rowContents[$i]['opp_team_id'] = $team->id;
@@ -379,12 +383,12 @@ class ScrapersController {
 				}
 			}
 
-			if (isset($rowContents[$i]['opp_team_id']) === false) {
+	/*		if (isset($rowContents[$i]['opp_team_id']) === false) {
 				$message = 'No team ID match for '.$OppAbbrFD.'.';
 				Session::flash('alert', 'danger');
 
 				return redirect('scrapers/fd_nba_salaries')->with('message', $message);	
-			}			
+			}			*/
 
 			$rowContents[$i]['top_play_index'] = null;
 		}	
