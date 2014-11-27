@@ -283,7 +283,26 @@ class DailyController {
 
         $timePeriod = $players[0]->time_period;
 
-		return view('daily_fd_nba', compact('date', 'timePeriod', 'players'));
+        foreach ($players as $key => $player) {
+            if (isset($player->filter)) {
+                if (isset($player->filter->playing) && $player->filter->playing == 0) {
+                    unset($players[$key]);
+                    continue;
+                }
+
+                if (isset($player->filter->notes) && $player->filter->notes == 'DTD') {
+                    $dtdPlayers[] = $player;
+
+                    unset($players[$key]);
+                    continue;                    
+                }           
+            }
+    
+        }
+
+        # ddAll($dtdPlayers);
+
+		return view('daily_fd_nba', compact('date', 'timePeriod', 'players', 'dtdPlayers'));
 	}
 
 }
