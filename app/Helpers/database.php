@@ -67,6 +67,12 @@ function getPlayersByPostion($date) {
                         break;
                     }
 
+                    if ($filter->notes == 'DTD') {
+                        unset($position[$key]);
+
+                        break;
+                    }
+
                     $player->filter = $filter;
 
                     break;
