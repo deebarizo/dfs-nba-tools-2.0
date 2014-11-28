@@ -185,7 +185,7 @@ class DailyController {
                     }
 
                     if ($player->filter->fppg_source == 'mp cs') {
-                        $player->mp_mod = calculateMpMod($playerStats[$player->player_id]['cs'], $date);
+                        $player->mp_mod = calculateMpMod($playerStats[$player->player_id]['cs'], $date, $player->filter->mp_ot_filter);
 
                         if ($player->filter->fppm_source == 'cs') {
                             $player = calculateFppm($player, $playerStats[$player->player_id]['cs']);

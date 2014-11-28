@@ -119,7 +119,7 @@ function calculateCvForFppm($player, $gameLogs) {
     return $player;
 }
 
-function calculateMpMod($gameLogs, $date) {
+function calculateMpMod($gameLogs, $date, $mpOtFilter) {
 	$totalGames = 0;
 	$totalMinutes = 0;
 
@@ -128,7 +128,7 @@ function calculateMpMod($gameLogs, $date) {
 		$totalMinutes += $gameLog->mp;			
 	}
 
-	return $totalMinutes / $totalGames;
+	return ($totalMinutes - $mpOtFilter) / $totalGames;
 }
 
 function calculateCorrelation($xArray, $yArray, $xVar, $yVar) {
