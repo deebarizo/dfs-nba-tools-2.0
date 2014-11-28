@@ -223,7 +223,7 @@ class DailyController {
                     $player->fppmPerGameWithVegasFilter = numFormat(($player->fppmPerGame * $player->vegas_filter) + $player->fppmPerGame);               
 
                     if ( is_null($player->filter->fppg_source) ) {
-                        $player->mp_mod = calculateMpMod($playerStats[$player->player_id]['all'], $date);
+                        $player->mp_mod = calculateMpMod($playerStats[$player->player_id]['all'], $date, $player->filter->mp_ot_filter);
                     }
                 }
             }
