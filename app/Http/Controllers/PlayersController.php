@@ -162,9 +162,11 @@ class PlayersController {
         $playerInfo['name'] = $statsPlayed['all'][0]->name;
         $playerInfo['player_id'] = $statsPlayed['all'][0]->player_id;
 
+        $name = $playerInfo['name'];
+
         # ddAll($stats);
 
-        return view('players', compact('stats', 'overviews', 'playerInfo', 'player'));
+        return view('players', compact('stats', 'overviews', 'playerInfo', 'player', 'name'));
 	}
 
 	private function modStats($row, $teams) {
