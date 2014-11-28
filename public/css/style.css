@@ -8,6 +8,12 @@ hr {
 	border-color: #333;
 }
 
+/* DAILY */
+
+#daily-dtd {
+	display: none;
+}
+
 /* PLAYER FILTER TOOLTIPS */
 
 .player-filter-tooltip {

@@ -158,9 +158,7 @@ class DailyController {
         foreach ($players as $player) {
             if (isset($player->filter)) {
                 if ($player->filter->filter == 1) {
-                    if ( $player->filter->fppg_source == 'fp cs' || $player->filter->fppg_source[0] == 'm' || is_numeric($player->filter->fppg_source) ) {
-                        $playerStats[$player->player_id]['cs'] = getBoxScoreLinesForPlayer(11, $player->player_id, $endDate);
-                    }
+                    $playerStats[$player->player_id]['cs'] = getBoxScoreLinesForPlayer(11, $player->player_id, $endDate);
                 }
             }
 
@@ -279,9 +277,7 @@ class DailyController {
             }      
         }
 
-        // fetch DFS time period (example: all day, early, late)
-
-        $timePeriod = $players[0]->time_period;
+        // remove players that are not playing or DTD
 
         foreach ($players as $key => $player) {
             if (isset($player->filter)) {
@@ -297,8 +293,19 @@ class DailyController {
                     continue;                    
                 }           
             }
-    
         }
+
+        // order DTD players array by team
+
+        foreach ($dtdPlayers as $key => $row) {
+            $teamId[$key]  = $row->team_id;
+        }
+
+        array_multisort($teamId, SORT_ASC, $dtdPlayers);
+
+        // fetch DFS time period (example: all day, early, late)
+
+        $timePeriod = $players[0]->time_period;
 
         # ddAll($dtdPlayers);
 

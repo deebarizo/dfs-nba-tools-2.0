@@ -26,6 +26,7 @@
 			  	<thead>
 				  	<tr>
 					    <th>Filter</th>
+					    <th>Playing</th>
 					    <th>FPPG</th>
 					    <th>FPPM</th>
 					    <th>CV</th>
@@ -38,6 +39,7 @@
 				  	@if (isset($player->filter))
 					  	<tr>
 						    <td>{{ $player->filter->filter }}</td>
+						    <td>{{ $player->filter->playing }}</td>
 						    <td>{{ $player->filter->fppg_source }}</td>
 						    <td>{{ $player->filter->fppm_source }}</td>
 						    <td>{{ $player->filter->cv_source }}</td>
