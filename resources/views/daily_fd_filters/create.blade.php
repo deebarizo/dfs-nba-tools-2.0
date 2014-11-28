@@ -37,49 +37,49 @@
 			<div class="col-lg-2">
 				<div class="form-group">
 					{!! Form::label('playing', 'Playing:') !!}
-					{!! Form::select('playing', array(0 => 'No', 1 => 'Yes'), 1, ['class' => 'form-control']) !!}
+					{!! Form::select('playing', array(0 => 'No', 1 => 'Yes'), $playerFilter['playing'], ['class' => 'form-control']) !!}
 				</div>
 			</div>
 
 			<div class="col-lg-2">
 				<div class="form-group">
 					{!! Form::label('fppg_source', 'FPPG Source:') !!}
-					{!! Form::text('fppg_source', null, ['class' => 'form-control']) !!}
+					{!! Form::text('fppg_source', $playerFilter['fppg_source'], ['class' => 'form-control']) !!}
 				</div>
 			</div>
 
 			<div class="col-lg-2">
 				<div class="form-group">
 					{!! Form::label('fppm_source', 'FPPM Source:') !!}
-					{!! Form::text('fppm_source', null, ['class' => 'form-control']) !!}
+					{!! Form::text('fppm_source', $playerFilter['fppm_source'], ['class' => 'form-control']) !!}
 				</div>
 			</div>
 
 			<div class="col-lg-2">
 				<div class="form-group">
 					{!! Form::label('cv_source', 'CV Source:') !!}
-					{!! Form::text('cv_source', null, ['class' => 'form-control']) !!}
+					{!! Form::text('cv_source', $playerFilter['cv_source'], ['class' => 'form-control']) !!}
 				</div>
 			</div>
 
 			<div class="col-lg-2">
 				<div class="form-group">
 					{!! Form::label('mp_ot_filter', 'MP OT Filter:') !!}
-					{!! Form::text('mp_ot_filter', $mpOtFilter, ['class' => 'form-control']) !!}
+					{!! Form::text('mp_ot_filter', $playerFilter['mp_ot_filter'], ['class' => 'form-control']) !!}
 				</div>
 			</div>
 
 			<div class="col-lg-2">
 				<div class="form-group">
 					{!! Form::label('dnp_games', 'DNP Games:') !!}
-					{!! Form::text('dnp_games', 0, ['class' => 'form-control']) !!}
+					{!! Form::text('dnp_games', $playerFilter['dnp_games'], ['class' => 'form-control']) !!}
 				</div>
 			</div>
 
 			<div class="col-lg-2">
 				<div class="form-group">
 					{!! Form::label('notes', 'Notes:') !!}
-					{!! Form::textarea('notes', null, ['class' => 'form-control']) !!}
+					{!! Form::textarea('notes', $playerFilter['notes'], ['class' => 'form-control']) !!}
 				</div>
 			</div>
 

@@ -56,12 +56,24 @@ class DailyFdFiltersController {
                                          where t1.player_id = '.$player_id);
 
         if (empty($dailyFdFilter)) {
-        	$mpOtFilter = 0;
+        	$playerFilter['playing'] = 1;
+        	$playerFilter['fppg_source'] = null;
+        	$playerFilter['fppm_source'] = null;
+        	$playerFilter['cv_source'] = null;
+        	$playerFilter['mp_ot_filter'] = 0;
+        	$playerFilter['dnp_games'] = 0;
+        	$playerFilter['notes'] = null;
         } else {
-        	$mpOtFilter = $dailyFdFilter[0]->mp_ot_filter;
+        	$playerFilter['playing'] = $dailyFdFilter[0]->playing;
+        	$playerFilter['fppg_source'] = $dailyFdFilter[0]->fppg_source;
+        	$playerFilter['fppm_source'] = $dailyFdFilter[0]->fppm_source;
+        	$playerFilter['cv_source'] = $dailyFdFilter[0]->cv_source;;
+        	$playerFilter['mp_ot_filter'] = $dailyFdFilter[0]->mp_ot_filter;
+        	$playerFilter['dnp_games'] = $dailyFdFilter[0]->dnp_games;
+        	$playerFilter['notes'] = $dailyFdFilter[0]->notes;
         }
 
-		return view('daily_fd_filters/create', compact('player', 'mpOtFilter'));
+		return view('daily_fd_filters/create', compact('player', 'playerFilter'));
 	}
 
 	/**

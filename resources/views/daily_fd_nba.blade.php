@@ -19,7 +19,7 @@
 		@endif
 
 		<div class="col-lg-12">
-			<h3>{{ $date }} {{ $timePeriod }}</h3>
+			<h3>{{ $date }} {{ $timePeriod }} | <a target="_blank" href="/solver_fd_nba/{{ $date }}">Solver</a></h3>
 
 			<table id="daily" class="table table-striped table-bordered table-hover table-condensed">
 				<thead>
