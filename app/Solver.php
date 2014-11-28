@@ -55,7 +55,7 @@ class Solver {
 					$skippedOne = false;
 
 					if ($nthPlayerInLineup == 9) {
-						$position = $this->figureOutLastPosition($lineup);
+						$position = $this->figureOutLastPosition($lineup, $order);
 
 						# ddAll($avgSalaryLeft);
 						# ddAll($players[$position]);
@@ -162,6 +162,53 @@ class Solver {
 					}
 
 					unset($player);
+
+					if (count($lineup) != $nthPlayerInLineup) { // all eligible players are priced too low to 
+																// to meet higher of average salary
+						foreach ($players['all'] as $playerIndex => &$player) {
+							list($players['all'], $lineup) = 
+								$this->addPlayertoLineup($players['all'], 
+														 $players['all'][$playerIndex], 
+														 $playerIndex,
+														 $nthPlayerInLineup,
+														 $lineup);
+
+							$positionCheck = $this->checkForMaxPositions($lineup);
+
+							if (!$positionCheck) {
+								unset($lineup[$nthPlayerInLineup]);
+								unset($player);
+
+								continue;							
+							}
+
+							if ($firstOrSecond == 1 && !$skippedOne) {
+								unset($lineup[$nthPlayerInLineup]);
+								unset($player);
+
+								$skippedOne = true;
+
+								continue;
+							}
+
+							$avgSalaryLeft = $this->calculateAvgSalaryLeft($lineup);
+
+							if ($avgSalaryLeft < 3500) {
+								unset($lineup[$nthPlayerInLineup]);
+								unset($player);
+
+								continue;							
+							}
+
+							if ($avgSalaryLeft <= 6700) {
+								$salaryToggle = 'lower';
+							} else {
+								$salaryToggle = 'higher';
+							}
+
+							break;
+						}					
+					}
 				}
 
 				$salaryTotal = 0;
@@ -290,7 +337,7 @@ class Solver {
 		return array($players, $lineup);
 	}	
 
-	private function figureOutLastPosition($lineup) {
+	private function figureOutLastPosition($lineup, $order) {
 		$maxPositions['PG'] = 2;
 		$maxPositions['SG'] = 2;
 		$maxPositions['SF'] = 2;
@@ -306,6 +353,8 @@ class Solver {
 				return $position;
 			}	
 		}
+
+		ddAll($order);
 	}
 
 	private function calculateAvgSalaryLeft($lineup) {
