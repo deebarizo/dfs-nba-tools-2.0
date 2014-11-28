@@ -12,7 +12,7 @@
 		</div>
 	</div>
 	<div class="row">
-		@foreach ($lineups as $lineup)
+		@foreach ($lineups as $lineupIndex => $lineup)
 			<div class="col-lg-4">
 				<table id="daily" class="table table-striped table-bordered table-hover table-condensed">
 					<thead>
@@ -36,7 +36,7 @@
 							@endif
 						@endforeach
 						<tr>
-							<td colspan="2">&nbsp;</td>
+							<td style="text-align: center" colspan="2">{{ $lineupIndex + 1 }}</td>
 							<td>{{ $lineup['salary_total'] }}</td>
 							<td style="color: green;"><strong>{{ numFormat($lineup['fppg_minus1_total'], 2) }}</strong></td>
 						</tr>				
