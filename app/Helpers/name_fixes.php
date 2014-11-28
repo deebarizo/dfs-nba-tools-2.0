@@ -13,6 +13,9 @@ function fd_name_fix($rawName) {
 
 		case 'Dennis Schroeder':
 			return 'Dennis Schröder';
+
+		case 'Tim Hardaway Jr.':
+			return 'Tim Hardaway';
 		
 		default:
 			return $rawName;
