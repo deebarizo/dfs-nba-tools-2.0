@@ -36,7 +36,7 @@ class SolverFdNbaController {
 
         $lineups = $solver->buildFdNbaLineups($players);
 
-        $topLineups = array_slice($lineups, 0, 10);
+        $topLineups = array_slice($lineups, 0, 5);
 
         list($playerPercentages, 
              $playersInTopLineups,
@@ -49,6 +49,7 @@ class SolverFdNbaController {
         return view('solver_fd_nba', compact('date', 
                                              'timePeriod', 
                                              'lineups', 
+                                             'topLineups',
                                              'playerPercentages',
                                              'playersInTopLineups',
                                              'percentagesInTopLineups'));

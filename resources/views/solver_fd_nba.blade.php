@@ -19,7 +19,7 @@
 
 			@foreach ($lineups as $lineupIndex => $lineup)
 				<?php 
-					if ($lineupIndex <= 9) {
+					if ($lineupIndex < count($topLineups)) {
 						$activeLineup = 'active-lineup';
 					} else {
 						$activeLineup = '';
@@ -32,6 +32,7 @@
 						<tr>
 							<th>Pos</th>
 							<th>Name</th>
+							<th>VR-1</th>
 							<th>Sal</th>
 							<th>FP</th>
 						</tr>
@@ -43,13 +44,14 @@
 								<tr>
 									<td>{{ $rosterSpot->position }}</td>
 									<td>{{ $rosterSpot->name }}</td>
+									<td>{{ $rosterSpot->vr_minus1 }}</td>
 									<td>{{ $rosterSpot->salary }}</td>
 									<td>{{ $rosterSpot->fppg_minus1 }}</td>
 								</tr>
 							@endif
 						@endforeach
 						<tr>
-							<td style="text-align: center" colspan="2">
+							<td style="text-align: center" colspan="3">
 								{{ $lineupIndex + 1 }} | 
 								@if ($lineupIndex <= 9)
 									$<span class="lineup-dollars">10</span> <a href="#">Change</a> | 
