@@ -12,6 +12,20 @@
 		</div>
 	</div>
 	<div class="row">
+		<div class="col-lg-12">
+			<h4>Player Percentages</h4>
+
+			<div id="player-percentages-container" style="width:70%; height:800px"></div>
+		</div>
+	</div>
+
+	<hr>
+
+	<div class="row">
+		<div class="col-lg-12">
+			<h4>Lineups</h4>
+		</div>
+
 		@foreach ($lineups as $lineupIndex => $lineup)
 			<div class="col-lg-4">
 				<table id="daily" class="table table-striped table-bordered table-hover table-condensed">
@@ -45,4 +59,52 @@
 			</div>
 		@endforeach
 	</div>
+
+<script>
+	$(function () {
+	    $('#player-percentages-container').highcharts({
+	        chart: {
+	            type: 'bar'
+	        },
+	        title: {
+	        	text: null
+	        },
+	        xAxis: {
+	            categories: <?php echo json_encode($playersInTopLineups); ?>,
+	            labels: {
+	            	step: 1
+	            }
+	        },
+	        yAxis: {
+	            min: 0,
+	            title: {
+	                text: 'Percentage'
+	            },
+	            max: 100
+	        },
+	        tooltip: {
+	            valueSuffix: '%'
+	        },
+	        plotOptions: {
+	            bar: {
+	                dataLabels: {
+	                    enabled: true
+	                },
+	                pointWidth: 20,
+	                pointPadding: 0
+	            }
+	        },
+	        credits: {
+	            enabled: false
+	        },
+	        series: [{
+	        	name: 'Percentage',
+	            data: <?php echo json_encode($percentagesInTopLineups); ?>
+	        }]
+	    });
+	});	
+
+
+</script>
+
 @stop
