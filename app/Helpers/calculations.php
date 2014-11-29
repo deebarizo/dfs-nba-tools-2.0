@@ -46,7 +46,7 @@ function calculatePlayerPercentagesOfTopLineups($topLineups) {
 	array_multisort($percentage, SORT_DESC, $playerPercentages);
 
 	foreach ($playerPercentages as $playerName => $values) {
-		$playersInTopLineups[] = $playerName;
+		$playersInTopLineups[] = $playerName.' ('.$values->position.')';
 	}
 
 	foreach ($playerPercentages as $playerName => $values) {

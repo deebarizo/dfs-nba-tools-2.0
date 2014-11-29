@@ -3,31 +3,21 @@
 @section('content')
 	<div class="row">
 		<div class="col-lg-12">
-			<h2>Daily - FD NBA</h2>
+			<h2>Solver FD NBA | {{ $date }} {{ $timePeriod }}</h2>
 		</div>
 	</div>
+
 	<div class="row">
-		<div class="col-lg-12">
-			<h3>{{ $date }} {{ $timePeriod }}</h3>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-lg-12">
+		<div class="col-lg-6">
 			<h4>Player Percentages</h4>
 
-			<div id="player-percentages-container" style="width:70%; height:800px"></div>
+			<div id="player-percentages-container" style="width:100%; height:800px"></div>
 		</div>
-	</div>
 
-	<hr>
-
-	<div class="row">
-		<div class="col-lg-12">
+		<div class="col-lg-6" style="overflow-y: scroll; height: 800px">
 			<h4>Lineups</h4>
-		</div>
 
-		@foreach ($lineups as $lineupIndex => $lineup)
-			<div class="col-lg-4">
+			@foreach ($lineups as $lineupIndex => $lineup)
 				<table id="daily" class="table table-striped table-bordered table-hover table-condensed">
 					<thead>
 						<tr>
@@ -56,8 +46,8 @@
 						</tr>				
 					</tbody>
 				</table>
-			</div>
-		@endforeach
+			@endforeach
+		</div>
 	</div>
 
 <script>
@@ -100,7 +90,10 @@
 	        series: [{
 	        	name: 'Percentage',
 	            data: <?php echo json_encode($percentagesInTopLineups); ?>
-	        }]
+	        }],
+	        legend: {
+	        	enabled: false
+	        }
 	    });
 	});	
 
