@@ -18,7 +18,16 @@
 			<h4>Lineups</h4>
 
 			@foreach ($lineups as $lineupIndex => $lineup)
-				<table id="daily" class="table table-striped table-bordered table-hover table-condensed">
+				<?php 
+					if ($lineupIndex <= 9) {
+						$activeLineup = 'active-lineup';
+					} else {
+						$activeLineup = '';
+					}
+
+				?>
+
+				<table style="{{ $activeLineup }}" id="daily" class="table table-striped table-bordered table-hover table-condensed {{ $activeLineup }}">
 					<thead>
 						<tr>
 							<th>Pos</th>
@@ -40,7 +49,15 @@
 							@endif
 						@endforeach
 						<tr>
-							<td style="text-align: center" colspan="2">{{ $lineupIndex + 1 }}</td>
+							<td style="text-align: center" colspan="2">
+								{{ $lineupIndex + 1 }} | 
+								@if ($lineupIndex <= 9)
+									$<span class="lineup-dollars">10</span> <a href="#">Change</a> | 
+									<a href="#">Remove</a>
+								@else
+									<a href="#">Add</a>
+								@endif
+							</td>
 							<td>{{ $lineup['salary_total'] }}</td>
 							<td style="color: green;"><strong>{{ numFormat($lineup['fppg_minus1_total'], 2) }}</strong></td>
 						</tr>				

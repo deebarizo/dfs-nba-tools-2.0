@@ -14,6 +14,12 @@ hr {
 	display: none;
 }
 
+/* SOLVER */
+
+.active-lineup {
+	border: 3px solid rgb(124, 181, 236);
+}
+
 /* PLAYER FILTER TOOLTIPS */
 
 .player-filter-tooltip {
