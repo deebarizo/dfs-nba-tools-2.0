@@ -1,5 +1,57 @@
 <?php
 
+// Top Lineups
+
+function calculatePlayerPercentagesOfTopLineups($topLineups) {
+	$playerPercentages = array();
+
+	foreach ($topLineups as $topLineup) {
+		foreach ($topLineup as $key => $player) {
+			if (is_numeric($key)) {
+				if (!isset($playerPercentages[$player->name])) {
+					$playerPercentages[$player->name] = new stdClass();
+
+					$playerPercentages[$player->name]->dollars = 10;
+
+					$playerPercentages[$player->name]->position = $player->position;
+					$playerPercentages[$player->name]->position_number = $player->position_number;
+					$playerPercentages[$player->name]->salary = $player->salary;
+					$playerPercentages[$player->name]->fppg_minus1 = $player->fppg_minus1;
+					$playerPercentages[$player->name]->vr_minus1 = $player->vr_minus1;
+					$playerPercentages[$player->name]->filter = $player->filter;
+					$playerPercentages[$player->name]->dollars = 10;
+
+					continue;
+				}
+
+				if (isset($playerPercentages[$player->name])) {
+					$playerPercentages[$player->name]->dollars += 10;
+				}
+			}
+		}
+	}
+
+	$totalSpent = count($topLineups) * 10;
+
+	foreach ($playerPercentages as $player => &$values) {
+		$values->percentage = numFormat(($values->dollars / $totalSpent) * 100, 2); 
+	}
+
+	unset($values);
+
+	foreach ($playerPercentages as $key => $row) {
+	    $percentage[$key] = $row->percentage;
+	}
+
+	array_multisort($percentage, SORT_DESC, $playerPercentages);
+
+	# ddAll($playerPercentages);
+
+	return $playerPercentages;
+}
+
+// Solver
+
 function calculateFppg($player, $gameLogs) {
 	$gamesPlayed = count($gameLogs) - ( isset($player->filter->dnp_games) ? $player->filter->dnp_games : 0 );
 
@@ -130,6 +182,8 @@ function calculateMpMod($gameLogs, $date, $mpOtFilter) {
 
 	return ($totalMinutes - $mpOtFilter) / $totalGames;
 }
+
+// Studies
 
 function calculateCorrelation($xArray, $yArray, $xVar, $yVar) {
 
