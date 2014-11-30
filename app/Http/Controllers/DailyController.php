@@ -124,11 +124,47 @@ class DailyController {
 
             // fetch team filters and calculate vegas filter
 
+            $gamesInCurrentSeason = Game::where('season_id', '=', 11)->get();
+
+            foreach ($teams as $key => $team) {
+                $gamesCount = 0;
+                $totalPoints = 0;
+
+                foreach ($gamesInCurrentSeason as $game) {
+
+
+
+                    if ($game->home_team_id == $team->id) {
+                        $gamesCount++;
+                        $totalPoints += $game->home_team_score;
+
+                        continue;
+                    }
+
+                    if ($game->road_team_id == $team->id) {
+                        $gamesCount++;
+                        $totalPoints += $game->road_team_score;
+
+                        continue;
+                    }
+                }
+
+                $teamPPG = $totalPoints / $gamesCount;
+
+                $teamFilters[$key] = new \stdClass();
+                $teamFilters[$key]->team_id = $team->id;
+                $teamFilters[$key]->ppg = $teamPPG;
+            }
+
+            # ddAll($teamFilters);
+
+            /*
             $teamFilters = DB::select('SELECT t1.* FROM team_filters AS t1
                                              JOIN (
                                                 SELECT team_id, MAX(created_at) AS latest FROM team_filters GROUP BY team_id
                                              ) AS t2
                                              ON t1.team_id = t2.team_id AND t1.created_at = t2.latest');
+            */
 
             foreach ($players as &$player) {
                 foreach ($teamFilters as $teamFilter) {
