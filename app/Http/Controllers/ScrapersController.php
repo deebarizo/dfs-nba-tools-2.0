@@ -254,23 +254,27 @@ class ScrapersController {
 				$rowContents = scrapeForGamesTable($client, $crawler, $tableIDinBR, $teams, $season->id, $gamesCount, $rowCount);
 
 				foreach ($rowContents as $row) {
-					$game = new Game;
+					$doesThisGameExist = Game::where('link_br', '=', $row['link_br'])->count();
 
-					$game->season_id = $season->id;
-					$game->date = $row['date'];
-					$game->link_br = $row['link_br'];
-					$game->home_team_id = $row['home_team_id'];
-					$game->home_team_score = $row['home_team_score'];
-					$game->vegas_home_team_score = $row['vegas_home_team_score'];
-					$game->road_team_id = $row['road_team_id'];
-					$game->road_team_score = $row['road_team_score'];
-					$game->vegas_road_team_score = $row['vegas_road_team_score'];
-					$game->pace = $row['pace'];
-					$game->type = $gameType;
-					$game->ot_periods = $row['ot_periods'];
-					$game->notes = $row['notes'];
+					if ($doesThisGameExist == 0) {
+						$game = new Game;
 
-					$game->save();
+						$game->season_id = $season->id;
+						$game->date = $row['date'];
+						$game->link_br = $row['link_br'];
+						$game->home_team_id = $row['home_team_id'];
+						$game->home_team_score = $row['home_team_score'];
+						$game->vegas_home_team_score = $row['vegas_home_team_score'];
+						$game->road_team_id = $row['road_team_id'];
+						$game->road_team_score = $row['road_team_score'];
+						$game->vegas_road_team_score = $row['vegas_road_team_score'];
+						$game->pace = $row['pace'];
+						$game->type = $gameType;
+						$game->ot_periods = $row['ot_periods'];
+						$game->notes = $row['notes'];
+
+						$game->save();						
+					}
 				}
 
 				unset($row);
