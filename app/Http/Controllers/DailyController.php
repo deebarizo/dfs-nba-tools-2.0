@@ -45,6 +45,10 @@ class DailyController {
             return view('daily_fd_nba')->with('message', $message);                
         }
 
+        // fetch DFS time period (example: all day, early, late)
+
+        $timePeriod = $players[0]->time_period;
+
         // match each player to a team id
 
         $teams = Team::all();
@@ -303,11 +307,7 @@ class DailyController {
 
         array_multisort($teamId, SORT_ASC, $dtdPlayers);
 
-        // fetch DFS time period (example: all day, early, late)
-
-        $timePeriod = $players[0]->time_period;
-
-        # ddAll($dtdPlayers);
+        # ddAll($players);
 
 		return view('daily_fd_nba', compact('date', 'timePeriod', 'players', 'dtdPlayers'));
 	}
