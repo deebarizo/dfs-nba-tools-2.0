@@ -26,7 +26,7 @@ class Solver {
 
 				# ddAll($order);
 
-				foreach ($order as $nthPlayerInLineup => $firstOrSecond) {
+				foreach ($order as $nthPlayerInLineup => $algorithmOrderInOrder) {
 					if ($nthPlayerInLineup == 1) {
 						$playerIndex = $firstPlayerIndex;
 
@@ -52,7 +52,7 @@ class Solver {
 						continue;
 					}
 
-					$skippedOne = false;
+					$skipPlayer = 0;
 
 					if ($nthPlayerInLineup == 9) {
 						$position = $this->figureOutLastPosition($lineup, $order);
@@ -71,11 +71,11 @@ class Solver {
 								}
 							}
 
-							if ($firstOrSecond == 1 && !$skippedOne) {
+							if ($algorithmOrderInOrder != $skipPlayer) {
 								unset($lineup[$nthPlayerInLineup]);
 								unset($player);
 
-								$skippedOne = true;
+								$skipPlayer++;
 
 								continue;
 							}
@@ -134,11 +134,11 @@ class Solver {
 							continue;							
 						}
 
-						if ($firstOrSecond == 1 && !$skippedOne) {
+						if ($algorithmOrderInOrder != $skipPlayer) {
 							unset($lineup[$nthPlayerInLineup]);
 							unset($player);
 
-							$skippedOne = true;
+							$skipPlayer++;
 
 							continue;
 						}
@@ -181,12 +181,12 @@ class Solver {
 
 								continue;							
 							}
-
-							if ($firstOrSecond == 1 && !$skippedOne) {
+							
+							if ($algorithmOrderInOrder != $skipPlayer) {
 								unset($lineup[$nthPlayerInLineup]);
 								unset($player);
 
-								$skippedOne = true;
+								$skipPlayer++;
 
 								continue;
 							}
@@ -419,7 +419,16 @@ class Solver {
 			24 => [1 => $i, 2 => 0, 3 => 1, 4 => 1, 5 => 1, 6 => 1, 7 => 0, 8 => 0, 9 => 0],
 			25 => [1 => $i, 2 => 0, 3 => 0, 4 => 1, 5 => 1, 6 => 1, 7 => 1, 8 => 0, 9 => 0],
 			26 => [1 => $i, 2 => 0, 3 => 0, 4 => 0, 5 => 1, 6 => 1, 7 => 1, 8 => 1, 9 => 0],
-			27 => [1 => $i, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 1, 7 => 1, 8 => 1, 9 => 1]
+			27 => [1 => $i, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 1, 7 => 1, 8 => 1, 9 => 1],
+
+			28 =>  [1 => $i, 2 => 2, 3 => 0, 4 => 0, 5 => 0, 6 => 0, 7 => 0, 8 => 0, 9 => 0],
+			29 =>  [1 => $i, 2 => 0, 3 => 2, 4 => 0, 5 => 0, 6 => 0, 7 => 0, 8 => 0, 9 => 0],
+			30 =>  [1 => $i, 2 => 0, 3 => 0, 4 => 2, 5 => 0, 6 => 0, 7 => 0, 8 => 0, 9 => 0],
+			31 =>  [1 => $i, 2 => 0, 3 => 0, 4 => 0, 5 => 2, 6 => 0, 7 => 0, 8 => 0, 9 => 0],
+			32 =>  [1 => $i, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 2, 7 => 0, 8 => 0, 9 => 0],
+			33 =>  [1 => $i, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0, 7 => 2, 8 => 0, 9 => 0],
+			34 =>  [1 => $i, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0, 7 => 0, 8 => 2, 9 => 0],
+			35 =>  [1 => $i, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0, 7 => 0, 8 => 0, 9 => 2]
 		];		
 
 		return $algorithmOrders;

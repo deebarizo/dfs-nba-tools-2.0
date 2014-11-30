@@ -184,7 +184,7 @@
     		$('#daily').dataTable({
     			"scrollY": "600px",
     			"paging": false,
-    			"order": [[5, "desc"]]
+    			"order": [[7, "desc"]]
     		});
 
 		    $('.player-filter').each(function() {
