@@ -131,21 +131,20 @@ class DailyController {
                 $totalPoints = 0;
 
                 foreach ($gamesInCurrentSeason as $game) {
+                    if (strtotime($game->date) < strtotime($date)) {
+                        if ($game->home_team_id == $team->id) {
+                            $gamesCount++;
+                            $totalPoints += $game->home_team_score;
 
+                            continue;
+                        }
 
+                        if ($game->road_team_id == $team->id) {
+                            $gamesCount++;
+                            $totalPoints += $game->road_team_score;
 
-                    if ($game->home_team_id == $team->id) {
-                        $gamesCount++;
-                        $totalPoints += $game->home_team_score;
-
-                        continue;
-                    }
-
-                    if ($game->road_team_id == $team->id) {
-                        $gamesCount++;
-                        $totalPoints += $game->road_team_score;
-
-                        continue;
+                            continue;
+                        }
                     }
                 }
 
