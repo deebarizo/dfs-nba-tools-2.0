@@ -228,7 +228,7 @@ class Solver {
 
 				$lineup['salary_total'] = $salaryTotal;
 				$lineup['fppg_minus1_total'] = $fppgMinus1Total;
-				$lineup['hash_total'] = $hashTotal;
+				$lineup['hash_total'] = numFormat($hashTotal);
 
 				$lineups[] = $lineup;	
 
@@ -291,8 +291,6 @@ class Solver {
 				$fppgMinus1Total = 0;
 				$hashTotal = 0;
 
-
-
 				foreach ($lineup as $key => $rosterSpot) {
 					if (is_numeric($key)) {
 						$salaryTotal += $rosterSpot->salary;
@@ -308,7 +306,7 @@ class Solver {
 
 				$lineup['salary_total'] = $salaryTotal;
 				$lineup['fppg_minus1_total'] = $fppgMinus1Total;
-				$lineup['hash_total'] = $hashTotal;
+				$lineup['hash_total'] = numFormat($hashTotal);
 			}
 		}
 

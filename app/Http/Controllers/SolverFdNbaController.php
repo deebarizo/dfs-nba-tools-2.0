@@ -25,7 +25,7 @@ date_default_timezone_set('America/Chicago');
 
 class SolverFdNbaController {
 
-	public function solverFdNba($date = 'today') {
+	public function solverFdNba($date = 'today', $numTopLineups = 5) {
 		if ($date == 'today') {
 			$date = date('Y-m-d', time());
 		}
@@ -36,7 +36,7 @@ class SolverFdNbaController {
 
         $lineups = $solver->buildFdNbaLineups($players);
 
-        $topLineups = array_slice($lineups, 0, 5);
+        $topLineups = array_slice($lineups, 0, $numTopLineups);
 
         list($playerPercentages, 
              $playersInTopLineups,
