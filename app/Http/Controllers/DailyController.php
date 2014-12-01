@@ -336,13 +336,17 @@ class DailyController {
 
         // order DTD players array by team
 
-        foreach ($dtdPlayers as $key => $row) {
-            $teamId[$key]  = $row->team_id;
+        if (isset($dtdPlayers)) {
+            foreach ($dtdPlayers as $key => $row) {
+	            $teamId[$key]  = $row->team_id;
+	        }   
+
+	        array_multisort($teamId, SORT_ASC, $dtdPlayers); 	
+        } else {
+        	$dtdPlayers = [];
         }
 
-        array_multisort($teamId, SORT_ASC, $dtdPlayers);
-
-        # ddAll($players);
+		# ddAll($players);
 
 		return view('daily_fd_nba', compact('date', 'timePeriod', 'players', 'dtdPlayers'));
 	}
