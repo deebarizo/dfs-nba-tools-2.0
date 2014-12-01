@@ -288,14 +288,27 @@ class Solver {
 				unset($rosterSpot);				
 
 				$salaryTotal = 0;
+				$fppgMinus1Total = 0;
+				$hashTotal = 0;
+
+
 
 				foreach ($lineup as $key => $rosterSpot) {
 					if (is_numeric($key)) {
 						$salaryTotal += $rosterSpot->salary;
+						$fppgMinus1Total += $rosterSpot->fppg_minus1;
+						$hashTotal += $rosterSpot->player_id +
+											$rosterSpot->salary +
+											$rosterSpot->team_id +
+											$rosterSpot->opp_team_id +
+											$rosterSpot->vr_minus1 +
+											$rosterSpot->fppg_minus1;
 					}
 				}
 
 				$lineup['salary_total'] = $salaryTotal;
+				$lineup['fppg_minus1_total'] = $fppgMinus1Total;
+				$lineup['hash_total'] = $hashTotal;
 			}
 		}
 
