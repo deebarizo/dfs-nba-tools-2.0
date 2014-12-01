@@ -244,6 +244,65 @@ class Solver {
 			$players = $originalPlayers;
 		}
 
+		# ddAll($lineups);
+
+		// try to upgrade each lineup
+
+		foreach ($lineups as $index => &$lineup) {
+			$salaryUnspent = 60000 - $lineup['salary_total'];
+
+			if ($salaryUnspent != 0) {
+				foreach ($lineup as $key => &$rosterSpot) {
+					if (is_numeric($key)) {
+						$salaryCapOfRosterSpot = $rosterSpot->salary + $salaryUnspent;
+
+						if ($index == 30 && $rosterSpot->name == 'Danny Green') {
+							# dd($salaryCapOfRosterSpot);
+						}
+
+						foreach ($originalPlayers[$rosterSpot->position] as $originalPlayer) {
+							if ($salaryCapOfRosterSpot >= $originalPlayer->salary && 
+							    $rosterSpot->fppg_minus1 <= $originalPlayer->fppg_minus1) {
+									$dupLineup = $lineup;
+
+									$dupPlayer = false;
+
+									foreach ($dupLineup as $dupLineupKey => $dupRosterSpot) {
+										if (is_numeric($dupLineupKey)) {
+											if ($originalPlayer->name == $dupRosterSpot->name) {
+												$dupPlayer = true;
+											}  
+										}
+									}
+
+									if (!$dupPlayer) {
+										$salaryUnspent -= ($originalPlayer->salary - $rosterSpot->salary);
+
+										$rosterSpot = $originalPlayer;
+									}
+							}
+						}
+					}
+				}
+
+				unset($rosterSpot);				
+
+				$salaryTotal = 0;
+
+				foreach ($lineup as $key => $rosterSpot) {
+					if (is_numeric($key)) {
+						$salaryTotal += $rosterSpot->salary;
+					}
+				}
+
+				$lineup['salary_total'] = $salaryTotal;
+			}
+		}
+
+		unset($lineup);
+
+		# ddAll($lineups);
+
 		// remove duplicate lineups
 
 		foreach ($lineups as $lineup) {
