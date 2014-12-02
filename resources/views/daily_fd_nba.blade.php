@@ -27,6 +27,7 @@
 				<thead>
 					<tr>
 						<th>Name</th>
+						<th>Mods</th>
 						<th>Team</th>
 						<th>Opp</th>
 						<th>Line</th>
@@ -55,10 +56,12 @@
 					    <tr>
 					    	<td>
 					    		<a target="_blank" href="/players/{{ $player->player_id }}">{{ $player->name }}</a> 
+					    	</td>
+			    			<td>
 					    		<a {!! $noFilterQtip !!} target="_blank" href="/daily_fd_filters/{{ $player->player_id }}/create">
 					    			<span {!! $spanFilterLink !!} class="glyphicon glyphicon-filter" aria-hidden="true"></span>
 				    			</a> 
-
+				    			@if (isset($player->filter))
 				    			<div class="player-filter-tooltip">
 									<table class="player-filter-tooltip-table">
 									  	<tr>
@@ -77,7 +80,9 @@
 									  	</tr>
 									</table>
 								</div>
-				    			<a target="_blank" href="/daily_fd_filters/{{ $player->player_id }}/edit">E</a>
+								@endif
+				    			<a target="_blank" href="/daily_fd_filters/{{ $player->player_id }}/edit"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a> 
+				    			<a target="_blank" href="#"><span class="glyphicon glyphicon-lock" aria-hidden="true"></span></a>
 			    			</td>
 					    	<td>{{ $player->team_abbr }}</td>
 					    	<td>{{ $player->opp_team_abbr }}</td>
@@ -102,6 +107,7 @@
 				<thead>
 					<tr>
 						<th>Name</th>
+						<th>Mods</th>
 						<th>Team</th>
 						<th>Opp</th>
 						<th>Line</th>
@@ -133,8 +139,9 @@
 						?>
 
 					    <tr>
-					    	<td>
-					    		<a target="_blank" href="/players/{{ $player->player_id }}">{{ $player->name }}</a> 
+					    	<td><a target="_blank" href="/players/{{ $player->player_id }}">{{ $player->name }}</a>
+			    			</td>
+			    			<td>
 					    		<a {!! $noFilterQtip !!} target="_blank" href="/daily_fd_filters/{{ $player->player_id }}/create">
 					    			<span {!! $spanFilterLink !!} class="glyphicon glyphicon-filter" aria-hidden="true"></span>
 				    			</a> 
@@ -158,7 +165,8 @@
 									</table>
 								</div>
 								@endif
-				    			<a target="_blank" href="/daily_fd_filters/{{ $player->player_id }}/edit">E</a>
+				    			<a target="_blank" href="/daily_fd_filters/{{ $player->player_id }}/edit"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a> 
+				    			<a target="_blank" href="#"><span class="glyphicon glyphicon-lock" aria-hidden="true"></span></a>
 			    			</td>
 					    	<td>{{ $player->team_abbr }}</td>
 					    	<td>{{ $player->opp_team_abbr }}</td>
@@ -184,7 +192,7 @@
     		$('#daily').dataTable({
     			"scrollY": "600px",
     			"paging": false,
-    			"order": [[7, "desc"]]
+    			"order": [[8, "desc"]]
     		});
 
 		    $('.player-filter').each(function() {
