@@ -46,8 +46,8 @@
 							$noFilterQtip = 'class="player-filter"';
 							$spanFilterLink = ''; 
 
-							if (isset($player->vegas_score_team)) {
-								$line = $player->vegas_score_opp_team - $player->vegas_score_team;
+							if (isset($player->line)) {
+								$line = $player->line;
 							} else {
 								$line = 'None';
 							}

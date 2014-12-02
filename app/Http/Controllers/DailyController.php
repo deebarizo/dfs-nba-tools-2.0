@@ -122,6 +122,14 @@ class DailyController {
 
             unset($player);
 
+            // create line property
+
+            foreach ($players as $player) {
+                $player->line = $player->vegas_score_opp_team - $player->vegas_score_team;
+            }
+
+            unset($player);
+
             // fetch team filters and calculate vegas filter
 
             $gamesInCurrentSeason = Game::where('season_id', '=', 11)->get();
@@ -290,8 +298,6 @@ class DailyController {
         }
 
         unset($player);
-
-        # ddAll($players);
 
         // update database table
 
