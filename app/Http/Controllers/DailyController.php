@@ -165,14 +165,6 @@ class DailyController {
 
             # ddAll($teamFilters);
 
-            /*
-            $teamFilters = DB::select('SELECT t1.* FROM team_filters AS t1
-                                             JOIN (
-                                                SELECT team_id, MAX(created_at) AS latest FROM team_filters GROUP BY team_id
-                                             ) AS t2
-                                             ON t1.team_id = t2.team_id AND t1.created_at = t2.latest');
-            */
-
             foreach ($players as &$player) {
                 foreach ($teamFilters as $teamFilter) {
                     if ($player->team_id == $teamFilter->team_id) {
@@ -186,6 +178,20 @@ class DailyController {
             }
 
             unset($player); 
+
+            $activeDbTeamFilters = TeamFilter::where('active', '=', 1)->get();
+
+            foreach ($players as &$player) {
+                foreach ($activeDbTeamFilters as $teamFilter) {
+                    if ($player->team_id == $teamFilter->team_id) {
+                        $player->team_ppg = $teamFilter->ppg;
+
+                        $player->vegas_filter = ($player->vegas_score_team - $player->team_ppg) / $player->team_ppg;
+
+                        break;
+                    }
+                }
+            }
 
             $areThereVegasScores = true;       
         }
