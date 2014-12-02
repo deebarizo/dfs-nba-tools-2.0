@@ -18,7 +18,9 @@ function calculatePlayerPercentagesOfTopLineups($topLineups) {
 					$playerPercentages[$player->name]->salary = $player->salary;
 					$playerPercentages[$player->name]->fppg_minus1 = $player->fppg_minus1;
 					$playerPercentages[$player->name]->vr_minus1 = $player->vr_minus1;
-					$playerPercentages[$player->name]->filter = $player->filter;
+					if (isset($player->filter)) {
+						$playerPercentages[$player->name]->filter = $player->filter;
+					}
 					$playerPercentages[$player->name]->dollars = 10;
 
 					continue;
