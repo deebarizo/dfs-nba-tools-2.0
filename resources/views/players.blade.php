@@ -14,7 +14,7 @@
 
 			<h2>Players ({{ $playerInfo['name'] }}</a>)</h2>
 
-			<p><strong>Links:</strong> <a target="_blank" href="http://www.google.com/search?q={{ $playerInfo['name'] }}+Rotoworld">RT</a> | <a target="_blank" href="http://www.google.com/search?q={{ $playerInfo['name'] }}+Basketball+Reference">BR</a> | <a target="_blank" href="http://www.google.com/search?q={{ $playerInfo['name'] }}+ESPN">ESPN</a> -- <a target="_blank" href="/daily_fd_filters/{{ $playerInfo['player_id'] }}/create"><span {!! $noFilterSpan !!} class="glyphicon glyphicon-filter" aria-hidden="true"></span></a> <a target="_blank" href="/daily_fd_filters/{{ $playerInfo['player_id'] }}/edit">E</a></p>
+			<p><strong>Links:</strong> <a target="_blank" href="http://www.google.com/search?q={{ $playerInfo['name'] }}+Rotoworld">RT</a> | <a target="_blank" href="http://www.google.com/search?q={{ $playerInfo['name'] }}+Basketball+Reference">BR</a> | <a target="_blank" href="http://www.google.com/search?q={{ $playerInfo['name'] }}+ESPN">ESPN</a> -- <a target="_blank" href="/daily_fd_filters/{{ $playerInfo['player_id'] }}/create"><span {!! $noFilterSpan !!} class="glyphicon glyphicon-filter" aria-hidden="true"></span></a> <a target="_blank" href="/daily_fd_filters/{{ $playerInfo['player_id'] }}/edit"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></p>
 		</div>
 	</div>
 
