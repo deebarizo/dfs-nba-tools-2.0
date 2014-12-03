@@ -91,31 +91,38 @@ class PlayersController {
                 $totalUsg = 0;
                 $totalFp = 0;
                 $totalFppm = 0;
-                
+
+                $gamesAbove10Minutes = 0;
 
                 foreach ($boxScoreLines as $boxScoreLine) {
-                    $totalMp += $boxScoreLine->mp;
-                    $totalUsg += $boxScoreLine->usg;
-                    $totalFp += $boxScoreLine->pts_fd;
-                    $totalFppm += $boxScoreLine->fppm;
+                    if ($boxScoreLine->mp >= 10) {
+                        $totalMp += $boxScoreLine->mp;
+                        $totalUsg += $boxScoreLine->usg;
+                        $totalFp += $boxScoreLine->pts_fd;
+                        $totalFppm += $boxScoreLine->fppm;   
+
+                        $gamesAbove10Minutes++;                 
+                    }
                 }
 
-                $overviews[$timePeriod]['mppg'] = numFormat($totalMp / $gamesPlayed);
-                $overviews[$timePeriod]['usg'] = numFormat($totalUsg / $gamesPlayed);
-                $overviews[$timePeriod]['fppg'] = numFormat($totalFp / $gamesPlayed);
+                $overviews[$timePeriod]['mppg'] = numFormat($totalMp / $gamesAbove10Minutes);
+                $overviews[$timePeriod]['usg'] = numFormat($totalUsg / $gamesAbove10Minutes);
+                $overviews[$timePeriod]['fppg'] = numFormat($totalFp / $gamesAbove10Minutes);
 
                 // CV for FPPG
 
                 $totalSquaredDiff = 0; 
 
-                $fppg = numFormat($totalFp / $gamesPlayed);
+                $fppg = numFormat($totalFp / $gamesAbove10Minutes);
 
                 foreach ($boxScoreLines as $boxScoreLine) {
-                    $totalSquaredDiff += pow($boxScoreLine->pts_fd - $fppg, 2);
+                    if ($boxScoreLine->mp >= 10) {
+                        $totalSquaredDiff += pow($boxScoreLine->pts_fd - $fppg, 2);
+                    }
                 }
 
                 if ($fppg != 0) {
-                    $overviews[$timePeriod]['sd'] = numFormat(sqrt($totalSquaredDiff / $gamesPlayed));
+                    $overviews[$timePeriod]['sd'] = numFormat(sqrt($totalSquaredDiff / $gamesAbove10Minutes));
                     $overviews[$timePeriod]['cv'] = numFormat(($overviews[$timePeriod]['sd'] / $fppg) * 100);
                 } else {
                     $overviews[$timePeriod]['sd'] = numFormat(0);
@@ -126,15 +133,17 @@ class PlayersController {
 
                 $totalSquaredDiff = 0; 
 
-                $overviews[$timePeriod]['fppm'] = numFormat($totalFppm / $gamesPlayed);
+                $overviews[$timePeriod]['fppm'] = numFormat($totalFppm / $gamesAbove10Minutes);
                 $fppm = $overviews[$timePeriod]['fppm'];
 
                 foreach ($boxScoreLines as $boxScoreLine) {
-                    $totalSquaredDiff += pow($boxScoreLine->fppm - $fppm, 2);
+                    if ($boxScoreLine->mp >= 10) {
+                        $totalSquaredDiff += pow($boxScoreLine->fppm - $fppm, 2);
+                    }
                 }                
 
                 if ($fppm != 0) {
-                    $overviews[$timePeriod]['sd_fppm'] = numFormat(sqrt($totalSquaredDiff / $gamesPlayed));
+                    $overviews[$timePeriod]['sd_fppm'] = numFormat(sqrt($totalSquaredDiff / $gamesAbove10Minutes));
                     $overviews[$timePeriod]['cv_fppm'] = numFormat(($overviews[$timePeriod]['sd_fppm'] / $fppm) * 100);
                 } else {
                     $overviews[$timePeriod]['sd_fppm'] = numFormat(0);
