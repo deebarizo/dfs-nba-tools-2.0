@@ -133,8 +133,7 @@ class PlayersController {
 
                 $totalSquaredDiff = 0; 
 
-                $overviews[$timePeriod]['fppm'] = numFormat($totalFppm / $gamesAbove10Minutes);
-                $fppm = $overviews[$timePeriod]['fppm'];
+                $fppm = numFormat($totalFppm / $gamesAbove10Minutes);
 
                 foreach ($boxScoreLines as $boxScoreLine) {
                     if ($boxScoreLine->mp >= 10) {
@@ -148,7 +147,19 @@ class PlayersController {
                 } else {
                     $overviews[$timePeriod]['sd_fppm'] = numFormat(0);
                     $overviews[$timePeriod]['cv_fppm'] = numFormat(0);
-                }    
+                }  
+
+                // Get fppm based on all box score lines including those under 10 minutes
+
+                $totalMp = 0;
+                $totalFp = 0;
+
+                foreach ($boxScoreLines as $boxScoreLine) {
+                    $totalMp += $boxScoreLine->mp;
+                    $totalFp += $boxScoreLine->pts_fd;
+                }
+
+                $overviews[$timePeriod]['fppm'] = numFormat($totalFp / $totalMp);
             }
         }
 
