@@ -25,6 +25,22 @@ date_default_timezone_set('America/Chicago');
 
 class SolverFdNbaController {
 
+    public function solver_with_top_plays($date) {
+        if ($date == 'today') {
+            $date = date('Y-m-d', time());
+        }
+
+        $players = getTopPlays($date);
+
+        $solver = new Solver;
+
+        if (!$solver->validateFdPositions($players)) {
+            return 'You are missing one or more positions';
+        }
+
+        ddAll($players);
+    }
+
 	public function solverFdNba($date = 'today', $numTopLineups = 5) {
 		if ($date == 'today') {
 			$date = date('Y-m-d', time());

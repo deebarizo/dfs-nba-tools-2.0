@@ -39,6 +39,7 @@ $router->get('/', function() {
 $router->get('solver_fd_nba', 'SolverFdNbaController@solverFdNba');
 $router->get('solver_fd_nba/{date}', 'SolverFdNbaController@solverFdNba');
 $router->get('solver_fd_nba/{date}/{numTopLineups}', 'SolverFdNbaController@solverFdNba');
+$router->get('solver_with_top_plays_fd_nba/{date}', 'SolverFdNbaController@solver_with_top_plays');
 
 $router->resource('daily_fd_filters', 'DailyFdFiltersController', ['except' => ['create']]);
 $router->get('daily_fd_filters/{player_id}/create', 'DailyFdFiltersController@create');

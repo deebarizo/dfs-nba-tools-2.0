@@ -2,6 +2,18 @@
 
 use Illuminate\Support\Facades\DB;
 
+function getTopPlays($date) {
+    $players = DB::table('player_pools')
+        ->join('players_fd', 'player_pools.id', '=', 'players_fd.player_pool_id')
+        ->join('players', 'players_fd.player_id', '=', 'players.id')
+        ->select('*')
+        ->whereRaw('player_pools.date = "'.$date.'" AND players_fd.top_play_index = 1')
+        ->orderBy('position')
+        ->get();
+
+    return $players;
+}
+
 function getPlayersByPostion($date) {
 	$players['all'] = DB::table('player_pools')
         ->join('players_fd', 'player_pools.id', '=', 'players_fd.player_pool_id')

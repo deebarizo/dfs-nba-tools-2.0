@@ -7,6 +7,34 @@ class Solver {
 	private $lineup;
 	private $algorithmOrder;
 
+	public function validateFdPositions($players) {
+		$positions = [
+			['name' => 'PG', 'required_num' => 2],
+			['name' => 'SG', 'required_num' => 2],
+			['name' => 'SF', 'required_num' => 2],
+			['name' => 'PF', 'required_num' => 2],
+			['name' => 'C' , 'required_num' => 1]
+		];
+
+		foreach ($players as $player) {
+			foreach ($positions as &$position) {
+				if ($player->position == $position['name']) {
+					$position['required_num']--;
+				}
+			}
+		}
+
+		unset($position);
+
+		foreach ($positions as $position) {
+			if ($position['required_num'] > 0) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	public function buildFdNbaLineups($players) {
 		$originalPlayers = $players;
 
@@ -355,6 +383,14 @@ class Solver {
 		return $lineups;
 	}
 
+	private function addPlayertoLineup($players, $player, $playerIndex, $nthPlayerInLineup, $lineup) {
+		$lineup[$nthPlayerInLineup] = $player;
+
+		unset($players[$playerIndex]);
+
+		return array($players, $lineup);
+	}	
+
 	private function reorderLineupByPositionAndFPPG($lineup) {
 		$dupLineup = $lineup;
 
@@ -398,14 +434,6 @@ class Solver {
 
 		return $lineup;
 	}
-
-	private function addPlayertoLineup($players, $player, $playerIndex, $nthPlayerInLineup, $lineup) {
-		$lineup[$nthPlayerInLineup] = $player;
-
-		unset($players[$playerIndex]);
-
-		return array($players, $lineup);
-	}	
 
 	private function figureOutLastPosition($lineup, $order) {
 		$maxPositions['PG'] = 2;
