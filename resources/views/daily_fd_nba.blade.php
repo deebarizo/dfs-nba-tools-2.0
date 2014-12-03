@@ -135,6 +135,14 @@
 							} else {
 								$line = 'None';
 							}
+
+							$isPlayerLocked = $player->top_play_index;
+
+							if ($isPlayerLocked == 1) {
+								$playerLockedClass = ' daily-lock-active';
+							} else {
+								$playerLockedClass = '';
+							}
 						?>
 
 					    <tr data-player-fd-index="{{ $player->player_fd_index }}">
@@ -165,7 +173,7 @@
 								</div>
 								@endif
 				    			<a target="_blank" href="/daily_fd_filters/{{ $player->player_id }}/edit"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a> 
-				    			<a href="#"><span class="glyphicon glyphicon-lock daily-lock" aria-hidden="true"></span></a>
+				    			<a href="#"><span class="glyphicon glyphicon-lock daily-lock {{ $playerLockedClass }}" aria-hidden="true"></span></a>
 			    			</td>
 					    	<td>{{ $player->team_abbr }}</td>
 					    	<td>{{ $player->opp_team_abbr }}</td>
@@ -206,17 +214,18 @@
 			  $("#daily-dtd").toggle();
 			}); 
 
-			$(".daily-lock").click(function() {
+			$(".daily-lock").click(function(e) {
+				e.preventDefault();
+
 				var playerFdIndex = $(this).parent().parent().parent().data('player-fd-index');
 				var isPlayerActive = $(this).hasClass("daily-lock-active");
-
-				console.log(playerFdIndex);
-
+				var $this = $(this);
+				
 		    	$.ajax({
 		            url: '<?php echo url(); ?>/daily_fd_nba/update_top_plays/'+playerFdIndex+'/'+isPlayerActive,
 		            type: 'POST',
 		            success: function() {
-						$(this).toggleClass("daily-lock-active");
+						$this.toggleClass("daily-lock-active");
 		            }
 		        }); 
 			});
