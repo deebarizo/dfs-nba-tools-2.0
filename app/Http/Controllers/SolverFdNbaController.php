@@ -38,6 +38,8 @@ class SolverFdNbaController {
             return 'You are missing one or more positions';
         }
 
+        $solver->buildLineupsWithTopPlays($players);
+
         ddAll($players);
     }
 
