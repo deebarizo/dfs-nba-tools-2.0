@@ -195,8 +195,8 @@
 								<th>To</th>
 								<th>Pt</th>
 								<th>Usg</th>
-								<th>S</th>
 								<th>Fd</th>
+								<th>S</th>
 								<th>Vr</th>
 								<th>Pm</th>
 							</tr>
