@@ -40,10 +40,14 @@ class PlayersController {
         }
 
         $teams = Team::all();
+        $playersFd = DB::table('players_fd')
+            ->join('player_pools', 'players_fd.player_pool_id', '=', 'player_pools.id')
+            ->select('*')
+            ->get();
 
         foreach ($stats as &$year) {
         	foreach ($year as &$row) {
-        		$row = $this->modStats($row, $teams);
+        		$row = $this->modStats($row, $teams, $playersFd);
         	}
         }
         unset($year);
@@ -73,7 +77,7 @@ class PlayersController {
 
         foreach ($statsPlayed as &$year) {
             foreach ($year as &$row) {
-                $row = $this->modStats($row, $teams);
+                $row = $this->modStats($row, $teams, $playersFd);
             }
         }
         unset($year);
@@ -169,8 +173,8 @@ class PlayersController {
         return view('players', compact('stats', 'overviews', 'playerInfo', 'player', 'name'));
 	}
 
-	private function modStats($row, $teams) {
-    	foreach ($teams as $team) {
+	private function modStats($row, $teams, $playersFd) {
+       	foreach ($teams as $team) {
     		if ($row->home_team_id == $team->id) {
     			$row->home_team_abbr_br = $team->abbr_br;
     			$row->home_team_abbr_pm = $team->abbr_pm;
@@ -194,6 +198,20 @@ class PlayersController {
             $row->fppm = $row->pts_fd / $row->mp;
         } else {
             $row->fppm = 0;
+        }
+
+        foreach ($playersFd as $playerFd) {
+            if ($row->player_id == $playerFd->player_id && $row->date == $playerFd->date) {
+                $row->salary = $playerFd->salary;
+                $row->vr = numFormat($row->pts_fd / $row->salary * 1000);
+
+                break;
+            }
+        }
+
+        if (!isset($row->salary)) {
+            $row->salary = 'N/A';
+            $row->vr = 'N/A';
         }
 
     	$row->date_pm = preg_replace("/-/", "", $row->date);

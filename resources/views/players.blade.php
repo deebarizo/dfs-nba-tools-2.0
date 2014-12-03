@@ -129,35 +129,36 @@
 
 					<h4>Game Log</h4>
 
-					<table id="game-log-{{ $yearKey }}" class="table table-striped table-bordered table-hover table-condensed">
+					<table style="font-size: 90%" id="game-log-{{ $yearKey }}" class="table table-striped table-bordered table-hover table-condensed">
 						<thead>
 							<tr>
 								<th>Date</th>
-								<th>Home</th>
-								<th>HS</th>
-								<th>Road</th>
-								<th>RS</th>
+								<th>H</th>
+								<th>Hs</th>
+								<th>R</th>
+								<th>Rs</th>
 								<th>Line</th>
-								<th>BR</th>
-								<th>PM</th>
+								<th>Links</th>
 								<th>Role</th>
-								<th>MP</th>
-								<th>OT</th>
-								<th>FG</th>
-								<th>3P</th>
-								<th>FT</th>
-								<th>ORB</th>
-								<th>DRB</th>
-								<th>TRB</th>
-								<th>AST</th>
-								<th>BLK</th>
-								<th>STL</th>
-								<th>PF</th>
-								<th>TOV</th>
-								<th>PTS</th>
-								<th>USG</th>
-								<th>FD</th>
-								<th>FDPM</th>
+								<th>Mp</th>
+								<th>Ot</th>
+								<th>Fg</th>
+								<th>3p</th>
+								<th>Ft</th>
+								<th>Or</th>
+								<th>Dr</th>
+								<th>Tr</th>
+								<th>Ast</th>
+								<th>Bl</th>
+								<th>St</th>
+								<th>Pf</th>
+								<th>To</th>
+								<th>Pt</th>
+								<th>Usg</th>
+								<th>S</th>
+								<th>Fd</th>
+								<th>Vr</th>
+								<th>Pm</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -169,8 +170,7 @@
 							    	<td>{{ $row->road_team_abbr_br }}</td>
 							    	<td>{{ $row->road_team_score }}</td>
 							    	<td>{{ $row->line }}</td>
-							    	<td><a target="_blank" href="{!! $row->link_br !!}">BR</a></td>
-							    	<td><a target="_blank" href="http://popcornmachine.net/gf?date={!! $row->date_pm !!}&game={!! $row->road_team_abbr_pm !!}{!! $row->home_team_abbr_pm !!}">PM</a></td>
+							    	<td><a target="_blank" href="{!! $row->link_br !!}">BR</a> | <a target="_blank" href="http://popcornmachine.net/gf?date={!! $row->date_pm !!}&game={!! $row->road_team_abbr_pm !!}{!! $row->home_team_abbr_pm !!}">PM</a></td>
 							    	<td>{{ $row->role }}</td>
 							    	@if ($row->bs_status == 'Played')
 								    	<td>{{ $row->mp }}</td>
@@ -189,13 +189,15 @@
 								    	<td>{{ $row->pts }}</td>
 								    	<td>{{ $row->usg }}</td>
 								    	<td>{{ $row->pts_fd }}</td>
+								    	<td>{{ $row->salary }}</td>
+								    	<td>{{ $row->vr }}</td>
 								    	@if ($row->mp != 0)
 									    	<td>{{ numFormat($row->pts_fd / $row->mp) }}</td>
 									   	@else
 									   		<td>0.00</td>
 									   	@endif
 								    @else
-								    	<td style="text-align: center" colspan="18">{{ $row->bs_status }}</td>
+								    	<td style="text-align: center" colspan="19">{{ $row->bs_status }}</td>
 								    @endif
 							    </tr>
 							@endforeach
