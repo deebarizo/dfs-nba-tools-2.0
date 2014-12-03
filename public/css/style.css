@@ -14,6 +14,10 @@ hr {
 	display: none;
 }
 
+.daily-lock-active {
+	color: green;
+}
+
 /* SOLVER */
 
 .active-lineup {

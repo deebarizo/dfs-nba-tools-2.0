@@ -34,7 +34,7 @@ class DailyController {
 		$players = DB::table('player_pools')
             ->join('players_fd', 'player_pools.id', '=', 'players_fd.player_pool_id')
             ->join('players', 'players_fd.player_id', '=', 'players.id')
-            ->select('*')
+            ->select('*', 'players_fd.id as player_fd_index')
             ->whereRaw('player_pools.date = "'.$date.'"')
             ->get();	
 
@@ -362,5 +362,17 @@ class DailyController {
 
 		return view('daily_fd_nba', compact('date', 'timePeriod', 'players', 'dtdPlayers'));
 	}
+
+    public function update_top_plays($playerFdIndex, $isPlayerActive) {
+        $playerFd = PlayerFd::find($playerFdIndex);
+
+        if ($isPlayerActive === 'true') {
+            $playerFd->top_play_index = 0;
+        } else {
+            $playerFd->top_play_index = 1;
+        }
+
+        $playerFd->save();
+    }
 
 }

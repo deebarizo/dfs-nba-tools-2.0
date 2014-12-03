@@ -82,7 +82,6 @@
 								</div>
 								@endif
 				    			<a target="_blank" href="/daily_fd_filters/{{ $player->player_id }}/edit"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a> 
-				    			<a target="_blank" href="#"><span class="glyphicon glyphicon-lock" aria-hidden="true"></span></a>
 			    			</td>
 					    	<td>{{ $player->team_abbr }}</td>
 					    	<td>{{ $player->opp_team_abbr }}</td>
@@ -138,7 +137,7 @@
 							}
 						?>
 
-					    <tr>
+					    <tr data-player-fd-index="{{ $player->player_fd_index }}">
 					    	<td><a target="_blank" href="/players/{{ $player->player_id }}">{{ $player->name }}</a>
 			    			</td>
 			    			<td>
@@ -166,7 +165,7 @@
 								</div>
 								@endif
 				    			<a target="_blank" href="/daily_fd_filters/{{ $player->player_id }}/edit"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a> 
-				    			<a target="_blank" href="#"><span class="glyphicon glyphicon-lock" aria-hidden="true"></span></a>
+				    			<a href="#"><span class="glyphicon glyphicon-lock daily-lock" aria-hidden="true"></span></a>
 			    			</td>
 					    	<td>{{ $player->team_abbr }}</td>
 					    	<td>{{ $player->opp_team_abbr }}</td>
@@ -205,7 +204,22 @@
 
 			$(".show-toggle-dtd-players").click(function(){
 			  $("#daily-dtd").toggle();
-			}); 		
+			}); 
+
+			$(".daily-lock").click(function() {
+				var playerFdIndex = $(this).parent().parent().parent().data('player-fd-index');
+				var isPlayerActive = $(this).hasClass("daily-lock-active");
+
+				console.log(playerFdIndex);
+
+		    	$.ajax({
+		            url: '<?php echo url(); ?>/daily_fd_nba/update_top_plays/'+playerFdIndex+'/'+isPlayerActive,
+		            type: 'POST',
+		            success: function() {
+						$(this).toggleClass("daily-lock-active");
+		            }
+		        }); 
+			});
 		});
 	</script>
 @stop
