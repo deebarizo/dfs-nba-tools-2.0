@@ -102,14 +102,22 @@ function calculateFppg($player, $gameLogs) {
 function calculateFppm($player, $gameLogs) {
 	$gamesPlayed = count($gameLogs) - ( isset($player->filter->dnp_games) ? $player->filter->dnp_games : 0 );
     
-    $totalFppm = 0;
+    $totalFp = 0;
+    $totalMp = 0;
 
     foreach ($gameLogs as $gameLog) {
-        $totalFppm += $gameLog->fppm;
+        $totalFp += $gameLog->pts +
+        			($gameLog->trb * 1.2) +
+        			($gameLog->ast * 1.5) +
+        			($gameLog->stl * 2) +
+        			($gameLog->blk * 2) +
+        			($gameLog->tov * -1);
+
+        $totalMp += $gameLog->mp;
     }
 
     if ($gamesPlayed > 0) {
-        $player->fppmPerGame = numFormat($totalFppm / $gamesPlayed);
+        $player->fppmPerGame = numFormat($totalFp / $totalMp);
         $player->fppmPerGameWithVegasFilter = numFormat(($player->fppmPerGame * $player->vegas_filter) + $player->fppmPerGame);
     } else {
         $player->fppmPerGame = number_format(0, 2);
