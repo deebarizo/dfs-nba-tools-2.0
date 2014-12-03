@@ -43,5 +43,6 @@ $router->get('solver_with_top_plays_fd_nba/{date}', 'SolverFdNbaController@solve
 
 $router->resource('daily_fd_filters', 'DailyFdFiltersController', ['except' => ['create']]);
 $router->get('daily_fd_filters/{player_id}/create', 'DailyFdFiltersController@create');
+$router->get('daily_fd_filters/{player_id}/create/{dailyFdFilterId}', 'DailyFdFiltersController@create');
 
 $router->get('one_time', 'ScrapersController@one_time');

@@ -40,20 +40,31 @@ class DailyFdFiltersController {
 	 *
 	 * @return Response
 	 */
-	public function create($player_id)
+	public function create($player_id, $dailyFdFilterId = null)
 	{
-		$player = DB::table('players')
-            ->select('*')
-            ->whereRaw('id = '.$player_id)
-            ->orderBy('created_at', 'desc')
-            ->get();	
+		if (is_null($dailyFdFilterId)) {
+			$player = DB::table('players')
+	            ->select('*')
+	            ->whereRaw('id = '.$player_id)
+	            ->orderBy('created_at', 'desc')
+	            ->get();	
 
-        $dailyFdFilter = DB::select('SELECT t1.* FROM daily_fd_filters AS t1
-                                         JOIN (
-                                            SELECT player_id, MAX(created_at) AS latest FROM daily_fd_filters GROUP BY player_id
-                                         ) AS t2
-                                         ON t1.player_id = t2.player_id AND t1.created_at = t2.latest
-                                         where t1.player_id = '.$player_id);
+	        $dailyFdFilter = DB::select('SELECT t1.* FROM daily_fd_filters AS t1
+	                                         JOIN (
+	                                            SELECT player_id, MAX(created_at) AS latest FROM daily_fd_filters GROUP BY player_id
+	                                         ) AS t2
+	                                         ON t1.player_id = t2.player_id AND t1.created_at = t2.latest
+	                                         where t1.player_id = '.$player_id);
+		}
+
+		if (is_numeric($dailyFdFilterId)) {
+			$dailyFdFilter = DB::table('daily_fd_filters')
+	            ->select('*')
+	            ->where('id', '=', $dailyFdFilterId)
+	            ->get();
+		}
+
+		# ddAll($dailyFdFilter);
 
         if (empty($dailyFdFilter)) {
         	$playerFilter['playing'] = 1;
