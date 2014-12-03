@@ -40,15 +40,14 @@ class DailyFdFiltersController {
 	 *
 	 * @return Response
 	 */
-	public function create($player_id, $dailyFdFilterId = null)
-	{
-		if (is_null($dailyFdFilterId)) {
-			$player = DB::table('players')
-	            ->select('*')
-	            ->whereRaw('id = '.$player_id)
-	            ->orderBy('created_at', 'desc')
-	            ->get();	
+	public function create($player_id, $dailyFdFilterId = null) {
+		$player = DB::table('players')
+	        ->select('*')
+	        ->whereRaw('id = '.$player_id)
+	        ->orderBy('created_at', 'desc')
+	        ->get();
 
+		if (is_null($dailyFdFilterId)) {
 	        $dailyFdFilter = DB::select('SELECT t1.* FROM daily_fd_filters AS t1
 	                                         JOIN (
 	                                            SELECT player_id, MAX(created_at) AS latest FROM daily_fd_filters GROUP BY player_id

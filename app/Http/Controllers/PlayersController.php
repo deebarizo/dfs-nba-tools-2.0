@@ -143,7 +143,7 @@ class PlayersController {
             }
         }
 
-        // Player Filter
+        // Current Player Filter
 
         $player = new Player;
 
@@ -161,6 +161,16 @@ class PlayersController {
             }
         }
 
+        // Previous Player Filters
+
+        $previousFdFilters = DB::table('daily_fd_filters')
+            ->select('*')
+            ->where('player_id', '=', $player_id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $previousFdFilters = array_slice($previousFdFilters, 1, 5);
+
         // Player Info
 
         $playerInfo['name'] = $statsPlayed['all'][0]->name;
@@ -170,7 +180,7 @@ class PlayersController {
 
         # ddAll($stats);
 
-        return view('players', compact('stats', 'overviews', 'playerInfo', 'player', 'name'));
+        return view('players', compact('stats', 'overviews', 'playerInfo', 'player', 'name', 'previousFdFilters'));
 	}
 
 	private function modStats($row, $teams, $playersFd) {

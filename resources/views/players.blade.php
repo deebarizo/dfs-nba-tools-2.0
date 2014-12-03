@@ -22,7 +22,7 @@
 		<div class="col-lg-12">
 			<h3>Current Player Filter</h3>
 
-			<table class="table table-striped table-bordered table-hover table-condensed">
+			<table style="margin-bottom: 5px" class="table table-striped table-bordered table-hover table-condensed">
 			  	<thead>
 				  	<tr>
 					    <th>Filter</th>
@@ -59,9 +59,49 @@
 					  	</tr>
 				  	@endif
 			  	</tbody>
-			</table>	
+			</table>
+
+			<a class="previous-filters-link" href="#">Previous Filters</a>
+
+			<table style="display:none; margin-top: 8px" id="previous-fd-filters" class="table table-striped table-bordered table-hover table-condensed">
+			  	<thead>
+				  	<tr>
+				  		<th>Create</th>
+					    <th>Filter</th>
+					    <th>Playing</th>
+					    <th>FPPG</th>
+					    <th>FPPM</th>
+					    <th>CV</th>
+					    <th>MP OT</th>
+					    <th>DNP</th>
+					    <th>Notes</th>
+				  	</tr>
+				</thead>
+				<tbody>
+				  	@foreach ($previousFdFilters as $previousFdFilter)
+					  	<tr>
+					  		<td>
+					  			<a target="_blank" href="/daily_fd_filters/{{ $playerInfo['player_id'] }}/create/{{ $previousFdFilter->id }}">
+					  				<span class="glyphicon glyphicon-filter" aria-hidden="true"></span>
+				  				</a>
+			  				</td>
+						    <td>{{ $previousFdFilter->filter }}</td>
+						    <td>{{ $previousFdFilter->playing }}</td>
+						    <td>{{ $previousFdFilter->fppg_source }}</td>
+						    <td>{{ $previousFdFilter->fppm_source }}</td>
+						    <td>{{ $previousFdFilter->cv_source }}</td>
+						    <td>{{ $previousFdFilter->mp_ot_filter }}</td>
+						    <td>{{ $previousFdFilter->dnp_games }}</td>
+						    <td>{{ $previousFdFilter->notes }}</td>
+					  	</tr>
+				  	@endforeach
+			  	</tbody>
+			</table>
+
 		</div>
 	</div>
+
+	<hr>
 
 	<div class="row">
 		<div class="col-lg-12">
@@ -209,4 +249,11 @@
 			<hr>
 		@endif
 	@endforeach
+
+	<script>
+		$( ".previous-filters-link" ).click(function() {
+			$( "#previous-fd-filters" ).toggle();
+		});
+
+	</script>
 @stop
