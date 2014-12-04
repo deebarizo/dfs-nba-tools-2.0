@@ -10,6 +10,7 @@ use App\PlayerFd;
 use App\DailyFdFilter;
 use App\TeamFilter;
 use App\Solver;
+use App\SolverTopPlays;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\RunFDNBASalariesScraperRequest;
@@ -32,13 +33,17 @@ class SolverFdNbaController {
 
         $players = getTopPlays($date);
 
-        $solver = new Solver;
+        $solverTopPlays = new SolverTopPlays;
 
-        if (!$solver->validateFdPositions($players)) {
+        if (!$solverTopPlays->validateFdPositions($players)) {
             return 'You are missing one or more positions';
         }
 
-        $solver->buildLineupsWithTopPlays($players);
+        if (!$solverTopPlays->validateMinimumTotalSalary($players)) {
+            return 'The least expensive lineup is over $60000 salary.';
+        }
+
+        $solverTopPlays->buildLineupsWithTopPlays($players);
 
         ddAll($players);
     }
