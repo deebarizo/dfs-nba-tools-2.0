@@ -29,7 +29,7 @@ class Solver {
 		];
 
 		do {
-			$lineup = $this->loopUntilValidLineupIsGenerated($)
+			$lineup = $this->loopThroughPlayersToBuildOneLineup($players, $numOfPlayersPerPosition, $randomNumPerPosition);
 		} while ($lineup['total_salary'] > 60000);
 
 		foreach ($numOfPlayersPerPosition as $position => $num) {
