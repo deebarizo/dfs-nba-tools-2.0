@@ -2,20 +2,72 @@
 
 class SolverTopPlays {
 
-	public function buildLineupsWithTopPlays($players) {
-		$numOfPlayersPerPosition = $this->calculateNumOfPlayersPerPosition($players);
+	//// Build lineups
 
-		for ($i=0; $i < 10000; $i++) { 
-			$validLineups[] = $this->buildOneLineupWithTopPlays($players, $numOfPlayersPerPosition);
+	public function buildLineupsWithTopPlays($players) {
+		$numOfPlayersPerPosition = [
+			'PG' => 0,
+			'SG' => 0,
+			'SF' => 0,
+			'PF' => 0,
+			'C' => 0
+		];
+
+		foreach ($players as $player) {
+			$numOfPlayersPerPosition[$player->position]++;
+		}
+
+		$duplicateLineups = [];
+
+		for ($i=0; $i < 250; $i++) { 
+			$duplicateLineups[] = $this->buildOneLineupWithTopPlays($players, $numOfPlayersPerPosition);
+		}
+
+		$uniqueLineups = $this->removeDuplicateLineups($duplicateLineups);
+
+		foreach ($uniqueLineups as $key => $uniqueLineup) {
+			$totalSalary[$key] = $uniqueLineup['total_salary'];
+		}
+
+		array_multisort($totalSalary, SORT_DESC, $uniqueLineups);
+
+		return $uniqueLineups;
+	}
+
+	public function removeDuplicateLineups($duplicateLineups) {
+		$duplicateHashes = [];
+
+		foreach ($duplicateLineups as $duplicateLineup) {
+			$duplicateHashes[] = $duplicateLineup['hash'];
+		}
+
+		$uniqueHashes = array_unique($duplicateHashes);
+
+		$uniqueLineups = [];
+
+		foreach ($uniqueHashes as $uniqueHash) {
+			$uniqueLineups[] = $this->getLineupByHash($uniqueHash, $duplicateLineups);
+		}
+
+		return $uniqueLineups;
+	}
+
+	public function getLineupByHash($uniqueHash, $duplicateLineups) {
+		foreach ($duplicateLineups as $duplicateLineup) {
+			if ($uniqueHash == $duplicateLineup['hash']) {
+				return $duplicateLineup;
+			}
 		}
 	}
 
+	// Build one lineup
+
 	private function buildOneLineupWithTopPlays($players, $numOfPlayersPerPosition) {
 		do {
-			$validLineup = $this->loopThroughPlayersToBuildOneLineup($players, $numOfPlayersPerPosition);
-		} while ($lineup['total_salary'] > 60000);
+			$lineup = $this->loopThroughPlayersToBuildOneLineup($players, $numOfPlayersPerPosition);
+		} while ($lineup['total_salary'] > 60000 || $lineup['total_salary'] < 54000);
 
-		return $validLineup;
+		return $lineup;
 	}
 
 	private function loopThroughPlayersToBuildOneLineup($players, $numOfPlayersPerPosition) {
@@ -39,14 +91,47 @@ class SolverTopPlays {
 		unset($lineup['C2']); // only one center per lineup
 
 		$lineup['total_salary'] = 0;
+		$lineup['hash'] = 0;
 
 		foreach ($lineup['roster_spots'] as $rosterSpot) {
 			$lineup['total_salary'] += $rosterSpot->salary;
+			$lineup['hash'] += $rosterSpot->player_id +
+							   $rosterSpot->salary +
+							   $rosterSpot->team_id +
+							   $rosterSpot->opp_team_id +
+							   $rosterSpot->vr_minus1 + 
+							   $rosterSpot->fppg_minus1;
 		}
 
-		ddAll($lineup);
+		$lineup['hash'] = $lineup['hash'] * 100; // remove the two decimal places
+
+		$lineup['total_unspent'] = 60000 - $lineup['total_salary'];
 
 		return $lineup;
+	}
+
+	private function generateRandomNumPerPosition($position, $num, $randomNumPerPosition) {
+		if ($position == 'C' && $num == 1) {
+			$randomNumPerPosition['C'] = array($num);
+
+			return $randomNumPerPosition;
+		}
+
+		$firstNum = rand(1, $num);
+
+		do {
+			$secondNum = rand(1, $num);
+		} while ($firstNum == $secondNum);
+
+		if ($position == 'C') {
+			$randomNumPerPosition['C'] = array($firstNum);
+
+			return $randomNumPerPosition;			
+		}
+
+		$randomNumPerPosition[$position] = array($firstNum, $secondNum);
+
+		return $randomNumPerPosition;
 	}
 
 	private function getPlayersPerPosition($players, $position, array $rosterSpotsWithinPosition) {
@@ -82,47 +167,7 @@ class SolverTopPlays {
 		return $topPlaysOfPosition;
 	}
 
-	private function generateRandomNumPerPosition($position, $num, $randomNumPerPosition) {
-		if ($position == 'C' && $num == 1) {
-			$randomNumPerPosition['C'] = array($num);
-
-			return $randomNumPerPosition;
-		}
-
-		$firstNum = rand(1, $num);
-
-		do {
-			$secondNum = rand(1, $num);
-		} while ($firstNum == $secondNum);
-
-		if ($position == 'C') {
-			$randomNumPerPosition['C'] = array($firstNum);
-
-			return $randomNumPerPosition;			
-		}
-
-		$randomNumPerPosition[$position] = array($firstNum, $secondNum);
-
-		return $randomNumPerPosition;
-	}
-
-	private function calculateNumOfPlayersPerPosition($players) {
-		$numOfPlayersPerPosition = [
-			'PG' => 0,
-			'SG' => 0,
-			'SF' => 0,
-			'PF' => 0,
-			'C' => 0
-		];
-
-		foreach ($players as $player) {
-			$numOfPlayersPerPosition[$player->position]++;
-		}
-
-		return $numOfPlayersPerPosition;
-	}
-
-	////// Validation of top plays
+	//// Validate top plays
 
 	private $numInPositions = [
 		'PG' => ['required_num' => 2, 'current_num' => 0],
@@ -132,7 +177,7 @@ class SolverTopPlays {
 		'C'  => ['required_num' => 1, 'current_num' => 0]
 	];
 
-	////
+	// Positions
 
 	public function validateFdPositions($players) {
 		$numInPositions = $this->numInPositions;
@@ -150,15 +195,43 @@ class SolverTopPlays {
 		return true;
 	}
 
-	////
+	// Salary
 
 	public function validateMinimumTotalSalary($players) {
+		$totalSalary = $this->getTotalSalary($players, 'Minimum');
+
+		if ($totalSalary > 60000) {
+			return false;
+		}
+
+		return true;
+	}
+
+	public function validateMaximumTotalSalary($players) {
+		$totalSalary = $this->getTotalSalary($players, 'Maximum');
+
+		if ($totalSalary < 54000) {
+			return false;
+		}
+
+		return true;
+	}
+
+	private function getTotalSalary($players, $minimumOrMaximum) {
 		foreach ($players as $key => $player) {
 			$position[$key] = $player->position;
 			$salary[$key] = $player->salary;
 		}
 
-		array_multisort($position, SORT_ASC, $salary, SORT_ASC, $players);
+		switch ($minimumOrMaximum) {
+			case 'Minimum':
+				array_multisort($position, SORT_ASC, $salary, SORT_ASC, $players);
+				break;
+			
+			case 'Maximum':
+				array_multisort($position, SORT_ASC, $salary, SORT_DESC, $players);
+				break;
+		}
 
 		$numInPositions = $this->numInPositions;
 
@@ -180,11 +253,7 @@ class SolverTopPlays {
 			$totalSalary += $this->getSalariesOfCheapestPlayers($playersSortedByPosition, $position, $num);
 		}
 
-		if ($totalSalary > 60000) {
-			return false;
-		}
-
-		return true;
+		return $totalSalary;
 	}
 
 	private function getSalariesOfCheapestPlayers($playersSortedByPosition, $position, $num) {

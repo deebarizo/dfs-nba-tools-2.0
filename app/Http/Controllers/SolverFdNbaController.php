@@ -40,12 +40,18 @@ class SolverFdNbaController {
         }
 
         if (!$solverTopPlays->validateMinimumTotalSalary($players)) {
-            return 'The least expensive lineup is over $60000 salary.';
+            return 'The least expensive lineup is more than $60000.';
         }
 
-        $solverTopPlays->buildLineupsWithTopPlays($players);
+        if (!$solverTopPlays->validateMaximumTotalSalary($players)) {
+            return 'The most expensive lineup is less than $54000.';
+        }
 
-        ddAll($players);
+        $lineups = $solverTopPlays->buildLineupsWithTopPlays($players);
+
+        $timePeriod = $lineups[0]['roster_spots']['PG2']->time_period;
+
+        return view('solver_with_top_plays_fd_nba', compact('date', 'timePeriod', 'lineups'));
     }
 
 	public function solverFdNba($date = 'today', $numTopLineups = 5) {
