@@ -124,7 +124,7 @@ class SolverTopPlays {
 
 	////// Validation of top plays
 
-	private $requiredNumOfPositions = [
+	private $numInPositions = [
 		'PG' => ['required_num' => 2, 'current_num' => 0],
 		'SG' => ['required_num' => 2, 'current_num' => 0],
 		'SF' => ['required_num' => 2, 'current_num' => 0],
@@ -135,20 +135,16 @@ class SolverTopPlays {
 	////
 
 	public function validateFdPositions($players) {
-		$requiredNumOfPositions = $this->requiredNumOfPositions;
+		$numInPositions = $this->numInPositions;
 
 		foreach ($players as $player) {
-			$requiredNumOfPositions[$player->position]['current_num']++;
+			$numInPositions[$player->position]['current_num']++;
 		}
 
-		foreach ($requiredNumOfPositions as $position) {
-			return $this->checkRequiredNum($position);
-		}
-	}
-
-	private function checkRequiredNum($position) {
-		if ($position['required_num'] > $position['current_num']) {
-			return false;
+		foreach ($numInPositions as $num) {
+			if ($num['required_num'] > $num['current_num']) {
+				return false;
+			}			
 		}
 
 		return true;
@@ -164,7 +160,41 @@ class SolverTopPlays {
 
 		array_multisort($position, SORT_ASC, $salary, SORT_ASC, $players);
 
-		ddAll($players);
+		$numInPositions = $this->numInPositions;
+
+		$playersSortedByPosition = [
+			'PG' => [],
+			'SG' => [],
+			'SF' => [],
+			'PF' => [],
+			'C'  => []
+		];
+
+		foreach ($players as $player) {
+			$playersSortedByPosition[$player->position][] = $player;
+		}
+
+		$totalSalary = 0;
+
+		foreach ($numInPositions as $position => $num) {
+			$totalSalary += $this->getSalariesOfCheapestPlayers($playersSortedByPosition, $position, $num);
+		}
+
+		if ($totalSalary > 60000) {
+			return false;
+		}
+
+		return true;
+	}
+
+	private function getSalariesOfCheapestPlayers($playersSortedByPosition, $position, $num) {
+		$totalSalaryWithinPosition = 0;
+
+		for ($i=0; $i < $num['required_num']; $i++) { 
+			$totalSalaryWithinPosition += $playersSortedByPosition[$position][$i]->salary;
+		}	
+
+		return $totalSalaryWithinPosition;
 	}
 
 }
