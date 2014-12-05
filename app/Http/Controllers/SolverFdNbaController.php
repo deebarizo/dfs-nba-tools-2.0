@@ -55,13 +55,14 @@ class SolverFdNbaController {
 
         $timePeriod = $lineups[0]['roster_spots']['PG2']->time_period;
         $playerPoolId = $lineups[0]['roster_spots']['PG2']->player_pool_id;
+        $buyIn = getBuyIn($playerPoolId);
 
         $lineups = $solverTopPlays->markActiveLineups($lineups, $playerPoolId);
 
         # ddAll($lineups);
 
         return view('solver_with_top_plays_fd_nba', 
-                     compact('date', 'timePeriod', 'playerPoolId', 'lineups'));
+                     compact('date', 'timePeriod', 'playerPoolId', 'buyIn', 'lineups'));
     }
 
     // Ajax

@@ -7,7 +7,7 @@
 
 			<p>
 				<strong>Buy In: </strong> 
-				<span class="buy-in-amount">$0</span>
+				<span class="buy-in-amount">${{ $buyIn }}</span>
 				(<a href="#" class="edit-buy-in-link">Edit</a>) 
 			</p>
 
@@ -54,9 +54,7 @@
 
 						<tr>
 							<td style="text-align: center" colspan="2">
-								<a href="#" class="add-or-remove-lineup-link">
-									<span class="add-or-remove-lineup-anchor-text">{{ $lineup['anchor_text'] }}</span>
-								</a>
+								<a href="#" class="add-or-remove-lineup-link"><span class="add-or-remove-lineup-anchor-text">{{ $lineup['anchor_text'] }}</span></a>
 								<span class="add-or-remove-lineup-link-loading-gif">
 									<img src="/files/spiffygif_16x16.gif" alt="Please wait..." />
 								</span>
@@ -78,6 +76,14 @@
 
 			$(".add-or-remove-lineup-link").click(function(e) {
 				e.preventDefault();
+
+				var buyIn = <?php echo $buyIn; ?>;
+
+				if (buyIn == 0) {
+					alert("Please enter a buy in.");
+
+					return false;
+				}
 
 				var addOrRemove = $(this).children(".add-or-remove-lineup-anchor-text").text();
 

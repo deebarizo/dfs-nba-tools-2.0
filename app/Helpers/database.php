@@ -16,6 +16,18 @@ use App\LineupPlayer;
 
 use Illuminate\Support\Facades\DB;
 
+function getBuyIn($playerPoolId) {
+    $buyIn = DB::table('player_pools')
+        ->where('id', $playerPoolId)
+        ->pluck('buy_in');
+
+    if (is_null($buyIn)) {
+        return 0;
+    }
+
+    return $buyIn;
+}
+
 function getActiveLineups($playerPoolId) {
     $activeLineups = DB::table('lineups')
         ->select('*')
