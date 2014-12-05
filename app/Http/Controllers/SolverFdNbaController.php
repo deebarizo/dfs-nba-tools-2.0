@@ -51,7 +51,15 @@ class SolverFdNbaController {
 
         $timePeriod = $lineups[0]['roster_spots']['PG2']->time_period;
 
-        ddAll($lineups);
+    /*    $lineup = DB::table('lineup_players')
+            ->join('lineups', 'lineups.id', '=', 'lineup_players.lineup_id')
+            ->join('player_pools', 'player_pools.id', '=', 'lineups.player_pool_id')
+            ->join('players_fd', 'players_fd.player_id', '=', 'lineups_players.player_fd_id')
+            ->select('*')
+            ->whereRaw('player_pools.date = "'.$date.'" AND lineups.hash = 63475')
+            ->get(); */
+
+        # ddAll($lineups);
 
         return view('solver_with_top_plays_fd_nba', compact('date', 'timePeriod', 'lineups'));
     }

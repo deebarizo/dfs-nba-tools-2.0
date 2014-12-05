@@ -71,12 +71,14 @@
 
 				switch(addOrRemoveAnchorText) {
 				    case "Add":
-				        $(this).text("Remove");
+				    	$(this).text("Remove");
 				        break;
 				    case "Remove":
 				        $(this).text("Add");
 				        break;
-				}				
+				}
+
+				$(this).parent().parent().parent().parent().toggleClass("active-lineup");		
 			});
 
 		});

@@ -27,7 +27,7 @@
 
 				?>
 
-				<table style="{{ $activeLineup }}" id="daily" class="table table-striped table-bordered table-hover table-condensed {{ $activeLineup }}">
+				<table id="daily" class="table table-striped table-bordered table-hover table-condensed {{ $activeLineup }}">
 					<thead>
 						<tr>
 							<th>Pos</th>
