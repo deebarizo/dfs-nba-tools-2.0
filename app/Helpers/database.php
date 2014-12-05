@@ -1,5 +1,19 @@
 <?php
 
+use App\Season;
+use App\Team;
+use App\Game;
+use App\Player;
+use App\BoxScoreLine;
+use App\PlayerPool;
+use App\PlayerFd;
+use App\DailyFdFilter;
+use App\TeamFilter;
+use App\Solver;
+use App\SolverTopPlays;
+use App\Lineup;
+use App\LineupPlayer;
+
 use Illuminate\Support\Facades\DB;
 
 function getActiveLineups($playerPoolId) {
@@ -11,10 +25,48 @@ function getActiveLineups($playerPoolId) {
     return $activeLineups;
 }
 
+function addLineup($playerPoolId, $hash, $totalSalary, $lineups) {
+    $lineup = new Lineup; 
+
+    $lineup->player_pool_id = $playerPoolId;
+    $lineup->hash = $hash;
+    $lineup->total_salary = $totalSalary; 
+    $lineup->active = 1;
+
+    $lineup->save();    
+
+    $players = getPlayersOfLineup($lineups, $hash);
+
+    foreach ($players as $player) {
+        $lineupPlayer = new LineupPlayer;
+
+        $lineupPlayer->lineup_id = $lineup->id;
+        $lineupPlayer->player_fd_id = $player['player_id'];
+
+        $lineupPlayer->save();
+    }
+}
+
+function getPlayersOfLineup($lineups, $hash) {
+    foreach ($lineups as $lineup) {
+        if ($lineup['hash'] == $hash) {
+            return $lineup['roster_spots'];
+        }
+    }
+}
+
 function removeLineup($playerPoolId, $hash) {
-    DB::table('lineups')
+    $lineupId = DB::table('lineups')
         ->where('player_pool_id', $playerPoolId)
         ->where('hash', $hash)
+        ->pluck('id');
+
+    DB::table('lineup_players')
+        ->where('lineup_id', $lineupId)
+        ->delete();
+
+    DB::table('lineups')
+        ->where('id', $lineupId)
         ->delete();
 }
 

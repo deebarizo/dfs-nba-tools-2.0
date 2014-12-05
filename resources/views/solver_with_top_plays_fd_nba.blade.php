@@ -81,6 +81,15 @@
 
 				var addOrRemove = $(this).children(".add-or-remove-lineup-anchor-text").text();
 
+				switch(addOrRemove) {
+				    case "Add":
+						var lineups = <?php echo json_encode($lineups); ?>;
+				        break;
+				    case "Remove":
+						var lineups = [];
+				        break;
+				}
+
 				$(this).children(".add-or-remove-lineup-anchor-text").text('');
 				$(this).next(".add-or-remove-lineup-link-loading-gif").show();
 
@@ -92,6 +101,7 @@
 		    	$.ajax({
 		            url: '<?php echo url(); ?>/solver_top_plays/add_or_remove_lineup/'+playerPoolId+'/'+hash+'/'+totalSalary+'/'+addOrRemove,
 		            type: 'POST',
+		            data: {lineups: lineups},
 		            success: function() {
 						$this.parent().parent().parent().parent().toggleClass("active-lineup");	
 						$this.next(".add-or-remove-lineup-link-loading-gif").hide();

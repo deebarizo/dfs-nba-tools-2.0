@@ -68,14 +68,9 @@ class SolverFdNbaController {
 
     public function add_or_remove_lineup($playerPoolId, $hash, $totalSalary, $addOrRemove) {
         if ($addOrRemove == 'Add') {
-            $lineup = new Lineup; 
+            $lineups = $_REQUEST['lineups'];
 
-            $lineup->player_pool_id = $playerPoolId;
-            $lineup->hash = $hash;
-            $lineup->total_salary = $totalSalary;
-            $lineup->active = 1;
-
-            $lineup->save();
+            addLineup($playerPoolId, $hash, $totalSalary, $lineups);            
         }
 
         if ($addOrRemove == 'Remove') {
