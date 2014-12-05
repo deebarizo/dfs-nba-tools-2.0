@@ -20,6 +20,16 @@ hr {
 	border: 3px solid rgb(124, 181, 236);
 }
 
+/* SOLVER TOP PLAYS */
+
+.edit-buy-in.form-hidden {
+	display: none;
+}
+
+.edit-buy-in {
+	display: table;
+}
+
 /* PLAYER FILTER TOOLTIPS */
 
 .player-filter-tooltip {

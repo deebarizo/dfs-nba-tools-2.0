@@ -5,7 +5,19 @@
 		<div class="col-lg-12">
 			<h2>Daily FD NBA (Solver With Top Plays) | {{ $date }} {{ $timePeriod }}</h2>
 
-			<p><strong>Buy In: </strong> $125</p>
+			<p>
+				<strong>Buy In: </strong> 
+				<span class="buy-in-amount">$0</span>
+				(<a href="#" class="edit-buy-in-link">Edit</a>) 
+			</p>
+
+			<div class="input-group edit-buy-in form-hidden" style="width: 20%; margin-bottom: 10px">
+				<div class="input-group-addon">$</div>
+			   	<input type="text" class="form-control">
+			   	<span class="input-group-btn">
+			    	<button class="btn btn-default" type="button">Submit</button>
+			   	</span>
+			</div>
 		</div>
 	</div>
 
@@ -39,7 +51,7 @@
 
 						<tr>
 							<td style="text-align: center" colspan="2">
-								<a href="#" class="add-lineup-link">Add</a>
+								<a href="#" class="add-or-remove-lineup-link">Add</a>
 							</td>
 							<td style="color: green"><strong>{{ $lineup['total_salary'] }}</strong></td>
 						</tr>
@@ -47,4 +59,26 @@
 				</table>
 			@endforeach	
 	</div>
+
+	<script>
+		$(document).ready(function() {
+			$(".edit-buy-in-link").click(function() {
+				$(".edit-buy-in").toggleClass("form-hidden");
+			});
+
+			$(".add-or-remove-lineup-link").click(function() {
+				addOrRemoveAnchorText = $(this).text();
+
+				switch(addOrRemoveAnchorText) {
+				    case "Add":
+				        $(this).text("Remove");
+				        break;
+				    case "Remove":
+				        $(this).text("Add");
+				        break;
+				}				
+			});
+
+		});
+	</script>
 @stop

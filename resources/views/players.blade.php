@@ -251,9 +251,10 @@
 	@endforeach
 
 	<script>
-		$( ".previous-filters-link" ).click(function() {
-			$( "#previous-fd-filters" ).toggle();
+		$(document).ready(function() {
+			$( ".previous-filters-link" ).click(function() {
+				$( "#previous-fd-filters" ).toggle();
+			});
 		});
-
 	</script>
 @stop
