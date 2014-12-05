@@ -73,11 +73,11 @@ class SolverFdNbaController {
             ->update(array('buy_in' => $buyIn));
     }
 
-    public function addOrRemoveLineup($playerPoolId, $hash, $totalSalary, $addOrRemove) {
+    public function addOrRemoveLineup($playerPoolId, $hash, $totalSalary, $buyIn, $addOrRemove) {
         if ($addOrRemove == 'Add') {
             $lineups = $_REQUEST['lineups'];
 
-            addLineup($playerPoolId, $hash, $totalSalary, $lineups);            
+            addLineup($playerPoolId, $hash, $totalSalary, $buyIn, $lineups);            
         }
 
         if ($addOrRemove == 'Remove') {

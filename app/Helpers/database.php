@@ -37,12 +37,13 @@ function getActiveLineups($playerPoolId) {
     return $activeLineups;
 }
 
-function addLineup($playerPoolId, $hash, $totalSalary, $lineups) {
+function addLineup($playerPoolId, $hash, $totalSalary, $buyIn, $lineups) {
     $lineup = new Lineup; 
 
     $lineup->player_pool_id = $playerPoolId;
     $lineup->hash = $hash;
     $lineup->total_salary = $totalSalary; 
+    $lineup->buy_in = $buyIn;
     $lineup->active = 1;
 
     $lineup->save();    

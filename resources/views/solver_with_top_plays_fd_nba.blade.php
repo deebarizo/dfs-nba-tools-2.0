@@ -7,7 +7,7 @@
 
 			<p>
 				<strong>Buy In: </strong> 
-				<span class="buy-in-amount">$<span class="buy-in">{{ $buyIn }}</span>
+				$<span class="buy-in-amount">{{ $buyIn }}</span>
 				(<a href="#" class="edit-buy-in-link">Edit</a>) 
 			</p>
 
@@ -35,7 +35,7 @@
 				<table data-player-pool-id="{{ $playerPoolId }}" 
 					   data-hash="{{ $lineup['hash'] }}" 
 					   data-total-salary="{{ $lineup['total_salary'] }}" 
-					   class="table table-striped table-bordered table-hover table-condensed {{ $lineup['css_class'] }}">
+					   class="table table-striped table-bordered table-hover table-condensed {{ $lineup['css_class_blue_border'] }}">
 					<thead>
 						<tr>
 							<th style="width: 15%">Pos</th>
@@ -54,6 +54,11 @@
 
 						<tr>
 							<td style="text-align: center" colspan="2">
+								<span class="edit-lineup-buy-in {{ $lineup['css_class_edit_info'] }}">
+									$<span class="edit-lineup-buy-in-amount">24</span> 
+									(<span class="edit-lineup-buy-in-percentage">20</span>%) | 
+									<a href="#" class="edit-lineup-buy-in-link">Edit</a> | 
+								</span>
 								<a href="#" class="add-or-remove-lineup-link"><span class="add-or-remove-lineup-anchor-text">{{ $lineup['anchor_text'] }}</span></a>
 								<span class="add-or-remove-lineup-link-loading-gif">
 									<img src="/files/spiffygif_16x16.gif" alt="Please wait..." />
@@ -79,7 +84,7 @@
 			$(".edit-buy-in-button").click(function(e) {
 				e.preventDefault();
 
-				var buyIn = $(".edit-buy-in-input").val();
+				var buyIn = $("span.buy-in-amount").text();
 
 		    	$.ajax({
 		            url: '<?php echo url(); ?>/solver_top_plays/update_buy_in/'+playerPoolId+'/'+buyIn,
@@ -87,7 +92,7 @@
 		            success: function() {
 		            	$(".edit-buy-in").addClass("form-hidden");
 
-		            	$("span.buy-in").text(buyIn).fadeIn();
+		            	$("span.buy-in-amount").text(buyIn).fadeIn();
 		            }
 		        }); 				
 			});
@@ -95,13 +100,15 @@
 			$(".add-or-remove-lineup-link").click(function(e) {
 				e.preventDefault();
 
-				var buyIn = $("span.buy-in").text();
+				var buyIn = $("span.buy-in-amount").text();
 
 				if (buyIn == 0) {
 					alert("Please enter a buy in.");
 
 					return false;
 				}
+
+				var lineupBuyIn = Math.round(buyIn * 0.20);
 
 				var addOrRemove = $(this).children(".add-or-remove-lineup-anchor-text").text();
 
@@ -122,11 +129,12 @@
 				var $this = $(this);
 
 		    	$.ajax({
-		            url: '<?php echo url(); ?>/solver_top_plays/add_or_remove_lineup/'+playerPoolId+'/'+hash+'/'+totalSalary+'/'+addOrRemove,
+		            url: '<?php echo url(); ?>/solver_top_plays/add_or_remove_lineup/'+playerPoolId+'/'+hash+'/'+totalSalary+'/'+lineupBuyIn+'/'+addOrRemove,
 		            type: 'POST',
 		            data: {lineups: lineups},
 		            success: function() {
 						$this.parent().parent().parent().parent().toggleClass("active-lineup");	
+						$this.prev().toggleClass("edit-lineup-buy-in-hidden");	
 						$this.next(".add-or-remove-lineup-link-loading-gif").hide();
 
 						switch(addOrRemove) {
@@ -140,52 +148,6 @@
 		            }
 		        }); 
 			});
-
-		/*	$(function () {
-			    $('#player-percentages-container').highcharts({
-			        chart: {
-			            type: 'bar'
-			        },
-			        title: {
-			        	text: null
-			        },
-			        xAxis: {
-			            categories: <?php echo json_encode($playersInTopLineups); ?>,
-			            labels: {
-			            	step: 1
-			            }
-			        },
-			        yAxis: {
-			            min: 0,
-			            title: {
-			                text: 'Percentage'
-			            },
-			            max: 100
-			        },
-			        tooltip: {
-			            valueSuffix: '%'
-			        },
-			        plotOptions: {
-			            bar: {
-			                dataLabels: {
-			                    enabled: true
-			                },
-			                pointWidth: 20,
-			                pointPadding: 0
-			            }
-			        },
-			        credits: {
-			            enabled: false
-			        },
-			        series: [{
-			        	name: 'Percentage',
-			            data: <?php echo json_encode($percentagesInTopLineups); ?>
-			        }],
-			        legend: {
-			        	enabled: false
-			        }
-			    });
-			});	*/
 		});
 	</script>
 @stop
