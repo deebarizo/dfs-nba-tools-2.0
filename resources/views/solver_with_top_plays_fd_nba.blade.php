@@ -7,15 +7,15 @@
 
 			<p>
 				<strong>Buy In: </strong> 
-				<span class="buy-in-amount">${{ $buyIn }}</span>
+				<span class="buy-in-amount">$<span class="buy-in">{{ $buyIn }}</span>
 				(<a href="#" class="edit-buy-in-link">Edit</a>) 
 			</p>
 
 			<div class="input-group edit-buy-in form-hidden" style="width: 20%; margin-bottom: 10px">
 				<div class="input-group-addon">$</div>
-			   	<input type="text" class="form-control">
+			   	<input type="text" class="form-control edit-buy-in-input" value="{{ $buyIn }}">
 			   	<span class="input-group-btn">
-			    	<button class="btn btn-default" type="button">Submit</button>
+			    	<button class="btn btn-default edit-buy-in-button" type="button">Submit</button>
 			   	</span>
 			</div>
 		</div>
@@ -68,16 +68,34 @@
 
 	<script>
 		$(document).ready(function() {
+			var playerPoolId = <?php echo $playerPoolId; ?>;
+
 			$(".edit-buy-in-link").click(function(e) {
 				e.preventDefault();
 
 				$(".edit-buy-in").toggleClass("form-hidden");
 			});
 
+			$(".edit-buy-in-button").click(function(e) {
+				e.preventDefault();
+
+				var buyIn = $(".edit-buy-in-input").val();
+
+		    	$.ajax({
+		            url: '<?php echo url(); ?>/solver_top_plays/update_buy_in/'+playerPoolId+'/'+buyIn,
+		            type: 'POST',
+		            success: function() {
+		            	$(".edit-buy-in").addClass("form-hidden");
+
+		            	$("span.buy-in").text(buyIn).fadeIn();
+		            }
+		        }); 				
+			});
+
 			$(".add-or-remove-lineup-link").click(function(e) {
 				e.preventDefault();
 
-				var buyIn = <?php echo $buyIn; ?>;
+				var buyIn = $("span.buy-in").text();
 
 				if (buyIn == 0) {
 					alert("Please enter a buy in.");
@@ -99,7 +117,6 @@
 				$(this).children(".add-or-remove-lineup-anchor-text").text('');
 				$(this).next(".add-or-remove-lineup-link-loading-gif").show();
 
-				var playerPoolId = $(this).parent().parent().parent().parent().data('player-pool-id');
 				var hash = $(this).parent().parent().parent().parent().data('hash');
 				var totalSalary = $(this).parent().parent().parent().parent().data('total-salary');
 				var $this = $(this);
@@ -122,10 +139,7 @@
 						}
 		            }
 		        }); 
-
-		
 			});
-
 		});
 	</script>
 @stop

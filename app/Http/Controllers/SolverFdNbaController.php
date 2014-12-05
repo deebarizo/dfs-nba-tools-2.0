@@ -67,7 +67,13 @@ class SolverFdNbaController {
 
     // Ajax
 
-    public function add_or_remove_lineup($playerPoolId, $hash, $totalSalary, $addOrRemove) {
+    public function updateBuyIn($playerPoolId, $buyIn) {
+        DB::table('player_pools')
+            ->where('id', $playerPoolId)
+            ->update(array('buy_in' => $buyIn));
+    }
+
+    public function addOrRemoveLineup($playerPoolId, $hash, $totalSalary, $addOrRemove) {
         if ($addOrRemove == 'Add') {
             $lineups = $_REQUEST['lineups'];
 
