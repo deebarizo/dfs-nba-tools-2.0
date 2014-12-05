@@ -55,8 +55,8 @@
 						<tr>
 							<td style="text-align: center" colspan="2">
 								<span class="edit-lineup-buy-in {{ $lineup['css_class_edit_info'] }}">
-									$<span class="edit-lineup-buy-in-amount">24</span> 
-									(<span class="edit-lineup-buy-in-percentage">20</span>%) | 
+									$<span class="lineup-buy-in-amount">{{ $lineup['buy_in'] }}</span> 
+									(<span class="lineup-buy-in-percentage">{{ $lineup['buy_in_percentage'] }}</span>%) | 
 									<a href="#" class="edit-lineup-buy-in-link">Edit</a> | 
 								</span>
 								<a href="#" class="add-or-remove-lineup-link"><span class="add-or-remove-lineup-anchor-text">{{ $lineup['anchor_text'] }}</span></a>
@@ -68,6 +68,14 @@
 						</tr>
 					</tbody>
 				</table>
+
+				<div class="input-group edit-lineup-buy-in-amount edit-lineup-buy-in-amount-hidden" style="width: 45%; margin: -12px auto 20px auto">
+					<div class="input-group-addon">$</div>
+				   	<input type="text" class="form-control edit-lineup-buy-in-input" value="{{ $lineup['buy_in'] }}">
+				   	<span class="input-group-btn">
+				    	<button class="btn btn-default edit-lineup-buy-in-button" type="button">Submit</button>
+				   	</span>
+				</div>
 			@endforeach	
 	</div>
 
@@ -79,6 +87,12 @@
 				e.preventDefault();
 
 				$(".edit-buy-in").toggleClass("form-hidden");
+			});
+
+			$(".edit-lineup-buy-in-link").click(function(e) {
+				e.preventDefault();
+
+				$(this).parent().parent().parent().parent().parent().next().toggleClass("edit-lineup-buy-in-amount-hidden");
 			});
 
 			$(".edit-buy-in-button").click(function(e) {
@@ -109,6 +123,7 @@
 				}
 
 				var lineupBuyIn = Math.round(buyIn * 0.20);
+				var lineupBuyInPercentage = 20;
 
 				var addOrRemove = $(this).children(".add-or-remove-lineup-anchor-text").text();
 
@@ -139,6 +154,9 @@
 
 						switch(addOrRemove) {
 						    case "Add":
+						    	$this.prev().children('.lineup-buy-in-amount').text(lineupBuyIn);
+						    	$this.prev().children('.lineup-buy-in-percentage').text(lineupBuyInPercentage);
+								$this.parent().parent().parent().parent().next().children(".edit-lineup-buy-in-input").val(lineupBuyIn);								
 								$this.children(".add-or-remove-lineup-anchor-text").text("Remove");
 						        break;
 						    case "Remove":

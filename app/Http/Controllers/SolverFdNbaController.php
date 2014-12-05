@@ -57,7 +57,7 @@ class SolverFdNbaController {
         $playerPoolId = $lineups[0]['roster_spots']['PG2']->player_pool_id;
         $buyIn = getBuyIn($playerPoolId);
 
-        $lineups = $solverTopPlays->markActiveLineups($lineups, $playerPoolId);
+        $lineups = $solverTopPlays->markActiveLineups($lineups, $playerPoolId, $buyIn);
 
         # ddAll($lineups);
 

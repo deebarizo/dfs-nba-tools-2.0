@@ -6,11 +6,11 @@ class SolverTopPlays {
 
 	//// Mark active lineups
 
-	public function markActiveLineups($lineups, $playerPoolId) {
+	public function markActiveLineups($lineups, $playerPoolId, $buyIn) {
 		$activeLineups = getActiveLineups($playerPoolId);
 
 		foreach ($lineups as &$lineup) {
-			$lineup = $this->markLineupIfActive($lineup, $activeLineups);
+			$lineup = $this->markLineupIfActive($lineup, $activeLineups, $buyIn);
 		}
 
 		unset($lineup);
@@ -18,13 +18,15 @@ class SolverTopPlays {
         return $lineups;
 	}
 
-	public function markLineupIfActive($lineup, $activeLineups)	{
+	public function markLineupIfActive($lineup, $activeLineups, $buyIn)	{
 		foreach ($activeLineups as $activeLineup) {
 			if ($lineup['hash'] == $activeLineup->hash) {
 				$lineup['active'] = 1;
 				$lineup['css_class_blue_border'] = 'active-lineup';
 				$lineup['css_class_edit_info'] = '';
 				$lineup['anchor_text'] = 'Remove';
+				$lineup['buy_in'] = $activeLineup->buy_in;
+				$lineup['buy_in_percentage'] = $activeLineup->buy_in / $buyIn * 100;
 
 				return $lineup;
 			}
@@ -34,6 +36,8 @@ class SolverTopPlays {
 		$lineup['css_class_blue_border'] = '';
 		$lineup['css_class_edit_info'] = 'edit-lineup-buy-in-hidden';
 		$lineup['anchor_text'] = 'Add';
+		$lineup['buy_in'] = 0;
+		$lineup['buy_in_percentage'] = 0;
 
 		return $lineup;
 	}

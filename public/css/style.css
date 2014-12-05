@@ -35,6 +35,10 @@ hr {
 	display: none;
 }
 
+.edit-lineup-buy-in-amount-hidden {
+	display: none;
+}
+
 .add-or-remove-lineup-link-loading-gif {
 	display: none;
 }
