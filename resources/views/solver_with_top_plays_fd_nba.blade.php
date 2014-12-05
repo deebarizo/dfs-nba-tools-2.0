@@ -140,6 +140,52 @@
 		            }
 		        }); 
 			});
+
+		/*	$(function () {
+			    $('#player-percentages-container').highcharts({
+			        chart: {
+			            type: 'bar'
+			        },
+			        title: {
+			        	text: null
+			        },
+			        xAxis: {
+			            categories: <?php echo json_encode($playersInTopLineups); ?>,
+			            labels: {
+			            	step: 1
+			            }
+			        },
+			        yAxis: {
+			            min: 0,
+			            title: {
+			                text: 'Percentage'
+			            },
+			            max: 100
+			        },
+			        tooltip: {
+			            valueSuffix: '%'
+			        },
+			        plotOptions: {
+			            bar: {
+			                dataLabels: {
+			                    enabled: true
+			                },
+			                pointWidth: 20,
+			                pointPadding: 0
+			            }
+			        },
+			        credits: {
+			            enabled: false
+			        },
+			        series: [{
+			        	name: 'Percentage',
+			            data: <?php echo json_encode($percentagesInTopLineups); ?>
+			        }],
+			        legend: {
+			        	enabled: false
+			        }
+			    });
+			});	*/
 		});
 	</script>
 @stop
