@@ -56,7 +56,7 @@ class SolverFdNbaController {
         $timePeriod = $lineups[0]['roster_spots']['PG2']->time_period;
         $playerPoolId = $lineups[0]['roster_spots']['PG2']->player_pool_id;
 
-        $lineups = $solverTopPlays->designateActiveLineups($lineups);
+        $lineups = $solverTopPlays->markActiveLineups($lineups, $playerPoolId);
 
         ddAll($lineups);
 

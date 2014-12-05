@@ -2,6 +2,15 @@
 
 use Illuminate\Support\Facades\DB;
 
+function getActiveLineups($playerPoolId) {
+    $activeLineups = DB::table('lineups')
+        ->select('*')
+        ->whereRaw('player_pool_id = '.$playerPoolId.' AND active = 1')
+        ->get(); 
+
+    return $activeLineups;
+}
+
 function getTopPlays($date) {
     $players = DB::table('player_pools')
         ->join('players_fd', 'player_pools.id', '=', 'players_fd.player_pool_id')

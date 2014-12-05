@@ -4,6 +4,36 @@ class SolverTopPlays {
 
 	private $minimumTotalSalary = 59400; // 1% of cap
 
+	//// Mark active lineups
+
+	public function markActiveLineups($lineups, $playerPoolId) {
+		$activeLineups = getActiveLineups($playerPoolId);
+
+		foreach ($lineups as &$lineup) {
+			$lineup = $this->markLineupIfActive($lineup, $activeLineups);
+		}
+
+		unset($lineup);
+
+        return $lineups;
+	}
+
+	public function markLineupIfActive($lineup, $activeLineups)	{
+		foreach ($activeLineups as $activeLineup) {
+			if ($lineup['hash'] == $activeLineup->hash) {
+				$lineup['active'] = 1;
+				$lineup['anchor_text'] = 'Remove';
+
+				return $lineup;
+			}
+		}
+
+		$lineup['active'] = 0;
+		$lineup['anchor_text'] = 'Add';
+
+		return $lineup;
+	}
+
 	//// Build lineups
 
 	public function buildLineupsWithTopPlays($players) {
