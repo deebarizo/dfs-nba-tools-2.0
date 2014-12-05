@@ -11,6 +11,8 @@ use App\DailyFdFilter;
 use App\TeamFilter;
 use App\Solver;
 use App\SolverTopPlays;
+use App\Lineup;
+use App\LineupPlayer;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\RunFDNBASalariesScraperRequest;
@@ -25,6 +27,8 @@ use Illuminate\Support\Facades\Session;
 date_default_timezone_set('America/Chicago');
 
 class SolverFdNbaController {
+
+    //// Solver with top plays
 
     public function solver_with_top_plays($date) {
         if ($date == 'today') {
@@ -50,19 +54,36 @@ class SolverFdNbaController {
         $lineups = $solverTopPlays->buildLineupsWithTopPlays($players);
 
         $timePeriod = $lineups[0]['roster_spots']['PG2']->time_period;
+        $playerPoolId = $lineups[0]['roster_spots']['PG2']->player_pool_id;
 
-    /*    $lineup = DB::table('lineup_players')
-            ->join('lineups', 'lineups.id', '=', 'lineup_players.lineup_id')
-            ->join('player_pools', 'player_pools.id', '=', 'lineups.player_pool_id')
-            ->join('players_fd', 'players_fd.player_id', '=', 'lineups_players.player_fd_id')
-            ->select('*')
-            ->whereRaw('player_pools.date = "'.$date.'" AND lineups.hash = 63475')
-            ->get(); */
+        $lineups = $solverTopPlays->designateActiveLineups($lineups);
 
-        # ddAll($lineups);
+        ddAll($lineups);
 
-        return view('solver_with_top_plays_fd_nba', compact('date', 'timePeriod', 'lineups'));
+        return view('solver_with_top_plays_fd_nba', 
+                     compact('date', 'timePeriod', 'playerPoolId', 'lineups'));
     }
+
+    // Ajax
+
+    public function add_or_remove_lineup($playerPoolId, $hash, $totalSalary, $addOrRemove) {
+        if ($addOrRemove = 'Add') {
+            $lineup = new Lineup; 
+
+            $lineup->player_pool_id = $playerPoolId;
+            $lineup->hash = $hash;
+            $lineup->total_salary = $totalSalary;
+            $lineup->active = 1;
+
+            $lineup->save();
+        }
+
+        if ($addOrRemove = "Remove") {
+
+        }
+    }
+
+    //// Solver
 
 	public function solverFdNba($date = 'today', $numTopLineups = 5) {
 		if ($date == 'today') {

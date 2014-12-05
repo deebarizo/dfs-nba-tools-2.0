@@ -32,7 +32,10 @@
 			<h4>Lineups</h4>
 
 			@foreach ($lineups as $lineup)
-				<table class="table table-striped table-bordered table-hover table-condensed">
+				<table data-player-pool-id="{{ $playerPoolId }}" 
+					   data-hash="{{ $lineup['hash'] }}" 
+					   data-total-salary="{{ $lineup['total_salary'] }}" 
+					   class="table table-striped table-bordered table-hover table-condensed">
 					<thead>
 						<tr>
 							<th style="width: 15%">Pos</th>
@@ -62,23 +65,39 @@
 
 	<script>
 		$(document).ready(function() {
-			$(".edit-buy-in-link").click(function() {
+			$(".edit-buy-in-link").click(function(e) {
+				e.preventDefault();
+
 				$(".edit-buy-in").toggleClass("form-hidden");
 			});
 
-			$(".add-or-remove-lineup-link").click(function() {
-				addOrRemoveAnchorText = $(this).text();
+			$(".add-or-remove-lineup-link").click(function(e) {
+				e.preventDefault();
 
-				switch(addOrRemoveAnchorText) {
-				    case "Add":
-				    	$(this).text("Remove");
-				        break;
-				    case "Remove":
-				        $(this).text("Add");
-				        break;
-				}
+				var playerPoolId = $(this).parent().parent().parent().parent().data('player-pool-id');
+				var hash = $(this).parent().parent().parent().parent().data('hash');
+				var totalSalary = $(this).parent().parent().parent().parent().data('total-salary');
+				var addOrRemove = $(this).text();
+				var $this = $(this);
+				
+		    	$.ajax({
+		            url: '<?php echo url(); ?>/solver_top_plays/add_or_remove_lineup/'+playerPoolId+'/'+hash+'/'+totalSalary+'/'+addOrRemove,
+		            type: 'POST',
+		            success: function() {
+						switch(addOrRemove) {
+						    case "Add":
+								$this.text("Remove");
+						        break;
+						    case "Remove":
+						        $this.text("Add");
+						        break;
+						}
 
-				$(this).parent().parent().parent().parent().toggleClass("active-lineup");		
+						$this.parent().parent().parent().parent().toggleClass("active-lineup");	
+		            }
+		        }); 
+
+		
 			});
 
 		});
