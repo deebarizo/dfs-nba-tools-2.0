@@ -219,11 +219,11 @@ class Solver {
 					$salaryTotal += $rosterSpot->salary;
 					$fppgMinus1Total += $rosterSpot->fppg_minus1;
 					$hashTotal += $rosterSpot->player_id +
-										$rosterSpot->salary +
-										$rosterSpot->team_id +
-										$rosterSpot->opp_team_id +
-										$rosterSpot->vr_minus1 +
-										$rosterSpot->fppg_minus1;
+								  $rosterSpot->salary +
+								  $rosterSpot->team_id +
+								  $rosterSpot->opp_team_id +
+								  strlen($rosterSpot->name) +
+							   	  strlen($rosterSpot->position);
 				}
 
 				$lineup['salary_total'] = $salaryTotal;

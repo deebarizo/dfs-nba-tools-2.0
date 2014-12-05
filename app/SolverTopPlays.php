@@ -2,6 +2,8 @@
 
 class SolverTopPlays {
 
+	private $minimumTotalSalary = 59400; // 1% of cap
+
 	//// Build lineups
 
 	public function buildLineupsWithTopPlays($players) {
@@ -65,7 +67,7 @@ class SolverTopPlays {
 	private function buildOneLineupWithTopPlays($players, $numOfPlayersPerPosition) {
 		do {
 			$lineup = $this->loopThroughPlayersToBuildOneLineup($players, $numOfPlayersPerPosition);
-		} while ($lineup['total_salary'] > 60000 || $lineup['total_salary'] < 54000);
+		} while ($lineup['total_salary'] > 60000 || $lineup['total_salary'] < $this->minimumTotalSalary);
 
 		return $lineup;
 	}
@@ -88,7 +90,7 @@ class SolverTopPlays {
 				$this->getPlayersPerPosition($players, $position, $rosterSpotsWithinPosition);
 		}
 
-		unset($lineup['C2']); // only one center per lineup
+		unset($lineup['roster_spots']['C2']); // only one center per lineup
 
 		$lineup['total_salary'] = 0;
 		$lineup['hash'] = 0;
@@ -99,11 +101,9 @@ class SolverTopPlays {
 							   $rosterSpot->salary +
 							   $rosterSpot->team_id +
 							   $rosterSpot->opp_team_id +
-							   $rosterSpot->vr_minus1 + 
-							   $rosterSpot->fppg_minus1;
+							   strlen($rosterSpot->name) +
+							   strlen($rosterSpot->position);
 		}
-
-		$lineup['hash'] = $lineup['hash'] * 100; // remove the two decimal places
 
 		$lineup['total_unspent'] = 60000 - $lineup['total_salary'];
 
@@ -141,20 +141,29 @@ class SolverTopPlays {
 			$topPlaysOfPosition = $this->checkForMatchingPosition($player, $position, $topPlaysOfPosition);
 		}
 
-		if ($position == 'C') {
+		if ($position == 'C') { // only one center per lineup
 			$randomNum = $rosterSpotsWithinPosition[0];
 
-			$playerWithinPosition[] = $topPlaysOfPosition[$randomNum - 1];
-			$playerWithinPosition[] = $topPlaysOfPosition[$randomNum - 1];
+			$playersWithinPosition[] = $topPlaysOfPosition[$randomNum - 1];
+			$playersWithinPosition[] = $topPlaysOfPosition[$randomNum - 1];
 
-			return array($playerWithinPosition[0], $playerWithinPosition[1]);
+			return array($playersWithinPosition[0], $playersWithinPosition[1]);
 		}
 
 		foreach ($rosterSpotsWithinPosition as $randomNum) {
-			$playerWithinPosition[] = $topPlaysOfPosition[$randomNum - 1]; // because index starts at 0
+			$playersWithinPosition[] = $topPlaysOfPosition[$randomNum - 1]; // because index starts at 0
 		}
 
-		return array($playerWithinPosition[0], $playerWithinPosition[1]);
+		foreach ($playersWithinPosition as $key => $player) {
+			$salary[$key] = $player->salary;
+		}
+
+		array_multisort($salary, SORT_DESC, $playersWithinPosition);
+
+		# dd($playersWithinPosition);
+
+		return array($playersWithinPosition[1], $playersWithinPosition[0]); 
+			// flip the order because of how the list function works
 	}
 
 	private function checkForMatchingPosition($player, $position, $topPlaysOfPosition) {
@@ -210,7 +219,7 @@ class SolverTopPlays {
 	public function validateMaximumTotalSalary($players) {
 		$totalSalary = $this->getTotalSalary($players, 'Maximum');
 
-		if ($totalSalary < 54000) {
+		if ($totalSalary < $this->minimumTotalSalary) {
 			return false;
 		}
 

@@ -44,12 +44,14 @@ class SolverFdNbaController {
         }
 
         if (!$solverTopPlays->validateMaximumTotalSalary($players)) {
-            return 'The most expensive lineup is less than $54000.';
+            return 'The most expensive lineup is less than $59400.';
         }
 
         $lineups = $solverTopPlays->buildLineupsWithTopPlays($players);
 
         $timePeriod = $lineups[0]['roster_spots']['PG2']->time_period;
+
+        # ddAll($lineups);
 
         return view('solver_with_top_plays_fd_nba', compact('date', 'timePeriod', 'lineups'));
     }
