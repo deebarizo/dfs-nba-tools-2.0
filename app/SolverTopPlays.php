@@ -26,7 +26,7 @@ class SolverTopPlays {
 				$lineup['css_class_edit_info'] = '';
 				$lineup['anchor_text'] = 'Remove';
 				$lineup['buy_in'] = $activeLineup->buy_in;
-				$lineup['buy_in_percentage'] = $activeLineup->buy_in / $buyIn * 100;
+				$lineup['buy_in_percentage'] = numFormat($activeLineup->buy_in / $buyIn * 100, 2);
 
 				return $lineup;
 			}

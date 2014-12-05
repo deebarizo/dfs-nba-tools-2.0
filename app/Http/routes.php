@@ -43,6 +43,7 @@ $router->get('solver_with_top_plays_fd_nba/{date}', 'SolverFdNbaController@solve
 
 $router->post('solver_top_plays/add_or_remove_lineup/{playerPoolId}/{hash}/{totalSalary}/{buyIn}/{addOrRemove}', 'SolverFdNbaController@addOrRemoveLineup');
 $router->post('solver_top_plays/update_buy_in/{playerPoolId}/{buyIn}', 'SolverFdNbaController@updateBuyIn');
+$router->post('solver_top_plays/update_lineup_buy_in/{playerPoolId}/{hash}/{lineupBuyIn}', 'SolverFdNbaController@updateLineupBuyIn');
 
 $router->resource('daily_fd_filters', 'DailyFdFiltersController', ['except' => ['create']]);
 $router->get('daily_fd_filters/{player_id}/create', 'DailyFdFiltersController@create');

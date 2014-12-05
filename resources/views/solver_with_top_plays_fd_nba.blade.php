@@ -52,8 +52,8 @@
 							</tr>
 						@endforeach
 
-						<tr>
-							<td style="text-align: center" colspan="2">
+						<tr class="update-lineup-row">
+							<td class="update-lineup-td" style="text-align: center" colspan="2">
 								<span class="edit-lineup-buy-in {{ $lineup['css_class_edit_info'] }}">
 									$<span class="lineup-buy-in-amount">{{ $lineup['buy_in'] }}</span> 
 									(<span class="lineup-buy-in-percentage">{{ $lineup['buy_in_percentage'] }}</span>%) | 
@@ -82,6 +82,9 @@
 	<script>
 		$(document).ready(function() {
 			var playerPoolId = <?php echo $playerPoolId; ?>;
+			var buyIn = $("span.buy-in-amount").text();
+
+			// Edit buy in
 
 			$(".edit-buy-in-link").click(function(e) {
 				e.preventDefault();
@@ -89,18 +92,10 @@
 				$(".edit-buy-in").toggleClass("form-hidden");
 			});
 
-			$(".edit-lineup-buy-in-link").click(function(e) {
-				e.preventDefault();
-
-				$(this).parent().parent().parent().parent().parent().next().toggleClass("edit-lineup-buy-in-amount-hidden");
-			});
-
 			$(".edit-buy-in-button").click(function(e) {
 				e.preventDefault();
 
-				var buyIn = $("span.buy-in-amount").text();
-
-		    	$.ajax({
+				$.ajax({
 		            url: '<?php echo url(); ?>/solver_top_plays/update_buy_in/'+playerPoolId+'/'+buyIn,
 		            type: 'POST',
 		            success: function() {
@@ -110,6 +105,44 @@
 		            }
 		        }); 				
 			});
+
+			// Edit lineup buy in
+
+			$(".edit-lineup-buy-in-link").click(function(e) {
+				e.preventDefault();
+
+				console.log('test');
+
+				$(this).parent().parent().parent().parent().parent().next().toggleClass("edit-lineup-buy-in-amount-hidden");
+			});
+
+			$(".edit-lineup-buy-in-button").click(function(e) {
+				e.preventDefault();
+
+				var lineupBuyIn = $(this).parent().prev().val();
+				var lineupBuyInPercentage = lineupBuyIn / buyIn * 100;
+				lineupBuyInPercentage = lineupBuyInPercentage.toFixed(2);
+
+				var hash = $(this).parent().parent().prev().data('hash');
+
+				// console.log(test); return false;
+
+				var $this = $(this);
+
+		    	$.ajax({
+		            url: '<?php echo url(); ?>/solver_top_plays/update_lineup_buy_in/'+playerPoolId+'/'+hash+'/'+lineupBuyIn,
+		            type: 'POST',
+		            success: function() {
+		            	$this.parent().parent().addClass("edit-lineup-buy-in-amount-hidden");
+
+		            	$this.parent().parent().prev().children('tbody').children('tr.update-lineup-row').children('td.update-lineup-td').children('span.edit-lineup-buy-in').children('span.lineup-buy-in-amount').text(lineupBuyIn);
+		            	$this.parent().parent().prev().children('tbody').children('tr.update-lineup-row').children('td.update-lineup-td').children('span.edit-lineup-buy-in').children('span.lineup-buy-in-percentage').text(lineupBuyInPercentage);
+		            }
+		        }); 				
+			});
+
+
+			// Add or remove lineup
 
 			$(".add-or-remove-lineup-link").click(function(e) {
 				e.preventDefault();
@@ -123,7 +156,8 @@
 				}
 
 				var lineupBuyIn = Math.round(buyIn * 0.20);
-				var lineupBuyInPercentage = 20;
+				var lineupBuyInPercentage = lineupBuyIn / buyIn * 100;
+				lineupBuyInPercentage = lineupBuyInPercentage.toFixed(2);
 
 				var addOrRemove = $(this).children(".add-or-remove-lineup-anchor-text").text();
 
@@ -161,6 +195,7 @@
 						        break;
 						    case "Remove":
 						        $this.children(".add-or-remove-lineup-anchor-text").text("Add");
+						        $this.parent().parent().parent().parent().next().addClass("edit-lineup-buy-in-amount-hidden");
 						        break;
 						}
 		            }

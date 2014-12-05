@@ -85,6 +85,13 @@ class SolverFdNbaController {
         }
     }
 
+    public function updateLineupBuyIn($playerPoolId, $hash, $lineupBuyIn) {
+        DB::table('lineups')
+            ->where('player_pool_id', $playerPoolId)
+            ->where('hash', $hash)
+            ->update(array('buy_in' => $lineupBuyIn));        
+    }
+
     //// Solver
 
 	public function solverFdNba($date = 'today', $numTopLineups = 5) {
