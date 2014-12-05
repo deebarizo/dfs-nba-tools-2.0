@@ -31,6 +31,10 @@ hr {
 	display: table;
 }
 
+.add-or-remove-lineup-link-loading-gif {
+	display: none;
+}
+
 /* PLAYER FILTER TOOLTIPS */
 
 .player-filter-tooltip {

@@ -22,6 +22,7 @@ class SolverTopPlays {
 		foreach ($activeLineups as $activeLineup) {
 			if ($lineup['hash'] == $activeLineup->hash) {
 				$lineup['active'] = 1;
+				$lineup['css_class'] = 'active-lineup';
 				$lineup['anchor_text'] = 'Remove';
 
 				return $lineup;
@@ -29,6 +30,7 @@ class SolverTopPlays {
 		}
 
 		$lineup['active'] = 0;
+		$lineup['css_class'] = '';
 		$lineup['anchor_text'] = 'Add';
 
 		return $lineup;

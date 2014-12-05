@@ -58,7 +58,7 @@ class SolverFdNbaController {
 
         $lineups = $solverTopPlays->markActiveLineups($lineups, $playerPoolId);
 
-        ddAll($lineups);
+        # ddAll($lineups);
 
         return view('solver_with_top_plays_fd_nba', 
                      compact('date', 'timePeriod', 'playerPoolId', 'lineups'));
@@ -67,7 +67,7 @@ class SolverFdNbaController {
     // Ajax
 
     public function add_or_remove_lineup($playerPoolId, $hash, $totalSalary, $addOrRemove) {
-        if ($addOrRemove = 'Add') {
+        if ($addOrRemove == 'Add') {
             $lineup = new Lineup; 
 
             $lineup->player_pool_id = $playerPoolId;
@@ -78,8 +78,8 @@ class SolverFdNbaController {
             $lineup->save();
         }
 
-        if ($addOrRemove = "Remove") {
-
+        if ($addOrRemove == 'Remove') {
+            removeLineup($playerPoolId, $hash);
         }
     }
 

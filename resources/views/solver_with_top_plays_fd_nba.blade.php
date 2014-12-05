@@ -35,7 +35,7 @@
 				<table data-player-pool-id="{{ $playerPoolId }}" 
 					   data-hash="{{ $lineup['hash'] }}" 
 					   data-total-salary="{{ $lineup['total_salary'] }}" 
-					   class="table table-striped table-bordered table-hover table-condensed">
+					   class="table table-striped table-bordered table-hover table-condensed {{ $lineup['css_class'] }}">
 					<thead>
 						<tr>
 							<th style="width: 15%">Pos</th>
@@ -54,7 +54,12 @@
 
 						<tr>
 							<td style="text-align: center" colspan="2">
-								<a href="#" class="add-or-remove-lineup-link">Add</a>
+								<a href="#" class="add-or-remove-lineup-link">
+									<span class="add-or-remove-lineup-anchor-text">{{ $lineup['anchor_text'] }}</span>
+								</a>
+								<span class="add-or-remove-lineup-link-loading-gif">
+									<img src="/files/spiffygif_16x16.gif" alt="Please wait..." />
+								</span>
 							</td>
 							<td style="color: green"><strong>{{ $lineup['total_salary'] }}</strong></td>
 						</tr>
@@ -74,26 +79,31 @@
 			$(".add-or-remove-lineup-link").click(function(e) {
 				e.preventDefault();
 
+				var addOrRemove = $(this).children(".add-or-remove-lineup-anchor-text").text();
+
+				$(this).children(".add-or-remove-lineup-anchor-text").text('');
+				$(this).next(".add-or-remove-lineup-link-loading-gif").show();
+
 				var playerPoolId = $(this).parent().parent().parent().parent().data('player-pool-id');
 				var hash = $(this).parent().parent().parent().parent().data('hash');
 				var totalSalary = $(this).parent().parent().parent().parent().data('total-salary');
-				var addOrRemove = $(this).text();
 				var $this = $(this);
-				
+
 		    	$.ajax({
 		            url: '<?php echo url(); ?>/solver_top_plays/add_or_remove_lineup/'+playerPoolId+'/'+hash+'/'+totalSalary+'/'+addOrRemove,
 		            type: 'POST',
 		            success: function() {
+						$this.parent().parent().parent().parent().toggleClass("active-lineup");	
+						$this.next(".add-or-remove-lineup-link-loading-gif").hide();
+
 						switch(addOrRemove) {
 						    case "Add":
-								$this.text("Remove");
+								$this.children(".add-or-remove-lineup-anchor-text").text("Remove");
 						        break;
 						    case "Remove":
-						        $this.text("Add");
+						        $this.children(".add-or-remove-lineup-anchor-text").text("Add");
 						        break;
 						}
-
-						$this.parent().parent().parent().parent().toggleClass("active-lineup");	
 		            }
 		        }); 
 

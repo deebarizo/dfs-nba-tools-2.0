@@ -11,6 +11,13 @@ function getActiveLineups($playerPoolId) {
     return $activeLineups;
 }
 
+function removeLineup($playerPoolId, $hash) {
+    DB::table('lineups')
+        ->where('player_pool_id', $playerPoolId)
+        ->where('hash', $hash)
+        ->delete();
+}
+
 function getTopPlays($date) {
     $players = DB::table('player_pools')
         ->join('players_fd', 'player_pools.id', '=', 'players_fd.player_pool_id')
