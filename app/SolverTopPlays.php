@@ -4,7 +4,10 @@ class SolverTopPlays {
 
 	private $minimumTotalSalary = 59400; // 1% of cap
 
-	//// Process active lineups
+
+	/********************************************
+	PROCESS ACTIVE LINEUPS
+	********************************************/
 
 	public function markActiveLineups($lineups, $playerPoolId, $buyIn) {
 		$activeLineups = getActiveLineups($playerPoolId);
@@ -52,7 +55,32 @@ class SolverTopPlays {
 		return 0;
 	}
 
-	//// Build lineups
+	public function calculateUnspentBuyIn($areThereActiveLineups, $lineups, $buyIn) {
+		if ($areThereActiveLineups == 0) {
+			return $buyIn;
+		}
+
+		$spentBuyIn = 0;
+
+		foreach ($lineups as $lineup) {
+			$spentBuyIn += $this->addBuyInOfActiveLineup($lineup);
+		}
+
+		return $buyIn - $spentBuyIn;
+	}
+
+	private function addBuyInOfActiveLineup($lineup) {
+		if ($lineup['active'] == 0) {
+			return 0;
+		}
+
+		return $lineup['buy_in'];
+	}
+
+
+	/********************************************
+	BUILD LINEUPS
+	********************************************/
 
 	public function buildLineupsWithTopPlays($players) {
 		$numOfPlayersPerPosition = [
@@ -110,7 +138,10 @@ class SolverTopPlays {
 		}
 	}
 
-	// Build one lineup
+
+	/********************************************
+	BUILD ONE LINEUP
+	********************************************/
 
 	private function buildOneLineupWithTopPlays($players, $numOfPlayersPerPosition) {
 		do {
@@ -224,7 +255,10 @@ class SolverTopPlays {
 		return $topPlaysOfPosition;
 	}
 
-	//// Validate top plays
+
+	/********************************************
+	VALIDATE TOP PLAYS
+	********************************************/
 
 	private $numInPositions = [
 		'PG' => ['required_num' => 2, 'current_num' => 0],

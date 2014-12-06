@@ -9,6 +9,11 @@
 				<strong>Buy In: </strong> 
 				$<span class="buy-in-amount">{{ $buyIn }}</span>
 				(<a href="#" class="edit-buy-in-link">Edit</a>) 
+
+				<span style="margin-left: 20px">
+					<strong>Unspent Buy In: </strong>
+					$<span class="unspent-buy-in-amount">{{ $unspentBuyIn }}</span>
+				</span>
 			</p>
 
 			<div class="input-group edit-buy-in form-hidden" style="width: 20%; margin-bottom: 10px">
@@ -81,10 +86,14 @@
 
 	<script>
 		$(document).ready(function() {
+
 			var playerPoolId = <?php echo $playerPoolId; ?>;
 			var buyIn = $("span.buy-in-amount").text();
 
-			// Edit buy in
+
+			/********************************************
+			EDIT BUY IN
+			********************************************/
 
 			$(".edit-buy-in-link").click(function(e) {
 				e.preventDefault();
@@ -108,7 +117,10 @@
 		        }); 				
 			});
 
-			// Edit lineup buy in
+
+			/********************************************
+			EDIT LINEUP BUY IN
+			********************************************/
 
 			$(".edit-lineup-buy-in-link").click(function(e) {
 				e.preventDefault();
@@ -139,12 +151,17 @@
 
 		            	$this.parent().parent().prev().children('tbody').children('tr.update-lineup-row').children('td.update-lineup-td').children('span.edit-lineup-buy-in').children('span.lineup-buy-in-amount').text(lineupBuyIn);
 		            	$this.parent().parent().prev().children('tbody').children('tr.update-lineup-row').children('td.update-lineup-td').children('span.edit-lineup-buy-in').children('span.lineup-buy-in-percentage').text(lineupBuyInPercentage);
+
+		            	updateUnspentBuyIn();
+		            	drawBarChart();
 		            }
 		        }); 				
 			});
 
 
-			// Add or remove lineup
+			/********************************************
+			ADD OR REMOVE LINEUP
+			********************************************/
 
 			$(".add-or-remove-lineup-link").click(function(e) {
 				e.preventDefault();
@@ -172,8 +189,6 @@
 				        break;
 				}
 
-				console.log(lineups);
-
 				$(this).children(".add-or-remove-lineup-anchor-text").text('');
 				$(this).next(".add-or-remove-lineup-link-loading-gif").show();
 
@@ -181,8 +196,10 @@
 				var totalSalary = $(this).parent().parent().parent().parent().data('total-salary');
 				var $this = $(this);
 
+				var Rand = Math.floor((Math.random() * 100000) + 1);
+
 		    	$.ajax({
-		            url: '<?php echo url(); ?>/solver_top_plays/add_or_remove_lineup/'+playerPoolId+'/'+hash+'/'+totalSalary+'/'+lineupBuyIn+'/'+addOrRemove+'/'+ new Date().getTime(),
+		            url: '<?php echo url(); ?>/solver_top_plays/add_or_remove_lineup/'+playerPoolId+'/'+hash+'/'+totalSalary+'/'+lineupBuyIn+'/'+addOrRemove+'/'+Rand,
 		            type: 'POST',
 		            data: {lineups: lineups},
 		            timeout: 10000,
@@ -209,17 +226,48 @@
 						        break;
 						}
 
+						updateUnspentBuyIn();
 						drawBarChart();
 		            }
 		        }); 
 			});
 
-			// Process bar chart
+
+			/********************************************
+			UPDATE UNSPENT BUY IN
+			********************************************/
+
+			function updateUnspentBuyIn() {
+				var buyIn = $("span.buy-in-amount").text();
+				buyIn = parseInt(buyIn);
+
+				var spentBuyIn = 0;
+				spentBuyIn = parseInt(spentBuyIn);
+
+				$(".active-lineup").each(function() {
+					var lineupBuyIn = $(this).find("span.lineup-buy-in-amount").text();	
+
+					spentBuyIn += parseInt(lineupBuyIn);
+				});
+
+				var unspentBuyIn = buyIn - spentBuyIn;
+
+				$("span.unspent-buy-in-amount").text(unspentBuyIn);
+			}
+
+
+			/********************************************
+			DRAW BAR CHART
+			********************************************/
 
 			var areThereActiveLineups = <?php echo $areThereActiveLineups; ?>;
 
 			if (areThereActiveLineups == 1) {
 				drawBarChart();
+			}
+
+			if (areThereActiveLineups == 0) {
+				$('#player-percentages-container').text("There are no active lineups.");
 			}
 
 			function drawBarChart() {
@@ -338,9 +386,6 @@
 			    });				
 			}				
 
-			if (areThereActiveLineups == 0) {
-				$('#player-percentages-container').text("There are no active lineups.");
-			}
 		});
 	</script>
 @stop
