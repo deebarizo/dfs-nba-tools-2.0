@@ -41,7 +41,7 @@ $router->get('solver_fd_nba/{date}', 'SolverFdNbaController@solverFdNba');
 $router->get('solver_fd_nba/{date}/{numTopLineups}', 'SolverFdNbaController@solverFdNba');
 $router->get('solver_with_top_plays_fd_nba/{date}', 'SolverFdNbaController@solver_with_top_plays');
 
-$router->post('solver_top_plays/add_or_remove_lineup/{playerPoolId}/{hash}/{totalSalary}/{buyIn}/{addOrRemove}/{time}', 'SolverFdNbaController@addOrRemoveLineup'); // {time} is to stop caching
+$router->post('solver_top_plays/add_or_remove_lineup/', 'SolverFdNbaController@addOrRemoveLineup'); // {time} is to stop caching
 $router->post('solver_top_plays/update_buy_in/{playerPoolId}/{buyIn}', 'SolverFdNbaController@updateBuyIn');
 $router->post('solver_top_plays/update_lineup_buy_in/{playerPoolId}/{hash}/{lineupBuyIn}', 'SolverFdNbaController@updateLineupBuyIn');
 

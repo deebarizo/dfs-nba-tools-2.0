@@ -50,7 +50,7 @@
 					</thead>
 					<tbody>
 						@foreach ($lineup['roster_spots'] as $rosterSpot)
-							<tr class="roster-spot">
+							<tr class="roster-spot" data-player-id="{{ $rosterSpot->player_id }}">
 								<td>{{ $rosterSpot->position }}</td>
 								<td class="roster-spot-name">{{ $rosterSpot->name }}</td>
 								<td>{{ $rosterSpot->salary }}</td>
@@ -87,7 +87,7 @@
 	<script>
 		$(document).ready(function() {
 
-			var playerPoolId = <?php echo $playerPoolId; ?>;
+			var playerPoolId = <?php echo json_encode($playerPoolId); ?>;
 			var buyIn = $("span.buy-in-amount").text();
 
 
@@ -180,30 +180,36 @@
 
 				var addOrRemove = $(this).children(".add-or-remove-lineup-anchor-text").text();
 
-				switch(addOrRemove) {
-				    case "Add":
-						var lineups = [];
-						lineups = <?php echo json_encode($lineups); ?>;
-				        break;
-				    case "Remove":
-						var lineups = [];
-				        break;
-				}
-
 				$(this).children(".add-or-remove-lineup-anchor-text").text('');
 				$(this).next(".add-or-remove-lineup-link-loading-gif").show();
 
 				var hash = $(this).parent().parent().parent().parent().data('hash');
 				var totalSalary = $(this).parent().parent().parent().parent().data('total-salary');
+				
+				var playerIdsOfLineup = [];
+
+				var rosterSpots = $(this).parent().parent().parent('tbody').find('tr.roster-spot');
+
+				$(rosterSpots).each(function() {
+					var playerId = $(this).data('player-id');
+
+					playerIdsOfLineup.push(playerId);
+				});
+
 				var $this = $(this);
 
-				var Rand = Math.floor((Math.random() * 100000) + 1);
-
 		    	$.ajax({
-		            url: '<?php echo url(); ?>/solver_top_plays/add_or_remove_lineup/'+playerPoolId+'/'+hash+'/'+totalSalary+'/'+lineupBuyIn+'/'+addOrRemove+'/'+Rand,
-		           	data: { 'lineups': lineups },
-		           	type: 'post',
-		            success: function(output) {
+		            url: '<?php echo url(); ?>/solver_top_plays/add_or_remove_lineup/',
+		           	type: 'POST',
+		           	data: { 
+		           		playerPoolId: playerPoolId,
+		           		hash: hash,
+		           		totalSalary: totalSalary,
+		           		buyIn: lineupBuyIn,
+		           		addOrRemove: addOrRemove,
+		           		playerIdsOfLineup: playerIdsOfLineup
+		           	},
+		            success: function() {
 						$this.parent().parent().parent().parent().toggleClass("active-lineup");	
 						$this.prev().toggleClass("edit-lineup-buy-in-hidden");	
 						$this.next(".add-or-remove-lineup-link-loading-gif").hide();
@@ -228,9 +234,6 @@
 
 						updateUnspentBuyIn();
 						drawBarChart();
-		            },
-		            error: function(request, status, error) {
-		            	alert(request+' '+status+' '+error);
 		            }
 		        }); 
 			});

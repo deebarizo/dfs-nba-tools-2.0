@@ -37,7 +37,7 @@ function getActiveLineups($playerPoolId) {
     return $activeLineups;
 }
 
-function addLineup($playerPoolId, $hash, $totalSalary, $buyIn, $lineups) {
+function addLineup($playerPoolId, $hash, $totalSalary, $buyIn, $playerIdsOfLineup) {
     $lineup = new Lineup; 
 
     $lineup->player_pool_id = $playerPoolId;
@@ -48,23 +48,13 @@ function addLineup($playerPoolId, $hash, $totalSalary, $buyIn, $lineups) {
 
     $lineup->save();    
 
-    $players = getPlayersOfLineup($lineups, $hash);
-
-    foreach ($players as $player) {
+    foreach ($playerIdsOfLineup as $playerId) {
         $lineupPlayer = new LineupPlayer;
 
         $lineupPlayer->lineup_id = $lineup->id;
-        $lineupPlayer->player_fd_id = $player['player_id'];
+        $lineupPlayer->player_fd_id = $playerId;
 
         $lineupPlayer->save();
-    }
-}
-
-function getPlayersOfLineup($lineups, $hash) {
-    foreach ($lineups as $lineup) {
-        if ($lineup['hash'] == $hash) {
-            return $lineup['roster_spots'];
-        }
     }
 }
 
