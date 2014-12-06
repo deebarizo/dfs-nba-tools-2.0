@@ -58,11 +58,13 @@ class SolverFdNbaController {
         $buyIn = getBuyIn($playerPoolId);
 
         $lineups = $solverTopPlays->markActiveLineups($lineups, $playerPoolId, $buyIn);
+        
+        $areThereActiveLineups = $solverTopPlays->areThereActiveLineups($lineups);
 
-        # ddAll($lineups);
+        # dd($areThereActiveLineups);
 
         return view('solver_with_top_plays_fd_nba', 
-                     compact('date', 'timePeriod', 'playerPoolId', 'buyIn', 'lineups'));
+                     compact('date', 'timePeriod', 'playerPoolId', 'buyIn', 'lineups', 'areThereActiveLineups'));
     }
 
     // Ajax

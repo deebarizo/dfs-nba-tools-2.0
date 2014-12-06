@@ -25,7 +25,7 @@
 		<div class="col-lg-6">
 			<h4>Player Percentages</h4>
 
-			<div id="player-percentages-container" style="width:100%; height:700px; padding-right: 70px"></div>
+			<div id="player-percentages-container" style="width:100%; height:700px; padding-right:30px"></div>
 		</div>
 
 		<div class="col-lg-6" style="overflow-y: scroll; height: 800px">
@@ -45,9 +45,9 @@
 					</thead>
 					<tbody>
 						@foreach ($lineup['roster_spots'] as $rosterSpot)
-							<tr>
+							<tr class="roster-spot">
 								<td>{{ $rosterSpot->position }}</td>
-								<td>{{ $rosterSpot->name }}</td>
+								<td class="roster-spot-name">{{ $rosterSpot->name }}</td>
 								<td>{{ $rosterSpot->salary }}</td>
 							</tr>
 						@endforeach
@@ -170,6 +170,8 @@
 				        break;
 				}
 
+				console.log(lineups);
+
 				$(this).children(".add-or-remove-lineup-anchor-text").text('');
 				$(this).next(".add-or-remove-lineup-link-loading-gif").show();
 
@@ -178,9 +180,10 @@
 				var $this = $(this);
 
 		    	$.ajax({
-		            url: '<?php echo url(); ?>/solver_top_plays/add_or_remove_lineup/'+playerPoolId+'/'+hash+'/'+totalSalary+'/'+lineupBuyIn+'/'+addOrRemove,
+		            url: '<?php echo url(); ?>/solver_top_plays/add_or_remove_lineup/'+playerPoolId+'/'+hash+'/'+totalSalary+'/'+lineupBuyIn+'/'+addOrRemove+"&ms="+ new Date().getTime(),
 		            type: 'POST',
 		            data: {lineups: lineups},
+		            timeout: 10000,
 		            success: function() {
 						$this.parent().parent().parent().parent().toggleClass("active-lineup");	
 						$this.prev().toggleClass("edit-lineup-buy-in-hidden");	
@@ -191,16 +194,151 @@
 						    	$this.prev().children('.lineup-buy-in-amount').text(lineupBuyIn);
 						    	$this.prev().children('.lineup-buy-in-percentage').text(lineupBuyInPercentage);
 								$this.parent().parent().parent().parent().next().children(".edit-lineup-buy-in-input").val(lineupBuyIn);								
+								
 								$this.children(".add-or-remove-lineup-anchor-text").text("Remove");
+
 						        break;
+						    
 						    case "Remove":
+						    	$this.parent().parent().parent().parent().next().addClass("edit-lineup-buy-in-amount-hidden");
+
 						        $this.children(".add-or-remove-lineup-anchor-text").text("Add");
-						        $this.parent().parent().parent().parent().next().addClass("edit-lineup-buy-in-amount-hidden");
+
 						        break;
 						}
+
+						drawBarChart();
 		            }
 		        }); 
 			});
+
+			// Process bar chart
+
+			var areThereActiveLineups = <?php echo $areThereActiveLineups; ?>;
+
+			if (areThereActiveLineups == 1) {
+				drawBarChart();
+			}
+
+			function drawBarChart() {
+				var numActiveLineups = $(".active-lineup").length; 
+
+				if (numActiveLineups == 0) {
+					$('#player-percentages-container').text("There are no active lineups.");
+
+					return true;
+				}
+
+				var rosterSpotsInActiveLineups = [];
+				var playersInActiveLineups = [];
+
+				$(".active-lineup").each(function() {
+					var lineupBuyIn = $(this).find("span.lineup-buy-in-amount").text();
+
+					$(this).children("tbody").children("tr.roster-spot").find("td.roster-spot-name").each(function() {
+						var name = $(this).text();
+
+						var rosterSpot = { 
+							name: name, 
+							lineupBuyIn: lineupBuyIn 
+						};
+
+						rosterSpotsInActiveLineups.push(rosterSpot);
+
+						playersInActiveLineups.push(name);
+					});
+				});
+
+				function arrayUnique(arr) {
+				    var a = [];
+				    for (var i=0, l=arr.length; i<l; i++)
+				        if (a.indexOf(arr[i]) === -1 && arr[i] !== '')
+				            a.push(arr[i]);
+				    return a;
+				}
+
+				playersInActiveLineups = arrayUnique(playersInActiveLineups);
+
+				var players = [];
+
+				for (var i = 0; i < playersInActiveLineups.length; i++) {
+					players[i] = {};
+
+					players[i]['name'] = playersInActiveLineups[i];
+					var totalBuyInOfPlayer = 0;
+
+					for (var n = 0; n < rosterSpotsInActiveLineups.length; n++) {
+						if (players[i]['name'] == rosterSpotsInActiveLineups[n]['name']) {
+							totalBuyInOfPlayer += parseInt(rosterSpotsInActiveLineups[n]['lineupBuyIn']);
+						} 
+					};
+
+					var percentage = totalBuyInOfPlayer / buyIn * 100;
+					percentage = parseInt(percentage);
+
+					players[i]['percentage'] = percentage;
+				};
+
+				players.sort(function(a,b) {
+				    return b.percentage - a.percentage;
+				});
+
+				var playerNames = [];
+				var percentages = [];
+
+				for (var i = 0; i < players.length; i++) {
+					playerNames.push(players[i]['name']);
+					percentages.push(players[i]['percentage']);
+				};
+
+			    $('#player-percentages-container').highcharts({
+			        chart: {
+			            type: 'bar'
+			        },
+			        title: {
+			        	text: null
+			        },
+			        xAxis: {
+			            categories: playerNames,
+			            labels: {
+			            	step: 1
+			            }
+			        },
+			        yAxis: {
+			            min: 0,
+			            title: {
+			                text: 'Percentage'
+			            },
+			            max: 100
+			        },
+			        tooltip: {
+			            valueSuffix: '%'
+			        },
+			        plotOptions: {
+			            bar: {
+			                dataLabels: {
+			                    enabled: true
+			                },
+			                pointWidth: 20,
+			                pointPadding: 0
+			            }
+			        },
+			        credits: {
+			            enabled: false
+			        },
+			        series: [{
+			        	name: 'Percentage',
+			            data: percentages
+			        }],
+			        legend: {
+			        	enabled: false
+			        }
+			    });				
+			}				
+
+			if (areThereActiveLineups == 0) {
+				$('#player-percentages-container').text("There are no active lineups.");
+			}
 		});
 	</script>
 @stop

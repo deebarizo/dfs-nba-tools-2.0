@@ -4,7 +4,7 @@ class SolverTopPlays {
 
 	private $minimumTotalSalary = 59400; // 1% of cap
 
-	//// Mark active lineups
+	//// Process active lineups
 
 	public function markActiveLineups($lineups, $playerPoolId, $buyIn) {
 		$activeLineups = getActiveLineups($playerPoolId);
@@ -40,6 +40,16 @@ class SolverTopPlays {
 		$lineup['buy_in_percentage'] = 0;
 
 		return $lineup;
+	}
+
+	public function areThereActiveLineups($lineups) {
+		foreach ($lineups as $lineup) {
+			if ($lineup['active'] == 1) {
+				return 1;
+			}
+		}
+
+		return 0;
 	}
 
 	//// Build lineups
