@@ -63,7 +63,7 @@ class SolverFdNbaController {
 
         $unspentBuyIn = $solverTopPlays->calculateUnspentBuyIn($areThereActiveLineups, $lineups, $buyIn);
 
-        # ddAll($lineups);
+        # dd($lineups[0]['hash']);
 
         return view('solver_with_top_plays_fd_nba', 
                      compact('date', 
@@ -85,7 +85,7 @@ class SolverFdNbaController {
 
     public function addOrRemoveLineup($playerPoolId, $hash, $totalSalary, $buyIn, $addOrRemove, $time) {
         if ($addOrRemove == 'Add') {
-            $lineups = $_REQUEST['lineups'];
+            $lineups = $_POST['lineups'];
 
             addLineup($playerPoolId, $hash, $totalSalary, $buyIn, $lineups);            
         }

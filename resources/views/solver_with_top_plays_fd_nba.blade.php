@@ -182,7 +182,8 @@
 
 				switch(addOrRemove) {
 				    case "Add":
-						var lineups = <?php echo json_encode($lineups); ?>;
+						var lineups = [];
+						lineups = <?php echo json_encode($lineups); ?>;
 				        break;
 				    case "Remove":
 						var lineups = [];
@@ -200,10 +201,9 @@
 
 		    	$.ajax({
 		            url: '<?php echo url(); ?>/solver_top_plays/add_or_remove_lineup/'+playerPoolId+'/'+hash+'/'+totalSalary+'/'+lineupBuyIn+'/'+addOrRemove+'/'+Rand,
-		            type: 'POST',
-		            data: {lineups: lineups},
-		            timeout: 10000,
-		            success: function() {
+		           	data: { 'lineups': lineups },
+		           	type: 'post',
+		            success: function(output) {
 						$this.parent().parent().parent().parent().toggleClass("active-lineup");	
 						$this.prev().toggleClass("edit-lineup-buy-in-hidden");	
 						$this.next(".add-or-remove-lineup-link-loading-gif").hide();
@@ -228,6 +228,9 @@
 
 						updateUnspentBuyIn();
 						drawBarChart();
+		            },
+		            error: function(request, status, error) {
+		            	alert(request+' '+status+' '+error);
 		            }
 		        }); 
 			});
