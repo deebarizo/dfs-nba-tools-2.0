@@ -180,7 +180,7 @@
 				var $this = $(this);
 
 		    	$.ajax({
-		            url: '<?php echo url(); ?>/solver_top_plays/add_or_remove_lineup/'+playerPoolId+'/'+hash+'/'+totalSalary+'/'+lineupBuyIn+'/'+addOrRemove+"&ms="+ new Date().getTime(),
+		            url: '<?php echo url(); ?>/solver_top_plays/add_or_remove_lineup/'+playerPoolId+'/'+hash+'/'+totalSalary+'/'+lineupBuyIn+'/'+addOrRemove+'/'+ new Date().getTime(),
 		            type: 'POST',
 		            data: {lineups: lineups},
 		            timeout: 10000,
