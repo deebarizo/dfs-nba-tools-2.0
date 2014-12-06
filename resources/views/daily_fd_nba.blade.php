@@ -21,6 +21,26 @@
 		<div class="col-lg-12">
 			<h3>{{ $date }} {{ $timePeriod }} | <a target="_blank" href="/solver_with_top_plays_fd_nba/{{ $date }}">Solver (With Top Plays)</a> | <a target="_blank" href="/solver_fd_nba/{{ $date }}">Solver</a></h3>
 
+			<form class="form-inline">
+
+				<label>Positions</label>
+				<select class="form-control position-filter" style="width: 10%; margin: 20px 20px 20px 0;">
+				  	<option value="All">All</option>
+				  	<option value="PG">PG</option>
+				  	<option value="SG">SG</option>
+				  	<option value="SF">SF</option>
+				  	<option value="PF">PF</option>
+				  	<option valu="C">C</option>
+				</select>
+
+				<label>Show Only Top Plays</label>
+				<select class="form-control top-plays-filter" style="width: 10%; margin: 20px 0 20px 0;">
+				  	<option value="0">No</option>
+				  	<option value="1">Yes</option>
+				</select>
+			
+			</form>
+
 			<p><a class="show-toggle-dtd-players" href="#">DTD Players</a></p>
 
 			<table id="daily-dtd" class="table table-striped table-bordered table-hover table-condensed">
@@ -145,7 +165,9 @@
 							}
 						?>
 
-					    <tr data-player-fd-index="{{ $player->player_fd_index }}">
+					    <tr data-player-fd-index="{{ $player->player_fd_index }}" 
+					    	data-player-position="{{ $player->position }}"
+					    	class="player-row">
 					    	<td><a target="_blank" href="/players/{{ $player->player_id }}">{{ $player->name }}</a>
 			    			</td>
 			    			<td>
@@ -196,6 +218,7 @@
 
 	<script type="text/javascript">
 		$(document).ready(function() {
+
     		$('#daily').dataTable({
     			"scrollY": "600px",
     			"paging": false,
@@ -229,6 +252,86 @@
 		            }
 		        }); 
 			});
+
+			////// Filters //////
+
+			var position;
+			var showOnlyTopPlays;
+			var filter = {};
+
+			function runFilter() {
+				filter = getFilter();
+
+				$('tr.player-row').removeClass('hide-player-row');
+
+				runPositionFilter(filter);
+				runTopPlaysFilter(filter);
+			}
+
+			function getFilter() {
+				position = $('select.position-filter').val();
+				showOnlyTopPlays = $('select.top-plays-filter').val();
+
+				filter = {
+					position: position,
+					showOnlyTopPlays: showOnlyTopPlays
+				};
+
+				return filter;
+			}
+
+			// Position filter
+
+			$('select.position-filter').on('change', function() {
+				runFilter();
+			});
+
+			function runPositionFilter(filter) {
+				if (filter.position == 'All') {
+					return;
+				}
+
+				$('tr.player-row').each(function() {
+					var playerRow = $(this);
+
+					hidePositionsNotSelected(playerRow, filter.position);
+				});				
+			}
+
+			function hidePositionsNotSelected(playerRow, position) {
+				var playerRowPosition = $(playerRow).data('player-position');
+
+				if (playerRowPosition != position) {
+					$(playerRow).addClass('hide-player-row');
+				}
+			}
+
+			// Top plays filter
+
+			$('select.top-plays-filter').on('change', function() {
+				runFilter();
+			});
+
+			function runTopPlaysFilter(filter) {
+				if (filter.showOnlyTopPlays == 0) {
+					return;
+				}
+
+				$('tr.player-row').each(function() {
+					var playerRow = $(this);
+
+					hideNonTopPlays(playerRow);
+				});						
+			}
+
+			function hideNonTopPlays(playerRow) {
+				var isPlayerTopPlay = $(playerRow).find('span.daily-lock').hasClass('daily-lock-active');
+
+				if (isPlayerTopPlay === false) {
+					$(playerRow).addClass('hide-player-row');
+				}
+			}
+
 		});
 	</script>
 @stop
