@@ -95,6 +95,8 @@
 			$(".edit-buy-in-button").click(function(e) {
 				e.preventDefault();
 
+				buyIn = $(this).parent().prev('input.edit-buy-in-input').val();
+
 				$.ajax({
 		            url: '<?php echo url(); ?>/solver_top_plays/update_buy_in/'+playerPoolId+'/'+buyIn,
 		            type: 'POST',
