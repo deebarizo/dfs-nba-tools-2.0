@@ -174,7 +174,7 @@
 					return false;
 				}
 
-				var lineupBuyIn = Math.round(buyIn * 0.20);
+				var lineupBuyIn = Math.round(buyIn * 0.10);
 				var lineupBuyInPercentage = lineupBuyIn / buyIn * 100;
 				lineupBuyInPercentage = lineupBuyInPercentage.toFixed(2);
 

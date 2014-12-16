@@ -19,6 +19,9 @@ function fd_name_fix($rawName) {
 
 		case 'Perry Jones III':
 			return 'Perry Jones';
+
+		case 'Ronald Roberts, Jr.':
+			return 'Ronald Roberts';
 		
 		default:
 			return $rawName;
