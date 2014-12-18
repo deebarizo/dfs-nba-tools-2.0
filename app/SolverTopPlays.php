@@ -172,16 +172,11 @@ class SolverTopPlays {
 		unset($lineup['roster_spots']['C2']); // only one center per lineup
 
 		$lineup['total_salary'] = 0;
-		$lineup['hash'] = 0;
+		$lineup['hash'] = '';
 
 		foreach ($lineup['roster_spots'] as $rosterSpot) {
 			$lineup['total_salary'] += $rosterSpot->salary;
-			$lineup['hash'] += $rosterSpot->player_id +
-							   $rosterSpot->salary +
-							   $rosterSpot->team_id +
-							   $rosterSpot->opp_team_id +
-							   strlen($rosterSpot->name) +
-							   strlen($rosterSpot->position);
+			$lineup['hash'] .= $rosterSpot->player_id;
 		}
 
 		$lineup['total_unspent'] = 60000 - $lineup['total_salary'];
