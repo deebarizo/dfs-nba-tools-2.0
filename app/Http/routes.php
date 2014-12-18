@@ -35,6 +35,9 @@ $router->get('studies', function() {
 $router->get('/', function() {
 	return View::make('pages/home');
 });
+$router->get('/player_search', function() {
+	return View::make('player_search');
+});
 
 $router->get('solver_fd_nba', 'SolverFdNbaController@solverFdNba');
 $router->get('solver_fd_nba/{date}', 'SolverFdNbaController@solverFdNba');
@@ -49,4 +52,4 @@ $router->resource('daily_fd_filters', 'DailyFdFiltersController', ['except' => [
 $router->get('daily_fd_filters/{player_id}/create', 'DailyFdFiltersController@create');
 $router->get('daily_fd_filters/{player_id}/create/{dailyFdFilterId}', 'DailyFdFiltersController@create');
 
-$router->get('one_time', 'ScrapersController@one_time');
+$router->get('search_for_player', 'PlayersController@searchForPlayer');

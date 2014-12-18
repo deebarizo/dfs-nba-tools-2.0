@@ -22,6 +22,12 @@ date_default_timezone_set('America/Chicago');
 
 class PlayersController {
 
+    public function searchForPlayer() {
+        $players = Player::all();
+
+        
+    }
+
 	public function getPlayerStats($player_id) {
 
         // Box Score Lines
