@@ -18,14 +18,28 @@ use Goutte\Client;
 
 use Illuminate\Support\Facades\Session;
 
+use Illuminate\Support\Str;
+
+use Illuminate\Support\Facades\Response;
+
 date_default_timezone_set('America/Chicago');
 
 class PlayersController {
 
-    public function searchForPlayer() {
+    public function getPlayerNameAutocomplete(Request $request) {
+        $formInput = $request->input('term');
+
         $players = Player::all();
 
-        
+        $result = [];
+
+        foreach ($players as $player) {
+            if ( strpos(Str::lower($player->name), $formInput ) !== false) {
+                $result[] = $player->name;
+            }
+        }
+
+        return Response::json($result);
     }
 
 	public function getPlayerStats($player_id) {

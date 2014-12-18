@@ -52,4 +52,4 @@ $router->resource('daily_fd_filters', 'DailyFdFiltersController', ['except' => [
 $router->get('daily_fd_filters/{player_id}/create', 'DailyFdFiltersController@create');
 $router->get('daily_fd_filters/{player_id}/create/{dailyFdFilterId}', 'DailyFdFiltersController@create');
 
-$router->get('search_for_player', 'PlayersController@searchForPlayer');
+$router->get('get_player_name_autocomplete', 'PlayersController@getPlayerNameAutocomplete');

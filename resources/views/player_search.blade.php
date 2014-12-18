@@ -16,4 +16,13 @@
 			</div>
 		{!!	Form::close() !!}
 	</div>
+
+	<script>
+
+		$('#player').autocomplete({
+			source: 'get_player_name_autocomplete',
+			minLength: 1
+		});
+
+	</script>
 @stop
