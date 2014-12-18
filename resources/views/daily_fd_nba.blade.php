@@ -26,11 +26,11 @@
 				<label>Positions</label>
 				<select class="form-control position-filter" style="width: 10%; margin: 20px 20px 20px 0;">
 				  	<option value="All">All</option>
+				  	<option value="C">C</option>
 				  	<option value="PG">PG</option>
 				  	<option value="SG">SG</option>
 				  	<option value="SF">SF</option>
 				  	<option value="PF">PF</option>
-				  	<option valu="C">C</option>
 				</select>
 
 				<label>Teams</label>
