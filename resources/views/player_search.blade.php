@@ -21,7 +21,10 @@
 
 		$('#player').autocomplete({
 			source: 'get_player_name_autocomplete',
-			minLength: 1
+			minLength: 1,
+			select: function (e, ui) {
+				window.location = ui.item.url;
+			}
 		});
 
 	</script>

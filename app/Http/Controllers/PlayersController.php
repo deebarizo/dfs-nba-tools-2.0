@@ -28,6 +28,7 @@ class PlayersController {
 
     public function getPlayerNameAutocomplete(Request $request) {
         $formInput = $request->input('term');
+        $formInput = Str::lower($formInput);
 
         $players = Player::all();
 
@@ -35,7 +36,12 @@ class PlayersController {
 
         foreach ($players as $player) {
             if ( strpos(Str::lower($player->name), $formInput ) !== false) {
-                $result[] = $player->name;
+                $playerUrl = url().'/players/'.$player->id;
+
+                $result[] = [
+                    'value' => $player->name,
+                    'url' => $playerUrl
+                ]; 
             }
         }
 
