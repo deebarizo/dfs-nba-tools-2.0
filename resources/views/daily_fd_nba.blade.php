@@ -175,6 +175,7 @@
 
 					    <tr data-player-fd-index="{{ $player->player_fd_index }}" 
 					    	data-player-position="{{ $player->position }}"
+					    	data-player-team="{{ $player->team_abbr }}"
 					    	class="player-row">
 					    	<td><a target="_blank" href="/players/{{ $player->player_id }}">{{ $player->name }}</a>
 			    			</td>
@@ -227,11 +228,20 @@
 	<script type="text/javascript">
 		$(document).ready(function() {
 
+			/********************************************
+			CREATE TABLE
+			********************************************/
+
     		$('#daily').dataTable({
     			"scrollY": "600px",
     			"paging": false,
     			"order": [[8, "desc"]]
     		});
+
+
+			/********************************************
+			PLAYER STATS FILTER TOOLTIP
+			********************************************/
 
 		    $('.player-filter').each(function() {
 		        $(this).qtip({
@@ -241,9 +251,19 @@
 		        });
 		    });   
 
+
+			/********************************************
+			TOGGLE DTD PLAYERS
+			********************************************/
+
 			$(".show-toggle-dtd-players").click(function(){
 			  $("#daily-dtd").toggle();
 			}); 
+
+
+			/********************************************
+			SET TOP PLAYS
+			********************************************/
 
 			$(".daily-lock").click(function(e) {
 				e.preventDefault();
@@ -266,6 +286,7 @@
 			********************************************/
 
 			var position;
+			var team;
 			var showOnlyTopPlays;
 			var filter = {};
 
@@ -275,22 +296,26 @@
 				$('tr.player-row').removeClass('hide-player-row');
 
 				runPositionFilter(filter);
+				runTeamFilter(filter);
 				runTopPlaysFilter(filter);
 			}
 
 			function getFilter() {
 				position = $('select.position-filter').val();
+				team = $('select.team-filter').val();
 				showOnlyTopPlays = $('select.top-plays-filter').val();
 
 				filter = {
 					position: position,
+					team: team,
 					showOnlyTopPlays: showOnlyTopPlays
 				};
 
 				return filter;
 			}
 
-			// Position filter
+
+			//// Position filter ////
 
 			$('select.position-filter').on('change', function() {
 				runFilter();
@@ -316,7 +341,35 @@
 				}
 			}
 
-			// Top plays filter
+
+			//// Team filter ////
+
+			$('select.team-filter').on('change', function() {
+				runFilter();
+			});
+
+			function runTeamFilter(filter) {
+				if (filter.team == 'All') {
+					return;
+				}
+
+				$('tr.player-row').each(function() {
+					var playerRow = $(this);
+
+					hideTeamsNotSelected(playerRow, filter.team);
+				});				
+			}
+
+			function hideTeamsNotSelected(playerRow, team) {
+				var playerRowTeam = $(playerRow).data('player-team');
+
+				if (playerRowTeam != team) {
+					$(playerRow).addClass('hide-player-row');
+				}
+			}
+
+
+			//// Top plays filter ////
 
 			$('select.top-plays-filter').on('change', function() {
 				runFilter();

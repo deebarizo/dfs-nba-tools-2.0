@@ -53,7 +53,7 @@ class DailyController {
 
         $teams = Team::all();
 
-        $teams_today = [];
+        $teamsToday = [];
 
         foreach ($players as &$player) {
             foreach ($teams as $team) {
@@ -368,8 +368,6 @@ class DailyController {
         } else {
         	$dtdPlayers = [];
         }
-
-		# ddAll($players);
 
 		return view('daily_fd_nba', compact('date', 'timePeriod', 'players', 'dtdPlayers', 'teamsToday'));
 	}
