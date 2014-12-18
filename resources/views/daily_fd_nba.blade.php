@@ -33,6 +33,14 @@
 				  	<option valu="C">C</option>
 				</select>
 
+				<label>Teams</label>
+				<select class="form-control team-filter" style="width: 10%; margin: 20px 20px 20px 0;">
+				  	<option value="All">All</option>
+				  	@foreach ($teamsToday as $team)
+					  	<option value="{{ $team }}">{{ $team }}</option>
+				  	@endforeach
+				</select>
+
 				<label>Show Only Top Plays</label>
 				<select class="form-control top-plays-filter" style="width: 10%; margin: 20px 0 20px 0;">
 				  	<option value="0">No</option>
@@ -253,7 +261,9 @@
 		        }); 
 			});
 
-			////// Filters //////
+			/********************************************
+			FILTERS
+			********************************************/
 
 			var position;
 			var showOnlyTopPlays;

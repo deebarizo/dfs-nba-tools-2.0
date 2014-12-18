@@ -53,16 +53,24 @@ class DailyController {
 
         $teams = Team::all();
 
+        $teams_today = [];
+
         foreach ($players as &$player) {
             foreach ($teams as $team) {
                 if ($player->team_id == $team->id) {
                     $player->team_name = $team->name_br;
                     $player->team_abbr = $team->abbr_br;
+
+                    $teamsToday[] = $player->team_abbr; 
+
+                    continue;
                 }
 
                 if ($player->opp_team_id == $team->id) {
                     $player->opp_team_name = $team->name_br;
                     $player->opp_team_abbr = $team->abbr_br;
+
+                    continue;
                 }
 
                 if (isset($player->team_name) && isset($player->opp_team_name)) {
@@ -72,6 +80,9 @@ class DailyController {
         }
 
         unset($player);
+
+        $teamsToday = array_unique($teamsToday);
+        sort($teamsToday);
 
         // fetch player filters
 
@@ -360,7 +371,7 @@ class DailyController {
 
 		# ddAll($players);
 
-		return view('daily_fd_nba', compact('date', 'timePeriod', 'players', 'dtdPlayers'));
+		return view('daily_fd_nba', compact('date', 'timePeriod', 'players', 'dtdPlayers', 'teamsToday'));
 	}
 
     public function update_top_plays($playerFdIndex, $isPlayerActive) {
