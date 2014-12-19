@@ -46,6 +46,14 @@ class SolverTopPlays {
 
 		# ddAll($lineups);
 
+		$totalSalary = [];
+
+		foreach ($lineups as $key => $lineup) {
+			$totalSalary[$key] = $lineup['total_salary'];
+		}
+
+		array_multisort($totalSalary, SORT_DESC, $lineups);
+
         return $lineups;
 	}
 
@@ -132,12 +140,6 @@ class SolverTopPlays {
 		}
 
 		$uniqueLineups = $this->removeDuplicateLineups($duplicateLineups);
-
-		foreach ($uniqueLineups as $key => $uniqueLineup) {
-			$totalSalary[$key] = $uniqueLineup['total_salary'];
-		}
-
-		array_multisort($totalSalary, SORT_DESC, $uniqueLineups);
 
 		return $uniqueLineups;
 	}
