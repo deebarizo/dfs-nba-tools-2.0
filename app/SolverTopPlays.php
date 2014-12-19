@@ -12,6 +12,10 @@ class SolverTopPlays {
 	public function markActiveLineups($lineups, $playerPoolId, $buyIn) {
 		$activeLineups = getActiveLineups($playerPoolId);
 
+		$playersInActiveLineups = getPlayersInActiveLineups($playerPoolId);
+
+		ddAll($playersInActiveLineups);
+
 		foreach ($lineups as &$lineup) {
 			$lineup = $this->markLineupIfActive($lineup, $activeLineups, $buyIn);
 		}
@@ -97,7 +101,7 @@ class SolverTopPlays {
 
 		$duplicateLineups = [];
 
-		for ($i=0; $i < 250; $i++) { 
+		for ($i=0; $i < 1000; $i++) { 
 			$duplicateLineups[] = $this->buildOneLineupWithTopPlays($players, $numOfPlayersPerPosition);
 		}
 

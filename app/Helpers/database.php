@@ -16,6 +16,22 @@ use App\LineupPlayer;
 
 use Illuminate\Support\Facades\DB;
 
+function getPlayersInActiveLineups($playerPoolId) {
+
+    $playersInActiveLineups = DB::table('lineups')
+        ->join('lineup_players', 'lineup_players.lineup_id', '=', 'lineups.id')
+        ->join('players_fd', 'players_fd.player_id', '=', 'lineup_players.player_fd_id')
+        ->join('players', 'players.id', '=', 'players_fd.player_id')
+        ->select('*')
+        ->whereRaw('lineups.player_pool_id = '.$playerPoolId.' AND players_fd.player_pool_id = '.$playerPoolId.' AND lineups.active = 1')
+        ->orderByRaw(DB::raw('lineup_id, FIELD(position, "PG", "SG", "SF", "PF", "C"), salary DESC'))
+        ->get();
+
+    # ddAll($playerPoolId);
+
+    return $playersInActiveLineups;    
+}
+
 function getBuyIn($playerPoolId) {
     $buyIn = DB::table('player_pools')
         ->where('id', $playerPoolId)
