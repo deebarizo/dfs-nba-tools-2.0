@@ -3,6 +3,7 @@
 class SolverTopPlays {
 
 	private $minimumTotalSalary = 59400; // 1% of cap
+	private $maximumTotalSalary = 60000;
 
 
 	/********************************************
@@ -14,19 +15,42 @@ class SolverTopPlays {
 
 		$playersInActiveLineups = getPlayersInActiveLineups($playerPoolId);
 
-		ddAll($playersInActiveLineups);
-
 		foreach ($lineups as &$lineup) {
-			$lineup = $this->markLineupIfActive($lineup, $activeLineups, $buyIn);
+			list($lineup, $activeLineups) = $this->markLineupIfActive($lineup, $activeLineups, $buyIn);
 		}
 
 		unset($lineup);
+
+		foreach ($activeLineups as $activeLineup) {
+			$rosterSpots = [];
+
+			foreach ($playersInActiveLineups as $player) {
+				if ($activeLineup->hash == $player->hash) {
+					$rosterSpots['roster_spots'][] = $player;
+				}
+			}
+
+			$rosterSpots['total_salary'] = $activeLineup->total_salary;
+			$rosterSpots['hash'] = $activeLineup->hash;
+			$rosterSpots['total_unspent'] = $this->maximumTotalSalary - $activeLineup->total_salary;
+
+			$rosterSpots['active'] = 1;
+			$rosterSpots['css_class_blue_border'] = 'active-lineup';
+			$rosterSpots['css_class_edit_info'] = '';
+			$rosterSpots['anchor_text'] = 'Remove';
+			$rosterSpots['buy_in'] = $activeLineup->buy_in;
+			$rosterSpots['buy_in_percentage'] = numFormat($activeLineup->buy_in / $buyIn * 100, 2);
+
+			array_push($lineups, $rosterSpots);
+		}
+
+		# ddAll($lineups);
 
         return $lineups;
 	}
 
 	public function markLineupIfActive($lineup, $activeLineups, $buyIn)	{
-		foreach ($activeLineups as $activeLineup) {
+		foreach ($activeLineups as $key => $activeLineup) {
 			if ($lineup['hash'] == $activeLineup->hash) {
 				$lineup['active'] = 1;
 				$lineup['css_class_blue_border'] = 'active-lineup';
@@ -35,7 +59,9 @@ class SolverTopPlays {
 				$lineup['buy_in'] = $activeLineup->buy_in;
 				$lineup['buy_in_percentage'] = numFormat($activeLineup->buy_in / $buyIn * 100, 2);
 
-				return $lineup;
+				unset($activeLineups[$key]);
+
+				return array($lineup, $activeLineups);
 			}
 		}
 
@@ -46,7 +72,7 @@ class SolverTopPlays {
 		$lineup['buy_in'] = 0;
 		$lineup['buy_in_percentage'] = 0;
 
-		return $lineup;
+		return array($lineup, $activeLineups);
 	}
 
 	public function areThereActiveLineups($lineups) {
