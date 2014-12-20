@@ -27,10 +27,6 @@ hr {
 
 /* SOLVER TOP PLAYS */
 
-.edit-buy-in.form-hidden {
-	display: none;
-}
-
 .edit-buy-in {
 	display: table;
 }
@@ -44,6 +40,10 @@ hr {
 }
 
 .add-or-remove-lineup-link-loading-gif {
+	display: none;
+}
+
+.form-hidden {
 	display: none;
 }
 

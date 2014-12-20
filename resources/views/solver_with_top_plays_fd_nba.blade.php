@@ -30,6 +30,14 @@
 				<span class="default-lineup-buy-in-percentage">({{ numFormat($defaultLineupBuyIn / $buyIn * 100, 2) }}%)</span>
 				[<a href="#" class="edit-buy-in-percentage-link">Edit</a>]
 			</p>
+
+			<div class="input-group edit-default-lineup-buy-in form-hidden" style="width: 20%; margin-bottom: 10px">
+				<div class="input-group-addon">$</div>
+			   	<input type="text" class="form-control edit-default-lineup-buy-in-input" value="{{ $defaultLineupBuyIn }}">
+			   	<span class="input-group-btn">
+			    	<button class="btn btn-default edit-default-lineup-buy-in-button" type="button">Submit</button>
+			   	</span>
+			</div>
 		</div>
 	</div>
 
@@ -123,6 +131,13 @@
 		            }
 		        }); 				
 			});
+
+
+			/********************************************
+			EDIT DEFAULT LINEUP BUY IN
+			********************************************/
+
+
 
 
 			/********************************************
