@@ -24,9 +24,9 @@ date_default_timezone_set('America/Chicago');
 
 class DailyController {
 
-	public function daily_fd_nba($date = 'today') {
-		if ($date == 'today') {
-			$date = date('Y-m-d', time());
+	public function daily_fd_nba($date = 'default') {
+		if ($date == 'default') {
+            $date = getDefaultDate();
 		}
 
         // fetch all players for the date

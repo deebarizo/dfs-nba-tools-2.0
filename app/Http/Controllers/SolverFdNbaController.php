@@ -30,9 +30,9 @@ class SolverFdNbaController {
 
     //// Solver with top plays
 
-    public function solver_with_top_plays($date) {
-        if ($date == 'today') {
-            $date = date('Y-m-d', time());
+    public function solver_with_top_plays($date = 'default') {
+        if ($date == 'default') {
+            $date = getDefaultDate();
         }
 
         $players = getTopPlays($date);

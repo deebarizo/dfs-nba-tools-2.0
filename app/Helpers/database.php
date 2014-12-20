@@ -204,3 +204,14 @@ function getBoxScoreLinesForPlayer($startingSeasonId, $playerId, $endDate) {
 
 	return $result;
 }
+
+function getDefaultDate() {
+    $date = DB::table('player_pools')
+                ->select('date')
+                ->whereRaw('buy_in IS NOT NULL')
+                ->orderBy('date', 'desc')
+                ->take(1)
+                ->pluck('date');
+
+    return $date;
+}
