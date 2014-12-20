@@ -55,7 +55,13 @@
 				<table data-player-pool-id="{{ $playerPoolId }}" 
 					   data-hash="{{ $lineup['hash'] }}" 
 					   data-total-salary="{{ $lineup['total_salary'] }}" 
-					   class="table table-striped table-bordered table-hover table-condensed {{ $lineup['css_class_blue_border'] }}">
+					   class="table 
+					   		  table-striped 
+					   		  table-bordered 
+					   		  table-hover 
+					   		  table-condensed 
+					   		  {{ $lineup['css_class_blue_border'] }} 
+					   		  {{ $lineup['css_class_money_lineup'] }}">
 					<thead>
 						<tr>
 							<th style="width: 15%">Pos</th>
@@ -78,6 +84,7 @@
 									$<span class="lineup-buy-in-amount">{{ $lineup['buy_in'] }}</span> 
 									(<span class="lineup-buy-in-percentage">{{ $lineup['buy_in_percentage'] }}</span>%) | 
 									<a href="#" class="edit-lineup-buy-in-link">Edit</a> | 
+									<a href="#" class="play-or-unplay-lineup-link">{{ $lineup['play_or_unplay_anchor_text'] }}</a> | 
 								</span>
 								<a href="#" class="add-or-remove-lineup-link"><span class="add-or-remove-lineup-anchor-text">{{ $lineup['anchor_text'] }}</span></a>
 								<span class="add-or-remove-lineup-link-loading-gif">
@@ -102,9 +109,14 @@
 	<script>
 		$(document).ready(function() {
 
+			/********************************************
+			GLOBAL VARIABLES
+			********************************************/
+
 			var playerPoolId = <?php echo json_encode($playerPoolId); ?>;
 			var buyIn = $("span.buy-in-amount").text();
 			var defaultLineupBuyIn = $("span.default-lineup-buy-in-amount").text();
+
 
 			/********************************************
 			EDIT BUY IN

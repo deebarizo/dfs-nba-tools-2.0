@@ -25,6 +25,10 @@ hr {
 	border: 3px solid rgb(124, 181, 236);
 }
 
+.money-lineup {
+	border: 3px solid green;
+}
+
 /* SOLVER TOP PLAYS */
 
 .edit-buy-in {
