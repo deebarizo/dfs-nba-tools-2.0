@@ -49,17 +49,17 @@ class SolverTopPlays {
 			array_push($lineups, $activeLineupsNotInSolver);
 		}
 
-		# ddAll($lineups);
-
 		$totalSalary = [];
 
 		foreach ($lineups as $key => $lineup) {
-			$totalSalary[$key] = $lineup['total_salary'];
 			$money[$key] = $lineup['money'];
 			$active[$key] = $lineup['active'];
+			$totalSalary[$key] = $lineup['total_salary'];
 		}
 
-		array_multisort($totalSalary, SORT_DESC, $money, SORT_DESC, $active, SORT_DESC, $lineups);
+		array_multisort($money, SORT_DESC, $active, SORT_DESC, $totalSalary, SORT_DESC, $lineups);
+
+		# ddAll($lineups);
 
         return $lineups;
 	}
