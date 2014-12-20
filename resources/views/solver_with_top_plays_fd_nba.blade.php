@@ -8,7 +8,7 @@
 			<p>
 				<strong>Buy In: </strong> 
 				$<span class="buy-in-amount">{{ $buyIn }}</span>
-				(<a href="#" class="edit-buy-in-link">Edit</a>) 
+				[<a href="#" class="edit-buy-in-link">Edit</a>]
 
 				<span style="margin-left: 20px">
 					<strong>Unspent Buy In: </strong>
@@ -23,6 +23,13 @@
 			    	<button class="btn btn-default edit-buy-in-button" type="button">Submit</button>
 			   	</span>
 			</div>
+
+			<p>
+				<strong>Default Lineup Buy In: </strong> 
+				$<span class="default-lineup-buy-in-amount">{{ $defaultLineupBuyIn }}</span> 
+				<span class="default-lineup-buy-in-percentage">({{ numFormat($defaultLineupBuyIn / $buyIn * 100, 2) }}%)</span>
+				[<a href="#" class="edit-buy-in-percentage-link">Edit</a>]
+			</p>
 		</div>
 	</div>
 

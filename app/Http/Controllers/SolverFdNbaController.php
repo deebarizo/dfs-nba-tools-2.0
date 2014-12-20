@@ -63,6 +63,8 @@ class SolverFdNbaController {
 
         $unspentBuyIn = $solverTopPlays->calculateUnspentBuyIn($areThereActiveLineups, $lineups, $buyIn);
 
+        $defaultLineupBuyIn = getDefaultLineupBuyIn();
+
         # ddAll($lineups);
 
         return view('solver_with_top_plays_fd_nba', 
@@ -72,7 +74,9 @@ class SolverFdNbaController {
                              'buyIn', 
                              'unspentBuyIn',
                              'lineups', 
-                             'areThereActiveLineups'));
+                             'areThereActiveLineups',
+                             'buyInPercentage',
+                             'defaultLineupBuyIn'));
     }
 
     // Ajax

@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateBuyInPercentagesTable extends Migration {
+class CreateDefaultLineupBuyInsTable extends Migration {
 
 	/**
 	 * Run the migrations.
@@ -12,10 +12,10 @@ class CreateBuyInPercentagesTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('buy_in_percentages', function($table)
+		Schema::create('default_lineup_buy_ins', function($table)
 		{
 		    $table->increments('id');
-		    $table->integer('percentage')->unsigned;
+		    $table->integer('dollar_amount')->unsigned;
 		    $table->date('created_at');
 		    $table->date('updated_at');
 		});		
@@ -28,6 +28,7 @@ class CreateBuyInPercentagesTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::dropIfExists('buy_in_percentages');
+		Schema::dropIfExists('default_lineup_buy_ins');
 	}
+
 }

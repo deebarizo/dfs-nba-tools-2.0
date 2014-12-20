@@ -89,6 +89,19 @@ function removeLineup($playerPoolId, $hash) {
         ->delete();
 }
 
+function getDefaultLineupBuyIn() {
+   return DB::table('default_lineup_buy_ins')
+            ->select('dollar_amount')
+            ->orderBy('created_at', 'desc')
+            ->take(1)
+            ->pluck('dollar_amount'); 
+}
+
+
+/********************************************
+SOMETHING
+********************************************/
+
 function getTopPlays($date) {
     $players = DB::table('player_pools')
         ->join('players_fd', 'player_pools.id', '=', 'players_fd.player_pool_id')
