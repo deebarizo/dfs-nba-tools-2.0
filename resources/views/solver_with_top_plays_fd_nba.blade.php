@@ -84,7 +84,7 @@
 									$<span class="lineup-buy-in-amount">{{ $lineup['buy_in'] }}</span> 
 									(<span class="lineup-buy-in-percentage">{{ $lineup['buy_in_percentage'] }}</span>%) | 
 									<a href="#" class="edit-lineup-buy-in-link">Edit</a> | 
-									<a href="#" class="play-or-unplay-lineup-link">{{ $lineup['play_or_unplay_anchor_text'] }}</a> | 
+									<a href="#" class="play-or-unplay-lineup-link"><span class="play-or-unplay-lineup-anchor-text">{{ $lineup['play_or_unplay_anchor_text'] }}</span></a> | 
 								</span>
 								<a href="#" class="add-or-remove-lineup-link"><span class="add-or-remove-lineup-anchor-text">{{ $lineup['anchor_text'] }}</span></a>
 								<span class="add-or-remove-lineup-link-loading-gif">
@@ -287,6 +287,7 @@
 		           	},
 		            success: function() {
 						$this.parent().parent().parent().parent().toggleClass("active-lineup");	
+						$this.parent().parent().parent().parent().removeClass("money-lineup");	
 						$this.prev().toggleClass("edit-lineup-buy-in-hidden");	
 						$this.next(".add-or-remove-lineup-link-loading-gif").hide();
 
@@ -297,13 +298,14 @@
 								$this.parent().parent().parent().parent().next().children(".edit-lineup-buy-in-input").val(lineupBuyIn);								
 								
 								$this.children(".add-or-remove-lineup-anchor-text").text("Remove");
-
+								
 						        break;
 						    
 						    case "Remove":
 						    	$this.parent().parent().parent().parent().next().addClass("edit-lineup-buy-in-amount-hidden");
 
 						        $this.children(".add-or-remove-lineup-anchor-text").text("Add");
+						        $this.prev().find(".play-or-unplay-lineup-anchor-text").text("Play");
 
 						        break;
 						}
