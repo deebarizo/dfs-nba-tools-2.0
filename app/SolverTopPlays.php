@@ -57,7 +57,7 @@ class SolverTopPlays {
 			$totalSalary[$key] = $lineup['total_salary'];
 		}
 
-		array_multisort($money, SORT_DESC, $active, SORT_DESC, $totalSalary, SORT_DESC, $lineups);
+		array_multisort($active, SORT_DESC, $money, SORT_ASC, $totalSalary, SORT_DESC, $lineups);
 
 		# ddAll($lineups);
 

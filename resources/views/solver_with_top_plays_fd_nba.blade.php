@@ -321,7 +321,44 @@
 			PLAY OR UNPLAY LINEUP
 			********************************************/
 
-			
+			$(".play-or-unplay-lineup-link").click(function(e) {
+				e.preventDefault();
+
+				var playOrUnplay = $(this).children(".play-or-unplay-lineup-anchor-text").text();
+
+				$(this).children(".play-or-unplay-lineup-anchor-text").text('');
+				$(this).children(".play-or-unplay-lineup-anchor-text").html('<img src="/files/spiffygif_16x16.gif" alt="Please wait..." />');
+
+				var hash = $(this).parent().parent().parent().parent().parent().data('hash');
+
+				var $this = $(this);
+
+		    	$.ajax({
+		            url: '<?php echo url(); ?>/solver_top_plays/play_or_unplay_lineup/',
+		           	type: 'POST',
+		           	data: { 
+		           		playerPoolId: playerPoolId,
+		           		hash: hash,
+		           		playOrUnplay: playOrUnplay,
+		           	},
+		            success: function() {
+						$this.parent().parent().parent().parent().parent().toggleClass("money-lineup");	
+						$(this).children(".play-or-unplay-lineup-anchor-text").html('');
+
+						switch(playOrUnplay) {
+						    case "Play":
+								$this.children(".play-or-unplay-lineup-anchor-text").text("Unplay");
+								
+						        break;
+						    
+						    case "Unplay":
+						    	$this.children(".play-or-unplay-lineup-anchor-text").text("Play");
+
+						        break;
+						}								
+		            }
+		        });
+			});
 
 
 			/********************************************

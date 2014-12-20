@@ -120,6 +120,26 @@ class SolverFdNbaController {
             ->update(array('buy_in' => $lineupBuyIn));        
     }
 
+    public function playOrUnplayLineup(Request $request) {
+        $playerPoolId = $request->input('playerPoolId');
+        $hash = $request->input('hash');   
+        $playOrUnplay = $request->input('playOrUnplay');     
+
+        if ($playOrUnplay == 'Play') {
+            DB::table('lineups')
+                ->where('player_pool_id', $playerPoolId)
+                ->where('hash', $hash)
+                ->update(array('money' => 1));             
+        }
+
+        if ($playOrUnplay == 'Unplay') {
+            DB::table('lineups')
+                ->where('player_pool_id', $playerPoolId)
+                ->where('hash', $hash)
+                ->update(array('money' => 0));             
+        }
+    }
+
     //// Solver
 
 	public function solverFdNba($date = 'today', $numTopLineups = 5) {
