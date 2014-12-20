@@ -92,7 +92,7 @@ function removeLineup($playerPoolId, $hash) {
 function getDefaultLineupBuyIn() {
    return DB::table('default_lineup_buy_ins')
             ->select('dollar_amount')
-            ->orderBy('created_at', 'desc')
+            ->orderBy('id', 'desc')
             ->take(1)
             ->pluck('dollar_amount'); 
 }

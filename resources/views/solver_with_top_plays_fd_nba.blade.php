@@ -27,8 +27,8 @@
 			<p>
 				<strong>Default Lineup Buy In: </strong> 
 				$<span class="default-lineup-buy-in-amount">{{ $defaultLineupBuyIn }}</span> 
-				<span class="default-lineup-buy-in-percentage">({{ numFormat($defaultLineupBuyIn / $buyIn * 100, 2) }}%)</span>
-				[<a href="#" class="edit-buy-in-percentage-link">Edit</a>]
+				(<span class="default-lineup-buy-in-percentage">{{ numFormat($defaultLineupBuyIn / $buyIn * 100, 2) }}</span>%)
+				[<a href="#" class="edit-default-lineup-buy-in-link">Edit</a>]
 			</p>
 
 			<div class="input-group edit-default-lineup-buy-in form-hidden" style="width: 20%; margin-bottom: 10px">
@@ -104,7 +104,7 @@
 
 			var playerPoolId = <?php echo json_encode($playerPoolId); ?>;
 			var buyIn = $("span.buy-in-amount").text();
-
+			var defaultLineupBuyIn = $("span.default-lineup-buy-in-amount").text();
 
 			/********************************************
 			EDIT BUY IN
@@ -116,20 +116,29 @@
 				$(".edit-buy-in").toggleClass("form-hidden");
 			});
 
+	        $('.edit-buy-in-input').keypress(function (event) {
+	            if (event.which == 13) {
+					buyIn = $(this).val();
+
+					$.ajax({
+			            url: '<?php echo url(); ?>/solver_top_plays/update_buy_in/'+playerPoolId+'/'+buyIn,
+			            type: 'POST',
+			            success: function() {
+			            	$(".edit-buy-in").addClass("form-hidden");
+
+			            	$("span.buy-in-amount").text(buyIn).fadeIn();
+			            }
+			        }); 
+	            }
+	        });
+
 			$(".edit-buy-in-button").click(function(e) {
 				e.preventDefault();
 
-				buyIn = $(this).parent().prev('input.edit-buy-in-input').val();
-
-				$.ajax({
-		            url: '<?php echo url(); ?>/solver_top_plays/update_buy_in/'+playerPoolId+'/'+buyIn,
-		            type: 'POST',
-		            success: function() {
-		            	$(".edit-buy-in").addClass("form-hidden");
-
-		            	$("span.buy-in-amount").text(buyIn).fadeIn();
-		            }
-		        }); 				
+				var e = jQuery.Event('keypress');
+				e.which = 13;
+				$(".edit-buy-in-input").focus();
+				$(".edit-buy-in-input").trigger(e);
 			});
 
 
@@ -137,7 +146,40 @@
 			EDIT DEFAULT LINEUP BUY IN
 			********************************************/
 
+			$(".edit-default-lineup-buy-in-link").click(function(e) {
+				e.preventDefault();
 
+				$(".edit-default-lineup-buy-in").toggleClass("form-hidden");
+			});
+
+	        $('.edit-default-lineup-buy-in-input').keypress(function (event) {
+	            if (event.which == 13) {
+					defaultLineupBuyIn = $(this).val();
+
+					$.ajax({
+			            url: '<?php echo url(); ?>/solver_top_plays/add_default_lineup_buy_in/'+defaultLineupBuyIn,
+			            type: 'POST',
+			            success: function() {
+			            	$(".edit-default-lineup-buy-in").addClass("form-hidden");
+
+			            	var defaultLineupBuyInPercentage = defaultLineupBuyIn / buyIn * 100;
+			            	defaultLineupBuyInPercentage = defaultLineupBuyInPercentage.toFixed(2);
+
+			            	$("span.default-lineup-buy-in-amount").text(defaultLineupBuyIn).fadeIn();
+			            	$("span.default-lineup-buy-in-percentage").text(defaultLineupBuyInPercentage).fadeIn();
+			            }
+			        }); 
+	            }
+	        });
+
+			$(".edit-default-lineup-buy-in-button").click(function(e) {
+				e.preventDefault();
+
+				var e = jQuery.Event('keypress');
+				e.which = 13;
+				$(".edit-default-lineup-buy-in-input").focus();
+				$(".edit-default-lineup-buy-in-input").trigger(e);
+			});
 
 
 			/********************************************
@@ -196,7 +238,7 @@
 					return false;
 				}
 
-				var lineupBuyIn = Math.round(buyIn * 0.0583);
+				var lineupBuyIn = defaultLineupBuyIn;
 				var lineupBuyInPercentage = lineupBuyIn / buyIn * 100;
 				lineupBuyInPercentage = lineupBuyInPercentage.toFixed(2);
 

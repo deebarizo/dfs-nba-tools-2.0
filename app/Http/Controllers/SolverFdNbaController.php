@@ -13,6 +13,7 @@ use App\Solver;
 use App\SolverTopPlays;
 use App\Lineup;
 use App\LineupPlayer;
+use App\DefaultLineupBuyIn;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\RunFDNBASalariesScraperRequest;
@@ -85,6 +86,14 @@ class SolverFdNbaController {
         DB::table('player_pools')
             ->where('id', $playerPoolId)
             ->update(array('buy_in' => $buyIn));
+    }
+
+    public function addDefaultLineupBuyIn($defaultLineupBuyInDollarAmount) {
+        $defaultLineupBuyIn = new DefaultLineupBuyIn; 
+
+        $defaultLineupBuyIn->dollar_amount = $defaultLineupBuyInDollarAmount;
+
+        $defaultLineupBuyIn->save();    
     }
 
     public function addOrRemoveLineup(Request $request) {

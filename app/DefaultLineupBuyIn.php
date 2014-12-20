@@ -2,6 +2,6 @@
 
 use Illuminate\Database\Eloquent\Model as Eloquent;
 
-class BuyInPercentage extends Eloquent {
+class DefaultLineupBuyIn extends Eloquent {
 
 }
