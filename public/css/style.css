@@ -29,6 +29,10 @@ hr {
 	border: 3px solid green;
 }
 
+.hide-lineup {
+	display: none;
+}
+
 /* SOLVER TOP PLAYS */
 
 .edit-buy-in {

@@ -1,15 +1,8 @@
-
-
-/********************************************
-EDIT BUY IN
-********************************************/
-
-
 $(document).ready(function() {
 
-	/********************************************
+	/****************************************************************************************
 	EDIT BUY IN
-	********************************************/
+	****************************************************************************************/
 
 	$(".edit-buy-in-link").click(function(e) {
 		e.preventDefault();
@@ -43,9 +36,32 @@ $(document).ready(function() {
 	});
 
 
-	/********************************************
+	/****************************************************************************************
+	UPDATE UNSPENT BUY IN
+	****************************************************************************************/
+
+	function updateUnspentBuyIn() {
+		var buyIn = $("span.buy-in-amount").text();
+		buyIn = parseInt(buyIn);
+
+		var spentBuyIn = 0;
+		spentBuyIn = parseInt(spentBuyIn);
+
+		$(".active-lineup").each(function() {
+			var lineupBuyIn = $(this).find("span.lineup-buy-in-amount").text();	
+
+			spentBuyIn += parseInt(lineupBuyIn);
+		});
+
+		var unspentBuyIn = buyIn - spentBuyIn;
+
+		$("span.unspent-buy-in-amount").text(unspentBuyIn);
+	}
+
+
+	/****************************************************************************************
 	EDIT DEFAULT LINEUP BUY IN
-	********************************************/
+	****************************************************************************************/
 
 	$(".edit-default-lineup-buy-in-link").click(function(e) {
 		e.preventDefault();
@@ -83,9 +99,71 @@ $(document).ready(function() {
 	});
 
 
+	/****************************************************************************************
+	FILTERS
+	****************************************************************************************/
+
+	var lineupType;
+	var filter = {};
+
+	function runFilter() {
+		filter = getFilter();
+
+		$('table.lineup').removeClass('hide-lineup');
+
+		runLineupTypeFilter(filter);
+	}
+
+	function getFilter() {
+		lineupType = $('select.lineup-type-filter').val();
+
+		filter = {
+			lineupType: lineupType
+		};
+
+		return filter;
+	}
+
 	/********************************************
-	EDIT LINEUP BUY IN
+	LINEUP TYPE FILTER
 	********************************************/
+
+	$('select.lineup-type-filter').on('change', function() {
+		runFilter();
+	});
+
+	function runLineupTypeFilter(filter) {
+		if (filter.lineupType == 'All') {
+			return;
+		}
+
+		$('table.lineup').each(function() {
+			var lineup = $(this);
+
+			hideLineupsNotSelected(lineup, filter.lineupType);
+		});				
+	}
+
+	function hideLineupsNotSelected(lineup, lineupType) {
+		var doWeWantActiveLineups = false;
+
+		if (lineupType == 'Only Active') {
+			doWeWantActiveLineups = true;
+		}
+
+		var isLineupActive = $(lineup).hasClass('active-lineup');
+
+		if (doWeWantActiveLineups == isLineupActive) {
+			return;
+		}
+
+		$(lineup).addClass('hide-lineup');
+	}
+
+
+	/****************************************************************************************
+	EDIT LINEUP BUY IN
+	****************************************************************************************/
 
 	$(".edit-lineup-buy-in-link").click(function(e) {
 		e.preventDefault();
@@ -124,9 +202,9 @@ $(document).ready(function() {
 	});
 
 
-	/********************************************
+	/****************************************************************************************
 	ADD OR REMOVE LINEUP
-	********************************************/
+	****************************************************************************************/
 
 	$(".add-or-remove-lineup-link").click(function(e) {
 		e.preventDefault();
@@ -206,9 +284,9 @@ $(document).ready(function() {
 	});
 
 
-	/********************************************
+	/****************************************************************************************
 	PLAY OR UNPLAY LINEUP
-	********************************************/
+	****************************************************************************************/
 
 	$(".play-or-unplay-lineup-link").click(function(e) {
 		e.preventDefault();
@@ -250,32 +328,9 @@ $(document).ready(function() {
 	});
 
 
-	/********************************************
-	UPDATE UNSPENT BUY IN
-	********************************************/
-
-	function updateUnspentBuyIn() {
-		var buyIn = $("span.buy-in-amount").text();
-		buyIn = parseInt(buyIn);
-
-		var spentBuyIn = 0;
-		spentBuyIn = parseInt(spentBuyIn);
-
-		$(".active-lineup").each(function() {
-			var lineupBuyIn = $(this).find("span.lineup-buy-in-amount").text();	
-
-			spentBuyIn += parseInt(lineupBuyIn);
-		});
-
-		var unspentBuyIn = buyIn - spentBuyIn;
-
-		$("span.unspent-buy-in-amount").text(unspentBuyIn);
-	}
-
-
-	/********************************************
+	/****************************************************************************************
 	DRAW BAR CHART
-	********************************************/
+	****************************************************************************************/
 
 	if (areThereActiveLineups == 1) {
 		drawBarChart();

@@ -3,7 +3,7 @@
 @section('content')
 	<div class="row">
 		<div class="col-lg-12">
-			<h2>Daily FD NBA (Solver With Top Plays) | {{ $date }} {{ $timePeriod }}</h2>
+			<h2 id="heading">Daily FD NBA (Solver With Top Plays) | {{ $date }} {{ $timePeriod }}</h2>
 		</div>
 
 		<div class="col-lg-4">
@@ -77,6 +77,7 @@
 					   		  table-bordered 
 					   		  table-hover 
 					   		  table-condensed 
+					   		  lineup 
 					   		  {{ $lineup['css_class_blue_border'] }} 
 					   		  {{ $lineup['css_class_money_lineup'] }}">
 					<thead>
