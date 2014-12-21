@@ -1,12 +1,12 @@
 @extends('master')
 
 @section('content')
-	<div class="row">
+	<div class="row" style="font-size: 90%">
 		<div class="col-lg-12">
 			<h2 id="heading">Daily FD NBA (Solver With Top Plays) | {{ $date }} {{ $timePeriod }}</h2>
 		</div>
 
-		<div class="col-lg-4">
+		<div class="col-lg-3">
 			<p>
 				<strong>Buy In: </strong> 
 				$<span class="buy-in-amount">{{ $buyIn }}</span>
@@ -18,7 +18,7 @@
 				</span>
 			</p>
 
-			<div class="input-group edit-buy-in form-hidden" style="width: 65%; margin-bottom: 10px">
+			<div class="input-group edit-buy-in form-hidden" style="width: 80%; margin-bottom: 10px">
 				<div class="input-group-addon">$</div>
 			   	<input type="text" class="form-control edit-buy-in-input" value="{{ $buyIn }}">
 			   	<span class="input-group-btn">
@@ -27,7 +27,7 @@
 			</div>
 		</div>
 
-		<div class="col-lg-4">
+		<div class="col-lg-3">
 			<p>
 				<strong>Default Lineup Buy In: </strong> 
 				$<span class="default-lineup-buy-in-amount">{{ $defaultLineupBuyIn }}</span> 
@@ -35,7 +35,7 @@
 				[<a href="#" class="edit-default-lineup-buy-in-link">Edit</a>]
 			</p>
 
-			<div class="input-group edit-default-lineup-buy-in form-hidden" style="width: 65%; margin-bottom:10px">
+			<div class="input-group edit-default-lineup-buy-in form-hidden" style="width: 80%; margin-bottom:10px">
 				<div class="input-group-addon">$</div>
 			   	<input type="text" class="form-control edit-default-lineup-buy-in-input" value="{{ $defaultLineupBuyIn }}">
 			   	<span class="input-group-btn">
@@ -44,7 +44,7 @@
 			</div>
 		</div>
 
-		<div class="col-lg-4">
+		<div class="col-lg-2">
 			<p>
 				<strong>Navbar:</strong> <a class="toggle-navbar-link" href="#">Toggle</a>
 			</p>
@@ -52,32 +52,64 @@
 
 		<div class="col-lg-12">
 			<form class="form-inline" style="margin: 5px 0 10px 0">
-				<label>Show Lineups</label>
-				<select class="form-control lineup-type-filter" style="margin-right: 20px">
+				<div style="font-size: 130%; font-weight: bold; display: inline-block; width: 70px">Show:</div>
+
+				<label>Player 1</label>
+				<select class="form-control show-player-1-filter" style="margin-right: 20px; width: 200px">
+				  	<option value="All">All</option>
+				  	@foreach ($players as $player)
+				  		<option value="{{ $player->player_id }}">{{ $player->name }}</option>
+				  	@endforeach
+				</select>
+
+				<label>Player 2</label>
+				<select class="form-control show-player-2-filter" style="margin-right: 20px; width: 200px">
+				  	<option value="None">-</option>
+				  	@foreach ($players as $player)
+				  		<option value="{{ $player->player_id }}">{{ $player->name }}</option>
+				  	@endforeach
+				</select>
+
+				<label>Player 3</label>
+				<select class="form-control show-player-3-filter" style="margin-right: 20px; width: 200px">
+				  	<option value="None">-</option>
+				  	@foreach ($players as $player)
+				  		<option value="{{ $player->player_id }}">{{ $player->name }}</option>
+				  	@endforeach
+				</select>
+
+				<label>Lineups</label>
+				<select class="form-control lineup-type-filter">
 				  	<option value="All">All</option>
 				  	<option value="Only Non Active">Only Non Active</option>
 				  	<option value="Only Active">Only Active</option>
 				</select>
+			</form>
+		</div>
 
-				<label>Show Player 1</label>
-				<select class="form-control show-player-1-filter" style="margin-right: 20px">
-				  	<option value="All">All</option>
+		<div class="col-lg-12">
+			<form class="form-inline" style="margin: 5px 0 10px 0">
+				<div style="font-size: 130%; font-weight: bold; display: inline-block; width: 70px">Hide:</div>
+
+				<label>Player 1</label>
+				<select class="form-control hide-player-1-filter" style="margin-right: 20px; width: 200px">
+				  	<option value="None">-</option>
 				  	@foreach ($players as $player)
 				  		<option value="{{ $player->player_id }}">{{ $player->name }}</option>
 				  	@endforeach
 				</select>
 
-				<label>Show Player 2</label>
-				<select class="form-control show-player-2-filter" style="margin-right: 20px">
-				  	<option value="All">All</option>
+				<label>Player 2</label>
+				<select class="form-control hide-player-2-filter" style="margin-right: 20px; width: 200px">
+				  	<option value="None">-</option>
 				  	@foreach ($players as $player)
 				  		<option value="{{ $player->player_id }}">{{ $player->name }}</option>
 				  	@endforeach
 				</select>
 
-				<label>Show Player 3</label>
-				<select class="form-control show-player-2-filter">
-				  	<option value="All">All</option>
+				<label>Player 3</label>
+				<select class="form-control hide-player-3-filter" style="width: 200px">
+				  	<option value="None">-</option>
 				  	@foreach ($players as $player)
 				  		<option value="{{ $player->player_id }}">{{ $player->name }}</option>
 				  	@endforeach
