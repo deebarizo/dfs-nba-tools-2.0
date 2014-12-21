@@ -8,6 +8,16 @@ $(document).ready(function() {
 		e.preventDefault();
 
 		$('.navbar').toggle();
+
+		var isNavbarVisible = $(".navbar").is(":visible");
+
+		if (isNavbarVisible) {
+			$("h2:").css({"margin-top":"20px"});
+
+			return;
+		}
+		
+		$("h2:").css({"margin-top":"10px"});
 	});
 
 

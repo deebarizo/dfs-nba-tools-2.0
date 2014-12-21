@@ -51,12 +51,36 @@
 		</div>
 
 		<div class="col-lg-12">
-			<form class="form-inline" style="margin: 5px 20px 10px 0">
+			<form class="form-inline" style="margin: 5px 0 10px 0">
 				<label>Show Lineups</label>
-				<select class="form-control lineup-type-filter">
+				<select class="form-control lineup-type-filter" style="margin-right: 20px">
 				  	<option value="All">All</option>
 				  	<option value="Only Non Active">Only Non Active</option>
 				  	<option value="Only Active">Only Active</option>
+				</select>
+
+				<label>Show Player 1</label>
+				<select class="form-control show-player-1-filter" style="margin-right: 20px">
+				  	<option value="All">All</option>
+				  	@foreach ($players as $player)
+				  		<option value="{{ $player->player_id }}">{{ $player->name }}</option>
+				  	@endforeach
+				</select>
+
+				<label>Show Player 2</label>
+				<select class="form-control show-player-2-filter" style="margin-right: 20px">
+				  	<option value="All">All</option>
+				  	@foreach ($players as $player)
+				  		<option value="{{ $player->player_id }}">{{ $player->name }}</option>
+				  	@endforeach
+				</select>
+
+				<label>Show Player 3</label>
+				<select class="form-control show-player-2-filter">
+				  	<option value="All">All</option>
+				  	@foreach ($players as $player)
+				  		<option value="{{ $player->player_id }}">{{ $player->name }}</option>
+				  	@endforeach
 				</select>
 			</form>
 		</div>
@@ -136,7 +160,8 @@
 		HIDE NAVBAR
 		****************************************************************************************/
 
-		$('.navbar').hide();
+		$(".navbar").hide();
+		$("h2").css({"margin-top":"10px"});
 
 			
 		/****************************************************************************************

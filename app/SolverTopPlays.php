@@ -21,10 +21,11 @@ class SolverTopPlays {
 
 		array_multisort($name, SORT_ASC, $players);
 
-		ddAll($players);
+		# ddAll($players);
 
 		return $players;
 	}
+	
 
 	/****************************************************************************************
 	PROCESS ACTIVE AND MONEY LINEUPS
