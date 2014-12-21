@@ -454,7 +454,7 @@ $(document).ready(function() {
 	            max: 100
 	        },
 	        tooltip: {
-	            valueSuffix: '%'
+	            enabled: false
 	        },
 	        plotOptions: {
 	            bar: {
@@ -463,6 +463,13 @@ $(document).ready(function() {
 	                },
 	                pointWidth: 20,
 	                pointPadding: 0
+	            },
+	            series: {
+	            	states: {
+	            		hover: {
+	            			enabled: false
+	            		}
+	            	}
 	            }
 	        },
 	        credits: {

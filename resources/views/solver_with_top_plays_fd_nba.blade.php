@@ -66,7 +66,7 @@
 				<select class="form-control show-player-2-filter" style="margin-right: 20px; width: 200px">
 				  	<option value="None">-</option>
 				  	@foreach ($players as $player)
-				  		<option value="{{ $player->player_id }}">{{ $player->name }}</option>
+				  		<option class="hide-player-in-filter" value="{{ $player->player_id }}">{{ $player->name }}</option>
 				  	@endforeach
 				</select>
 
@@ -74,7 +74,7 @@
 				<select class="form-control show-player-3-filter" style="margin-right: 20px; width: 200px">
 				  	<option value="None">-</option>
 				  	@foreach ($players as $player)
-				  		<option value="{{ $player->player_id }}">{{ $player->name }}</option>
+				  		<option class="hide-player-in-filter" value="{{ $player->player_id }}">{{ $player->name }}</option>
 				  	@endforeach
 				</select>
 
@@ -95,7 +95,7 @@
 				<select class="form-control hide-player-1-filter" style="margin-right: 20px; width: 200px">
 				  	<option value="None">-</option>
 				  	@foreach ($players as $player)
-				  		<option value="{{ $player->player_id }}">{{ $player->name }}</option>
+				  		<option class="hide-player-in-filter" value="{{ $player->player_id }}">{{ $player->name }}</option>
 				  	@endforeach
 				</select>
 
@@ -103,7 +103,7 @@
 				<select class="form-control hide-player-2-filter" style="margin-right: 20px; width: 200px">
 				  	<option value="None">-</option>
 				  	@foreach ($players as $player)
-				  		<option value="{{ $player->player_id }}">{{ $player->name }}</option>
+				  		<option class="hide-player-in-filter" value="{{ $player->player_id }}">{{ $player->name }}</option>
 				  	@endforeach
 				</select>
 
@@ -111,7 +111,7 @@
 				<select class="form-control hide-player-3-filter" style="width: 200px">
 				  	<option value="None">-</option>
 				  	@foreach ($players as $player)
-				  		<option value="{{ $player->player_id }}">{{ $player->name }}</option>
+				  		<option class="hide-player-in-filter" value="{{ $player->player_id }}">{{ $player->name }}</option>
 				  	@endforeach
 				</select>
 			</form>

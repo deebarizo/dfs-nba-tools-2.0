@@ -41,6 +41,10 @@ a:visited, a:active, a:focus {
 	display: none;
 }
 
+.hide-player-in-filter {
+	display: none;
+}
+
 /* SOLVER TOP PLAYS */
 
 .edit-buy-in {
