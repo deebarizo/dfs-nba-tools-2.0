@@ -4,6 +4,14 @@ hr {
 	border-color: #333;
 }
 
+a:hover, a:visited, a:link, a:active {
+    text-decoration: none;
+}
+
+a:visited, a:active, a:focus {
+    color: #428bca;
+}
+
 /* DAILY */
 
 #daily-dtd {
