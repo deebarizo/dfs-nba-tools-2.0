@@ -29,7 +29,9 @@ date_default_timezone_set('America/Chicago');
 
 class SolverFdNbaController {
 
-    //// Solver with top plays
+    /****************************************************************************************
+    SOLVER TOP PLAYS
+    ****************************************************************************************/
 
     public function solver_with_top_plays($date = 'default') {
         if ($date == 'default') {
@@ -40,17 +42,9 @@ class SolverFdNbaController {
 
         $solverTopPlays = new SolverTopPlays;
 
-        if (!$solverTopPlays->validateFdPositions($players)) {
-            return 'You are missing one or more positions';
-        }
+        $players = $solverTopPlays->sortPlayers($players);
 
-        if (!$solverTopPlays->validateMinimumTotalSalary($players)) {
-            return 'The least expensive lineup is more than $60000.';
-        }
-
-        if (!$solverTopPlays->validateMaximumTotalSalary($players)) {
-            return 'The most expensive lineup is less than $59400.';
-        }
+        $solverTopPlays->validateTopPlays($players);
 
         $lineups = $solverTopPlays->buildLineupsWithTopPlays($players);
 
@@ -58,15 +52,13 @@ class SolverFdNbaController {
         $playerPoolId = $lineups[0]['roster_spots']['PG2']->player_pool_id;
         $buyIn = getBuyIn($playerPoolId);
 
-        $lineups = $solverTopPlays->markActiveLineups($lineups, $playerPoolId, $buyIn);
-        
+        $lineups = $solverTopPlays->markAndAppendActiveLineups($lineups, $playerPoolId, $buyIn);
+
         $areThereActiveLineups = $solverTopPlays->areThereActiveLineups($lineups);
 
         $unspentBuyIn = $solverTopPlays->calculateUnspentBuyIn($areThereActiveLineups, $lineups, $buyIn);
 
         $defaultLineupBuyIn = getDefaultLineupBuyIn();
-
-        # ddAll($lineups);
 
         return view('solver_with_top_plays_fd_nba', 
                      compact('date', 
@@ -77,10 +69,14 @@ class SolverFdNbaController {
                              'lineups', 
                              'areThereActiveLineups',
                              'buyInPercentage',
-                             'defaultLineupBuyIn'));
+                             'defaultLineupBuyIn',
+                             'players'));
     }
 
-    // Ajax
+
+    /********************************************
+    AJAX
+    ********************************************/
 
     public function updateBuyIn($playerPoolId, $buyIn) {
         DB::table('player_pools')
@@ -140,7 +136,10 @@ class SolverFdNbaController {
         }
     }
 
-    //// Solver
+
+    /****************************************************************************************
+    SOLVER
+    ****************************************************************************************/
 
 	public function solverFdNba($date = 'today', $numTopLineups = 5) {
 		if ($date == 'today') {

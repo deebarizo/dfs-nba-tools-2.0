@@ -2,15 +2,35 @@
 
 class SolverTopPlays {
 
+	/****************************************************************************************
+	GLOBAL VARIABLES
+	****************************************************************************************/
+
 	private $minimumTotalSalary = 59400; // 1% of cap
 	private $maximumTotalSalary = 60000;
 
 
-	/********************************************
-	PROCESS ACTIVE AND MONEY LINEUPS
-	********************************************/
+	/****************************************************************************************
+	SORT PLAYERS
+	****************************************************************************************/
 
-	public function markActiveLineups($lineups, $playerPoolId, $buyIn) {
+	public function sortPlayers($players) {
+		foreach ($players as $key => $player) {
+			$name[$key] = $player->name;
+		}
+
+		array_multisort($name, SORT_ASC, $players);
+
+		ddAll($players);
+
+		return $players;
+	}
+
+	/****************************************************************************************
+	PROCESS ACTIVE AND MONEY LINEUPS
+	****************************************************************************************/
+
+	public function markAndAppendActiveLineups($lineups, $playerPoolId, $buyIn) {
 		$activeLineups = getActiveLineups($playerPoolId);
 
 		$playersInActiveLineups = getPlayersInActiveLineups($playerPoolId);
@@ -67,7 +87,7 @@ class SolverTopPlays {
         return $lineups;
 	}
 
-	public function markLineupIfActive($lineup, $activeLineups, $buyIn)	{
+	private function markLineupIfActive($lineup, $activeLineups, $buyIn)	{
 		foreach ($activeLineups as $key => $activeLineup) {
 			if ($lineup['hash'] == $activeLineup->hash) {
 				$lineup['active'] = 1;
@@ -152,9 +172,9 @@ class SolverTopPlays {
 	}
 
 
-	/********************************************
+	/****************************************************************************************
 	BUILD LINEUPS
-	********************************************/
+	****************************************************************************************/
 
 	public function buildLineupsWithTopPlays($players) {
 		$numOfPlayersPerPosition = [
@@ -207,9 +227,9 @@ class SolverTopPlays {
 	}
 
 
-	/********************************************
+	/****************************************************************************************
 	BUILD ONE LINEUP
-	********************************************/
+	****************************************************************************************/
 
 	private function buildOneLineupWithTopPlays($players, $numOfPlayersPerPosition) {
 		do {
@@ -319,10 +339,10 @@ class SolverTopPlays {
 	}
 
 
-	/********************************************
+	/****************************************************************************************
 	VALIDATE TOP PLAYS
-	********************************************/
-
+	****************************************************************************************/
+	
 	private $numInPositions = [
 		'PG' => ['required_num' => 2, 'current_num' => 0],
 		'SG' => ['required_num' => 2, 'current_num' => 0],
@@ -331,9 +351,29 @@ class SolverTopPlays {
 		'C'  => ['required_num' => 1, 'current_num' => 0]
 	];
 
-	// Positions
+	public function validateTopPlays($players) {
+        if (!$this->validateFdPositions($players)) {
+            echo 'You are missing one or more positions'; 
+            exit();
+        }
 
-	public function validateFdPositions($players) {
+        if (!$this->validateMinimumTotalSalary($players)) {
+            echo 'The least expensive lineup is more than $60000.';
+            exit();
+        }
+
+        if (!$this->validateMaximumTotalSalary($players)) {
+            echo 'The most expensive lineup is less than $59400.';
+            exit();
+        }
+	}
+
+
+	/********************************************
+	POSITION
+	********************************************/
+
+	private function validateFdPositions($players) {
 		$numInPositions = $this->numInPositions;
 
 		foreach ($players as $player) {
@@ -349,7 +389,10 @@ class SolverTopPlays {
 		return true;
 	}
 
-	// Salary
+
+	/********************************************
+	SALARY
+	********************************************/
 
 	public function validateMinimumTotalSalary($players) {
 		$totalSalary = $this->getTotalSalary($players, 'Minimum');
