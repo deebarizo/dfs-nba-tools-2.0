@@ -52,12 +52,15 @@ class SolverTopPlays {
 		$totalSalary = [];
 
 		foreach ($lineups as $key => $lineup) {
-			$money[$key] = $lineup['money'];
+			$hashAsString = (string)$lineup['hash'];
+			$shortenedHash[$key] = substr($hashAsString, 0, 10);
+
 			$active[$key] = $lineup['active'];
-			$totalSalary[$key] = $lineup['total_salary'];
+
+			$money[$key] = $lineup['money'];
 		}
 
-		array_multisort($active, SORT_DESC, $money, SORT_ASC, $totalSalary, SORT_DESC, $lineups);
+		array_multisort($active, SORT_ASC, $money, SORT_ASC, $shortenedHash, SORT_ASC, $lineups);
 
 		# ddAll($lineups);
 

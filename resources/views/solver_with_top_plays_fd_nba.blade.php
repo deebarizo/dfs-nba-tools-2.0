@@ -71,7 +71,7 @@
 			<div id="player-percentages-container" style="width:100%; height:700px; padding-right:30px"></div>
 		</div>
 
-		<div class="col-lg-6" style="overflow-y: scroll; height: 800px">
+		<div class="col-lg-6" style="overflow-y: scroll; height: 750px">
 			<h4>Lineups</h4>
 
 			@foreach ($lineups as $lineup)
