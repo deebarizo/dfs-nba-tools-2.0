@@ -369,6 +369,8 @@ class DailyController {
         	$dtdPlayers = [];
         }
 
+        # ddAll($players);
+
 		return view('daily_fd_nba', compact('date', 'timePeriod', 'players', 'dtdPlayers', 'teamsToday'));
 	}
 

@@ -21,10 +21,10 @@
 		<div class="col-lg-12">
 			<h3>{{ $date }} {{ $timePeriod }} | <a target="_blank" href="/solver_with_top_plays_fd_nba/{{ $date }}">Solver (With Top Plays)</a> <!-- |  <a target="_blank" href="/solver_fd_nba/{{ $date }}">Solver</a> --></h3>
 
-			<form class="form-inline">
+			<form class="form-inline" style="margin: 15px 0 20px 0">
 
 				<label>Positions</label>
-				<select class="form-control position-filter" style="width: 10%; margin: 20px 20px 20px 0;">
+				<select class="form-control position-filter" style="width: 10%; margin-right: 20px">
 				  	<option value="All">All</option>
 				  	<option value="PG">PG</option>
 				  	<option value="SG">SG</option>
@@ -34,7 +34,7 @@
 				</select>
 
 				<label>Teams</label>
-				<select class="form-control team-filter" style="width: 10%; margin: 20px 20px 20px 0;">
+				<select class="form-control team-filter" style="width: 10%; margin-right: 20px">
 				  	<option value="All">All</option>
 				  	@foreach ($teamsToday as $team)
 					  	<option value="{{ $team }}">{{ $team }}</option>
@@ -42,7 +42,7 @@
 				</select>
 
 				<label>Show Only Top Plays</label>
-				<select class="form-control top-plays-filter" style="width: 10%; margin: 20px 0 20px 0;">
+				<select class="form-control top-plays-filter" style="width: 10%; margin-right: 20px">
 				  	<option value="0">No</option>
 				  	<option value="1">Yes</option>
 				</select>
@@ -237,6 +237,8 @@
     			"paging": false,
     			"order": [[7, "desc"]]
     		});
+
+    		$('#daily_filter').hide();
 
 
 			/********************************************
