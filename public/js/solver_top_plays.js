@@ -157,8 +157,6 @@ $(document).ready(function() {
 			players: players
 		};
 
-		// console.log(filter);
-
 		return filter;
 	}
 
@@ -166,8 +164,8 @@ $(document).ready(function() {
 		for (var i = 0; i < numPlayersInEachPlayerFilterType; i++) {
 			var playerNumber = i + 1;
 
-			playerId = $('select.'+playerFilterType+'-player-'+playerNumber+'-filter').val();
-			playerName = $('select.'+playerFilterType+'-player-'+playerNumber+'-filter option[value="'+playerId+'"]').text();
+			var playerId = $('select.'+playerFilterType+'-player-'+playerNumber+'-filter').val();
+			var playerName = $('select.'+playerFilterType+'-player-'+playerNumber+'-filter option[value="'+playerId+'"]').text();
 
 			players[playerFilterType][i] = {
 				id: playerId,
@@ -189,36 +187,90 @@ $(document).ready(function() {
 
 	function runPlayerFilter(filter, playerFilterType) {
 		if (filter.players.show[0].name == 'All') {
-			setPlayerSelectTags('default');
+			setDefaultPlayerSelectTags();
 
 			return;
 		}
+
+		hidePlayerSelectOptions(filter);
 	}
 
-	function setPlayerSelectTags(settings) {
-		if (settings == 'default') {
-			setPlayerSelectOptions('default');
-		}
-	}
+	function hidePlayerSelectOptions(filter) {
+		$('select.player-filter option').removeClass('hide-player-in-filter');
 
-	function setPlayerSelectOptions(settings) {
-		if (settings == 'default') {
-			$('select.player-filter').find('option:eq(0)').prop('selected', true);
+		var selectedPlayerIds = [];
 
-			hidePlayerSelectOptions('default');
-		}
-	}
+		$("select.player-filter option:selected").each(function () {
+			var optionValue = $(this).val();
 
-	function hidePlayerSelectOptions(settings) {
-		if (settings == 'default') {
-			
-		}
+			selectedPlayerIds = checkForNonPlayerIds(optionValue, selectedPlayerIds);
+		});
 
 		for (var i = 0; i < playerFilterTypes.length; i++) {
-			playerFilterTypes[i]
+			hidePlayerSelectOptionsForEachPlayerFilterType(playerFilterTypes[i], selectedPlayerIds);
 		};
 	}
-	
+
+	function checkForNonPlayerIds(optionValue, selectedPlayerIds) {
+		if (optionValue == 'All' || optionValue == 'None') {
+			return selectedPlayerIds;
+		}
+
+		selectedPlayerIds.push(optionValue);
+
+		return selectedPlayerIds;
+	}
+
+	function hidePlayerSelectOptionsForEachPlayerFilterType(playerFilterType, selectedPlayerIds) {
+		for (var i = 0; i < selectedPlayerIds.length; i++) {
+			var playerId = selectedPlayerIds[i];
+
+			hidePlayerSelectOption(playerFilterType, playerId);		
+		}			
+	}
+
+	function hidePlayerSelectOption(playerFilterType, playerId) {
+		for (var i = 0; i < numPlayersInEachPlayerFilterType; i++) {
+			var playerNumber = i + 1;
+
+			hidePlayerSelectOptionExceptShowPlayer1(playerFilterType, playerId, playerNumber); 
+		}		
+	}
+
+	function hidePlayerSelectOptionExceptShowPlayer1(playerFilterType, playerId, playerNumber) {
+		if (playerFilterType == 'show' && playerNumber == 1) {
+			return;
+		}
+
+		$('select.'+playerFilterType+'-player-'+playerNumber+'-filter').find('option[value='+playerId+']').addClass('hide-player-in-filter');		
+	}
+
+	//// Default ////
+
+	function setDefaultPlayerSelectTags() {
+		$('select.player-filter').find('option:eq(0)').prop('selected', true);
+
+		for (var i = 0; i < playerFilterTypes.length; i++) {
+			hideDefaultPlayerSelectOptions(playerFilterTypes[i]);
+		};
+	}
+
+	function hideDefaultPlayerSelectOptions(playerFilterType) {
+		for (var i = 0; i < numPlayersInEachPlayerFilterType; i++) {
+			var playerNumber = i + 1;
+
+			hideDefaultPlayerSelectOption(playerFilterType, playerNumber);				
+		}	
+	}
+
+	function hideDefaultPlayerSelectOption(playerFilterType, playerNumber) {
+		if (playerFilterType == 'show' && playerNumber == 1) {
+			return;
+		}
+
+		$('select.'+playerFilterType+'-player-'+playerNumber+'-filter option:not(:selected)').addClass('hide-player-in-filter');
+	}
+
 
 	/********************************************
 	LINEUP TYPE FILTER
@@ -264,8 +316,6 @@ $(document).ready(function() {
 	$(".edit-lineup-buy-in-link").click(function(e) {
 		e.preventDefault();
 
-		console.log('test');
-
 		$(this).parent().parent().parent().parent().parent().next().toggleClass("edit-lineup-buy-in-amount-hidden");
 	});
 
@@ -277,8 +327,6 @@ $(document).ready(function() {
 		lineupBuyInPercentage = lineupBuyInPercentage.toFixed(2);
 
 		var hash = $(this).parent().parent().prev().data('hash');
-
-		// console.log(test); return false;
 
 		var $this = $(this);
 

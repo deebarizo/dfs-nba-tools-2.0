@@ -56,7 +56,7 @@
 
 				<label>Player 1</label>
 				<select class="form-control player-filter show-player-filter show-player-1-filter" style="margin-right: 20px; width: 200px">
-				  	<option value="All">All</option>
+				  	<option value="All" selected>All</option>
 				  	@foreach ($players as $player)
 				  		<option value="{{ $player->player_id }}">{{ $player->name }}</option>
 				  	@endforeach
@@ -64,7 +64,7 @@
 
 				<label>Player 2</label>
 				<select class="form-control player-filter show-player-filter show-player-2-filter" style="margin-right: 20px; width: 200px">
-				  	<option value="None">-</option>
+				  	<option value="None" selected="selected">-</option>
 				  	@foreach ($players as $player)
 				  		<option class="hide-player-in-filter" value="{{ $player->player_id }}">{{ $player->name }}</option>
 				  	@endforeach
@@ -72,7 +72,7 @@
 
 				<label>Player 3</label>
 				<select class="form-control player-filter show-player-filter show-player-3-filter" style="margin-right: 20px; width: 200px">
-				  	<option value="None">-</option>
+				  	<option value="None" selected>-</option>
 				  	@foreach ($players as $player)
 				  		<option class="hide-player-in-filter" value="{{ $player->player_id }}">{{ $player->name }}</option>
 				  	@endforeach
@@ -93,15 +93,15 @@
 
 				<label>Player 1</label>
 				<select class="form-control player-filter hide-player-filter hide-player-1-filter" style="margin-right: 20px; width: 200px">
-				  	<option value="None">-</option>
+				  	<option value="None" selected>-</option>
 				  	@foreach ($players as $player)
-				  		<option class="hide-player-in-filter" value="{{ $player->player_id }}">{{ $player->name }}</option>
+				  		<option class="" value="{{ $player->player_id }}">{{ $player->name }}</option>
 				  	@endforeach
 				</select>
 
 				<label>Player 2</label>
 				<select class="form-control player-filter hide-player-filter hide-player-2-filter" style="margin-right: 20px; width: 200px">
-				  	<option value="None">-</option>
+				  	<option value="None" selected>-</option>
 				  	@foreach ($players as $player)
 				  		<option class="hide-player-in-filter" value="{{ $player->player_id }}">{{ $player->name }}</option>
 				  	@endforeach
@@ -109,7 +109,7 @@
 
 				<label>Player 3</label>
 				<select class="form-control player-filter hide-player-filter hide-player-3-filter" style="width: 200px">
-				  	<option value="None">-</option>
+				  	<option value="None" selected>-</option>
 				  	@foreach ($players as $player)
 				  		<option class="hide-player-in-filter" value="{{ $player->player_id }}">{{ $player->name }}</option>
 				  	@endforeach
