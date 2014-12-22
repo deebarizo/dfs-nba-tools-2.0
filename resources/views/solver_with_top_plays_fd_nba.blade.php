@@ -3,7 +3,7 @@
 @section('content')
 	<div class="row" style="font-size: 90%">
 		<div class="col-lg-12">
-			<h2 id="heading">Daily FD NBA (Solver With Top Plays) | {{ $date }} {{ $timePeriod }}</h2>
+			<h2 id="heading">Solver With Top Plays | {{ $date }} {{ $timePeriod }}</h2>
 		</div>
 
 		<div class="col-lg-3">
@@ -51,70 +51,44 @@
 		</div>
 
 		<div class="col-lg-12">
-			<form class="form-inline" style="margin: 5px 0 10px 0">
-				<div style="font-size: 130%; font-weight: bold; display: inline-block; width: 70px">Show:</div>
-
-				<label>Player 1</label>
-				<select class="form-control player-filter show-player-filter show-player-1-filter" style="margin-right: 20px; width: 200px">
-				  	<option value="All" selected>All</option>
-				  	@foreach ($players as $player)
-				  		<option value="{{ $player->player_id }}">{{ $player->name }}</option>
-				  	@endforeach
-				</select>
-
-				<label>Player 2</label>
-				<select class="form-control player-filter show-player-filter show-player-2-filter" style="margin-right: 20px; width: 200px">
-				  	<option value="None" selected="selected">-</option>
-				  	@foreach ($players as $player)
-				  		<option class="hide-player-in-filter" value="{{ $player->player_id }}">{{ $player->name }}</option>
-				  	@endforeach
-				</select>
-
-				<label>Player 3</label>
-				<select class="form-control player-filter show-player-filter show-player-3-filter" style="margin-right: 20px; width: 200px">
-				  	<option value="None" selected>-</option>
-				  	@foreach ($players as $player)
-				  		<option class="hide-player-in-filter" value="{{ $player->player_id }}">{{ $player->name }}</option>
-				  	@endforeach
-				</select>
+			<form class="form-inline" style="margin: 5px 0 10px 0; width: 505px; display: inline-block">
+				<div style="font-size: 130%; font-weight: bold; display: inline-block; width: 60px">Show:</div>
 
 				<label>Lineups</label>
-				<select class="form-control lineup-type-filter">
+				<select class="form-control lineup-type-filter" style="margin-right: 20px">
 				  	<option value="All">All</option>
 				  	<option value="Only Non Active">Only Non Active</option>
 				  	<option value="Only Active">Only Active</option>
 				</select>
+
+				<label>Players</label>
+				<select class="form-control player-filter show-player-filter" style="width: 150px">
+				  	<option value="Default" selected>-</option>
+				  	@foreach ($players as $player)
+				  		<option value="{{ $player->player_id }}">{{ $player->name }}</option>
+				  	@endforeach
+				</select>
 			</form>
+
+			<span class="selected-players-to-show"></span>
 		</div>
 
 		<div class="col-lg-12">
-			<form class="form-inline" style="margin: 5px 0 10px 0">
-				<div style="font-size: 130%; font-weight: bold; display: inline-block; width: 70px">Hide:</div>
+			<form class="form-inline" style="margin: 5px 0 10px 0; width: 505px; display: inline-block">
+				<div style="font-size: 130%; font-weight: bold; display: inline-block; width: 60px">Hide:</div>
 
-				<label>Player 1</label>
-				<select class="form-control player-filter hide-player-filter hide-player-1-filter" style="margin-right: 20px; width: 200px">
-				  	<option value="None" selected>-</option>
-				  	@foreach ($players as $player)
-				  		<option class="" value="{{ $player->player_id }}">{{ $player->name }}</option>
-				  	@endforeach
-				</select>
+				<div style="display: inline-block; width: 226px">&nbsp;</div>
 
-				<label>Player 2</label>
-				<select class="form-control player-filter hide-player-filter hide-player-2-filter" style="margin-right: 20px; width: 200px">
-				  	<option value="None" selected>-</option>
+				<label>Players</label>
+				<select class="form-control player-filter hide-player-filter" style="width: 150px">
+				  	<option value="Default" selected>-</option>
 				  	@foreach ($players as $player)
-				  		<option class="hide-player-in-filter" value="{{ $player->player_id }}">{{ $player->name }}</option>
-				  	@endforeach
-				</select>
-
-				<label>Player 3</label>
-				<select class="form-control player-filter hide-player-filter hide-player-3-filter" style="width: 200px">
-				  	<option value="None" selected>-</option>
-				  	@foreach ($players as $player)
-				  		<option class="hide-player-in-filter" value="{{ $player->player_id }}">{{ $player->name }}</option>
+				  		<option value="{{ $player->player_id }}">{{ $player->name }}</option>
 				  	@endforeach
 				</select>
 			</form>
+
+			<span class="selected-players-to-hide"></span>
 		</div>
 	</div>
 

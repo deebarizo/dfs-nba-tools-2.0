@@ -124,10 +124,9 @@ $(document).ready(function() {
 	FILTERS
 	****************************************************************************************/
 
-	var numPlayersInEachPlayerFilterType = 3;
 	var players = {
-		show: new Array(numPlayersInEachPlayerFilterType),
-		hide: new Array(numPlayersInEachPlayerFilterType)
+		show: [],
+		hide: []
 	};
 	var playerFilterTypes = ['show', 'hide'];
 	var lineupType;
@@ -146,13 +145,8 @@ $(document).ready(function() {
 	function getFilter() {
 		lineupType = $('select.lineup-type-filter').val();
 
-		for (var i = 0; i < playerFilterTypes.length; i++) {
-			players[playerFilterTypes[i]] = getPlayerMetadata(playerFilterTypes[i]);
-		}
-
 		filter = {
 			lineupType: lineupType,
-			players: players
 		};
 
 		return filter;
@@ -179,179 +173,44 @@ $(document).ready(function() {
 	PLAYER FILTER
 	********************************************/
 
-	$('select.show-player-filter').on('change', function() {
+	$('select.player-filter').on('change', function() {
+		var selectedPlayer = {
+			id: $(this).find('option:selected').val(),
+			name: $(this).find('option:selected').text()
+		}
+
+		if ($(this).hasClass('show-player-filter')) {
+			addPlayerToView('show', selectedPlayer);
+		}
+
+		if ($(this).hasClass('hide-player-filter')) {
+			addPlayerToView('hide', selectedPlayer);
+		}
+
 		runFilter();
+
+		$(this).find('option:selected').addClass('hide-player-in-filter');
+		$(this).val('Default');
 	});	
 
-	$('select.hide-player-filter').on('change', function() {
-		runFilter();
-	});
-
 	function runPlayerFilter(filter) {
-		if (filter.players.show[0].name == 'All') {
-			setDefaultPlayerSelectTags();
 
-			return;
-		}
 
-		hidePlayerSelectOptions(filter);
+		// hidePlayerSelectOptions(filter);
 
-		runShowPlayerFilter(filter);
-		runHidePlayerFilter(filter);
+		// runShowPlayerFilter(filter);
+		// runHidePlayerFilter(filter);
 	}
 
 
-	function runShowPlayerFilter(filter) {
-		var lineups = getLineups();
+	//// ADD PLAYER TO VIEW ////
 
-		for (var i = 0; i < lineups.length; i++) {
-			checkLineupForPlayers(lineups[i], filter.players.show, 'show');
-		}
-	}
-
-	function runHidePlayerFilter(filter) {
-		var lineups = getLineups();
-
-		for (var i = 0; i < lineups.length; i++) {
-			checkLineupForPlayers(lineups[i], filter.players.hide, 'hide');
-		}
+	function addPlayerToView(playerFilterType, selectedPlayer) {
+		$('span.selected-players-to-'+playerFilterType).append('<span class="selected-player selected-player-to-'+playerFilterType+'">'+selectedPlayer.name+'</span> <a class="remove-selected-player-link" href="#"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>');
 	}
 
 
-	//// GET LINEUPS ////
 
-	function getLineups() {
-		var lineups = [];
-
-		$('table.lineup').each(function() {
-			var lineup = $(this);
-
-			lineups.push(lineup);
-		});		
-
-		return lineups;
-	}
-
-
-	//// CHECK LINEUP FOR PLAYERS ////
-
-	function checkLineupForPlayers(lineup, players, playerFilterType) {
-		for (var i = 0; i < players.length; i++) {
-			checkForPlayerInLineup(players[i], lineup, playerFilterType);
-		}
-	}
-
-	function checkForPlayerInLineup(player, lineup, playerFilterType) {
-		if (player.id == 'None') {
-			return;
-		}
-
-		var playerId = player.id;
-
-		if (playerFilterType == 'show') {
-			checkForPlayerInLineupToShow(lineup, playerId);
-		}
-
-		if (playerFilterType == 'hide') {
-			checkForPlayerInLineupToHide(lineup, playerId);
-		}
-	}
-
-	function checkForPlayerInLineupToShow(lineup, playerId) {
-		var isPlayerInLineup = $(lineup).find('tr.roster-spot[data-player-id='+playerId+']').length;
-
-		if (isPlayerInLineup == 0) {
-			$(lineup).addClass('hide-lineup');
-		}
-	}
-
-	function checkForPlayerInLineupToHide(lineup, playerId) {
-		var isPlayerInLineup = $(lineup).find('tr.roster-spot[data-player-id='+playerId+']').length;
-
-		if (isPlayerInLineup == 1) {
-			$(lineup).addClass('hide-lineup');
-		}
-	}
-
-
-	//// HIDE PLAYER SELECT OPTIONS ////
-
-	function hidePlayerSelectOptions(filter) {
-		$('select.player-filter option').removeClass('hide-player-in-filter');
-
-		var selectedPlayerIds = [];
-
-		$("select.player-filter option:selected").each(function() {
-			var optionValue = $(this).val();
-
-			selectedPlayerIds = checkForNonPlayerIds(optionValue, selectedPlayerIds);
-		});
-
-		for (var i = 0; i < playerFilterTypes.length; i++) {
-			hidePlayerSelectOptionsForEachPlayerFilterType(playerFilterTypes[i], selectedPlayerIds);
-		};
-	}
-
-	function checkForNonPlayerIds(optionValue, selectedPlayerIds) {
-		if (optionValue == 'All' || optionValue == 'None') {
-			return selectedPlayerIds;
-		}
-
-		selectedPlayerIds.push(optionValue);
-
-		return selectedPlayerIds;
-	}
-
-	function hidePlayerSelectOptionsForEachPlayerFilterType(playerFilterType, selectedPlayerIds) {
-		for (var i = 0; i < selectedPlayerIds.length; i++) {
-			var playerId = selectedPlayerIds[i];
-
-			hidePlayerSelectOption(playerFilterType, playerId);		
-		}			
-	}
-
-	function hidePlayerSelectOption(playerFilterType, playerId) {
-		for (var i = 0; i < numPlayersInEachPlayerFilterType; i++) {
-			var playerNumber = i + 1;
-
-			hidePlayerSelectOptionExceptShowPlayer1(playerFilterType, playerId, playerNumber); 
-		}		
-	}
-
-	function hidePlayerSelectOptionExceptShowPlayer1(playerFilterType, playerId, playerNumber) {
-		if (playerFilterType == 'show' && playerNumber == 1) {
-			return;
-		}
-
-		$('select.'+playerFilterType+'-player-'+playerNumber+'-filter').find('option[value='+playerId+']').addClass('hide-player-in-filter');		
-	}
-
-
-	//// DEFAULT PLAYER SELECT OPTIONS ////
-
-	function setDefaultPlayerSelectTags() {
-		$('select.player-filter').find('option:eq(0)').prop('selected', true);
-
-		for (var i = 0; i < playerFilterTypes.length; i++) {
-			hideDefaultPlayerSelectOptions(playerFilterTypes[i]);
-		};
-	}
-
-	function hideDefaultPlayerSelectOptions(playerFilterType) {
-		for (var i = 0; i < numPlayersInEachPlayerFilterType; i++) {
-			var playerNumber = i + 1;
-
-			hideDefaultPlayerSelectOption(playerFilterType, playerNumber);				
-		}	
-	}
-
-	function hideDefaultPlayerSelectOption(playerFilterType, playerNumber) {
-		if (playerFilterType == 'show' && playerNumber == 1) {
-			return;
-		}
-
-		$('select.'+playerFilterType+'-player-'+playerNumber+'-filter option:not(:selected)').addClass('hide-player-in-filter');
-	}
 
 
 	/********************************************

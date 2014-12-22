@@ -12,6 +12,12 @@ a:visited, a:active, a:focus {
     color: #428bca;
 }
 
+.form-control:focus {
+	border: 1px solid #ccc;
+	-webkit-box-shadow: none;
+	box-shadow: none;
+}
+
 /* DAILY */
 
 #daily-dtd {
