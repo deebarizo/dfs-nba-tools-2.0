@@ -138,9 +138,7 @@ $(document).ready(function() {
 
 		$('table.lineup').removeClass('hide-lineup');
 
-		for (var i = 0; i < playerFilterTypes.length; i++) {
-			runPlayerFilter(filter, playerFilterTypes[i]);
-		}
+		runPlayerFilter(filter);
 		
 		runLineupTypeFilter(filter);
 	}
@@ -185,7 +183,11 @@ $(document).ready(function() {
 		runFilter();
 	});	
 
-	function runPlayerFilter(filter, playerFilterType) {
+	$('select.hide-player-filter').on('change', function() {
+		runFilter();
+	});
+
+	function runPlayerFilter(filter) {
 		if (filter.players.show[0].name == 'All') {
 			setDefaultPlayerSelectTags();
 
@@ -193,14 +195,93 @@ $(document).ready(function() {
 		}
 
 		hidePlayerSelectOptions(filter);
+
+		runShowPlayerFilter(filter);
+		runHidePlayerFilter(filter);
 	}
+
+
+	function runShowPlayerFilter(filter) {
+		var lineups = getLineups();
+
+		for (var i = 0; i < lineups.length; i++) {
+			checkLineupForPlayers(lineups[i], filter.players.show, 'show');
+		}
+	}
+
+	function runHidePlayerFilter(filter) {
+		var lineups = getLineups();
+
+		for (var i = 0; i < lineups.length; i++) {
+			checkLineupForPlayers(lineups[i], filter.players.hide, 'hide');
+		}
+	}
+
+
+	//// GET LINEUPS ////
+
+	function getLineups() {
+		var lineups = [];
+
+		$('table.lineup').each(function() {
+			var lineup = $(this);
+
+			lineups.push(lineup);
+		});		
+
+		return lineups;
+	}
+
+
+	//// CHECK LINEUP FOR PLAYERS ////
+
+	function checkLineupForPlayers(lineup, players, playerFilterType) {
+		for (var i = 0; i < players.length; i++) {
+			checkForPlayerInLineup(players[i], lineup, playerFilterType);
+		}
+	}
+
+	function checkForPlayerInLineup(player, lineup, playerFilterType) {
+		if (player.id == 'None') {
+			return;
+		}
+
+		var playerId = player.id;
+
+		if (playerFilterType == 'show') {
+			checkForPlayerInLineupToShow(lineup, playerId);
+		}
+
+		if (playerFilterType == 'hide') {
+			checkForPlayerInLineupToHide(lineup, playerId);
+		}
+	}
+
+	function checkForPlayerInLineupToShow(lineup, playerId) {
+		var isPlayerInLineup = $(lineup).find('tr.roster-spot[data-player-id='+playerId+']').length;
+
+		if (isPlayerInLineup == 0) {
+			$(lineup).addClass('hide-lineup');
+		}
+	}
+
+	function checkForPlayerInLineupToHide(lineup, playerId) {
+		var isPlayerInLineup = $(lineup).find('tr.roster-spot[data-player-id='+playerId+']').length;
+
+		if (isPlayerInLineup == 1) {
+			$(lineup).addClass('hide-lineup');
+		}
+	}
+
+
+	//// HIDE PLAYER SELECT OPTIONS ////
 
 	function hidePlayerSelectOptions(filter) {
 		$('select.player-filter option').removeClass('hide-player-in-filter');
 
 		var selectedPlayerIds = [];
 
-		$("select.player-filter option:selected").each(function () {
+		$("select.player-filter option:selected").each(function() {
 			var optionValue = $(this).val();
 
 			selectedPlayerIds = checkForNonPlayerIds(optionValue, selectedPlayerIds);
@@ -245,7 +326,8 @@ $(document).ready(function() {
 		$('select.'+playerFilterType+'-player-'+playerNumber+'-filter').find('option[value='+playerId+']').addClass('hide-player-in-filter');		
 	}
 
-	//// Default ////
+
+	//// DEFAULT PLAYER SELECT OPTIONS ////
 
 	function setDefaultPlayerSelectTags() {
 		$('select.player-filter').find('option:eq(0)').prop('selected', true);
