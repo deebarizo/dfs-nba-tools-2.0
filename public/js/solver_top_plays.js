@@ -195,9 +195,6 @@ $(document).ready(function() {
 
 	function runPlayerFilter(filter) {
 
-
-		// hidePlayerSelectOptions(filter);
-
 		// runShowPlayerFilter(filter);
 		// runHidePlayerFilter(filter);
 	}
@@ -206,11 +203,22 @@ $(document).ready(function() {
 	//// ADD PLAYER TO VIEW ////
 
 	function addPlayerToView(playerFilterType, selectedPlayer) {
-		$('span.selected-players-to-'+playerFilterType).append('<span class="selected-player selected-player-to-'+playerFilterType+'">'+selectedPlayer.name+'</span> <a class="remove-selected-player-link" href="#"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>');
+		$('span.selected-players-to-'+playerFilterType).append('<span data-player-id="'+selectedPlayer.id+'" class="selected-player selected-player-to-'+playerFilterType+'">'+selectedPlayer.name+'</span> <a class="remove-selected-player-link" href="#"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>');
 	}
 
 
+	//// REMOVE SELECTED PLAYER ////
 
+	$('.selected-players').on('click', '.remove-selected-player-link', function(e) {
+		e.preventDefault();
+
+		var selectedPlayerId = $(this).prev('span.selected-player').data('player-id');
+
+		$('select.player-filter').find('option[value='+selectedPlayerId+']').removeClass('hide-player-in-filter');
+
+		$(this).prev('span.selected-player').remove();
+		$(this).remove();
+	});
 
 
 	/********************************************

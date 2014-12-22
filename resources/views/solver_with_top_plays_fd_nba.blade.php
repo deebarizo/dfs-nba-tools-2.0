@@ -80,7 +80,7 @@
 		</div>
 
 		<div style="padding-left: 0" class="col-lg-6">
-			<span style="display: inline-block; margin-top: 12px" class="selected-players-to-show"></span>
+			<span style="display: inline-block; margin-top: 12px" class="selected-players selected-players-to-show"></span>
 		</div>
 	</div>
 
@@ -102,7 +102,7 @@
 		</div>
 
 		<div style="padding-left: 0" class="col-lg-6">
-			<span style="display: inline-block; margin-top: 12px" class="selected-players-to-hide"></span>
+			<span style="display: inline-block; margin-top: 12px" class="selected-players selected-players-to-hide"></span>
 		</div>
 	</div>
 
