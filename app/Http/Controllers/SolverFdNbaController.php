@@ -42,9 +42,9 @@ class SolverFdNbaController {
 
         $solverTopPlays = new SolverTopPlays;
 
-        $players = $solverTopPlays->sortPlayers($players);
-
         $solverTopPlays->validateTopPlays($players);
+
+        $players = $solverTopPlays->sortPlayers($players);
 
         $lineups = $solverTopPlays->buildLineupsWithTopPlays($players);
 

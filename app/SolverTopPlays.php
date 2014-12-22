@@ -354,7 +354,7 @@ class SolverTopPlays {
 
 	public function validateTopPlays($players) {
         if (!$this->validateFdPositions($players)) {
-            echo 'You are missing one or more positions'; 
+            echo 'You are missing one or more positions.'; 
             exit();
         }
 
