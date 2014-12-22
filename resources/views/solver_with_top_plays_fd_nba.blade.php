@@ -52,7 +52,7 @@
 
 		<div class="col-lg-2">
 			<p>
-				<strong>Players:</strong> <a class="clear-players-link" href="#">Clear All</a>
+				<strong>Selected Players:</strong> <a class="clear-selected-players-link" href="#">Clear All</a>
 			</p>
 		</div>
 	</div>

@@ -170,8 +170,6 @@ $(document).ready(function() {
 	function getPlayers(playerFilterType) {
 		var numSelectedPlayers = $('.selected-player-to-'+playerFilterType).length;
 
-		console.log(numSelectedPlayers);
-
 		if (numSelectedPlayers == 0) {
 			return [];
 		}
@@ -310,6 +308,20 @@ $(document).ready(function() {
 
 		$(this).prev('span.selected-player').remove();
 		$(this).remove();
+
+		runFilter();
+	});
+
+
+	//// CLEAR ALL SELECTED PLAYERS ////
+
+	$('.clear-selected-players-link').click(function(e) {
+		e.preventDefault();
+
+		$('select.player-filter option').removeClass('hide-player-in-filter');
+
+		$('span.selected-player').remove();
+		$('.remove-selected-player-link').remove();
 
 		runFilter();
 	});
