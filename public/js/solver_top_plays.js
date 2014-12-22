@@ -124,6 +124,12 @@ $(document).ready(function() {
 	FILTERS
 	****************************************************************************************/
 
+	var numPlayersInEachPlayerFilterType = 3;
+	var players = {
+		show: new Array(numPlayersInEachPlayerFilterType),
+		hide: new Array(numPlayersInEachPlayerFilterType)
+	};
+	var playerFilterTypes = ['show', 'hide'];
 	var lineupType;
 	var filter = {};
 
@@ -132,17 +138,85 @@ $(document).ready(function() {
 
 		$('table.lineup').removeClass('hide-lineup');
 
+		for (var i = 0; i < playerFilterTypes.length; i++) {
+			runPlayerFilter(filter, playerFilterTypes[i]);
+		}
+		
 		runLineupTypeFilter(filter);
 	}
 
 	function getFilter() {
 		lineupType = $('select.lineup-type-filter').val();
 
+		for (var i = 0; i < playerFilterTypes.length; i++) {
+			players[playerFilterTypes[i]] = getPlayerMetadata(playerFilterTypes[i]);
+		}
+
 		filter = {
-			lineupType: lineupType
+			lineupType: lineupType,
+			players: players
 		};
 
+		// console.log(filter);
+
 		return filter;
+	}
+
+	function getPlayerMetadata(playerFilterType) {
+		for (var i = 0; i < numPlayersInEachPlayerFilterType; i++) {
+			var playerNumber = i + 1;
+
+			playerId = $('select.'+playerFilterType+'-player-'+playerNumber+'-filter').val();
+			playerName = $('select.'+playerFilterType+'-player-'+playerNumber+'-filter option[value="'+playerId+'"]').text();
+
+			players[playerFilterType][i] = {
+				id: playerId,
+				name: playerName
+			};
+		}
+
+		return players[playerFilterType];
+	}
+
+
+	/********************************************
+	PLAYER FILTER
+	********************************************/
+
+	$('select.show-player-filter').on('change', function() {
+		runFilter();
+	});	
+
+	function runPlayerFilter(filter, playerFilterType) {
+		if (filter.players.show[0].name == 'All') {
+			setPlayerSelectTags('default');
+
+			return;
+		}
+	}
+
+	function setPlayerSelectTags(settings) {
+		if (settings == 'default') {
+			setPlayerSelectOptions('default');
+		}
+	}
+
+	function setPlayerSelectOptions(settings) {
+		if (settings == 'default') {
+			$('select.player-filter').find('option:eq(0)').prop('selected', true);
+
+			hidePlayerSelectOptions('default');
+		}
+	}
+
+	function hidePlayerSelectOptions(settings) {
+		if (settings == 'default') {
+			
+		}
+
+		for (var i = 0; i < playerFilterTypes.length; i++) {
+			playerFilterTypes[i]
+		};
 	}
 	
 
