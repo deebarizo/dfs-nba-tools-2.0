@@ -129,7 +129,13 @@ $(document).ready(function() {
 		hide: []
 	};
 	var playerFilterTypes = ['show', 'hide'];
-	var filter = {};
+	var filter = {
+		lineupType: '',
+		players: {
+			show: [],
+			hide: []
+		}
+	};
 	var lineupType;
 	
 	function runFilter() {
@@ -149,6 +155,9 @@ $(document).ready(function() {
 
 		filter.lineupType = lineupType;
 
+		filter.players.show.length = 0;
+		filter.players.hide.length = 0;
+
 		for (var i = 0; i < playerFilterTypes.length; i++) {
 			players[playerFilterTypes[i]] = getPlayers(playerFilterTypes[i]);
 		}
@@ -160,6 +169,8 @@ $(document).ready(function() {
 
 	function getPlayers(playerFilterType) {
 		var numSelectedPlayers = $('.selected-player-to-'+playerFilterType).length;
+
+		console.log(numSelectedPlayers);
 
 		if (numSelectedPlayers == 0) {
 			return [];
@@ -204,9 +215,80 @@ $(document).ready(function() {
 	});	
 
 	function runPlayerFilter(filter) {
+		runShowPlayerFilter(filter);
+		runHidePlayerFilter(filter);
+	}
 
-		// runShowPlayerFilter(filter);
-		// runHidePlayerFilter(filter);
+	function runShowPlayerFilter(filter) {
+		var lineups = getLineups();
+
+		for (var i = 0; i < lineups.length; i++) {
+			checkLineupForPlayers(lineups[i], filter.players.show, 'show');
+		}
+	}
+
+	function runHidePlayerFilter(filter) {
+		var lineups = getLineups();
+
+		for (var i = 0; i < lineups.length; i++) {
+			checkLineupForPlayers(lineups[i], filter.players.hide, 'hide');
+		}
+	}
+
+
+	//// GET LINEUPS ////
+
+	function getLineups() {
+		var lineups = [];
+
+		$('table.lineup').each(function() {
+			var lineup = $(this);
+
+			lineups.push(lineup);
+		});		
+
+		return lineups;
+	}
+
+
+	//// CHECK LINEUP FOR PLAYERS ////
+
+	function checkLineupForPlayers(lineup, players, playerFilterType) {
+		for (var i = 0; i < players.length; i++) {
+			checkForPlayerInLineup(players[i], lineup, playerFilterType);
+		}
+	}
+
+	function checkForPlayerInLineup(player, lineup, playerFilterType) {
+		if (player.id == 'None') {
+			return;
+		}
+
+		var playerId = player.id;
+
+		if (playerFilterType == 'show') {
+			checkForPlayerInLineupToShow(lineup, playerId);
+		}
+
+		if (playerFilterType == 'hide') {
+			checkForPlayerInLineupToHide(lineup, playerId);
+		}
+	}
+
+	function checkForPlayerInLineupToShow(lineup, playerId) {
+		var isPlayerInLineup = $(lineup).find('tr.roster-spot[data-player-id='+playerId+']').length;
+
+		if (isPlayerInLineup == 0) {
+			$(lineup).addClass('hide-lineup');
+		}
+	}
+
+	function checkForPlayerInLineupToHide(lineup, playerId) {
+		var isPlayerInLineup = $(lineup).find('tr.roster-spot[data-player-id='+playerId+']').length;
+
+		if (isPlayerInLineup == 1) {
+			$(lineup).addClass('hide-lineup');
+		}
 	}
 
 
