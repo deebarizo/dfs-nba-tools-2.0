@@ -36,6 +36,8 @@ class SolverFdNbaController {
     public function solver_with_top_plays($date = 'default') {
         if ($date == 'default') {
             $date = getDefaultDate();
+
+            return redirect('solver_with_top_plays_fd_nba/'.$date);
         }
 
         $players = getTopPlays($date);

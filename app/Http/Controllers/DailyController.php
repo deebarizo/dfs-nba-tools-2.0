@@ -27,6 +27,8 @@ class DailyController {
 	public function daily_fd_nba($date = 'default') {
 		if ($date == 'default') {
             $date = getDefaultDate();
+
+            return redirect('daily_fd_nba/'.$date);
 		}
 
         // fetch all players for the date
