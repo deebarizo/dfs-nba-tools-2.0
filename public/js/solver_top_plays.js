@@ -129,11 +129,13 @@ $(document).ready(function() {
 		hide: []
 	};
 	var playerFilterTypes = ['show', 'hide'];
-	var lineupType;
 	var filter = {};
-
+	var lineupType;
+	
 	function runFilter() {
 		filter = getFilter();
+
+		console.log(filter);
 
 		$('table.lineup').removeClass('hide-lineup');
 
@@ -145,19 +147,27 @@ $(document).ready(function() {
 	function getFilter() {
 		lineupType = $('select.lineup-type-filter').val();
 
-		filter = {
-			lineupType: lineupType,
-		};
+		filter.lineupType = lineupType;
+
+		for (var i = 0; i < playerFilterTypes.length; i++) {
+			players[playerFilterTypes[i]] = getPlayers(playerFilterTypes[i]);
+		}
+
+		filter.players = players;
 
 		return filter;
 	}
 
-	function getPlayerMetadata(playerFilterType) {
-		for (var i = 0; i < numPlayersInEachPlayerFilterType; i++) {
-			var playerNumber = i + 1;
+	function getPlayers(playerFilterType) {
+		var numSelectedPlayers = $('.selected-player-to-'+playerFilterType).length;
 
-			var playerId = $('select.'+playerFilterType+'-player-'+playerNumber+'-filter').val();
-			var playerName = $('select.'+playerFilterType+'-player-'+playerNumber+'-filter option[value="'+playerId+'"]').text();
+		if (numSelectedPlayers == 0) {
+			return [];
+		}
+
+		for (var i = 0; i < numSelectedPlayers; i++) {
+			var playerId = $('.selected-player-to-'+playerFilterType).eq(i).data('player-id');
+			var playerName = $('.selected-player-to-'+playerFilterType).eq(i).text();
 
 			players[playerFilterType][i] = {
 				id: playerId,
@@ -187,10 +197,10 @@ $(document).ready(function() {
 			addPlayerToView('hide', selectedPlayer);
 		}
 
-		runFilter();
-
 		$('select.player-filter').find('option[value='+selectedPlayer.id+']').addClass('hide-player-in-filter');
 		$(this).val('Default');
+
+		runFilter();
 	});	
 
 	function runPlayerFilter(filter) {
@@ -218,6 +228,8 @@ $(document).ready(function() {
 
 		$(this).prev('span.selected-player').remove();
 		$(this).remove();
+
+		runFilter();
 	});
 
 
