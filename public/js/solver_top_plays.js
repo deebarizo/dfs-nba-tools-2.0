@@ -189,7 +189,7 @@ $(document).ready(function() {
 
 		runFilter();
 
-		$(this).find('option:selected').addClass('hide-player-in-filter');
+		$('select.player-filter').find('option[value='+selectedPlayer.id+']').addClass('hide-player-in-filter');
 		$(this).val('Default');
 	});	
 

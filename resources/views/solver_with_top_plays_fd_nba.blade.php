@@ -50,8 +50,16 @@
 			</p>
 		</div>
 
-		<div class="col-lg-12">
-			<form class="form-inline" style="margin: 5px 0 10px 0; width: 505px; display: inline-block">
+		<div class="col-lg-2">
+			<p>
+				<strong>Players:</strong> <a class="clear-players-link" href="#">Clear All</a>
+			</p>
+		</div>
+	</div>
+
+	<div class="row" style="font-size: 90%">
+		<div style="width: 525px" class="col-lg-4">
+			<form class="form-inline" style="margin: 5px 0 10px 0; display: inline-block">
 				<div style="font-size: 130%; font-weight: bold; display: inline-block; width: 60px">Show:</div>
 
 				<label>Lineups</label>
@@ -69,15 +77,19 @@
 				  	@endforeach
 				</select>
 			</form>
-
-			<span class="selected-players-to-show"></span>
 		</div>
 
-		<div class="col-lg-12">
-			<form class="form-inline" style="margin: 5px 0 10px 0; width: 505px; display: inline-block">
+		<div style="padding-left: 0" class="col-lg-6">
+			<span style="display: inline-block; margin-top: 12px" class="selected-players-to-show"></span>
+		</div>
+	</div>
+
+	<div class="row" style="font-size: 90%">
+		<div style="width: 525px" class="col-lg-4">
+			<form class="form-inline" style="margin: 5px 0 10px 0; display: inline-block">
 				<div style="font-size: 130%; font-weight: bold; display: inline-block; width: 60px">Hide:</div>
 
-				<div style="display: inline-block; width: 226px">&nbsp;</div>
+				<div style="display: inline-block; width: 226px"></div>
 
 				<label>Players</label>
 				<select class="form-control player-filter hide-player-filter" style="width: 150px">
@@ -87,8 +99,10 @@
 				  	@endforeach
 				</select>
 			</form>
+		</div>
 
-			<span class="selected-players-to-hide"></span>
+		<div style="padding-left: 0" class="col-lg-6">
+			<span style="display: inline-block; margin-top: 12px" class="selected-players-to-hide"></span>
 		</div>
 	</div>
 
