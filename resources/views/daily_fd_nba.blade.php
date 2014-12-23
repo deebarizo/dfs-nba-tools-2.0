@@ -48,85 +48,6 @@
 				</select>
 			
 			</form>
-
-			<!-- <p><a class="show-toggle-dtd-players" href="#">DTD Players</a></p> -->
-
-			<table id="daily-dtd" class="table table-striped table-bordered table-hover table-condensed">
-				<thead>
-					<tr>
-						<th>Name</th>
-						<th>Mods</th>
-						<th>Team</th>
-						<th>Opp</th>
-						<th>Line</th>
-						<th>Pos</th>
-						<th>Salary</th>
-						<th>VR</th>
-						<th>VR-1</th>
-						<th>FPPG</th>
-						<th>FPPG-1</th>
-						<th>FPPM</th>
-					</tr>
-				</thead>
-				<tbody>
-					@foreach ($dtdPlayers as $player)
-						<?php 
-							$noFilterQtip = 'class="player-filter"';
-							$spanFilterLink = ''; 
-
-							if (isset($player->line)) {
-								$line = $player->line;
-							} else {
-								$line = 'None';
-							}
-						?>
-
-					    <tr>
-					    	<td>
-					    		<a target="_blank" href="/players/{{ $player->player_id }}">{{ $player->name }}</a> 
-					    	</td>
-			    			<td>
-					    		<a {!! $noFilterQtip !!} target="_blank" href="/daily_fd_filters/{{ $player->player_id }}/create">
-					    			<span {!! $spanFilterLink !!} class="glyphicon glyphicon-filter" aria-hidden="true"></span>
-				    			</a> 
-				    			@if (isset($player->filter))
-				    			<div class="player-filter-tooltip">
-									<table class="player-filter-tooltip-table">
-									  	<tr>
-										    <th>Filter</th>
-										    <th>FPPG</th>
-										    <th>FPPM</th>
-										    <th>CV</th>
-										    <th>Notes</th>
-									  	</tr>
-									  	<tr>
-										    <td>{{ $player->filter->filter }}</td>
-										    <td>{{ $player->filter->fppg_source }}</td>
-										    <td>{{ $player->filter->fppm_source }}</td>
-										    <td>{{ $player->filter->cv_source }}</td>
-										    <td>{{ $player->filter->notes }}</td>
-									  	</tr>
-									</table>
-								</div>
-								@endif
-				    			<a target="_blank" href="/daily_fd_filters/{{ $player->player_id }}/edit"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a> 
-			    			</td>
-					    	<td>{{ $player->team_abbr }}</td>
-					    	<td>{{ $player->opp_team_abbr }}</td>
-					    	<td>{{ $line }}</td>
-					    	<td>{{ $player->position }}</td>
-					    	<td>{{ $player->salary }}</td>
-					    	<td>{{ $player->vr }}</td>
-					    	<td>{{ $player->vr_minus_1sd }}</td>
-					    	<td>{{ $player->fppgWithVegasFilter }}</td>
-					    	<td>{{ $player->fppgMinus1WithVegasFilter }}</td>
-					    	<td>{{ $player->fppmPerGameWithVegasFilter }}</td>
-					    </tr>
-
-					    <?php unset($line); ?>
-					@endforeach
-				</tbody>
-			</table>
 		</div>
 
 		<div class="col-lg-12">
@@ -135,6 +56,7 @@
 					<tr>
 						<th>Name</th>
 						<th>Mods</th>
+						<th>Target</th>
 						<th>Team</th>
 						<th>Opp</th>
 						<th>Line</th>
@@ -206,6 +128,7 @@
 				    			<a target="_blank" href="/daily_fd_filters/{{ $player->player_id }}/edit"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a> 
 				    			<a href="#"><span class="glyphicon glyphicon-lock daily-lock {{ $playerLockedClass }}" aria-hidden="true"></span></a>
 			    			</td>
+			    			<td>-</td>
 					    	<td>{{ $player->team_abbr }}</td>
 					    	<td>{{ $player->opp_team_abbr }}</td>
 					    	<td>{{ $line }}</td>
