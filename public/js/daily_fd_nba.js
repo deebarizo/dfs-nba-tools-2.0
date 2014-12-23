@@ -47,12 +47,14 @@ $(document).ready(function() {
         if (event.which == 13) {
 			var newTargetPercentage = $(this).val();
 
-			var raw = $(this).parent('div.edit-target-percentage-tooltip').parent('div.qtip-content').parent('div.qtip').attr('id');
+			var rawDataHasQtip = $(this).parent('div.edit-target-percentage-tooltip').parent('div.qtip-content').parent('div.qtip').attr('id');
 
-			var dataHasQtip = raw.replace(/qtip-/gi, '');
+			var dataHasQtip = rawDataHasQtip.replace(/qtip-/gi, '');
 
-			$('a[data-hasqtip='+dataHasQtip+']').parent('span.target-percentage-group').prev('span.target-percentage-amount').text(newTargetPercentage);
-        }
+			var playerFdIndex = $('a[data-hasqtip='+dataHasQtip+']').parent('span.target-percentage-group').parent('td').parent('tr').data('player-fd-index');
+
+			updateTargetPercentage(newTargetPercentage, dataHasQtip, playerFdIndex);
+		}
     });
 
 	$(".edit-target-percentage-button").click(function(e) {
@@ -63,6 +65,23 @@ $(document).ready(function() {
 		$(this).prev(".edit-target-percentage-input").focus();
 		$(this).prev(".edit-target-percentage-input").trigger(e);
 	});
+
+	function updateTargetPercentage(newTargetPercentage, dataHasQtip, playerFdIndex) {
+		$('a[data-hasqtip='+dataHasQtip+']').parent('span.target-percentage-group').addClass('hide-target-percentage-group');
+		$('a[data-hasqtip='+dataHasQtip+']').parent('span.target-percentage-group').prev('span.target-percentage-amount').html('<img src="/files/spiffygif_16x16.gif" alt="Please wait..." />');
+
+		$.ajax({
+            url: baseUrl+'/daily_fd_nba/update_target_percentage/'+playerFdIndex+'/'+newTargetPercentage,
+            type: 'POST',
+            success: function() {
+            	$('a[data-hasqtip='+dataHasQtip+']').parent('span.target-percentage-group').prev('span.target-percentage-amount').html('');
+
+				$('a[data-hasqtip='+dataHasQtip+']').parent('span.target-percentage-group').prev('span.target-percentage-amount').text(newTargetPercentage);
+
+				$('a[data-hasqtip='+dataHasQtip+']').parent('span.target-percentage-group').removeClass('hide-target-percentage-group');
+            }
+        });	
+	}
 
 
 	/********************************************
@@ -110,7 +129,13 @@ $(document).ready(function() {
 
 				$this.next('img').remove();
             }
-        }); 
+        });
+
+		var newTargetPercentage = 0;
+
+		var dataHasQtip = $(this).parent('a').parent('td').next('td').children('span.target-percentage-group').children('a.target-percentage-qtip').data('hasqtip');
+
+		updateTargetPercentage(newTargetPercentage, dataHasQtip, playerFdIndex); 
 	});
 
 	/********************************************

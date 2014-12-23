@@ -388,4 +388,12 @@ class DailyController {
         $playerFd->save();
     }
 
+    public function updateTargetPercentage($playerFdIndex, $newTargetPercentage) {
+        $playerFd = PlayerFd::find($playerFdIndex);
+
+        $playerFd->target_percentage = $newTargetPercentage;
+
+        $playerFd->save();
+    }
+
 }
