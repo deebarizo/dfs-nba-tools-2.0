@@ -43,6 +43,27 @@ $(document).ready(function() {
         });
     }); 
 
+    $('.edit-target-percentage-input').keypress(function (event) {
+        if (event.which == 13) {
+			var newTargetPercentage = $(this).val();
+
+			var raw = $(this).parent('div.edit-target-percentage-tooltip').parent('div.qtip-content').parent('div.qtip').attr('id');
+
+			var dataHasQtip = raw.replace(/qtip-/gi, '');
+
+			$('a[data-hasqtip='+dataHasQtip+']').parent('span.target-percentage-group').prev('span.target-percentage-amount').text(newTargetPercentage);
+        }
+    });
+
+	$(".edit-target-percentage-button").click(function(e) {
+		e.preventDefault();
+
+		var e = jQuery.Event('keypress');
+		e.which = 13;
+		$(this).prev(".edit-target-percentage-input").focus();
+		$(this).prev(".edit-target-percentage-input").trigger(e);
+	});
+
 
 	/********************************************
 	TOGGLE DTD PLAYERS
