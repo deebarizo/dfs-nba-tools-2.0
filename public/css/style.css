@@ -77,7 +77,7 @@ a:visited, a:active, a:focus {
 	display: none;
 }
 
-/* PLAYER FILTER TOOLTIPS */
+/* PLAYER FILTER TOOLTIP */
 
 .player-filter-tooltip {
 	display: none;
@@ -96,4 +96,10 @@ a:visited, a:active, a:focus {
 	padding: 4px;
 	text-align: left;
 	border: 1px solid #DDDDDD;
+}
+
+/* TARGET PERCENTAGE TOOLTIP */
+
+.edit-target-percentage-tooltip {
+	display: none;
 }

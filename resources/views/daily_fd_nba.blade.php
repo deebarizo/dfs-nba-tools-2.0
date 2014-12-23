@@ -56,7 +56,7 @@
 					<tr>
 						<th>Name</th>
 						<th>Mods</th>
-						<th>Target</th>
+						<th>Target %</th>
 						<th>Team</th>
 						<th>Opp</th>
 						<th>Line</th>
@@ -90,8 +90,14 @@
 
 							if ($isPlayerLocked == 1) {
 								$playerLockedClass = ' daily-lock-active';
+
+								$targetPercentageQtipClass = 'target-percentage-qtip';
+								$targetPercentage = $player->target_percentage.'%';
 							} else {
 								$playerLockedClass = '';
+
+								$targetPercentageQtipClass = '';
+								$targetPercentage = false;
 							}
 						?>
 
@@ -128,7 +134,18 @@
 				    			<a target="_blank" href="/daily_fd_filters/{{ $player->player_id }}/edit"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a> 
 				    			<a href="#"><span class="glyphicon glyphicon-lock daily-lock {{ $playerLockedClass }}" aria-hidden="true"></span></a>
 			    			</td>
-			    			<td>-</td>
+			    			<td style="text-align: center">
+			    				@if ($targetPercentage)
+				    				{{ $targetPercentage }} <a class="{{ $targetPercentageQtipClass }} edit-target-percentage-link" href="#"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
+									
+									<div class="edit-target-percentage-tooltip">
+										<input type="text" class="edit-target-percentage-input" value="{{ $player->target_percentage }}">
+								    	<button class="edit-target-percentage-button" type="button">Submit</button>
+									</div>
+								@else
+									---
+								@endif
+			    			</td>
 					    	<td>{{ $player->team_abbr }}</td>
 					    	<td>{{ $player->opp_team_abbr }}</td>
 					    	<td>{{ $line }}</td>
@@ -174,7 +191,25 @@
 		                text: $(this).next('.player-filter-tooltip')
 		            }
 		        });
-		    });   
+		    });  
+
+
+			/********************************************
+			TARGET PERCENTAGE TOOLTIP
+			********************************************/
+
+		    $('.target-percentage-qtip').each(function() {
+		        $(this).qtip({
+		            content: {
+		                text: $(this).next('.edit-target-percentage-tooltip'),
+		                button: true
+		            },
+		            show: 'click',
+		            hide: {
+		            	event: false
+		            }
+		        });
+		    }); 
 
 
 			/********************************************
