@@ -83,7 +83,9 @@ class DailyFdFiltersController {
         	$playerFilter['notes'] = $dailyFdFilter[0]->notes;
         }
 
-		return view('daily_fd_filters/create', compact('player', 'playerFilter'));
+        $name = $player[0]->name;
+
+		return view('daily_fd_filters/create', compact('player', 'playerFilter', 'name'));
 	}
 
 	/**
@@ -143,7 +145,9 @@ class DailyFdFiltersController {
             ->orderBy('created_at', 'desc')
             ->get();	
 
-		return view('daily_fd_filters/edit', compact('dailyFdFilter', 'player'));
+	    $name = $player[0]->name;
+
+		return view('daily_fd_filters/edit', compact('dailyFdFilter', 'player', 'name'));
 	}
 
 	/**
