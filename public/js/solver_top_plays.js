@@ -596,18 +596,23 @@ $(document).ready(function() {
 			percentage = parseInt(percentage);
 
 			players[i]['percentage'] = percentage;
+
+			players[i]['targetPercentage'] = $('td.roster-spot-name:contains("'+players[i]['name']+'")').first().parent('tr.roster-spot').data('target-percentage');
 		};
 
 		players.sort(function(a,b) {
-		    return b.percentage - a.percentage;
+		    return b.targetPercentage - a.targetPercentage || 
+		    	   (b.targetPercentage == a.targetPercentage && b.percentage - a.percentage);
 		});
 
 		var playerNames = [];
 		var percentages = [];
+		var targetPercentages = [];
 
 		for (var i = 0; i < players.length; i++) {
 			playerNames.push(players[i]['name']);
 			percentages.push(players[i]['percentage']);
+			targetPercentages.push(players[i]['targetPercentage']);
 		};
 
 	    $('#player-percentages-container').highcharts({
@@ -618,10 +623,7 @@ $(document).ready(function() {
 	        	text: null
 	        },
 	        xAxis: {
-	            categories: playerNames,
-	            labels: {
-	            	step: 1
-	            }
+	            categories: playerNames
 	        },
 	        yAxis: {
 	            min: 0,
@@ -637,9 +639,7 @@ $(document).ready(function() {
 	            bar: {
 	                dataLabels: {
 	                    enabled: true
-	                },
-	                pointWidth: 20,
-	                pointPadding: 0
+	                }
 	            },
 	            series: {
 	            	states: {
@@ -653,13 +653,16 @@ $(document).ready(function() {
 	            enabled: false
 	        },
 	        series: [{
-	        	name: 'Percentage',
 	            data: percentages
+	        }, {
+	        	data: targetPercentages
 	        }],
 	        legend: {
 	        	enabled: false
 	        }
-	    });				
+	    });	
+
+	    console.log(players);			
 	}				
 
 });

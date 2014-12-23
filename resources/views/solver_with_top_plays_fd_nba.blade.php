@@ -109,13 +109,13 @@
 	<hr>
 
 	<div class="row">
-		<div class="col-lg-6">
+		<div class="col-lg-7">
 			<h4>Player Percentages</h4>
 
-			<div id="player-percentages-container" style="width:100%; height:700px; padding-right:30px"></div>
+			<div id="player-percentages-container" style="width:100%; height:1200px; padding-right:30px"></div>
 		</div>
 
-		<div class="col-lg-6" style="overflow-y: scroll; height: 750px">
+		<div class="col-lg-5" style="overflow-y: scroll; height: 1200px">
 			<h4>Lineups</h4>
 
 			@foreach ($lineups as $lineup)
@@ -139,7 +139,9 @@
 					</thead>
 					<tbody>
 						@foreach ($lineup['roster_spots'] as $rosterSpot)
-							<tr class="roster-spot" data-player-id="{{ $rosterSpot->player_id }}">
+							<tr class="roster-spot" 
+								data-player-id="{{ $rosterSpot->player_id }}"
+								data-target-percentage="{{ $rosterSpot->target_percentage }}">
 								<td>{{ $rosterSpot->position }}</td>
 								<td class="roster-spot-name">{{ $rosterSpot->name }}</td>
 								<td>{{ $rosterSpot->salary }}</td>
