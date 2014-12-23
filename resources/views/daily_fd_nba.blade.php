@@ -91,13 +91,13 @@
 							if ($isPlayerLocked == 1) {
 								$playerLockedClass = ' daily-lock-active';
 
-								$targetPercentageQtipClass = 'target-percentage-qtip';
-								$targetPercentage = $player->target_percentage.'%';
+								$targetPercentage = $player->target_percentage;
+								$targetPercentageGroup = '';
 							} else {
 								$playerLockedClass = '';
 
-								$targetPercentageQtipClass = '';
-								$targetPercentage = false;
+								$targetPercentage = '---';
+								$targetPercentageGroup = 'hide-target-percentage-group';
 							}
 						?>
 
@@ -135,16 +135,16 @@
 				    			<a href="#"><span class="glyphicon glyphicon-lock daily-lock {{ $playerLockedClass }}" aria-hidden="true"></span></a>
 			    			</td>
 			    			<td style="text-align: center">
-			    				@if ($targetPercentage)
-				    				{{ $targetPercentage }} <a class="{{ $targetPercentageQtipClass }} edit-target-percentage-link" href="#"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
-									
-									<div class="edit-target-percentage-tooltip">
-										<input type="text" class="edit-target-percentage-input" value="{{ $player->target_percentage }}">
-								    	<button class="edit-target-percentage-button" type="button">Submit</button>
-									</div>
-								@else
-									---
-								@endif
+			    				<span class="target-percentage-amount">{{ $targetPercentage }}</span><span class="target-percentage-group {{ $targetPercentageGroup }}">% 
+				    				<a class="target-percentage-qtip edit-target-percentage-link" href="#">
+				    					<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+				    				</a>
+								</span>
+								
+								<div class="edit-target-percentage-tooltip">
+									<input type="text" class="edit-target-percentage-input" value="{{ $player->target_percentage }}">
+							    	<button class="edit-target-percentage-button" type="button">Submit</button>
+								</div>
 			    			</td>
 					    	<td>{{ $player->team_abbr }}</td>
 					    	<td>{{ $player->opp_team_abbr }}</td>
@@ -166,195 +166,14 @@
 	</div>
 
 	<script type="text/javascript">
-		$(document).ready(function() {
 
-			/********************************************
-			CREATE TABLE
-			********************************************/
+		/****************************************************************************************
+		GLOBAL VARIABLES
+		****************************************************************************************/
 
-    		$('#daily').dataTable({
-    			"scrollY": "600px",
-    			"paging": false,
-    			"order": [[7, "desc"]]
-    		});
+		var baseUrl = '<?php echo url(); ?>';
 
-    		$('#daily_filter').hide();
-
-
-			/********************************************
-			PLAYER STATS FILTER TOOLTIP
-			********************************************/
-
-		    $('.player-filter').each(function() {
-		        $(this).qtip({
-		            content: {
-		                text: $(this).next('.player-filter-tooltip')
-		            }
-		        });
-		    });  
-
-
-			/********************************************
-			TARGET PERCENTAGE TOOLTIP
-			********************************************/
-
-		    $('.target-percentage-qtip').each(function() {
-		        $(this).qtip({
-		            content: {
-		                text: $(this).next('.edit-target-percentage-tooltip'),
-		                button: true
-		            },
-		            show: 'click',
-		            hide: {
-		            	event: false
-		            }
-		        });
-		    }); 
-
-
-			/********************************************
-			TOGGLE DTD PLAYERS
-			********************************************/
-
-			$(".show-toggle-dtd-players").click(function(){
-			  $("#daily-dtd").toggle();
-			}); 
-
-
-			/********************************************
-			SET TOP PLAYS
-			********************************************/
-
-			$(".daily-lock").click(function(e) {
-				e.preventDefault();
-
-				var playerFdIndex = $(this).parent().parent().parent().data('player-fd-index');
-				var isPlayerActive = $(this).hasClass("daily-lock-active");
-				var $this = $(this);
-				
-		    	$.ajax({
-		            url: '<?php echo url(); ?>/daily_fd_nba/update_top_plays/'+playerFdIndex+'/'+isPlayerActive,
-		            type: 'POST',
-		            success: function() {
-						$this.toggleClass("daily-lock-active");
-		            }
-		        }); 
-			});
-
-			/********************************************
-			FILTERS
-			********************************************/
-
-			var position;
-			var team;
-			var showOnlyTopPlays;
-			var filter = {};
-
-			function runFilter() {
-				filter = getFilter();
-
-				$('tr.player-row').removeClass('hide-player-row');
-
-				runPositionFilter(filter);
-				runTeamFilter(filter);
-				runTopPlaysFilter(filter);
-			}
-
-			function getFilter() {
-				position = $('select.position-filter').val();
-				team = $('select.team-filter').val();
-				showOnlyTopPlays = $('select.top-plays-filter').val();
-
-				filter = {
-					position: position,
-					team: team,
-					showOnlyTopPlays: showOnlyTopPlays
-				};
-
-				return filter;
-			}
-
-
-			//// Position filter ////
-
-			$('select.position-filter').on('change', function() {
-				runFilter();
-			});
-
-			function runPositionFilter(filter) {
-				if (filter.position == 'All') {
-					return;
-				}
-
-				$('tr.player-row').each(function() {
-					var playerRow = $(this);
-
-					hidePositionsNotSelected(playerRow, filter.position);
-				});				
-			}
-
-			function hidePositionsNotSelected(playerRow, position) {
-				var playerRowPosition = $(playerRow).data('player-position');
-
-				if (playerRowPosition != position) {
-					$(playerRow).addClass('hide-player-row');
-				}
-			}
-
-
-			//// Team filter ////
-
-			$('select.team-filter').on('change', function() {
-				runFilter();
-			});
-
-			function runTeamFilter(filter) {
-				if (filter.team == 'All') {
-					return;
-				}
-
-				$('tr.player-row').each(function() {
-					var playerRow = $(this);
-
-					hideTeamsNotSelected(playerRow, filter.team);
-				});				
-			}
-
-			function hideTeamsNotSelected(playerRow, team) {
-				var playerRowTeam = $(playerRow).data('player-team');
-
-				if (playerRowTeam != team) {
-					$(playerRow).addClass('hide-player-row');
-				}
-			}
-
-
-			//// Top plays filter ////
-
-			$('select.top-plays-filter').on('change', function() {
-				runFilter();
-			});
-
-			function runTopPlaysFilter(filter) {
-				if (filter.showOnlyTopPlays == 0) {
-					return;
-				}
-
-				$('tr.player-row').each(function() {
-					var playerRow = $(this);
-
-					hideNonTopPlays(playerRow);
-				});						
-			}
-
-			function hideNonTopPlays(playerRow) {
-				var isPlayerTopPlay = $(playerRow).find('span.daily-lock').hasClass('daily-lock-active');
-
-				if (isPlayerTopPlay === false) {
-					$(playerRow).addClass('hide-player-row');
-				}
-			}
-
-		});
 	</script>
+
+	<script src="/js/daily_fd_nba.js"></script>
 @stop
