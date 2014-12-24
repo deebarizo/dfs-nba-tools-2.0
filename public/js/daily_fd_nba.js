@@ -51,9 +51,9 @@ $(document).ready(function() {
 
 			var playerFdIndex = $('a[data-hasqtip='+dataHasQtip+']').parent('span.target-percentage-group').parent('td').parent('tr').data('player-fd-index');
 
-			var targetPercentageAmount = $('a[data-hasqtip='+dataHasQtip+']').parent('span.target-percentage-group').prev('span.target-percentage-amount').text();
+			// var targetPercentageAmount = $('a[data-hasqtip='+dataHasQtip+']').parent('span.target-percentage-group').prev('span.target-percentage-amount').text();
 
-			$(this).val(targetPercentageAmount);
+			// $(this).val(targetPercentageAmount);
 
 			var newTargetPercentage = $(this).val();
 
@@ -79,6 +79,8 @@ $(document).ready(function() {
             type: 'POST',
             success: function() {
             	$('a[data-hasqtip='+dataHasQtip+']').parent('span.target-percentage-group').prev('span.target-percentage-amount').html('');
+
+            	var targetPercentageTooltipInput = $('div#qtip-'+dataHasQtip+'-content').children('div.edit-target-percentage-tooltip').children('input.edit-target-percentage-input');
 
             	if (newTargetPercentage == 0) {
             		$(targetPercentageTooltipInput).val(0);
@@ -132,13 +134,16 @@ $(document).ready(function() {
 
 				var spanTargetPercentageAmount = $this.parent('a').parent('td').next('td').children('span.target-percentage-amount');
 				var spanTargetPercentageGroup = $this.parent('a').parent('td').next('td').children('span.target-percentage-group');
+				var editTargetPercentageInput = $this.parent('a').parent('td').next('td').children('div.edit-target-percentage-tooltip').children('input.edit-target-percentage-input');
 
 				if ($this.hasClass('daily-lock-active')) {
 					$(spanTargetPercentageAmount).text('5');
 					$(spanTargetPercentageGroup).removeClass('hide-target-percentage-group');
+					$(editTargetPercentageInput).val('5');
 				} else {
 					$(spanTargetPercentageAmount).text('---');
 					$(spanTargetPercentageGroup ).addClass('hide-target-percentage-group');
+					$(editTargetPercentageInput).val('0');
 				}
 
 				$this.next('img').remove();
