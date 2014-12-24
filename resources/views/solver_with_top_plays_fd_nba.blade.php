@@ -6,7 +6,7 @@
 			<h2 id="heading">Solver With Top Plays | {{ $date }} {{ $timePeriod }}</h2>
 		</div>
 
-		<div class="col-lg-3">
+		<div class="col-lg-4">
 			<p>
 				<strong>Buy In: </strong> 
 				$<span class="buy-in-amount">{{ $buyIn }}</span>
@@ -31,7 +31,7 @@
 			<p>
 				<strong>Default Lineup Buy In: </strong> 
 				$<span class="default-lineup-buy-in-amount">{{ $defaultLineupBuyIn }}</span> 
-				(<span class="default-lineup-buy-in-percentage">{{ numFormat($defaultLineupBuyIn / $buyIn * 100, 2) }}</span>%)
+				(<span class="default-lineup-buy-in-percentage">@if ($buyIn != 0){{ numFormat($defaultLineupBuyIn / $buyIn * 100, 2) }}@else{{0.00}}@endif</span>%)
 				[<a href="#" class="edit-default-lineup-buy-in-link">Edit</a>]
 			</p>
 

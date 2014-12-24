@@ -45,13 +45,17 @@ $(document).ready(function() {
 
     $('.edit-target-percentage-input').keypress(function (event) {
         if (event.which == 13) {
-			var newTargetPercentage = $(this).val();
-
 			var rawDataHasQtip = $(this).parent('div.edit-target-percentage-tooltip').parent('div.qtip-content').parent('div.qtip').attr('id');
 
 			var dataHasQtip = rawDataHasQtip.replace(/qtip-/gi, '');
 
 			var playerFdIndex = $('a[data-hasqtip='+dataHasQtip+']').parent('span.target-percentage-group').parent('td').parent('tr').data('player-fd-index');
+
+			var targetPercentageAmount = $('a[data-hasqtip='+dataHasQtip+']').parent('span.target-percentage-group').prev('span.target-percentage-amount').text();
+
+			$(this).val(targetPercentageAmount);
+
+			var newTargetPercentage = $(this).val();
 
 			updateTargetPercentage(newTargetPercentage, dataHasQtip, playerFdIndex);
 		}
@@ -76,9 +80,19 @@ $(document).ready(function() {
             success: function() {
             	$('a[data-hasqtip='+dataHasQtip+']').parent('span.target-percentage-group').prev('span.target-percentage-amount').html('');
 
-				$('a[data-hasqtip='+dataHasQtip+']').parent('span.target-percentage-group').prev('span.target-percentage-amount').text(newTargetPercentage);
+            	if (newTargetPercentage == 0) {
+            		$(targetPercentageTooltipInput).val(0);
 
-				$('a[data-hasqtip='+dataHasQtip+']').parent('span.target-percentage-group').removeClass('hide-target-percentage-group');
+            		newTargetPercentage = '---';
+
+            		$('a[data-hasqtip='+dataHasQtip+']').parent('span.target-percentage-group').addClass('hide-target-percentage-group');
+            	} else {
+            		$(targetPercentageTooltipInput).val(newTargetPercentage);
+
+            		$('a[data-hasqtip='+dataHasQtip+']').parent('span.target-percentage-group').removeClass('hide-target-percentage-group');
+            	}
+
+				$('a[data-hasqtip='+dataHasQtip+']').parent('span.target-percentage-group').prev('span.target-percentage-amount').text(newTargetPercentage);
             }
         });	
 	}
@@ -116,26 +130,32 @@ $(document).ready(function() {
 
 				$this.show();
 
-				var targetPercentageAmount = $this.parent('a').parent('td').next('td').children('span.target-percentage-amount');
-				var targetPercentageGroup = $this.parent('a').parent('td').next('td').children('span.target-percentage-group');
+				var spanTargetPercentageAmount = $this.parent('a').parent('td').next('td').children('span.target-percentage-amount');
+				var spanTargetPercentageGroup = $this.parent('a').parent('td').next('td').children('span.target-percentage-group');
 
 				if ($this.hasClass('daily-lock-active')) {
-					$(targetPercentageAmount).text('0');
-					$(targetPercentageGroup).removeClass('hide-target-percentage-group');
+					$(spanTargetPercentageAmount).text('5');
+					$(spanTargetPercentageGroup).removeClass('hide-target-percentage-group');
 				} else {
-					$(targetPercentageAmount).text('---');
-					$(targetPercentageGroup).addClass('hide-target-percentage-group');
+					$(spanTargetPercentageAmount).text('---');
+					$(spanTargetPercentageGroup ).addClass('hide-target-percentage-group');
 				}
 
 				$this.next('img').remove();
+
+				var targetPercentageAmount = $this.parent('a').parent('td').next('td').children('span.target-percentage-amount').text();
+
+				if (targetPercentageAmount == '---') {
+					var newTargetPercentage = 0;
+				} else {
+					var newTargetPercentage = targetPercentageAmount;
+				}
+
+				var dataHasQtip = $this.parent('a').parent('td').next('td').children('span.target-percentage-group').children('a.target-percentage-qtip').data('hasqtip');
+
+				updateTargetPercentage(newTargetPercentage, dataHasQtip, playerFdIndex); 
             }
         });
-
-		var newTargetPercentage = 0;
-
-		var dataHasQtip = $(this).parent('a').parent('td').next('td').children('span.target-percentage-group').children('a.target-percentage-qtip').data('hasqtip');
-
-		updateTargetPercentage(newTargetPercentage, dataHasQtip, playerFdIndex); 
 	});
 
 	/********************************************
