@@ -7,7 +7,7 @@ $(document).ready(function() {
 	$('#daily').dataTable({
 		"scrollY": "600px",
 		"paging": false,
-		"order": [[8, "desc"]]
+		"order": [[9, "desc"]]
 	});
 
 	$('#daily_filter').hide();
@@ -137,9 +137,9 @@ $(document).ready(function() {
 				var editTargetPercentageInput = $this.parent('a').parent('td').next('td').children('div.edit-target-percentage-tooltip').children('input.edit-target-percentage-input');
 
 				if ($this.hasClass('daily-lock-active')) {
-					$(spanTargetPercentageAmount).text('5');
+					$(spanTargetPercentageAmount).text('10');
 					$(spanTargetPercentageGroup).removeClass('hide-target-percentage-group');
-					$(editTargetPercentageInput).val('5');
+					$(editTargetPercentageInput).val('10');
 				} else {
 					$(spanTargetPercentageAmount).text('---');
 					$(spanTargetPercentageGroup ).addClass('hide-target-percentage-group');

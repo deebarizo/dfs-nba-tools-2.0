@@ -141,8 +141,6 @@ $(document).ready(function() {
 	function runFilter() {
 		filter = getFilter();
 
-		console.log(filter);
-
 		$('table.lineup').removeClass('hide-lineup');
 
 		runPlayerFilter(filter);
@@ -531,64 +529,42 @@ $(document).ready(function() {
 	DRAW BAR CHART
 	****************************************************************************************/
 
-	if (areThereActiveLineups == 1) {
-		drawBarChart();
-	}
+	drawBarChart();
 
-	if (areThereActiveLineups == 0) {
-		$('#player-percentages-container').text("There are no active lineups.");
+	function arrayUnique(arr) {
+	    var a = [];
+	    for (var i=0, l=arr.length; i<l; i++)
+	        if (a.indexOf(arr[i]) === -1 && arr[i] !== '')
+	            a.push(arr[i]);
+	    return a;
 	}
 
 	function drawBarChart() {
-		var numActiveLineups = $(".active-lineup").length; 
-
-		if (numActiveLineups == 0) {
-			$('#player-percentages-container').text("There are no active lineups.");
-
-			return true;
-		}
-
-		var rosterSpotsInActiveLineups = [];
-		var playersInActiveLineups = [];
+		var activeLineups = {};
+		activeLineups.rosterSpots = [];
+		activeLineups.names = [];
 
 		$(".active-lineup").each(function() {
 			var lineupBuyIn = $(this).find("span.lineup-buy-in-amount").text();
 
-			$(this).children("tbody").children("tr.roster-spot").find("td.roster-spot-name").each(function() {
-				var name = $(this).text();
+			var $this = $(this);
 
-				var rosterSpot = { 
-					name: name, 
-					lineupBuyIn: lineupBuyIn 
-				};
-
-				rosterSpotsInActiveLineups.push(rosterSpot);
-
-				playersInActiveLineups.push(name);
-			});
+			getActiveLineupsInfo($this, activeLineups, lineupBuyIn);
 		});
 
-		function arrayUnique(arr) {
-		    var a = [];
-		    for (var i=0, l=arr.length; i<l; i++)
-		        if (a.indexOf(arr[i]) === -1 && arr[i] !== '')
-		            a.push(arr[i]);
-		    return a;
-		}
-
-		playersInActiveLineups = arrayUnique(playersInActiveLineups);
+		activeLineups.names = arrayUnique(activeLineups.names);
 
 		var players = [];
 
-		for (var i = 0; i < playersInActiveLineups.length; i++) {
+		for (var i = 0; i < activeLineups.names.length; i++) {
 			players[i] = {};
 
-			players[i]['name'] = playersInActiveLineups[i];
+			players[i]['name'] = activeLineups.names[i];
 			var totalBuyInOfPlayer = 0;
 
-			for (var n = 0; n < rosterSpotsInActiveLineups.length; n++) {
-				if (players[i]['name'] == rosterSpotsInActiveLineups[n]['name']) {
-					totalBuyInOfPlayer += parseInt(rosterSpotsInActiveLineups[n]['lineupBuyIn']);
+			for (var n = 0; n < activeLineups.rosterSpots.length; n++) {
+				if (players[i]['name'] == activeLineups.rosterSpots[n]['name']) {
+					totalBuyInOfPlayer += parseInt(activeLineups.rosterSpots[n]['lineupBuyIn']);
 				} 
 			};
 
@@ -599,6 +575,27 @@ $(document).ready(function() {
 
 			players[i]['targetPercentage'] = $('td.roster-spot-name:contains("'+players[i]['name']+'")').first().parent('tr.roster-spot').data('target-percentage');
 		};
+
+		for (var i = 0; i < topPlays.length; i++) {
+			var isTopPlayInActiveLineup = checkForTopPlayInActiveLineup(topPlays[i], players);
+
+			addTopPlayIfMissing(isTopPlayInActiveLineup, topPlays[i], players);
+		};
+
+		function addTopPlayIfMissing(isTopPlayInActiveLineup, topPlay, players) {
+			if (!isTopPlayInActiveLineup) {
+				var player = {
+					name: topPlay.name,
+					percentage: 0,
+					targetPercentage: topPlay.target_percentage
+				}
+
+				players.push(player);
+			}
+
+			return;
+		}
+
 
 		players.sort(function(a,b) {
 		    return b.targetPercentage - a.targetPercentage || 
@@ -661,8 +658,31 @@ $(document).ready(function() {
 	        	enabled: false
 	        }
 	    });	
-
-	    console.log(players);			
 	}				
+
+	function getActiveLineupsInfo($this, activeLineups, lineupBuyIn) {
+		$this.children("tbody").children("tr.roster-spot").find("td.roster-spot-name").each(function() {
+			var name = $(this).text();
+
+			var rosterSpot = { 
+				name: name, 
+				lineupBuyIn: lineupBuyIn 
+			};
+
+			activeLineups.rosterSpots.push(rosterSpot);
+
+			activeLineups.names.push(name);
+		});			
+	}
+
+	function checkForTopPlayInActiveLineup(topPlay, players) {
+		for (var n = 0; n < players.length; n++) {
+			if (players[n]['name'] == topPlay['name']) {
+				return true;
+			}
+		}
+
+		return false;
+	}
 
 });

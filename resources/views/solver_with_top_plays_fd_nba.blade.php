@@ -190,11 +190,12 @@
 		GLOBAL VARIABLES
 		****************************************************************************************/
 
+		var baseUrl = '<?php echo url(); ?>';
 		var playerPoolId = <?php echo json_encode($playerPoolId); ?>;
 		var buyIn = $("span.buy-in-amount").text();
 		var defaultLineupBuyIn = $("span.default-lineup-buy-in-amount").text();
 		var areThereActiveLineups = <?php echo $areThereActiveLineups; ?>;
-		var baseUrl = '<?php echo url(); ?>';
+		var topPlays = <?php echo json_encode($players); ?>;
 
 	</script>
 

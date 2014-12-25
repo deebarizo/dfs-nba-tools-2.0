@@ -37,7 +37,7 @@
 					<li class="{!! setActive('daily_fd_nba*') !!}{!! setActive('solver_fd_nba*') !!}"><a href="/daily_fd_nba">Daily FD</a></li>
 					<li class="{!! setActive('solver_with_top_plays_fd_nba*') !!}"><a href="/solver_with_top_plays_fd_nba">Solver Top Plays</a></li>
 					<li class="{!! setActive('scrapers*') !!}"><a href="/scrapers">Scrapers</a></li>
-					<li class="{!! setActive('player_search*') !!}"><a href="/player_search">Player Search</a></li>
+					<li class="{!! setActive('player_search*') !!}{!! setActive('players*') !!}"><a href="/player_search">Player Search</a></li>
 					<!-- <li class="{!! setActive('studies*') !!}"><a href="/studies">Studies</a></li> -->
 				</ul>
 			</div><!--/.nav-collapse -->
