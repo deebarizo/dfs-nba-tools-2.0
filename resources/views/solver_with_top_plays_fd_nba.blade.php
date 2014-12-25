@@ -112,10 +112,22 @@
 		<div class="col-lg-7">
 			<h4>Player Percentages</h4>
 
-			<div id="player-percentages-container" style="width:100%; height:1200px; padding-right:30px"></div>
+			<form class="form-inline" style="font-size: 90%; margin: 15px 0 10px 0">
+				<label>Sort</label>
+				<select class="form-control player-percentages-filter">
+					<option value="Unspent Target Percentage" selected>Unspent Target Percentage</option>
+				  	<option value="Target Percentage">Target Percentage</option>
+				  	<option value="Percentage">Percentage</option>
+				  	<option value="First Name">First Name</option>
+				  	<option value="Position">Position</option>
+				  	<option value="Team">Team</option>
+				</select>
+			</form>
+
+			<div id="player-percentages-container" style="width:100%; height:2000px; padding-right:30px"></div>
 		</div>
 
-		<div class="col-lg-5" style="overflow-y: scroll; height: 1200px">
+		<div class="col-lg-5" style="overflow-y: scroll; height: 2000px">
 			<h4>Lineups</h4>
 
 			@foreach ($lineups as $lineup)

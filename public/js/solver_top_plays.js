@@ -574,6 +574,8 @@ $(document).ready(function() {
 			players[i]['percentage'] = percentage;
 
 			players[i]['targetPercentage'] = $('td.roster-spot-name:contains("'+players[i]['name']+'")').first().parent('tr.roster-spot').data('target-percentage');
+
+			players[i]['unspentTargetPercentage'] = players[i]['targetPercentage'] - players[i]['percentage'];
 		};
 
 		for (var i = 0; i < topPlays.length; i++) {
@@ -582,25 +584,9 @@ $(document).ready(function() {
 			addTopPlayIfMissing(isTopPlayInActiveLineup, topPlays[i], players);
 		};
 
-		function addTopPlayIfMissing(isTopPlayInActiveLineup, topPlay, players) {
-			if (!isTopPlayInActiveLineup) {
-				var player = {
-					name: topPlay.name,
-					percentage: 0,
-					targetPercentage: topPlay.target_percentage
-				}
-
-				players.push(player);
-			}
-
-			return;
-		}
-
-
-		players.sort(function(a,b) {
-		    return b.targetPercentage - a.targetPercentage || 
-		    	   (b.targetPercentage == a.targetPercentage && b.percentage - a.percentage);
-		});
+		console.log(players);
+		sortBarChart(players);
+		console.log(players);
 
 		var playerNames = [];
 		var percentages = [];
@@ -663,9 +649,11 @@ $(document).ready(function() {
 	function getActiveLineupsInfo($this, activeLineups, lineupBuyIn) {
 		$this.children("tbody").children("tr.roster-spot").find("td.roster-spot-name").each(function() {
 			var name = $(this).text();
+			var position = $(this).prev('td').text();
 
 			var rosterSpot = { 
 				name: name, 
+				position: position,
 				lineupBuyIn: lineupBuyIn 
 			};
 
@@ -683,6 +671,60 @@ $(document).ready(function() {
 		}
 
 		return false;
+	}
+
+	function addTopPlayIfMissing(isTopPlayInActiveLineup, topPlay, players) {
+		if (!isTopPlayInActiveLineup) {
+			var player = {
+				name: topPlay.name,
+				percentage: 0,
+				targetPercentage: topPlay.target_percentage
+			}
+
+			player['unspentTargetPercentage'] = topPlay.target_percentage - 0;
+
+			players.push(player);
+		}
+
+		return;
+	}
+
+	function sortBarChart(players) {
+		var barChartSorter = $('select.player-percentages-filter').val();
+
+		if (barChartSorter === 'Unspent Target Percentage') {
+			players.sort(function(a,b) {
+			    return b.unspentTargetPercentage - a.unspentTargetPercentage || 
+			    	   (b.unspentTargetPercentage == a.unspentTargetPercentage && b.percentage - a.percentage);
+			});
+		}
+
+		if (barChartSorter === 'Target Percentage') {
+			players.sort(function(a,b) {
+			    return b.targetPercentage - a.targetPercentage || 
+			    	   (b.targetPercentage == a.targetPercentage && b.percentage - a.percentage);
+			});
+		}
+
+		if (barChartSorter === 'Percentage') {
+			players.sort(function(a,b) {
+			    return b.Percentage - a.Percentage
+			});
+		}
+
+		if (barChartSorter === 'First Name') {
+			players.sort(function(a,b) {
+			    return b.name - a.name || 
+			    	   (b.name == a.name && b.percentage - a.percentage);
+			});
+		}
+
+		if (barChartSorter === 'Position') {
+			players.sort(function(a,b) {
+			    return b.position - a.position || 
+			    	   (b.position == a.position && b.percentage - a.percentage);
+			});
+		}
 	}
 
 });
