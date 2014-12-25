@@ -62,7 +62,7 @@ class SolverFdNbaController {
 
         $defaultLineupBuyIn = getDefaultLineupBuyIn();
 
-        # ddAll($players);
+        # ddAll($lineups);
 
         return view('solver_with_top_plays_fd_nba', 
                      compact('date', 

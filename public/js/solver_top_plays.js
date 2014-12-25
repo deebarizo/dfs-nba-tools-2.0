@@ -576,6 +576,8 @@ $(document).ready(function() {
 			players[i]['targetPercentage'] = $('td.roster-spot-name:contains("'+players[i]['name']+'")').first().parent('tr.roster-spot').data('target-percentage');
 
 			players[i]['unspentTargetPercentage'] = players[i]['targetPercentage'] - players[i]['percentage'];
+
+			players[i]['teamAbbrBr'] = $('td.roster-spot-name:contains("'+players[i]['name']+'")').first().parent('tr.roster-spot').data('team-abbr-br');
 		};
 
 		for (var i = 0; i < topPlays.length; i++) {
@@ -584,7 +586,6 @@ $(document).ready(function() {
 			addTopPlayIfMissing(isTopPlayInActiveLineup, topPlays[i], players);
 		};
 
-		console.log(players);
 		sortBarChart(players);
 		console.log(players);
 
@@ -683,6 +684,8 @@ $(document).ready(function() {
 
 			player['unspentTargetPercentage'] = topPlay.target_percentage - 0;
 
+			player['teamAbbrBr'] = $('td.roster-spot-name:contains("'+player['name']+'")').first().parent('tr.roster-spot').data('team-abbr-br');
+
 			players.push(player);
 		}
 
@@ -723,6 +726,13 @@ $(document).ready(function() {
 			players.sort(function(a,b) {
 			    return b.position - a.position || 
 			    	   (b.position == a.position && b.percentage - a.percentage);
+			});
+		}
+
+		if (barChartSorter === 'Team') {
+			players.sort(function(a,b) {
+			    return b.teamAbbrBr - a.teamAbbrBr || 
+			    	   (b.teamAbbrBr == a.teamAbbrBr && b.percentage - a.percentage);
 			});
 		}
 	}

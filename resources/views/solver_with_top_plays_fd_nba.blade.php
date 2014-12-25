@@ -153,7 +153,8 @@
 						@foreach ($lineup['roster_spots'] as $rosterSpot)
 							<tr class="roster-spot" 
 								data-player-id="{{ $rosterSpot->player_id }}"
-								data-target-percentage="{{ $rosterSpot->target_percentage }}">
+								data-target-percentage="{{ $rosterSpot->target_percentage }}" 
+								data-team-abbr-br="{{ $rosterSpot->abbr_br }}">
 								<td>{{ $rosterSpot->position }}</td>
 								<td class="roster-spot-name">{{ $rosterSpot->name }}</td>
 								<td>{{ $rosterSpot->salary }}</td>
