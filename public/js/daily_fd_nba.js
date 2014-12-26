@@ -95,6 +95,8 @@ $(document).ready(function() {
             	}
 
 				$('a[data-hasqtip='+dataHasQtip+']').parent('span.target-percentage-group').prev('span.target-percentage-amount').text(newTargetPercentage);
+
+				showTotalTargetPercentage();
             }
         });	
 	}
@@ -158,10 +160,52 @@ $(document).ready(function() {
 
 				var dataHasQtip = $this.parent('a').parent('td').next('td').children('span.target-percentage-group').children('a.target-percentage-qtip').data('hasqtip');
 
-				updateTargetPercentage(newTargetPercentage, dataHasQtip, playerFdIndex); 
+				updateTargetPercentage(newTargetPercentage, dataHasQtip, playerFdIndex);
             }
         });
+
+		
 	});
+
+
+	/********************************************
+	SHOW TOTAL TARGET PERCENTAGE
+	********************************************/
+
+	function showTotalTargetPercentage() {
+		var position = $('select.position-filter').val();
+
+		var totalTargetPercentage = addTargetPercentages(position);
+		
+		if (filter.position == 'All') {
+			$('span.total-target-percentage').text('N/A');
+		}
+
+		if (filter.position != 'All') {
+			$('span.total-target-percentage').text(totalTargetPercentage+'%');
+		}	
+	}
+
+	function addTargetPercentages(position) {
+		var totalTargetPercentage = 0;
+
+		$('span.target-percentage-amount:visible').each(function() {
+			var targetPercentageAmount = $(this).text();
+
+			totalTargetPercentage += addTargetPercentage(targetPercentageAmount);
+		});			
+
+		return totalTargetPercentage;
+	}
+
+	function addTargetPercentage(targetPercentageAmount) {
+		if (targetPercentageAmount == '---') {
+			return 0;
+		}
+
+		return parseInt(targetPercentageAmount);
+	}
+
 
 	/********************************************
 	FILTERS
@@ -201,6 +245,8 @@ $(document).ready(function() {
 
 	$('select.position-filter').on('change', function() {
 		runFilter();
+
+		showTotalTargetPercentage();
 	});
 
 	function runPositionFilter(filter) {

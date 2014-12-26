@@ -21,7 +21,7 @@
 		<div class="col-lg-12">
 			<h3>{{ $date }} {{ $timePeriod }} | <a target="_blank" href="/solver_with_top_plays_fd_nba/{{ $date }}">Solver (With Top Plays)</a> <!-- |  <a target="_blank" href="/solver_fd_nba/{{ $date }}">Solver</a> --></h3>
 
-			<form class="form-inline" style="margin: 15px 0 20px 0">
+			<form class="form-inline" style="margin: 15px 0 10px 0">
 
 				<label>Positions</label>
 				<select class="form-control position-filter" style="width: 10%; margin-right: 20px">
@@ -48,6 +48,10 @@
 				</select>
 			
 			</form>
+		</div>
+
+		<div class="col-lg-12" style="margin-bottom: 7px">
+			<p><strong>Total Target Percentage: </strong> <span class="total-target-percentage">N/A</span></p>
 		</div>
 
 		<div class="col-lg-12">
