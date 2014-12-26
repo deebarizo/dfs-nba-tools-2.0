@@ -529,15 +529,15 @@ $(document).ready(function() {
 	DRAW BAR CHART
 	****************************************************************************************/
 
+	var barChartSorter = $('select.player-percentages-filter').val();
+
 	drawBarChart();
 
-	function arrayUnique(arr) {
-	    var a = [];
-	    for (var i=0, l=arr.length; i<l; i++)
-	        if (a.indexOf(arr[i]) === -1 && arr[i] !== '')
-	            a.push(arr[i]);
-	    return a;
-	}
+	$('select.player-percentages-filter').on('change', function() {
+		barChartSorter = $('select.player-percentages-filter').val();
+		
+		drawBarChart();
+	});
 
 	function drawBarChart() {
 		var activeLineups = {};
@@ -597,8 +597,7 @@ $(document).ready(function() {
 			players[i]['contents'] = players[i]['name']+' ('+players[i]['position']+') ('+players[i]['teamAbbrBr']+')';
 		};
 
-		sortBarChart(players);
-		console.log(players);
+		sortBarChart(barChartSorter, players);
 
 		var playerContents = [];
 		var percentages = [];
@@ -656,7 +655,15 @@ $(document).ready(function() {
 	        	enabled: false
 	        }
 	    });	
-	}				
+	}		
+
+	function arrayUnique(arr) {
+	    var a = [];
+	    for (var i=0, l=arr.length; i<l; i++)
+	        if (a.indexOf(arr[i]) === -1 && arr[i] !== '')
+	            a.push(arr[i]);
+	    return a;
+	}		
 
 	function getActiveLineupsInfo($this, activeLineups, lineupBuyIn) {
 		$this.children("tbody").children("tr.roster-spot").find("td.roster-spot-name").each(function() {
@@ -709,9 +716,7 @@ $(document).ready(function() {
 		return;
 	}
 
-	function sortBarChart(players) {
-		var barChartSorter = $('select.player-percentages-filter').val();
-
+	function sortBarChart(barChartSorter, players) {
 		if (barChartSorter === 'Unspent Target Percentage') {
 			players.sort(function(a,b) {
 			    return b.unspentTargetPercentage - a.unspentTargetPercentage || 
