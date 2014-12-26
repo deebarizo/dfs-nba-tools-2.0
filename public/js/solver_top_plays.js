@@ -535,7 +535,7 @@ $(document).ready(function() {
 
 	$('select.player-percentages-filter').on('change', function() {
 		barChartSorter = $('select.player-percentages-filter').val();
-		
+
 		drawBarChart();
 	});
 
@@ -598,6 +598,7 @@ $(document).ready(function() {
 		};
 
 		sortBarChart(barChartSorter, players);
+		console.log(players);
 
 		var playerContents = [];
 		var percentages = [];
@@ -717,6 +718,8 @@ $(document).ready(function() {
 	}
 
 	function sortBarChart(barChartSorter, players) {
+		console.log(barChartSorter);
+
 		if (barChartSorter === 'Unspent Target Percentage') {
 			players.sort(function(a,b) {
 			    return b.unspentTargetPercentage - a.unspentTargetPercentage || 
@@ -731,30 +734,34 @@ $(document).ready(function() {
 			});
 		}
 
-		if (barChartSorter === 'Percentage') {
+		if (barChartSorter === 'Actual Percentage') {
 			players.sort(function(a,b) {
-			    return b.Percentage - a.Percentage
+			    return b.percentage - a.percentage;
 			});
 		}
 
 		if (barChartSorter === 'First Name') {
 			players.sort(function(a,b) {
-			    return b.name - a.name || 
-			    	   (b.name == a.name && b.percentage - a.percentage);
+			    return a.name.localeCompare(b.name);
 			});
 		}
 
 		if (barChartSorter === 'Position') {
 			players.sort(function(a,b) {
-			    return b.position - a.position || 
-			    	   (b.position == a.position && b.percentage - a.percentage);
+			    return a.position.localeCompare(b.position);
 			});
 		}
 
 		if (barChartSorter === 'Team') {
 			players.sort(function(a,b) {
-			    return b.teamAbbrBr - a.teamAbbrBr || 
-			    	   (b.teamAbbrBr == a.teamAbbrBr && b.percentage - a.percentage);
+			    return a.teamAbbrBr.localeCompare(b.teamAbbrBr);
+			});
+		}
+
+		if (barChartSorter === 'Salary') {
+			players.sort(function(a,b) {
+			    return b.salary - a.salary || 
+			    	   (b.salary == a.salary && b.percentage - a.percentage);
 			});
 		}
 	}

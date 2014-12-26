@@ -117,7 +117,7 @@
 				<select class="form-control player-percentages-filter">
 					<option value="Unspent Target Percentage" selected>Unspent Target Percentage</option>
 				  	<option value="Target Percentage">Target Percentage</option>
-				  	<option value="Percentage">Percentage</option>
+				  	<option value="Actual Percentage">Actual Percentage</option>
 				  	<option value="First Name">First Name</option>
 				  	<option value="Position">Position</option>
 				  	<option value="Team">Team</option>
