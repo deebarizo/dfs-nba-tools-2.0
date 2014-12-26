@@ -114,13 +114,20 @@
 
 			<form class="form-inline" style="font-size: 90%; margin: 15px 0 10px 0">
 				<label>Sort</label>
-				<select class="form-control player-percentages-filter">
+				<select class="form-control player-percentages-filter" style="margin-right: 20px">
 					<option value="Unspent Target Percentage" selected>Unspent Target Percentage</option>
 				  	<option value="Target Percentage">Target Percentage</option>
 				  	<option value="Actual Percentage">Actual Percentage</option>
 				  	<option value="First Name">First Name</option>
 				  	<option value="Position">Position</option>
 				  	<option value="Team">Team</option>
+				  	<option value="Salary">Salary</option>
+				</select>
+
+				<label>Show</label>
+				<select class="form-control player-percentages-show-filter">
+					<option value="All" selected>All</option>
+				  	<option value="Only Actual Percentage">Actual Percentage</option>
 				</select>
 			</form>
 

@@ -530,11 +530,18 @@ $(document).ready(function() {
 	****************************************************************************************/
 
 	var barChartSorter = $('select.player-percentages-filter').val();
+	var barChartShowSorter = $('select.player-percentages-show-filter').val();
 
 	drawBarChart();
 
 	$('select.player-percentages-filter').on('change', function() {
 		barChartSorter = $('select.player-percentages-filter').val();
+
+		drawBarChart();
+	});
+
+	$('select.player-percentages-show-filter').on('change', function() {
+		barChartShowSorter = $('select.player-percentages-show-filter').val();
 
 		drawBarChart();
 	});
@@ -564,6 +571,7 @@ $(document).ready(function() {
 			for (var n = 0; n < activeLineups.rosterSpots.length; n++) {
 				if (players[i]['name'] == activeLineups.rosterSpots[n]['name']) {
 					players[i]['position'] = activeLineups.rosterSpots[n]['position'];
+					players[i]['salary'] = activeLineups.rosterSpots[n]['salary'];
 					players[i]['teamAbbrBr'] = activeLineups.rosterSpots[n]['teamAbbrBr'];
 					players[i]['targetPercentage'] = activeLineups.rosterSpots[n]['targetPercentage'];
 
@@ -594,11 +602,10 @@ $(document).ready(function() {
 		};
 
 		for (var i = 0; i < players.length; i++) {
-			players[i]['contents'] = players[i]['name']+' ('+players[i]['position']+') ('+players[i]['teamAbbrBr']+')';
+			players[i]['contents'] = players[i]['name']+'<br>('+players[i]['position']+') ('+players[i]['teamAbbrBr']+') ('+players[i]['salary']+')';
 		};
 
 		sortBarChart(barChartSorter, players);
-		console.log(players);
 
 		var playerContents = [];
 		var percentages = [];
@@ -609,6 +616,19 @@ $(document).ready(function() {
 			percentages.push(players[i]['percentage']);
 			targetPercentages.push(players[i]['targetPercentage']);
 		};
+
+		if (barChartShowSorter == 'All') {
+			var series = [		
+				{ data: percentages },
+				{ data: targetPercentages }
+			];			
+		}
+
+		if (barChartShowSorter == 'Only Actual Percentage') {
+			var series = [		
+				{ data: percentages }
+			];			
+		}
 
 	    $('#player-percentages-container').highcharts({
 	        chart: {
@@ -647,11 +667,7 @@ $(document).ready(function() {
 	        credits: {
 	            enabled: false
 	        },
-	        series: [{
-	            data: percentages
-	        }, {
-	        	data: targetPercentages
-	        }],
+	        series: series,
 	        legend: {
 	        	enabled: false
 	        }
@@ -670,12 +686,14 @@ $(document).ready(function() {
 		$this.children("tbody").children("tr.roster-spot").find("td.roster-spot-name").each(function() {
 			var name = $(this).text();
 			var position = $(this).prev('td').text();
+			var salary = $(this).next('td').text();
 			var teamAbbrBr = $(this).parent('tr.roster-spot').data('team-abbr-br');
 			var targetPercentage = $(this).parent('tr.roster-spot').data('target-percentage');
 
 			var rosterSpot = { 
 				name: name, 
 				position: position,
+				salary: salary,
 				teamAbbrBr: teamAbbrBr,
 				targetPercentage: targetPercentage,
 				lineupBuyIn: lineupBuyIn 
@@ -711,6 +729,8 @@ $(document).ready(function() {
 
 			player['teamAbbrBr'] = $('td.roster-spot-name:contains("'+player['name']+'")').first().parent('tr.roster-spot').data('team-abbr-br');
 
+			player['salary'] = $('td.roster-spot-name:contains("'+player['name']+'")').first().next('td').text();
+
 			players.push(player);
 		}
 
@@ -718,8 +738,6 @@ $(document).ready(function() {
 	}
 
 	function sortBarChart(barChartSorter, players) {
-		console.log(barChartSorter);
-
 		if (barChartSorter === 'Unspent Target Percentage') {
 			players.sort(function(a,b) {
 			    return b.unspentTargetPercentage - a.unspentTargetPercentage || 
