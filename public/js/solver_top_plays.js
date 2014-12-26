@@ -560,6 +560,17 @@ $(document).ready(function() {
 			players[i] = {};
 
 			players[i]['name'] = activeLineups.names[i];
+
+			for (var n = 0; n < activeLineups.rosterSpots.length; n++) {
+				if (players[i]['name'] == activeLineups.rosterSpots[n]['name']) {
+					players[i]['position'] = activeLineups.rosterSpots[n]['position'];
+					players[i]['teamAbbrBr'] = activeLineups.rosterSpots[n]['teamAbbrBr'];
+					players[i]['targetPercentage'] = activeLineups.rosterSpots[n]['targetPercentage'];
+
+					break;
+				} 
+			};
+
 			var totalBuyInOfPlayer = 0;
 
 			for (var n = 0; n < activeLineups.rosterSpots.length; n++) {
@@ -573,11 +584,7 @@ $(document).ready(function() {
 
 			players[i]['percentage'] = percentage;
 
-			players[i]['targetPercentage'] = $('td.roster-spot-name:contains("'+players[i]['name']+'")').first().parent('tr.roster-spot').data('target-percentage');
-
 			players[i]['unspentTargetPercentage'] = players[i]['targetPercentage'] - players[i]['percentage'];
-
-			players[i]['teamAbbrBr'] = $('td.roster-spot-name:contains("'+players[i]['name']+'")').first().parent('tr.roster-spot').data('team-abbr-br');
 		};
 
 		for (var i = 0; i < topPlays.length; i++) {
@@ -586,15 +593,19 @@ $(document).ready(function() {
 			addTopPlayIfMissing(isTopPlayInActiveLineup, topPlays[i], players);
 		};
 
+		for (var i = 0; i < players.length; i++) {
+			players[i]['contents'] = players[i]['name']+' ('+players[i]['position']+') ('+players[i]['teamAbbrBr']+')';
+		};
+
 		sortBarChart(players);
 		console.log(players);
 
-		var playerNames = [];
+		var playerContents = [];
 		var percentages = [];
 		var targetPercentages = [];
 
 		for (var i = 0; i < players.length; i++) {
-			playerNames.push(players[i]['name']);
+			playerContents.push(players[i]['contents']);
 			percentages.push(players[i]['percentage']);
 			targetPercentages.push(players[i]['targetPercentage']);
 		};
@@ -607,7 +618,7 @@ $(document).ready(function() {
 	        	text: null
 	        },
 	        xAxis: {
-	            categories: playerNames
+	            categories: playerContents
 	        },
 	        yAxis: {
 	            min: 0,
@@ -651,10 +662,14 @@ $(document).ready(function() {
 		$this.children("tbody").children("tr.roster-spot").find("td.roster-spot-name").each(function() {
 			var name = $(this).text();
 			var position = $(this).prev('td').text();
+			var teamAbbrBr = $(this).parent('tr.roster-spot').data('team-abbr-br');
+			var targetPercentage = $(this).parent('tr.roster-spot').data('target-percentage');
 
 			var rosterSpot = { 
 				name: name, 
 				position: position,
+				teamAbbrBr: teamAbbrBr,
+				targetPercentage: targetPercentage,
 				lineupBuyIn: lineupBuyIn 
 			};
 
@@ -683,6 +698,8 @@ $(document).ready(function() {
 			}
 
 			player['unspentTargetPercentage'] = topPlay.target_percentage - 0;
+
+			player['position'] = $('td.roster-spot-name:contains("'+player['name']+'")').first().prev('td').text();
 
 			player['teamAbbrBr'] = $('td.roster-spot-name:contains("'+player['name']+'")').first().parent('tr.roster-spot').data('team-abbr-br');
 
