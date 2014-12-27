@@ -192,7 +192,7 @@ class SolverTopPlays {
 
 		$duplicateLineups = [];
 
-		for ($i=0; $i < 250; $i++) { 
+		for ($i=0; $i < 1000; $i++) { 
 			$duplicateLineups[] = $this->buildOneLineupWithTopPlays($players, $numOfPlayersPerPosition);
 		}
 
