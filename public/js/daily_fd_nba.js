@@ -172,18 +172,18 @@ $(document).ready(function() {
 	SHOW TOTAL TARGET PERCENTAGE
 	********************************************/
 
+	showTotalTargetPercentage();
+
 	function showTotalTargetPercentage() {
 		var position = $('select.position-filter').val();
 
 		var totalTargetPercentage = addTargetPercentages(position);
 		
-		if (filter.position == 'All') {
-			$('span.total-target-percentage').text('N/A');
+		if (position == 'All') {
+			totalTargetPercentage = totalTargetPercentage / 9;
 		}
 
-		if (filter.position != 'All') {
-			$('span.total-target-percentage').text(totalTargetPercentage+'%');
-		}	
+		$('span.total-target-percentage').text(totalTargetPercentage+'%');
 	}
 
 	function addTargetPercentages(position) {

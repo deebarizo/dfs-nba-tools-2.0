@@ -738,10 +738,17 @@ $(document).ready(function() {
 	}
 
 	function sortBarChart(barChartSorter, players) {
-		if (barChartSorter === 'Unspent Target Percentage') {
+		if (barChartSorter === 'Unspent Target Percentage (Desc)') {
 			players.sort(function(a,b) {
 			    return b.unspentTargetPercentage - a.unspentTargetPercentage || 
 			    	   (b.unspentTargetPercentage == a.unspentTargetPercentage && b.percentage - a.percentage);
+			});
+		}
+
+		if (barChartSorter === 'Unspent Target Percentage (Asc)') {
+			players.sort(function(a,b) {
+			    return a.unspentTargetPercentage - b.unspentTargetPercentage || 
+			    	   (a.unspentTargetPercentage == b.unspentTargetPercentage && b.percentage - a.percentage);
 			});
 		}
 

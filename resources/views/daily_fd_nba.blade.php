@@ -51,7 +51,7 @@
 		</div>
 
 		<div class="col-lg-12" style="margin-bottom: 7px">
-			<p><strong>Total Target Percentage: </strong> <span class="total-target-percentage">N/A</span></p>
+			<p><strong>Total Target Percentage: </strong> <span class="total-target-percentage"></span></p>
 		</div>
 
 		<div class="col-lg-12">

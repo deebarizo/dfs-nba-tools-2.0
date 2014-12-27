@@ -115,7 +115,8 @@
 			<form class="form-inline" style="font-size: 90%; margin: 15px 0 10px 0">
 				<label>Sort</label>
 				<select class="form-control player-percentages-filter" style="margin-right: 20px">
-					<option value="Unspent Target Percentage" selected>Unspent Target Percentage</option>
+					<option value="Unspent Target Percentage (Desc)" selected>Unspent Target Percentage (Desc)</option>
+					<option value="Unspent Target Percentage (Asc)" selected>Unspent Target Percentage (Asc)</option>
 				  	<option value="Target Percentage">Target Percentage</option>
 				  	<option value="Actual Percentage">Actual Percentage</option>
 				  	<option value="First Name">First Name</option>
