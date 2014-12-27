@@ -6,6 +6,7 @@
 			<h2>Daily - FD NBA</h2>
 		</div>
 	</div>
+	
 	<div class="row">
 		<?php $errors = Session::get('errors') ? : $errors; ?>
 

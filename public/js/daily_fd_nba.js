@@ -183,6 +183,8 @@ $(document).ready(function() {
 			totalTargetPercentage = totalTargetPercentage / 9;
 		}
 
+		totalTargetPercentage = Math.round(totalTargetPercentage);
+
 		$('span.total-target-percentage').text(totalTargetPercentage+'%');
 	}
 
