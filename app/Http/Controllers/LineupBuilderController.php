@@ -57,7 +57,17 @@ class LineupBuilderController {
     ****************************************************************************************/
 
     public function editActiveLineup($date, $hash) {
-        echo 'bob';
+        $lineupBuilder = new LineupBuilder;
+
+        $lineup = $lineupBuilder->getLineup($hash);
+
+        $players = $lineupBuilder->getPlayersInPlayerPool($lineup['metadata']->player_pool_id);
+
+        $name = 'Edit Lineup';
+
+        ddAll($players);
+
+        return view('lineup_builder/edit_lineup', compact('date', 'lineup', 'players', 'name'));
     } 
 
 }

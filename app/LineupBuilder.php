@@ -18,9 +18,9 @@ use Illuminate\Support\Facades\DB;
 
 class LineupBuilder {
 
-	/****************************************************************************************
-	GET LINEUPS
-	****************************************************************************************/	
+    /****************************************************************************************
+    LINEUPS
+    ****************************************************************************************/
 
 	public function getLineups($date) {
 		$metadataOfLineups = DB::table('lineups')
@@ -48,6 +48,20 @@ class LineupBuilder {
         return $lineups;
 	}
 
+    public function getLineup($hash) {
+        $lineup = [];
+
+        $lineup['metadata'] = DB::table('lineups')
+            ->join('player_pools', 'player_pools.id', '=', 'lineups.player_pool_id')
+            ->select('lineups.id', 'hash', 'total_salary', 'lineups.buy_in as lineup_buy_in', 'active', 'money', 'player_pools.buy_in', 'player_pool_id')
+            ->where('lineups.hash', '=', $hash)
+            ->first();
+
+        $lineup['players'] = $this->getPlayersInLineup($lineup['metadata']->id, $lineup['metadata']->player_pool_id);
+
+        return $lineup;
+    }
+
     private function getPlayersInLineup($lineupId, $playerPoolId) {
         $playersInActiveLineups = DB::table('lineups')
             ->join('lineup_players', 'lineup_players.lineup_id', '=', 'lineups.id')
@@ -62,6 +76,19 @@ class LineupBuilder {
         # ddAll($playerPoolId);
 
         return $playersInActiveLineups;    
+    }
+
+
+    /****************************************************************************************
+    PLAYERS IN PLAYER POOL
+    ****************************************************************************************/
+
+    public function getPlayersInPlayerPool($playerPoolId) {
+        return DB::table('players_fd')
+            ->join('players', 'players.id', '=', 'players_fd.player_id')
+            ->select('*')
+            ->where('player_pool_id', '=', $playerPoolId)
+            ->get();
     }
 
 }
