@@ -37,7 +37,13 @@ class LineupBuilder {
             $lineups[$key]['players'] = $this->getPlayersInLineup($metadataOfLineup->id, $metadataOfLineup->player_pool_id);
         }
 
-        ddAll($lineups);
+        foreach ($lineups as &$lineup) {
+            $lineup['metadata']->lineup_buy_in_percentage = numFormat($lineup['metadata']->lineup_buy_in / $lineup['metadata']->buy_in * 100, 2);
+        }
+
+        unset($lineup);
+
+        # ddAll($lineups);
 
         return $lineups;
 	}

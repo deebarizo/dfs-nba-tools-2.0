@@ -47,7 +47,7 @@ class LineupBuilderController {
 
         $name = 'Lineup Builder';
 
-        ddAll($lineups);
+        # ddAll($lineups);
 
         return view('lineup_builder', compact('date', 'lineups', 'name'));
     }
