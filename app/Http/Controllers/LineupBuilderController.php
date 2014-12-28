@@ -31,10 +31,10 @@ date_default_timezone_set('America/Chicago');
 class LineupBuilderController {
 
     /****************************************************************************************
-    LINEUP BUILDER
+    SHOW ACTIVE LINEUPS
     ****************************************************************************************/
 
-    public function lineupBuilder($date = 'default') {
+    public function showActiveLineups($date = 'default') {
         if ($date == 'default') {
             $date = getDefaultDate();
 
@@ -51,5 +51,13 @@ class LineupBuilderController {
 
         return view('lineup_builder', compact('date', 'lineups', 'name'));
     }
+
+    /****************************************************************************************
+    EDIT ACTIVE LINEUP
+    ****************************************************************************************/
+
+    public function editActiveLineup($date, $hash) {
+        echo 'bob';
+    } 
 
 }

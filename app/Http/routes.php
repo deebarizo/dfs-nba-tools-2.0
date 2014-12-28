@@ -56,7 +56,8 @@ $router->resource('daily_fd_filters', 'DailyFdFiltersController', ['except' => [
 $router->get('daily_fd_filters/{player_id}/create', 'DailyFdFiltersController@create');
 $router->get('daily_fd_filters/{player_id}/create/{dailyFdFilterId}', 'DailyFdFiltersController@create');
 
-$router->get('lineup_builder/', 'LineupBuilderController@lineupBuilder');
-$router->get('lineup_builder/{date}', 'LineupBuilderController@lineupBuilder');
+$router->get('lineup_builder/', 'LineupBuilderController@showActiveLineups');
+$router->get('lineup_builder/{date}', 'LineupBuilderController@showActiveLineups');
+$router->get('lineup_builder/{date}/{hash}', 'LineupBuilderController@editActiveLineup');
 
 $router->get('get_player_name_autocomplete', 'PlayersController@getPlayerNameAutocomplete');
