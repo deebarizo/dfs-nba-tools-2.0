@@ -25,14 +25,7 @@ class LineupBuilder {
 	public function getLineups($date) {
 		$metadataOfLineups = DB::table('lineups')
             ->join('player_pools', 'player_pools.id', '=', 'lineups.player_pool_id')
-            ->select('lineups.id', 'hash', 'total_salary', 'lineups.buy_in as lineup_buy_in', 'active', 'money', 'player_pools.buy_in')
-            ->where('player_pools.date', '=', $date)
-            ->get();
-
-        $lineupPlayers = DB::table('lineups')
-            ->join('lineup_players', 'lineup_players.lineup_id', '=', 'lineups.id')
-            ->join('player_pools', 'player_pools.id', '=', 'lineups.player_pool_id')
-            ->select('*')
+            ->select('lineups.id', 'hash', 'total_salary', 'lineups.buy_in as lineup_buy_in', 'active', 'money', 'player_pools.buy_in', 'player_pool_id')
             ->where('player_pools.date', '=', $date)
             ->get();
 
@@ -41,28 +34,28 @@ class LineupBuilder {
         foreach ($metadataOfLineups as $key => $metadataOfLineup) {
             $lineups[$key]['metadata'] = $metadataOfLineup;
 
-            $lineups[$key]['players'] = $this->matchPlayersWithMetadataOfLineups($metadataOfLineup->id, $lineupPlayers);
+            $lineups[$key]['players'] = $this->getPlayersInLineup($metadataOfLineup->id, $metadataOfLineup->player_pool_id);
         }
+
+        ddAll($lineups);
 
         return $lineups;
 	}
 
-    private function matchPlayersWithMetadataOfLineups($lineupId, $lineupPlayers) {
-        $matchedPlayers = [];
+    private function getPlayersInLineup($lineupId, $playerPoolId) {
+        $playersInActiveLineups = DB::table('lineups')
+            ->join('lineup_players', 'lineup_players.lineup_id', '=', 'lineups.id')
+            ->join('players_fd', 'players_fd.player_id', '=', 'lineup_players.player_fd_id')
+            ->join('players', 'players.id', '=', 'players_fd.player_id')
+            ->join('teams', 'teams.id', '=', 'players_fd.team_id')
+            ->select('*')
+            ->whereRaw('lineups.id = '.$lineupId.' AND players_fd.player_pool_id = '.$playerPoolId.' AND lineups.active = 1')
+            ->orderByRaw(DB::raw('lineup_id, FIELD(position, "PG", "SG", "SF", "PF", "C"), salary DESC'))
+            ->get();
 
-        foreach ($lineupPlayers as $lineupPlayer) {
-            $matchedPlayers = $this->matchPlayersWithMetadataOfLineup($matchedPlayers, $lineupPlayer, $lineupId);
-        }
+        # ddAll($playerPoolId);
 
-        return $matchedPlayers;
-    }
-
-    private function matchPlayersWithMetadataOfLineup($matchedPlayers, $lineupPlayer, $lineupId) {
-        if ($lineupPlayer->lineup_id == $lineupId) {
-            $matchedPlayers[] = $lineupPlayer;
-        }
-
-        return $matchedPlayers;
+        return $playersInActiveLineups;    
     }
 
 }

@@ -45,9 +45,11 @@ class LineupBuilderController {
 
         $lineups = $lineupBuilder->getLineups($date);
 
-        # ddAll($lineups);
+        $name = 'Lineup Builder';
 
-        return view('lineup_builder', compact('date', 'lineups'));
+        ddAll($lineups);
+
+        return view('lineup_builder', compact('date', 'lineups', 'name'));
     }
 
 }

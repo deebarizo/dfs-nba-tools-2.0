@@ -178,14 +178,14 @@ $(document).ready(function() {
 		var position = $('select.position-filter').val();
 
 		var totalTargetPercentage = addTargetPercentages(position);
+		totalTargetPercentage = Math.round(totalTargetPercentage);
+		totalTargetPercentage = totalTargetPercentage+'%';
 		
 		if (position == 'All') {
-			totalTargetPercentage = totalTargetPercentage / 9;
+			totalTargetPercentage = 'N/A';
 		}
 
-		totalTargetPercentage = Math.round(totalTargetPercentage);
-
-		$('span.total-target-percentage').text(totalTargetPercentage+'%');
+		$('span.total-target-percentage').text(totalTargetPercentage);
 	}
 
 	function addTargetPercentages(position) {
