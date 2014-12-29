@@ -332,8 +332,29 @@ $(document).ready(function() {
 
 		$('select.player-filter option').removeClass('hide-player-in-filter');
 
+		$('span.selected-player-to-hide').next('.remove-selected-player-link').remove();
+		$('span.selected-player-to-hide').remove();
+		
+		var players = getPlayerPercentages();
+
+		var spentPlayers = players.filter(isSpentPlayer);
+
+		addSpentPlayersToView(spentPlayers);
+
 		runFilter();
 	});
+
+	function isSpentPlayer(player) {
+		return player['unspentTargetPercentage'] <= 0;
+	}
+
+	function addSpentPlayersToView(spentPlayers) {
+		for (var i = 0; i < spentPlayers.length; i++) {
+			$('span.selected-players-to-hide').append('<span data-player-id="'+spentPlayers[i].id+'" class="selected-player selected-player-to-hide">'+spentPlayers[i].name+'</span> <a class="remove-selected-player-link" href="#"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>');
+
+			$('select.player-filter').find('option[value='+spentPlayers[i].id+']').addClass('hide-player-in-filter');
+		};
+	}
 
 
 	/********************************************
@@ -558,63 +579,7 @@ $(document).ready(function() {
 	});
 
 	function drawBarChart() {
-		var activeLineups = {};
-		activeLineups.rosterSpots = [];
-		activeLineups.names = [];
-
-		$(".active-lineup").each(function() {
-			var lineupBuyIn = $(this).find("span.lineup-buy-in-amount").text();
-
-			var $this = $(this);
-
-			getActiveLineupsInfo($this, activeLineups, lineupBuyIn);
-		});
-
-		activeLineups.names = arrayUnique(activeLineups.names);
-
-		var players = [];
-
-		for (var i = 0; i < activeLineups.names.length; i++) {
-			players[i] = {};
-
-			players[i]['name'] = activeLineups.names[i];
-
-			for (var n = 0; n < activeLineups.rosterSpots.length; n++) {
-				if (players[i]['name'] == activeLineups.rosterSpots[n]['name']) {
-					players[i]['position'] = activeLineups.rosterSpots[n]['position'];
-					players[i]['salary'] = activeLineups.rosterSpots[n]['salary'];
-					players[i]['teamAbbrBr'] = activeLineups.rosterSpots[n]['teamAbbrBr'];
-					players[i]['targetPercentage'] = activeLineups.rosterSpots[n]['targetPercentage'];
-
-					break;
-				} 
-			};
-
-			var totalBuyInOfPlayer = 0;
-
-			for (var n = 0; n < activeLineups.rosterSpots.length; n++) {
-				if (players[i]['name'] == activeLineups.rosterSpots[n]['name']) {
-					totalBuyInOfPlayer += parseInt(activeLineups.rosterSpots[n]['lineupBuyIn']);
-				} 
-			};
-
-			var percentage = totalBuyInOfPlayer / buyIn * 100;
-			percentage = parseInt(percentage);
-
-			players[i]['percentage'] = percentage;
-
-			players[i]['unspentTargetPercentage'] = players[i]['targetPercentage'] - players[i]['percentage'];
-		};
-
-		for (var i = 0; i < topPlays.length; i++) {
-			var isTopPlayInActiveLineup = checkForTopPlayInActiveLineup(topPlays[i], players);
-
-			addTopPlayIfMissing(isTopPlayInActiveLineup, topPlays[i], players);
-		};
-
-		for (var i = 0; i < players.length; i++) {
-			players[i]['contents'] = players[i]['name']+'<br>('+players[i]['position']+') ('+players[i]['teamAbbrBr']+') ('+players[i]['salary']+')';
-		};
+		var players = getPlayerPercentages();
 
 		sortBarChart(barChartSorter, players);
 
@@ -695,6 +660,7 @@ $(document).ready(function() {
 
 	function getActiveLineupsInfo($this, activeLineups, lineupBuyIn) {
 		$this.children("tbody").children("tr.roster-spot").find("td.roster-spot-name").each(function() {
+			var id = $(this).parent('tr.roster-spot').data('player-id');
 			var name = $(this).text();
 			var position = $(this).prev('td').text();
 			var salary = $(this).next('td').text();
@@ -702,6 +668,7 @@ $(document).ready(function() {
 			var targetPercentage = $(this).parent('tr.roster-spot').data('target-percentage');
 
 			var rosterSpot = { 
+				id: id,
 				name: name, 
 				position: position,
 				salary: salary,
@@ -729,6 +696,7 @@ $(document).ready(function() {
 	function addTopPlayIfMissing(isTopPlayInActiveLineup, topPlay, players) {
 		if (!isTopPlayInActiveLineup) {
 			var player = {
+				id: topPlay.id,
 				name: topPlay.name,
 				percentage: 0,
 				targetPercentage: topPlay.target_percentage
@@ -800,6 +768,74 @@ $(document).ready(function() {
 			    	   (b.salary == a.salary && b.percentage - a.percentage);
 			});
 		}
+	}
+
+
+	/****************************************************************************************
+	PLAYER PERCENTAGES
+	****************************************************************************************/
+
+	function getPlayerPercentages() {
+		var activeLineups = {};
+		activeLineups.rosterSpots = [];
+		activeLineups.names = [];
+
+		$(".active-lineup").each(function() {
+			var lineupBuyIn = $(this).find("span.lineup-buy-in-amount").text();
+
+			var $this = $(this);
+
+			getActiveLineupsInfo($this, activeLineups, lineupBuyIn);
+		});
+
+		activeLineups.names = arrayUnique(activeLineups.names);
+
+		var players = [];
+
+		for (var i = 0; i < activeLineups.names.length; i++) {
+			players[i] = {};
+
+			players[i]['name'] = activeLineups.names[i];
+
+			for (var n = 0; n < activeLineups.rosterSpots.length; n++) {
+				if (players[i]['name'] == activeLineups.rosterSpots[n]['name']) {
+					players[i]['id'] = activeLineups.rosterSpots[n]['id'];
+					players[i]['position'] = activeLineups.rosterSpots[n]['position'];
+					players[i]['salary'] = activeLineups.rosterSpots[n]['salary'];
+					players[i]['teamAbbrBr'] = activeLineups.rosterSpots[n]['teamAbbrBr'];
+					players[i]['targetPercentage'] = activeLineups.rosterSpots[n]['targetPercentage'];
+
+					break;
+				} 
+			};
+
+			var totalBuyInOfPlayer = 0;
+
+			for (var n = 0; n < activeLineups.rosterSpots.length; n++) {
+				if (players[i]['name'] == activeLineups.rosterSpots[n]['name']) {
+					totalBuyInOfPlayer += parseInt(activeLineups.rosterSpots[n]['lineupBuyIn']);
+				} 
+			};
+
+			var percentage = totalBuyInOfPlayer / buyIn * 100;
+			percentage = parseInt(percentage);
+
+			players[i]['percentage'] = percentage;
+
+			players[i]['unspentTargetPercentage'] = players[i]['targetPercentage'] - players[i]['percentage'];
+		};
+
+		for (var i = 0; i < topPlays.length; i++) {
+			var isTopPlayInActiveLineup = checkForTopPlayInActiveLineup(topPlays[i], players);
+
+			addTopPlayIfMissing(isTopPlayInActiveLineup, topPlays[i], players);
+		};
+
+		for (var i = 0; i < players.length; i++) {
+			players[i]['contents'] = players[i]['name']+'<br>('+players[i]['position']+') ('+players[i]['teamAbbrBr']+') ('+players[i]['salary']+')';
+		};
+
+		return players;
 	}
 
 });
