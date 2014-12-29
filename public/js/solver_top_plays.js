@@ -325,6 +325,17 @@ $(document).ready(function() {
 	});
 
 
+	//// HIDE ALL SPENT PLAYERS ////
+
+	$('.hide-spent-players-link').click(function(e) {
+		e.preventDefault();
+
+		$('select.player-filter option').removeClass('hide-player-in-filter');
+
+		runFilter();
+	});
+
+
 	/********************************************
 	LINEUP TYPE FILTER
 	********************************************/

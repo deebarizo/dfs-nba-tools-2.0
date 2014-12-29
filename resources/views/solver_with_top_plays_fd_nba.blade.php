@@ -44,15 +44,9 @@
 			</div>
 		</div>
 
-		<div class="col-lg-2">
+		<div class="col-lg-4">
 			<p>
-				<strong>Navbar:</strong> <a class="toggle-navbar-link" href="#">Toggle</a>
-			</p>
-		</div>
-
-		<div class="col-lg-2">
-			<p>
-				<strong>Selected Players:</strong> <a class="clear-selected-players-link" href="#">Clear All</a>
+				<strong>Navbar:</strong> <a style="margin-right: 50px" class="toggle-navbar-link" href="">Toggle</a> <strong>Players:</strong> <a class="clear-selected-players-link" href="">Clear All</a> | <a class="hide-spent-players-link" href="">Hide Spent</a>
 			</p>
 		</div>
 	</div>
