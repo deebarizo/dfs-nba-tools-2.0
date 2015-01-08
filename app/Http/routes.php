@@ -58,6 +58,7 @@ $router->get('daily_fd_filters/{player_id}/create/{dailyFdFilterId}', 'DailyFdFi
 
 $router->get('lineup_builder/', 'LineupBuilderController@showActiveLineups');
 $router->get('lineup_builder/{date}', 'LineupBuilderController@showActiveLineups');
+$router->get('lineup_builder/{date}/create', 'LineupBuilderController@createLineup');
 $router->get('lineup_builder/{date}/{hash}', 'LineupBuilderController@editActiveLineup');
 
 $router->get('get_player_name_autocomplete', 'PlayersController@getPlayerNameAutocomplete');

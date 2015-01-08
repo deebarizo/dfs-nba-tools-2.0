@@ -9,7 +9,7 @@
 
 	<div class="row">
 		<div class="col-lg-12">
-			<h3>{{ $date }}</h3>
+			<h3>{{ $date }} | <a href="{{ $date }}/create">Create Lineup</a></h3>
 		</div>
 	</div>
 

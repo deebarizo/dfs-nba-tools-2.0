@@ -52,6 +52,29 @@ class LineupBuilderController {
         return view('lineup_builder', compact('date', 'lineups', 'name'));
     }
 
+
+    /****************************************************************************************
+    CREATE LINEUP
+    ****************************************************************************************/
+
+    public function createLineup($date) {
+        $lineupBuilder = new LineupBuilder;
+
+        $players = $lineupBuilder->getPlayersInPlayerPool($date);
+
+        $name = 'Create Lineup';
+        $defaultLineupBuyIn = getDefaultLineupBuyIn();
+
+        # ddAll($players);
+
+        return view('lineup_builder/create_lineup', compact('date', 
+                                                            'lineup', 
+                                                            'players', 
+                                                            'name', 
+                                                            'defaultLineupBuyIn'));
+    } 
+
+
     /****************************************************************************************
     EDIT ACTIVE LINEUP
     ****************************************************************************************/
@@ -61,7 +84,7 @@ class LineupBuilderController {
 
         $lineup = $lineupBuilder->getLineup($hash);
 
-        $players = $lineupBuilder->getPlayersInPlayerPool($lineup['metadata']->player_pool_id);
+        $players = $lineupBuilder->getPlayersInPlayerPool($date);
 
         $name = 'Edit Lineup';
 

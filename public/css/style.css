@@ -107,3 +107,39 @@ a:visited, a:active, a:focus {
 .hide-target-percentage-group {
 	display: none;
 }
+
+/* LINEUP BUILDER */
+
+tr.available-player-row-strikethrough {
+	text-decoration: line-through;
+}
+
+.circle-plus-icon {
+    width:25px;
+    height:25px;
+    background: green;
+    padding: 3px;
+    border-radius: 100%;
+    color: white;
+    text-align:center;
+    margin: 0 auto;
+}
+
+.circle-minus-icon {
+    width:25px;
+    height:25px;
+    background: red;
+    padding: 3px;
+    border-radius: 100%;
+    color: white;
+    text-align:center;
+    margin: 0 auto;
+}
+
+.lineup-salary-total {
+	font-weight: bold;
+}
+
+.lineup-salary-total-valid {
+	color: green;
+}

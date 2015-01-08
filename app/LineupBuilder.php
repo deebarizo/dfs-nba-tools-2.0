@@ -83,11 +83,12 @@ class LineupBuilder {
     PLAYERS IN PLAYER POOL
     ****************************************************************************************/
 
-    public function getPlayersInPlayerPool($playerPoolId) {
+    public function getPlayersInPlayerPool($date) {
         return DB::table('players_fd')
             ->join('players', 'players.id', '=', 'players_fd.player_id')
+            ->join('player_pools', 'player_pools.id', '=', 'players_fd.player_pool_id')
             ->select('*')
-            ->where('player_pool_id', '=', $playerPoolId)
+            ->where('player_pools.date', '=', $date)
             ->get();
     }
 
