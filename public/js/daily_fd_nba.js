@@ -139,9 +139,9 @@ $(document).ready(function() {
 				var editTargetPercentageInput = $this.parent('a').parent('td').next('td').children('div.edit-target-percentage-tooltip').children('input.edit-target-percentage-input');
 
 				if ($this.hasClass('daily-lock-active')) {
-					$(spanTargetPercentageAmount).text('10');
+					$(spanTargetPercentageAmount).text(defaultTargetPercentage);
 					$(spanTargetPercentageGroup).removeClass('hide-target-percentage-group');
-					$(editTargetPercentageInput).val('10');
+					$(editTargetPercentageInput).val(defaultTargetPercentage);
 				} else {
 					$(spanTargetPercentageAmount).text('---');
 					$(spanTargetPercentageGroup ).addClass('hide-target-percentage-group');

@@ -66,12 +66,12 @@
 						<th>Opp</th>
 						<th>Line</th>
 						<th>Pos</th>
-						<th>Salary</th>
+						<th>Sal</th>
 						<th>VR</th>
 						<th>VR-1</th>
-						<th>FPPG</th>
-						<th>FPPG-1</th>
-						<th>FPPM</th>
+						<th>FP</th>
+						<th>FP-1</th>
+						<th>FPM</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -177,6 +177,7 @@
 		****************************************************************************************/
 
 		var baseUrl = '<?php echo url(); ?>';
+		var defaultTargetPercentage = 10;
 
 	</script>
 

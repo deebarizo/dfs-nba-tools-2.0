@@ -345,7 +345,7 @@ $(document).ready(function() {
 	});
 
 	function isSpentPlayer(player) {
-		return player['unspentTargetPercentage'] <= 0;
+		return player['unspentTargetPercentage'] <= 4;
 	}
 
 	function addSpentPlayersToView(spentPlayers) {

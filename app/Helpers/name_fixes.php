@@ -12,10 +12,10 @@ function fd_name_fix($rawName) {
 			return 'Luc Mbah a Moute';
 
 		case 'Dennis Schroeder':
-			return 'Dennis Schröder';
+			return 'Dennis Schroder';
 
 		case 'Dennis Schroder':
-			return 'Dennis Schröder';
+			return 'Dennis Schroder';
 
 		case 'Tim Hardaway Jr.':
 			return 'Tim Hardaway';
