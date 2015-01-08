@@ -64,6 +64,7 @@ class LineupBuilderController {
 
         $name = 'Create Lineup';
         $defaultLineupBuyIn = getDefaultLineupBuyIn();
+        $fdPositions = ['PG', 'PG', 'SG', 'SG', 'SF', 'SF', 'PF', 'PF', 'C'];
 
         # ddAll($players);
 
@@ -71,7 +72,8 @@ class LineupBuilderController {
                                                             'lineup', 
                                                             'players', 
                                                             'name', 
-                                                            'defaultLineupBuyIn'));
+                                                            'defaultLineupBuyIn',
+                                                            'fdPositions'));
     } 
 
 

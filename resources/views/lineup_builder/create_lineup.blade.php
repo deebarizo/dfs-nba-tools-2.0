@@ -28,13 +28,10 @@
 				</thead>
 				<tbody>
 					@foreach ($players as $player)
-						<tr class="available-player-row"
-							data-player-pool-id="{{ $player->player_pool_id }}"
-							data-player-id="{{ $player->player_id }}"
-							>
-							<td>{{ $player->position }}</td>
-							<td>{{ $player->name }}</td>
-							<td>{{ $player->salary }}</td>
+						<tr class="available-player-row" data-player-pool-id="{{ $player->player_pool_id }}" data-player-id="{{ $player->player_id }}">
+							<td class="available-player-position">{{ $player->position }}</td>
+							<td class="available-player-name">{{ $player->name }}</td>
+							<td class="available-player-salary">{{ $player->salary }}</td>
 							<td style="width: 10%"><a class="update-player" href=""><div class="circle-plus-icon"><span class="glyphicon glyphicon-plus"></span></div></a></td>
 						</tr>		
 					@endforeach		
@@ -51,64 +48,18 @@
 						<th>Pos</th>					
 						<th>Name</th>
 						<th>Salary</th>
-						<th>Update</th>
+						<th>Remove</th>
 					</tr>
 				</thead>
 				<tbody>
-					<tr>
-						<td style="width: 10%">PG</td>
-						<td></td>
-						<td style="width: 15%"></td>
-						<td style="width: 10%"></td>
-					</tr>
-					<tr>
-						<td style="width: 10%">PG</td>
-						<td></td>
-						<td style="width: 15%"></td>
-						<td style="width: 10%"></td>
-					</tr>
-					<tr>
-						<td style="width: 10%">SG</td>
-						<td></td>
-						<td style="width: 15%"></td>
-						<td style="width: 10%"></td>
-					</tr>
-					<tr>
-						<td style="width: 10%">SG</td>
-						<td></td>
-						<td style="width: 15%"></td>
-						<td style="width: 10%"></td>
-					</tr>
-					<tr>
-						<td style="width: 10%">SF</td>
-						<td></td>
-						<td style="width: 15%"></td>
-						<td style="width: 10%"></td>
-					</tr>
-					<tr>
-						<td style="width: 10%">SF</td>
-						<td></td>
-						<td style="width: 15%"></td>
-						<td style="width: 10%"></td>
-					</tr>
-					<tr>
-						<td style="width: 10%">PF</td>
-						<td></td>
-						<td style="width: 15%"></td>
-						<td style="width: 10%"></td>
-					</tr>
-					<tr>
-						<td style="width: 10%">PF</td>
-						<td></td>
-						<td style="width: 15%"></td>
-						<td style="width: 10%"></td>
-					</tr>
-					<tr>
-						<td style="width: 10%">C</td>
-						<td></td>
-						<td style="width: 15%"></td>
-						<td style="width: 10%"></td>
-					</tr>	
+					@foreach ($fdPositions as $fdPosition)
+						<tr class="lineup-player-row" data-player-pool-id="" data-player-id="">
+							<td style="width: 10%" class="lineup-player-position">{{ $fdPosition }}</td>
+							<td class="lineup-player-name"></td>
+							<td style="width: 15%" class="lineup-player-salary"></td>
+							<td style="width: 10%"><a href="" class="remove-lineup-player-link"></a></td>
+						</tr>
+					@endforeach
 					<tr>
 						<td colspan="2" style="text-align: center">$<span class="default-lineup-buy-in-amount">{{ $defaultLineupBuyIn}}</span> | <a href="" class="edit-default-lineup-buy-in-link">Edit</a></td>
 						<td><span class="lineup-salary-total">0</span></td>

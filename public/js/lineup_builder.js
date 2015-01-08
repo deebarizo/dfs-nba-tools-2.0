@@ -14,7 +14,7 @@ $(document).ready(function() {
 
 
 	/****************************************************************************************
-	??
+	UPDATE PLAYER
 	****************************************************************************************/
 
 	$('a.update-player').on('click', function(e) {
@@ -26,7 +26,22 @@ $(document).ready(function() {
 		var tableRow = $(this).closest('tr.available-player-row');
 
 		toggleAvailablePlayerRow(status, iconDiv, iconSpan, tableRow);
+
+		var playerPoolId = tableRow.data('player-pool-id');
+		var playerId = tableRow.data('playerId');
+		var position = tableRow.children('td.available-player-position').text();
+		var name = tableRow.children('td.available-player-name').text();
+		var salary = tableRow.children('td.available-player-salary').text();
+
+		updateLineupPlayerRow(status, playerPoolId, playerId, position, name, salary);
 	});
+
+	function updateLineupPlayerRow(status, playerPoolId, playerId, position, name, salary) {
+		if (status) {
+			var lineupPlayerRow = $('td.lineup-player-position:contains("'+position+'")').next('td.lineup-player-name:empty').first().closest('tr.lineup-player-row');
+			lineupPlayerRow.find('td.lineup-player-name').text(name);
+		}		
+	}
 
 	function toggleAvailablePlayerRow(status, iconDiv, iconSpan, tableRow) {
 		if (status) {
