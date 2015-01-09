@@ -9,7 +9,7 @@
 
 	<div class="row">
 		<div class="col-lg-12">
-			<h3>{{ $date }} | <a href="{{ $date }}/create">Create Lineup</a></h3>
+			<h3>{{ $date }} | <a href="{{ url() }}/lineup_builder/{{ $date }}/create">Create Lineup</a></h3>
 		</div>
 	</div>
 
@@ -40,7 +40,7 @@
 								<td>{{ $player->salary }}</td>
 							</tr>
 						@endforeach
-						<td class="edit-lineup-td" style="text-align: center" colspan="2">#{{ $key + 1 }} | ${{ $lineup['metadata']->lineup_buy_in }} ({{ $lineup['metadata']->lineup_buy_in_percentage }}%) | <a href="{{ $date}}/{{ $lineup['metadata']->hash }}" class="edit-lineup-players-link">Edit Players</a></td>
+						<td class="edit-lineup-td" style="text-align: center" colspan="2">#{{ $key + 1 }} | ${{ $lineup['metadata']->lineup_buy_in }} ({{ $lineup['metadata']->lineup_buy_in_percentage }}%) | <a href="{{ url() }}/lineup_builder/{{ $date }}/create/{{ $lineup['metadata']->hash}}" class="edit-lineup-players-link">Edit Players</a></td>
 						<td style="color: green"><strong>{{ $player->total_salary }}</strong></td>
 					</tbody>
 				</table>

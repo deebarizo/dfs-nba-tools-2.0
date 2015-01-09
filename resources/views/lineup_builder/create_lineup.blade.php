@@ -28,11 +28,11 @@
 				</thead>
 				<tbody>
 					@foreach ($players as $player)
-						<tr class="available-player-row" data-player-pool-id="{{ $player->player_pool_id }}" data-player-id="{{ $player->player_id }}">
+						<tr class="available-player-row {{ $player->strikethrough_css_class }}" data-player-pool-id="{{ $player->player_pool_id }}" data-player-id="{{ $player->player_id }}">
 							<td class="available-player-position">{{ $player->position }}</td>
 							<td class="available-player-name">{{ $player->name }}</td>
 							<td class="available-player-salary">{{ $player->salary }}</td>
-							<td class="available-player-update" style="width: 10%"><a class="update-available-player-link" href=""><div class="circle-plus-icon"><span class="glyphicon glyphicon-plus"></span></div></a></td>
+							<td class="available-player-update" style="width: 10%"><a class="update-available-player-link" href="">{!! $player->update_icon !!}</a></td>
 						</tr>		
 					@endforeach		
 				</tbody>
@@ -52,22 +52,22 @@
 					</tr>
 				</thead>
 				<tbody>
-					@foreach ($fdPositions as $fdPosition)
-						<tr class="lineup-row lineup-player-row" data-player-pool-id="" data-player-id="">
-							<td style="width: 10%" class="lineup-player-position">{{ $fdPosition }}</td>
-							<td class="lineup-player-name"></td>
-							<td style="width: 15%" class="lineup-player-salary"></td>
-							<td style="width: 10%"><a href="" class="remove-lineup-player-link"></a></td>
+					@foreach ($lineup['players'] as $player)
+						<tr class="lineup-row lineup-player-row" data-player-pool-id="{{ $player->player_pool_id }}" data-player-id="{{ $player->player_id }}">
+							<td style="width: 10%" class="lineup-player-position">{{ $player->position }}</td>
+							<td class="lineup-player-name">{{ $player->name }}</td>
+							<td style="width: 15%" class="lineup-player-salary">{{ $player->salary }}</td>
+							<td style="width: 10%"><a href="" class="remove-lineup-player-link">{!! $player->remove_player_icon !!}</a></td>
 						</tr>
 					@endforeach
 					<tr class="lineup-row">
 						<td colspan="2">
 							<div class="input-group" style="margin: 0 auto">
 						  		<span class="input-group-addon">$</span>
-						  		<input style="width: 75px" type="text" class="form-control lineup-buy-in-amount" value="{{ $defaultLineupBuyIn }}">
+						  		<input style="width: 75px" type="text" class="form-control lineup-buy-in-amount" value="{{ $lineup['metadata']->lineup_buy_in }}">
 							</div>
 						</td>
-						<td><span class="lineup-salary-total">0</span></td>
+						<td><span class="lineup-salary-total">{{ $lineup['metadata']->total_salary }}</span></td>
 						<td></td>
 					</tr>	
 				</tbody>

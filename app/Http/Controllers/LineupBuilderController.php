@@ -38,7 +38,7 @@ class LineupBuilderController {
         if ($date == 'default') {
             $date = getDefaultDate();
 
-            return redirect('lineup_builder/'.$date);
+            return redirect('lineup_builder/'.$date.'/');
         }
 
         $lineupBuilder = new LineupBuilder;
@@ -57,42 +57,90 @@ class LineupBuilderController {
     CREATE LINEUP
     ****************************************************************************************/
 
-    public function createLineup($date) {
+    public function createLineup($date, $hash = null) {
         $lineupBuilder = new LineupBuilder;
 
         $players = $lineupBuilder->getPlayersInPlayerPool($date);
 
-        $name = 'Create Lineup';
-        $defaultLineupBuyIn = getDefaultLineupBuyIn();
-        $fdPositions = ['PG', 'PG', 'SG', 'SG', 'SF', 'SF', 'PF', 'PF', 'C'];
-
         # ddAll($players);
+
+        if (is_null($hash)) {
+            $name = 'Create Lineup';
+            $lineup = $this->createEmptyLineup();
+        }
+
+        if (!is_null($hash)) {
+            $name = 'Create Lineup From Import';
+            $lineup = $lineupBuilder->getLineup($hash);
+
+            $lineup = $this->addHtmlToImportedLineup($lineup);
+        }
+
+        $players = $this->addHtmlToEachAvailablePlayer($players, $lineup);
+
+        # dd($lineup);
 
         return view('lineup_builder/create_lineup', compact('date', 
                                                             'lineup', 
                                                             'players', 
                                                             'name', 
-                                                            'defaultLineupBuyIn',
-                                                            'fdPositions'));
+                                                            'lineup'));
     } 
 
+    private function createEmptyLineup() {
+        $lineup = [];
 
-    /****************************************************************************************
-    EDIT ACTIVE LINEUP
-    ****************************************************************************************/
+        $lineup['metadata'] = new \stdClass();
+        $lineup['metadata']->total_salary = 0;
+        $lineup['metadata']->lineup_buy_in = getDefaultLineupBuyIn();
 
-    public function editActiveLineup($date, $hash) {
-        $lineupBuilder = new LineupBuilder;
+        $fdPositions = ['PG', 'PG', 'SG', 'SG', 'SF', 'SF', 'PF', 'PF', 'C'];
 
-        $lineup = $lineupBuilder->getLineup($hash);
+        for ($i = 0; $i < 9; $i++) { 
+            $lineup['players'][$i] = new \stdClass();
+            $lineup['players'][$i]->position = $fdPositions[$i];
+            $lineup['players'][$i]->player_pool_id = '';
+            $lineup['players'][$i]->player_id = '';
+            $lineup['players'][$i]->name = '';
+            $lineup['players'][$i]->salary = '';
+            $lineup['players'][$i]->remove_player_icon = '';
+        }
 
-        $players = $lineupBuilder->getPlayersInPlayerPool($date);
+        return $lineup;
+    }
 
-        $name = 'Edit Lineup';
+    private function addHtmlToImportedLineup($lineup) {
+        foreach ($lineup['players'] as $lineupPlayer) {
+            $lineupPlayer->remove_player_icon = '<div class="circle-minus-icon"><span class="glyphicon glyphicon-minus"></span></div>';
+        }
 
-        ddAll($players);
+        return $lineup;
+    }
 
-        return view('lineup_builder/edit_lineup', compact('date', 'lineup', 'players', 'name'));
-    } 
+    private function addHtmlToEachAvailablePlayer($players, $lineup) {
+        foreach ($players as &$player) {
+            $player = $this->checkLineupForPlayer($lineup, $player);
+        }
+
+        unset($player);
+
+        return $players;
+    }
+
+    private function checkLineupForPlayer($lineup, $availablePlayer) {
+        foreach ($lineup['players'] as $lineupPlayer) {
+            if ($lineupPlayer->player_id == $availablePlayer->player_id) {
+                $availablePlayer->strikethrough_css_class = 'available-player-row-strikethrough';
+                $availablePlayer->update_icon = '<div class="circle-minus-icon"><span class="glyphicon glyphicon-minus"></span></div>';
+
+                return $availablePlayer;
+            }
+        }
+
+        $availablePlayer->strikethrough_css_class = '';
+        $availablePlayer->update_icon = '<div class="circle-plus-icon"><span class="glyphicon glyphicon-plus"></span></div>';
+
+        return $availablePlayer;  
+    }
 
 }

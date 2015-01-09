@@ -141,6 +141,26 @@ $(document).ready(function() {
 
 		$('span.lineup-salary-total').text(totalSalary);
 
+		addColorForTotalSalary(totalSalary);
+	}
+
+	function checkSalaryForBlank(salaryText) {
+		if (salaryText == '') {
+			return parseInt(0);
+		} 
+
+		return parseInt(salaryText);
+	}
+
+
+	/****************************************************************************************
+	ADD COLOR FOR TOTAL SALARY
+	****************************************************************************************/
+
+	var totalSalary = $('span.lineup-salary-total').text();
+	addColorForTotalSalary(totalSalary);
+
+	function addColorForTotalSalary(totalSalary) {
 		if (totalSalary >= 59400 && totalSalary <= 60000) {
 			$('span.lineup-salary-total').addClass('lineup-salary-total-valid');
 			$('span.lineup-salary-total').removeClass('lineup-salary-total-invalid');
@@ -155,14 +175,6 @@ $(document).ready(function() {
 			$('span.lineup-salary-total').removeClass('lineup-salary-total-valid');
 			$('span.lineup-salary-total').removeClass('lineup-salary-total-invalid');
 		}
-	}
-
-	function checkSalaryForBlank(salaryText) {
-		if (salaryText == '') {
-			return parseInt(0);
-		} 
-
-		return parseInt(salaryText);
 	}
 
 
