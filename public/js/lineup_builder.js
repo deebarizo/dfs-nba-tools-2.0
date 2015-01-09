@@ -165,4 +165,14 @@ $(document).ready(function() {
 		return parseInt(salaryText);
 	}
 
+
+	/****************************************************************************************
+	SUBMIT LINEUP 
+	****************************************************************************************/
+
+	$('button.submit-lineup').on('click', function() {
+		var lineupBuyIn = $('input.lineup-buy-in-amount').val();
+		console.log(lineupBuyIn);
+	});
+
 });

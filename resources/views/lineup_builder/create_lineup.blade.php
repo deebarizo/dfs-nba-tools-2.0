@@ -61,12 +61,19 @@
 						</tr>
 					@endforeach
 					<tr class="lineup-row">
-						<td colspan="2" style="text-align: center">$<span class="default-lineup-buy-in-amount">{{ $defaultLineupBuyIn}}</span> | <a href="" class="edit-default-lineup-buy-in-link">Edit</a></td>
+						<td colspan="2">
+							<div class="input-group" style="margin: 0 auto">
+						  		<span class="input-group-addon">$</span>
+						  		<input style="width: 75px" type="text" class="form-control lineup-buy-in-amount" value="{{ $defaultLineupBuyIn }}">
+							</div>
+						</td>
 						<td><span class="lineup-salary-total">0</span></td>
 						<td></td>
 					</tr>	
 				</tbody>
 			</table>
+
+			<button class="btn btn-primary pull-right submit-lineup" type="submit">Submit</button>
 		</div>
 	</div>
 
