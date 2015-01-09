@@ -123,13 +123,14 @@ $(document).ready(function() {
 
 		if (!status) {
 			var lineupPlayerRow = $('tr.lineup-player-row[data-player-id*='+playerId+']').first();
-			lineupPlayerRow.removeData('player-pool-id');
-			lineupPlayerRow.removeData('player-id');
-			lineupPlayerRow.find('td.lineup-player-name').empty();
-			lineupPlayerRow.find('td.lineup-player-salary').empty();
-			lineupPlayerRow.find('a.remove-lineup-player-link').empty();		
-		}		
 
+			emptyLineupPlayerRow(lineupPlayerRow);
+		}
+
+		updateTotalSalary();		
+	}
+
+	function updateTotalSalary() {
 		var totalSalary = 0;
 
 		$('td.lineup-player-salary').each(function() {
@@ -150,6 +151,14 @@ $(document).ready(function() {
 		} 
 
 		return parseInt(salaryText);
+	}
+
+	function emptyLineupPlayerRow(lineupPlayerRow) {
+		lineupPlayerRow.removeData('player-pool-id');
+		lineupPlayerRow.removeData('player-id');
+		lineupPlayerRow.find('td.lineup-player-name').empty();
+		lineupPlayerRow.find('td.lineup-player-salary').empty();
+		lineupPlayerRow.find('a.remove-lineup-player-link').empty();	
 	}
 
 
@@ -183,22 +192,57 @@ $(document).ready(function() {
 	****************************************************************************************/
 
 	$('button.submit-lineup').on('click', function() {
-		var lineupValidation = validateLineup();
-
-		if (!lineupValidation.validRoster) {
-			alert('This lineup is missing roster spots.');
+		if (!validateLineup()) {
 			return;
 		}
 
-		if (!lineupValidation.validSalary) {
-			alert('This total salary for this lineup is not valid.');
-			return;
-		}
+		$('button.submit-lineup').attr('disabled', 'disabled').text('Saving...');
 
+		var lineupPlayerRow = $('tr.lineup-player-row');
+
+		var playerPoolId = lineupPlayerRow.first().data('player-pool-id');
 		var lineupBuyIn = $('input.lineup-buy-in-amount').val();
+		var totalSalary = $('span.lineup-salary-total-valid').text();
+
+		var playerIdsOfLineup = [];
+		var hash = '';
+
+		lineupPlayerRow.each(function() {
+			var playerId = $(this).data('player-id');
+			
+			playerIdsOfLineup.push(playerId); 
+			hash += playerId;
+		});
+
+		$.ajax({
+            url: baseUrl+'/solver_top_plays/add_or_remove_lineup/',
+           	type: 'POST',
+           	data: { 
+           		addOrRemove: 'Add',
+           		playerPoolId: playerPoolId,
+           		buyIn: lineupBuyIn,
+           		totalSalary: totalSalary,
+           		playerIdsOfLineup: playerIdsOfLineup,
+           		hash: hash
+           	},
+            success: function() {
+            	emptyLineupPlayerRow(lineupPlayerRow);
+
+            	updateTotalSalary();
+
+            	availablePlayerRowWithStrikethrough = $('tr.available-player-row-strikethrough');
+            	
+            	availablePlayerRowWithStrikethrough.removeClass('available-player-row-strikethrough');
+            	availablePlayerRowWithStrikethrough.children('td.available-player-update').find('div').removeClass('circle-minus-icon').addClass('circle-plus-icon');
+            	availablePlayerRowWithStrikethrough.children('td.available-player-update').find('span').removeClass('glyphicon-minus').addClass('glyphicon-plus');
+
+            	$('button.submit-lineup').removeAttr('disabled').text('Submit Lineup');
+            	$('h4.lineup').after('<div class="alert alert-info fade in" role="alert"><button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>Success!</div>');
+            }
+        }); 
 	});
 
-	function validateLineup(lineup) {
+	function validateLineup() {
 		var numEmptyRosterSpots = $('td.lineup-player-name:empty').length;
 
 		if (numEmptyRosterSpots == 0) {
@@ -209,12 +253,19 @@ $(document).ready(function() {
 			var validRoster = 0;
 		}
 
-		var lineupValidation = {
-			validRoster: validRoster,
-			validSalary: $('span.lineup-salary-total-valid').length
+		if (!validRoster) {
+			alert('This lineup is missing roster spots.');
+			return false;
 		}
 
-		return lineupValidation;
+		var validSalary = $('span.lineup-salary-total-valid').length;
+
+		if (!validSalary) {
+			alert('This total salary for this lineup is not valid.');
+			return false;
+		}
+
+		return true;
 	}
 
 });

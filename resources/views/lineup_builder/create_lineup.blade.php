@@ -40,7 +40,7 @@
 		</div>
 
 		<div class="col-lg-6">
-			<h4>Lineup</h4>
+			<h4 class="lineup">Lineup</h4>
 
 			<table id="lineup" class="table table-striped table-bordered table-hover table-condensed">
 				<thead>
@@ -73,9 +73,19 @@
 				</tbody>
 			</table>
 
-			<button class="btn btn-primary pull-right submit-lineup" type="submit">Submit</button>
+			<button style="width: 128px" class="btn btn-primary pull-right submit-lineup" type="submit">Submit Lineup</button>
 		</div>
 	</div>
+
+	<script type="text/javascript">
+
+		/****************************************************************************************
+		GLOBAL VARIABLES
+		****************************************************************************************/
+
+		var baseUrl = '<?php echo url(); ?>';
+
+	</script>
 
 	<script src="/js/lineup_builder.js"></script>
 @stop

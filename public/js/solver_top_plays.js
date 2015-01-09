@@ -470,6 +470,8 @@ $(document).ready(function() {
 
 		var $this = $(this);
 
+		console.log(playerIdsOfLineup);
+
     	$.ajax({
             url: baseUrl+'/solver_top_plays/add_or_remove_lineup/',
            	type: 'POST',
