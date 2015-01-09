@@ -23,17 +23,27 @@ $(document).ready(function() {
 		var availablePlayerRow = $(this).closest('tr.available-player-row');
 
 		var playerPoolId = availablePlayerRow.data('player-pool-id');
+		var iconDiv = getIconDiv(availablePlayerRow);
+		var status = getStatus(iconDiv);
 		var playerId = availablePlayerRow.data('playerId');
 		var position = availablePlayerRow.children('td.available-player-position').text();
 		var name = availablePlayerRow.children('td.available-player-name').text();
 		var salary = availablePlayerRow.children('td.available-player-salary').text();
 
-		var iconDiv = getIconDiv(availablePlayerRow);
-		var status = getStatus(iconDiv);
+		if (!isPositionFull(position)) {
+			alert('The '+position+' position is full.');
+			return;
+		}
 
 		updateAvailablePlayerRow(availablePlayerRow, iconDiv, status);
 		updateLineupPlayerRow(status, playerPoolId, playerId, position, name, salary);
 	});
+
+	function isPositionFull(position) {
+		var isThereOpenSpot = $('td.lineup-player-position:contains("'+position+'")').next('td.lineup-player-name:empty').first().closest('tr.lineup-player-row').length;
+
+		return isThereOpenSpot;
+	}
 
 
 	/****************************************************************************************
