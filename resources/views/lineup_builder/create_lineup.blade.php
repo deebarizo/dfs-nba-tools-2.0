@@ -32,7 +32,7 @@
 							<td class="available-player-position">{{ $player->position }}</td>
 							<td class="available-player-name">{{ $player->name }}</td>
 							<td class="available-player-salary">{{ $player->salary }}</td>
-							<td style="width: 10%"><a class="update-available-player-link" href=""><div class="circle-plus-icon"><span class="glyphicon glyphicon-plus"></span></div></a></td>
+							<td class="available-player-update" style="width: 10%"><a class="update-available-player-link" href=""><div class="circle-plus-icon"><span class="glyphicon glyphicon-plus"></span></div></a></td>
 						</tr>		
 					@endforeach		
 				</tbody>
