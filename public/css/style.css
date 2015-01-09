@@ -136,6 +136,15 @@ tr.available-player-row-strikethrough {
     margin: 0 auto;
 }
 
+tr.lineup-row {
+	height: 43px;
+}
+
+.table-condensed > tbody > tr.lineup-row > td {
+	padding: 5px;
+	vertical-align: middle;
+}
+
 .lineup-salary-total {
 	font-weight: bold;
 }
