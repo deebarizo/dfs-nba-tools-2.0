@@ -30,7 +30,7 @@ $(document).ready(function() {
 		var name = availablePlayerRow.children('td.available-player-name').text();
 		var salary = availablePlayerRow.children('td.available-player-salary').text();
 
-		if (!isPositionFull(position)) {
+		if (!isPositionFull(position) && status) {
 			alert('The '+position+' position is full.');
 			return;
 		}
@@ -171,8 +171,38 @@ $(document).ready(function() {
 	****************************************************************************************/
 
 	$('button.submit-lineup').on('click', function() {
+		var lineupValidation = validateLineup();
+
+		if (!lineupValidation.validRoster) {
+			alert('This lineup is missing roster spots.');
+			return;
+		}
+
+		if (!lineupValidation.validSalary) {
+			alert('This total salary for this lineup is not valid.');
+			return;
+		}
+
 		var lineupBuyIn = $('input.lineup-buy-in-amount').val();
-		console.log(lineupBuyIn);
 	});
+
+	function validateLineup(lineup) {
+		var numEmptyRosterSpots = $('td.lineup-player-name:empty').length;
+
+		if (numEmptyRosterSpots == 0) {
+			var validRoster = 1;
+		}
+
+		if (numEmptyRosterSpots != 0) {
+			var validRoster = 0;
+		}
+
+		var lineupValidation = {
+			validRoster: validRoster,
+			validSalary: $('span.lineup-salary-total-valid').length
+		}
+
+		return lineupValidation;
+	}
 
 });
