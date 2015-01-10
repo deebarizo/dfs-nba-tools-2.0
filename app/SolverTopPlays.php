@@ -6,7 +6,9 @@ class SolverTopPlays {
 	GLOBAL VARIABLES
 	****************************************************************************************/
 
-	private $minimumTotalSalary = 59700; // 1% of cap
+	private $lineupBuilderIterations = 2000;
+	private $targetPercentageModifier = 0;
+	private $minimumTotalSalary = 59400; // 1% of cap
 	private $maximumTotalSalary = 60000;
 
 
@@ -77,7 +79,7 @@ class SolverTopPlays {
 	}
 
 	private function appendIfUnspentPlayer($spentPercentage, $player, $unspentPlayers) {
-		if ($spentPercentage < $player->target_percentage) {
+		if ($spentPercentage + $this->targetPercentageModifier < $player->target_percentage) {
 			$unspentPlayers[] = $player;
 		}
 
@@ -365,7 +367,7 @@ class SolverTopPlays {
 
 		$duplicateLineups = [];
 
-		for ($i=0; $i < 2000; $i++) { 
+		for ($i=0; $i < $this->lineupBuilderIterations; $i++) { 
 			$duplicateLineups[] = $this->buildOneLineupWithTopPlays($players, $numOfPlayersPerPosition);
 		}
 
