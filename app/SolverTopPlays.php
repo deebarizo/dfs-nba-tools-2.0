@@ -63,8 +63,49 @@ class SolverTopPlays {
 	FILTER UNSPENT PLAYERS
 	****************************************************************************************/
 
-	public function filterUnspentPlayers($players) {
-		
+	public function filterUnspentPlayers($players, $activeLineups, $buyIn) {
+		$unspentPlayers = [];
+
+		foreach ($players as $player) {
+			$spentPercentage = 0;
+			$spentPercentage = $this->getSpentPercentage($spentPercentage, $activeLineups, $player, $buyIn);
+
+			$unspentPlayers = $this->appendIfUnspentPlayer($spentPercentage, $player, $unspentPlayers);
+		}
+
+		ddAll($unspentPlayers);
+	}
+
+	private function appendIfUnspentPlayer($spentPercentage, $player, $unspentPlayers) {
+		if ($spentPercentage < $player->target_percentage) {
+			$unspentPlayers[] = $player;
+		}
+
+		return $unspentPlayers;
+	}
+
+	private function getSpentPercentage($spentPercentage, $activeLineups, $player, $buyIn) {
+		foreach ($activeLineups as $activeLineup) {
+			$spentPercentage = $this->getSpentPercentageForLineup($spentPercentage, $activeLineup, $player, $buyIn);
+		}
+
+		return $spentPercentage;
+	}
+
+	private function getSpentPercentageForLineup($spentPercentage, $activeLineup, $player, $buyIn) {
+		foreach ($activeLineup['roster_spots'] as $rosterSpot) {
+			$spentPercentage += $this->addSpentPercentage($rosterSpot->player_id, $player->player_id, $rosterSpot->buy_in, $buyIn);
+		}
+
+		return $spentPercentage;
+	}
+
+	private function addSpentPercentage($playerId1, $playerId2, $rosterSpotBuyIn, $buyIn) {
+		if ($playerId1 == $playerId2) {
+			return $rosterSpotBuyIn / $buyIn * 100;
+		}
+
+		return 0;
 	}
 
 
