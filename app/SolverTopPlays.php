@@ -70,19 +70,40 @@ class SolverTopPlays {
 			array_push($lineups, $activeLineupsNotInSolver);
 		}
 
-		$totalSalary = [];
+		foreach ($lineups as $key => &$lineup) {
+			$lineup['num_of_unique_teams'] = $this->getNumOfUniqueTeams($lineup['roster_spots']);
+		}
+
+		unset($lineup);
 
 		foreach ($lineups as $key => $lineup) {
 			$active[$key] = $lineup['active'];
 			$money[$key] = $lineup['money'];
+			$numOfUniqueTeams[$key] = $lineup['num_of_unique_teams'];
 			$totalSalary[$key] = $lineup['total_salary'];
 		}
 
-		array_multisort($active, SORT_ASC, $money, SORT_ASC, $totalSalary, SORT_DESC, $lineups);
+		array_multisort($active, SORT_ASC, 
+						$money, SORT_ASC, 
+						$numOfUniqueTeams, SORT_DESC,
+						$totalSalary, SORT_DESC, 
+						$lineups);
 
 		# ddAll($lineups);
 
         return $lineups;
+	}
+
+	private function getNumOfUniqueTeams($rosterSpots) {
+		$teams = [];
+
+		foreach ($rosterSpots as $rosterSpot) {
+			$teams[] = $rosterSpot->abbr_br;
+		}
+
+		$uniqueTeams = array_unique($teams);
+
+		return count($uniqueTeams);
 	}
 
 	private function markLineupIfActive($lineup, $activeLineups, $buyIn)	{
@@ -232,7 +253,10 @@ class SolverTopPlays {
 	private function buildOneLineupWithTopPlays($players, $numOfPlayersPerPosition) {
 		do {
 			$lineup = $this->loopThroughPlayersToBuildOneLineup($players, $numOfPlayersPerPosition);
-		} while ($lineup['total_salary'] > 60000 || $lineup['total_salary'] < $this->minimumTotalSalary);
+		} while ($lineup['total_salary'] > 60000 || 
+				 $lineup['total_salary'] < $this->minimumTotalSalary);
+
+		# ddAll($lineup);
 
 		return $lineup;
 	}
