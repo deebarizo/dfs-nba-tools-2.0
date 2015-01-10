@@ -34,13 +34,33 @@ class SolverTopPlays {
 	GET ACTIVE LINEUPS
 	****************************************************************************************/
 
-	public function getActiveLineups($metadata) {
-		
+	public function getActiveLineups($metadataOfActiveLineups, $playerPoolId) {
+		$activeLineups = [];
+
+		foreach ($metadataOfActiveLineups as $metadataOfActiveLineup) {
+			$activeLineups[] = $metadataOfActiveLineup;
+		}
+
+		# ddAll($activeLineups);
+
+		$playersInActiveLineups = getPlayersInActiveLineups($playerPoolId);
+
+		foreach ($playersInActiveLineups as $player) {
+			foreach ($activeLineups as &$activeLineup) {
+				if ($activeLineup['hash'] == $player->hash) {
+					$activeLineup['roster_spots'][] = $player;
+				}
+			}
+
+			unset($activeLineup);
+		}
+
+		return $activeLineups;
 	}
 
 
 	/****************************************************************************************
-	SORT PLAYERS
+	FILTER UNSPENT PLAYERS
 	****************************************************************************************/
 
 	public function filterUnspentPlayers($players) {
@@ -91,7 +111,7 @@ class SolverTopPlays {
 
 			$activeLineupsNotInSolver['total_salary'] = $activeLineup['total_salary'];
 			$activeLineupsNotInSolver['hash'] = $activeLineup['hash'];
-			$activeLineupsNotInSolver['total_unspent'] = $this->maximumTotalSalary - $activeLineup['total_salary'];
+			$activeLineupsNotInSolver['total_unspent_salary'] = $this->maximumTotalSalary - $activeLineup['total_salary'];
 
 			$activeLineupsNotInSolver['active'] = 1;
 			$activeLineupsNotInSolver['css_class_blue_border'] = 'active-lineup';
@@ -383,7 +403,7 @@ class SolverTopPlays {
 			$lineup['hash'] .= $rosterSpot->player_id;
 		}
 
-		$lineup['total_unspent'] = $this->maximumTotalSalary - $lineup['total_salary'];
+		$lineup['total_unspent_salary'] = $this->maximumTotalSalary - $lineup['total_salary'];
 
 		return $lineup;
 	}

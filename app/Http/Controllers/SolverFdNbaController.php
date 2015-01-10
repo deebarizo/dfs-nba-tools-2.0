@@ -53,9 +53,11 @@ class SolverFdNbaController {
 
         $metadataOfActiveLineups = $solverTopPlays->appendMoreMetadataToActiveLineups($metadataOfActiveLineups, $buyIn);
 
-        $activeLineups = $solverTopPlays->getActiveLineups($metadataOfActiveLineups);
+        $activeLineups = $solverTopPlays->getActiveLineups($metadataOfActiveLineups, $playerPoolId);
 
-        # ddAll($activeLineups);
+        $unspentPlayers = $solverTopPlays->filterUnspentPlayers($players);
+
+        ddAll($unspentPlayers);
 
         $players = $solverTopPlays->sortPlayers($players);
 
