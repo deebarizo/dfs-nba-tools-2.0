@@ -42,6 +42,8 @@ class SolverFdNbaController {
 
         $players = getTopPlays($date);
 
+        # ddAll($players);
+
         $solverTopPlays = new SolverTopPlays;
 
         $solverTopPlays->validateTopPlays($players);
