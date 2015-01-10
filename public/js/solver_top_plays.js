@@ -664,7 +664,7 @@ $(document).ready(function() {
 		$this.children("tbody").children("tr.roster-spot").find("td.roster-spot-name").each(function() {
 			var id = $(this).parent('tr.roster-spot').data('player-id');
 			var name = $(this).text();
-			var position = $(this).prev('td').text();
+			var position = $(this).siblings('td.position').text();
 			var salary = $(this).next('td').text();
 			var teamAbbrBr = $(this).parent('tr.roster-spot').data('team-abbr-br');
 			var targetPercentage = $(this).parent('tr.roster-spot').data('target-percentage');
@@ -706,7 +706,7 @@ $(document).ready(function() {
 
 			player['unspentTargetPercentage'] = topPlay.target_percentage - 0;
 
-			player['position'] = $('td.roster-spot-name:contains("'+player['name']+'")').first().prev('td').text();
+			player['position'] = $('td.roster-spot-name:contains("'+player['name']+'")').first().siblings('td.position').text();
 
 			player['teamAbbrBr'] = $('td.roster-spot-name:contains("'+player['name']+'")').first().parent('tr.roster-spot').data('team-abbr-br');
 

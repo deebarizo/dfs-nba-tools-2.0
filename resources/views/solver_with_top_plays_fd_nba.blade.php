@@ -158,7 +158,7 @@
 								data-player-id="{{ $rosterSpot->player_id }}"
 								data-target-percentage="{{ $rosterSpot->target_percentage }}" 
 								data-team-abbr-br="{{ $rosterSpot->abbr_br }}">
-								<td>{{ $rosterSpot->position }}</td>	
+								<td class="position">{{ $rosterSpot->position }}</td>	
 								<td class="{{ $lineup['team_css_classes'][$key] }}">{{ $rosterSpot->abbr_br }}</td>
 								<td class="roster-spot-name">{{ $rosterSpot->name }}</td>
 								<td>{{ $rosterSpot->salary }}</td>
