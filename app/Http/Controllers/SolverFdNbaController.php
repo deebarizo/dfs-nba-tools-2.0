@@ -45,6 +45,7 @@ class SolverFdNbaController {
         $buyIn = getBuyIn($playerPoolId);
 
         $players = getTopPlays($date);
+
         $metadataOfActiveLineups = getMetadataOfActiveLineups($playerPoolId);
 
         $solverTopPlays = new SolverTopPlays;
@@ -57,11 +58,7 @@ class SolverFdNbaController {
 
         $unspentPlayers = $solverTopPlays->filterUnspentPlayers($players, $activeLineups, $buyIn);
 
-        ddAll($unspentPlayers);
-
-        $players = $solverTopPlays->sortPlayers($players);
-
-        $lineups = $solverTopPlays->buildLineupsWithTopPlays($players);
+        $lineups = $solverTopPlays->buildLineupsWithTopPlays($unspentPlayers);
 
         $lineups = $solverTopPlays->markAndAppendActiveLineups($lineups, $playerPoolId, $buyIn);
 
@@ -71,7 +68,9 @@ class SolverFdNbaController {
 
         $defaultLineupBuyIn = getDefaultLineupBuyIn();
 
-        ddAll($lineups);
+        $players = $solverTopPlays->sortPlayers($players); // for select options
+
+        # ddAll($lineups);
 
         return view('solver_with_top_plays_fd_nba', 
                      compact('date', 

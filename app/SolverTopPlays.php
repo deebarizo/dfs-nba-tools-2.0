@@ -73,7 +73,7 @@ class SolverTopPlays {
 			$unspentPlayers = $this->appendIfUnspentPlayer($spentPercentage, $player, $unspentPlayers);
 		}
 
-		ddAll($unspentPlayers);
+		return $unspentPlayers;
 	}
 
 	private function appendIfUnspentPlayer($spentPercentage, $player, $unspentPlayers) {
