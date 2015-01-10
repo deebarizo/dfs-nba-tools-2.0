@@ -14,6 +14,15 @@ class SolverTopPlays {
 	SORT PLAYERS
 	****************************************************************************************/
 
+	public function filterUnspentPlayers($players) {
+		
+	}
+
+
+	/****************************************************************************************
+	SORT PLAYERS
+	****************************************************************************************/
+
 	public function sortPlayers($players) {
 		foreach ($players as $key => $player) {
 			$name[$key] = $player->name;
@@ -32,7 +41,7 @@ class SolverTopPlays {
 	****************************************************************************************/
 
 	public function markAndAppendActiveLineups($lineups, $playerPoolId, $buyIn) {
-		$activeLineups = getActiveLineups($playerPoolId);
+		$activeLineups = getMetadataOfActiveLineups($playerPoolId);
 
 		$playersInActiveLineups = getPlayersInActiveLineups($playerPoolId);
 
@@ -345,7 +354,7 @@ class SolverTopPlays {
 			$lineup['hash'] .= $rosterSpot->player_id;
 		}
 
-		$lineup['total_unspent'] = 60000 - $lineup['total_salary'];
+		$lineup['total_unspent'] = $this->$maximumTotalSalary - $lineup['total_salary'];
 
 		return $lineup;
 	}
@@ -429,7 +438,11 @@ class SolverTopPlays {
 		'C'  => ['required_num' => 1, 'current_num' => 0]
 	];
 
-	public function validateTopPlays($players) {
+	public function validateTopPlays($players, $activeLineups) {
+		if (!empty($activeLineups)) {
+			return true;
+		}
+
         if (!$this->validateFdPositions($players)) {
             echo 'You are missing one or more positions.'; 
             exit();

@@ -40,21 +40,26 @@ class SolverFdNbaController {
             return redirect('solver_with_top_plays_fd_nba/'.$date);
         }
 
-        $players = getTopPlays($date);
+        $timePeriod = 'All Day';
+        $playerPoolId = getPlayerPoolId($date);
+        $buyIn = getBuyIn($playerPoolId);
 
-        # ddAll($players);
+        $players = getTopPlays($date);
+        $metadataOfActiveLineups = getMetadataOfActiveLineups($playerPoolId);
+
+        ddAll($metadataOfActiveLineups);
 
         $solverTopPlays = new SolverTopPlays;
 
-        $solverTopPlays->validateTopPlays($players);
+        $unspentPlayers = $solverTopPlays->filterUnspentPlayers($players);
+
+        $solverTopPlays->validateTopPlays($players, $activeLineups);
+
+        # ddAll($activeLineups);
 
         $players = $solverTopPlays->sortPlayers($players);
 
         $lineups = $solverTopPlays->buildLineupsWithTopPlays($players);
-
-        $timePeriod = $lineups[0]['roster_spots']['PG2']->time_period;
-        $playerPoolId = $lineups[0]['roster_spots']['PG2']->player_pool_id;
-        $buyIn = getBuyIn($playerPoolId);
 
         $lineups = $solverTopPlays->markAndAppendActiveLineups($lineups, $playerPoolId, $buyIn);
 
@@ -64,7 +69,7 @@ class SolverFdNbaController {
 
         $defaultLineupBuyIn = getDefaultLineupBuyIn();
 
-        # ddAll($lineups);
+        ddAll($lineups);
 
         return view('solver_with_top_plays_fd_nba', 
                      compact('date', 

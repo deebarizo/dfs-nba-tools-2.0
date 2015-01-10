@@ -33,6 +33,12 @@ function getPlayersInActiveLineups($playerPoolId) {
     return $playersInActiveLineups;    
 }
 
+function getPlayerPoolId($date) {
+    return DB::table('player_pools')
+                 ->where('date', $date)
+                 ->pluck('id');
+}
+
 function getBuyIn($playerPoolId) {
     $buyIn = DB::table('player_pools')
         ->where('id', $playerPoolId)
@@ -45,13 +51,8 @@ function getBuyIn($playerPoolId) {
     return $buyIn;
 }
 
-function getActiveLineups($playerPoolId) {
-    $activeLineups = DB::table('lineups')
-        ->select('*')
-        ->whereRaw('player_pool_id = '.$playerPoolId.' AND active = 1')
-        ->get(); 
-
-    return $activeLineups;
+function getMetadataOfActiveLineups($playerPoolId) {
+    return Lineup::where(['player_pool_id' => $playerPoolId, 'active' => 1])->get()->toArray();
 }
 
 function addLineup($playerPoolId, $hash, $totalSalary, $buyIn, $playerIdsOfLineup) {
