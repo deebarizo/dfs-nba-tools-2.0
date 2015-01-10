@@ -11,6 +11,35 @@ class SolverTopPlays {
 
 
 	/****************************************************************************************
+	APPEND MORE METADATA TO LINEUPS
+	****************************************************************************************/
+
+	public function appendMoreMetadataToActiveLineups($metadataOfActiveLineups, $buyIn) {
+		foreach ($metadataOfActiveLineups as &$metadataOfActiveLineup) {
+			$metadataOfActiveLineup['css_class_blue_border'] = 'active-lineup';
+			$metadataOfActiveLineup['css_class_edit_info'] = '';
+			$metadataOfActiveLineup['anchor_text'] = 'Remove';
+			$metadataOfActiveLineup['css_class_money_lineup'] = $this->getMoneyCssClass($metadataOfActiveLineup['money']);
+			$metadataOfActiveLineup['play_or_unplay_anchor_text'] = $this->getMoneyAnchorText($metadataOfActiveLineup['money']);
+			$metadataOfActiveLineup['buy_in_percentage'] = numFormat($metadataOfActiveLineup['buy_in'] / $buyIn * 100, 2);
+		}
+
+		unset($metadataOfActiveLineup);
+
+		return $metadataOfActiveLineups;
+	}
+
+
+	/****************************************************************************************
+	GET ACTIVE LINEUPS
+	****************************************************************************************/
+
+	public function getActiveLineups($metadata) {
+		
+	}
+
+
+	/****************************************************************************************
 	SORT PLAYERS
 	****************************************************************************************/
 
@@ -55,26 +84,26 @@ class SolverTopPlays {
 			$activeLineupsNotInSolver = [];
 
 			foreach ($playersInActiveLineups as $player) {
-				if ($activeLineup->hash == $player->hash) {
+				if ($activeLineup['hash'] == $player->hash) {
 					$activeLineupsNotInSolver['roster_spots'][] = $player;
 				}
 			}
 
-			$activeLineupsNotInSolver['total_salary'] = $activeLineup->total_salary;
-			$activeLineupsNotInSolver['hash'] = $activeLineup->hash;
-			$activeLineupsNotInSolver['total_unspent'] = $this->maximumTotalSalary - $activeLineup->total_salary;
+			$activeLineupsNotInSolver['total_salary'] = $activeLineup['total_salary'];
+			$activeLineupsNotInSolver['hash'] = $activeLineup['hash'];
+			$activeLineupsNotInSolver['total_unspent'] = $this->maximumTotalSalary - $activeLineup['total_salary'];
 
 			$activeLineupsNotInSolver['active'] = 1;
 			$activeLineupsNotInSolver['css_class_blue_border'] = 'active-lineup';
 			$activeLineupsNotInSolver['css_class_edit_info'] = '';
 			$activeLineupsNotInSolver['anchor_text'] = 'Remove';
 
-			$activeLineupsNotInSolver['money'] = $activeLineup->money;
-			$activeLineupsNotInSolver['css_class_money_lineup'] = $this->getMoneyCssClass($activeLineup->money);
-			$activeLineupsNotInSolver['play_or_unplay_anchor_text'] = $this->getMoneyAnchorText($activeLineup->money);
+			$activeLineupsNotInSolver['money'] = $activeLineup['money'];
+			$activeLineupsNotInSolver['css_class_money_lineup'] = $this->getMoneyCssClass($activeLineup['money']);
+			$activeLineupsNotInSolver['play_or_unplay_anchor_text'] = $this->getMoneyAnchorText($activeLineup['money']);
 
-			$activeLineupsNotInSolver['buy_in'] = $activeLineup->buy_in;
-			$activeLineupsNotInSolver['buy_in_percentage'] = numFormat($activeLineup->buy_in / $buyIn * 100, 2);
+			$activeLineupsNotInSolver['buy_in'] = $activeLineup['buy_in'];
+			$activeLineupsNotInSolver['buy_in_percentage'] = numFormat($activeLineup['buy_in'] / $buyIn * 100, 2);
 
 			array_push($lineups, $activeLineupsNotInSolver);
 		}
@@ -173,18 +202,18 @@ class SolverTopPlays {
 
 	private function markLineupIfActive($lineup, $activeLineups, $buyIn)	{
 		foreach ($activeLineups as $key => $activeLineup) {
-			if ($lineup['hash'] == $activeLineup->hash) {
+			if ($lineup['hash'] == $activeLineup['hash']) {
 				$lineup['active'] = 1;
 				$lineup['css_class_blue_border'] = 'active-lineup';
 				$lineup['css_class_edit_info'] = '';
 				$lineup['anchor_text'] = 'Remove';
 
-				$lineup['money'] = $activeLineup->money;
-				$lineup['css_class_money_lineup'] = $this->getMoneyCssClass($activeLineup->money);
-				$lineup['play_or_unplay_anchor_text'] = $this->getMoneyAnchorText($activeLineup->money);
+				$lineup['money'] = $activeLineup['money'];
+				$lineup['css_class_money_lineup'] = $this->getMoneyCssClass($activeLineup['money']);
+				$lineup['play_or_unplay_anchor_text'] = $this->getMoneyAnchorText($activeLineup['money']);
 				
-				$lineup['buy_in'] = $activeLineup->buy_in;
-				$lineup['buy_in_percentage'] = numFormat($activeLineup->buy_in / $buyIn * 100, 2);
+				$lineup['buy_in'] = $activeLineup['buy_in'];
+				$lineup['buy_in_percentage'] = numFormat($activeLineup['buy_in'] / $buyIn * 100, 2);
 
 				unset($activeLineups[$key]);
 
@@ -354,7 +383,7 @@ class SolverTopPlays {
 			$lineup['hash'] .= $rosterSpot->player_id;
 		}
 
-		$lineup['total_unspent'] = $this->$maximumTotalSalary - $lineup['total_salary'];
+		$lineup['total_unspent'] = $this->maximumTotalSalary - $lineup['total_salary'];
 
 		return $lineup;
 	}
