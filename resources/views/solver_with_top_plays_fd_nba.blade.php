@@ -146,25 +146,27 @@
 					   		  {{ $lineup['css_class_money_lineup'] }}">
 					<thead>
 						<tr>
-							<th style="width: 15%">Pos</th>
-							<th style="width: 55%">Name</th>
-							<th style="width: 30%">Sal</th>
+							<th style="width: 10%">Pos</th>
+							<th style="width: 15%">Team</th>
+							<th style="width: 60%">Name</th>
+							<th style="width: 15%">Sal</th>
 						</tr>
 					</thead>
 					<tbody>
-						@foreach ($lineup['roster_spots'] as $rosterSpot)
+						@foreach ($lineup['roster_spots'] as $key => $rosterSpot)
 							<tr class="roster-spot" 
 								data-player-id="{{ $rosterSpot->player_id }}"
 								data-target-percentage="{{ $rosterSpot->target_percentage }}" 
 								data-team-abbr-br="{{ $rosterSpot->abbr_br }}">
-								<td>{{ $rosterSpot->position }}</td>
+								<td>{{ $rosterSpot->position }}</td>	
+								<td class="{{ $lineup['team_css_classes'][$key] }}">{{ $rosterSpot->abbr_br }}</td>
 								<td class="roster-spot-name">{{ $rosterSpot->name }}</td>
 								<td>{{ $rosterSpot->salary }}</td>
 							</tr>
 						@endforeach
 
 						<tr class="update-lineup-row">
-							<td class="update-lineup-td" style="text-align: center" colspan="2">
+							<td class="update-lineup-td" style="text-align: center" colspan="3">
 								<span class="edit-lineup-buy-in {{ $lineup['css_class_edit_info'] }}">
 									$<span class="lineup-buy-in-amount">{{ $lineup['buy_in'] }}</span> 
 									(<span class="lineup-buy-in-percentage">{{ $lineup['buy_in_percentage'] }}</span>%) | 

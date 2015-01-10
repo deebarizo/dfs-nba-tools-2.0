@@ -6,7 +6,7 @@ class SolverTopPlays {
 	GLOBAL VARIABLES
 	****************************************************************************************/
 
-	private $minimumTotalSalary = 59400; // 1% of cap
+	private $minimumTotalSalary = 59700; // 1% of cap
 	private $maximumTotalSalary = 60000;
 
 
@@ -70,8 +70,14 @@ class SolverTopPlays {
 			array_push($lineups, $activeLineupsNotInSolver);
 		}
 
-		foreach ($lineups as $key => &$lineup) {
+		foreach ($lineups as &$lineup) {
 			$lineup['num_of_unique_teams'] = $this->getNumOfUniqueTeams($lineup['roster_spots']);
+		}
+
+		unset($lineup);
+
+		foreach ($lineups as &$lineup) {
+			$lineup['team_css_classes'] = $this->getTeamCssClasses($lineup['num_of_unique_teams'], $lineup['roster_spots']);
 		}
 
 		unset($lineup);
@@ -95,15 +101,65 @@ class SolverTopPlays {
 	}
 
 	private function getNumOfUniqueTeams($rosterSpots) {
+		$uniqueTeams = $this->getUniqueTeamsOfLineup($rosterSpots);
+
+		return count($uniqueTeams);
+	}
+
+	private function getTeamCssClasses($numOfUniqueTeams, $rosterSpots) {
+		if ($numOfUniqueTeams == 9) {
+			$teamCssClasses = $this->createEmptyTeamCssClasses($rosterSpots);
+
+			return $teamCssClasses;
+		}
+
+		$teams = $this->getTeamsOfLineup($rosterSpots);
+
+		foreach ($rosterSpots as $key => $rosterSpot) {
+			$teamCount = 0;
+
+			foreach ($teams as $team) {
+				if ($team == $rosterSpot->abbr_br) {
+					$teamCount++;
+				}
+			}
+
+			if ($teamCount > 1) {
+				$teamCssClasses[$key] = 'team-bold';
+			}
+
+			if ($teamCount == 1) {
+				$teamCssClasses[$key] = '';
+			}
+		}
+
+		return $teamCssClasses;
+	}
+
+	private function createEmptyTeamCssClasses($rosterSpots) {
+		foreach ($rosterSpots as $key => $rosterSpot) {
+			$teamCssClasses[$key] = '';
+		}
+
+		return $teamCssClasses;
+	}
+
+	private function getUniqueTeamsOfLineup($rosterSpots) {
+		$teams = $this->getTeamsOfLineup($rosterSpots);
+
+		$uniqueTeams = array_unique($teams);
+
+		return $uniqueTeams;		
+	}
+
+	private function getTeamsOfLineup($rosterSpots) {
 		$teams = [];
 
 		foreach ($rosterSpots as $rosterSpot) {
 			$teams[] = $rosterSpot->abbr_br;
 		}
 
-		$uniqueTeams = array_unique($teams);
-
-		return count($uniqueTeams);
+		return $teams;		
 	}
 
 	private function markLineupIfActive($lineup, $activeLineups, $buyIn)	{
