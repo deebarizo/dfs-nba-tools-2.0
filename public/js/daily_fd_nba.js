@@ -7,7 +7,7 @@ $(document).ready(function() {
 	$('#daily').dataTable({
 		"scrollY": "600px",
 		"paging": false,
-		"order": [[9, "desc"]]
+		"order": [[8, "desc"]]
 	});
 
 	$('#daily_filter').hide();
