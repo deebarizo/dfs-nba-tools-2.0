@@ -22,17 +22,27 @@ class StudiesController {
 	CORRELATION: SPREADS AND PLAYER FPTS ERROR
 	****************************************************************************************/	
 
-	public function correlationSpreadsAndPlayerFptsError() {
+	public function correlationSpreadsAndPlayerFptsError($mpgMax, $fppgMax, $fppgMin, $absoluteSpread) {
+		if ($absoluteSpread == 'NOABS') {
+			$absoluteSpread = '';
+			
+			$xMin = -25;
+		}
+
+		if ($absoluteSpread == 'ABS') {
+			$xMin = 0;
+		}
+
 		$seasons = Season::where('start_year', '>=', $this->seasonStartYear['earliest'])
 					->where('end_year', '<=', $this->seasonStartYear['latest'])
 					->get()
 					->toArray();
 
 		foreach ($seasons as &$season) { 
-			$season['eligible_players'] = $this->getEligiblePlayers($season['id']);
+			$season['eligible_players'] = $this->getEligiblePlayers($season['id'], $mpgMax, $fppgMax, $fppgMin);
 			$season['teams'] = $this->getTeams($season['id']);
 
-			$boxScoreLines = $this->getBoxScoreLines($season['id']);
+			$boxScoreLines = $this->getBoxScoreLines($season['id'], $absoluteSpread);
 			$boxScoreLines = $this->removeIneligiblePlayers($boxScoreLines, $season['eligible_players']);
 			$season['box_score_lines'] = $this->addPlayerFptsErrorToBoxScoreLines($boxScoreLines, $season['eligible_players'], $season['teams']);
 		}
@@ -44,9 +54,22 @@ class StudiesController {
 
 		foreach ($seasons as $season) {
 			foreach ($season['box_score_lines'] as $boxScoreLine) {
-				if ($boxScoreLine['mp'] >= 20) {
+				$playerFptsError[] = $boxScoreLine['player_fpts_error'];
+
+				if ($absoluteSpread == 'ABS') {
 					$spreads[] = $boxScoreLine['absolute_spread'];
-					$playerFptsError[] = $boxScoreLine['player_fpts_error'];		
+				}
+				
+				if ($boxScoreLine['team_id'] == $boxScoreLine['home_team_id'] && $absoluteSpread == '') {
+					$spreads[] = $boxScoreLine['absolute_spread'];
+
+					continue;
+				}
+				
+				if ($boxScoreLine['team_id'] == $boxScoreLine['road_team_id'] && $absoluteSpread == '') {
+					$spreads[] = $boxScoreLine['absolute_spread'] * -1;
+
+					continue;
 				}
 			}
 		}
@@ -55,7 +78,7 @@ class StudiesController {
 
 		# ddAll($data);
 
-		for ($x=0; $x <= 25 ; $x++) { 
+		for ($x = $xMin; $x <= 25 ; $x++) { 
 			$y = ($data['bOne'] * $x) + $data['bNaught'];
 			$lineOfBestFitJSON[] = [$x, $y];
 		}
@@ -64,7 +87,7 @@ class StudiesController {
 
 		$perfectLineJSON = [];
 
-		for ($x=0; $x <= 25 ; $x++) { 
+		for ($x = $xMin; $x <= 25 ; $x++) { 
 			$y = $x * 2;
 			$perfectLineJSON[] = [$x, $y];
 		}
@@ -140,7 +163,7 @@ class StudiesController {
 		return false;
 	}
 
-	private function getBoxScoreLines($seasonId) {
+	private function getBoxScoreLines($seasonId, $absoluteSpread) {
 		return BoxScoreLine::select(DB::raw('box_score_lines.id as box_score_line_id, 
 											  game_id, 
 											  season_id, 
@@ -152,7 +175,7 @@ class StudiesController {
 											  vegas_home_team_score,
 											  road_team_id, 
 											  vegas_road_team_score,
-											  ABS(vegas_road_team_score - vegas_home_team_score) as absolute_spread,
+											  '.$absoluteSpread.'(vegas_road_team_score - vegas_home_team_score) as absolute_spread,
 											  mp, 
 											  pts + (trb * 1.2) + (ast * 1.5) + (blk * 2) + (stl * 2) - tov as fpts'))
 					->join('games', 'games.id', '=', 'box_score_lines.game_id')
@@ -165,7 +188,7 @@ class StudiesController {
 					->toArray();
 	}
 
-	private function getEligiblePlayers($seasonId) {
+	private function getEligiblePlayers($seasonId, $mpgMax, $fppgMax, $fppgMin) {
 		return DB::table('box_score_lines')
 			->select(DB::raw('player_id, 
 							  players.name, 
@@ -182,10 +205,15 @@ class StudiesController {
 			->where('seasons.id', '=', $seasonId)
 			->where('status', '=', 'Played')
 			->groupBy('player_id')
-			->having('mpg', '>=', 20)
-			->having('fppg', '<', 38.9)
-			->having('fppg', '>=', 37)
-			->having('num_games', '>=', 30)
+			->having('mpg', '>=', $mpgMax)
+			->having('fppg', '<', $fppgMax)
+			->having('fppg', '>=', $fppgMin)
+			// ->having('fppg', '<', 36)
+			// ->having('fppg', '>=', 30)
+			// ->having('fppg', '<', 30)
+			// ->having('fppg', '>=', 25)
+			// ->having('fppg', '<', 25)
+			->having('num_games', '>=', 41)
 			->having('num_teams', '=', 1)
 			->get();
 	}
