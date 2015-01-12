@@ -5,6 +5,7 @@ ini_set('max_execution_time', 10800); // 10800 seconds = 3 hours
 use App\Season;
 use App\Team;
 use App\Game;
+use App\BoxScoreLine;
 
 use Illuminate\Support\Facades\DB;
 
@@ -18,42 +19,76 @@ class StudiesController {
 	];
 
 	/****************************************************************************************
-	CORRELATION: SPREADS AND PROJECTED FD POINTS
+	CORRELATION: SPREADS AND PLAYER FPTS ERROR
 	****************************************************************************************/	
 
-	public function correlationSpreadsAndProjectedFdPoints() {
-		$games = Game::select('*')
-					->join('seasons', 'seasons.id', '=', 'games.season_id')
-					->where('start_year', '>=', $this->seasonStartYear['earliest'])
-					->where('end_year', '<=', $this->seasonStartYear['latest'])
-					->get()
-					->toArray();
-
-		// create x-axis array
-
-		$spreads = [];
-		
-		foreach ($games as $game) {
-			$spreads[] = $game['vegas_road_team_score'] - $game['vegas_home_team_score'];
-		}
-
-		// create y-axis array
-
+	public function correlationSpreadsAndPlayerFptsError() {
 		$seasons = Season::where('start_year', '>=', $this->seasonStartYear['earliest'])
 					->where('end_year', '<=', $this->seasonStartYear['latest'])
 					->get()
 					->toArray();
 
-		foreach ($seasons as &$season) {
+		foreach ($seasons as &$season) { 
 			$season['eligible_players'] = $this->getEligiblePlayers($season['id']);
 			$season['teams'] = $this->getTeams($season['id']);
+
+			$boxScoreLines = $this->getBoxScoreLines($season['id']);
+			$boxScoreLines = $this->removeIneligiblePlayers($boxScoreLines, $season['eligible_players']);
+
+			ddAll($boxScoreLines);
 		}
 
 		unset($season);
 
-		ddAll($seasons);
+		ddAll($seasons[0]['box_score_lines']);
+	}
 
-		// $data = calculateCorrelation($spreads, ?, 'Spreads', '?');
+	private function removeIneligiblePlayers($boxScoreLines, $eligiblePlayers) {
+		foreach ($boxScoreLines as $key => $boxScoreLine) {
+			$isPlayerEligible = false;
+
+			foreach ($eligiblePlayers as $eligiblePlayer) {
+				if ($boxScoreLine['player_id'] == $eligiblePlayer->player_id) {
+					$isPlayerEligible = true;
+
+					break;
+				}					
+			}
+
+			if (!$isPlayerEligible) {
+				unset($boxScoreLines[$key]);
+			}
+		}
+
+		return $boxScoreLines;
+	}
+
+	private function isPlayerEligible($boxScoreLinePlayerId, $eligiblePlayerId) {
+	
+	}
+
+	private function getBoxScoreLines($seasonId) {
+		return BoxScoreLine::select(DB::raw('box_score_lines.id as box_score_line_id, 
+											  game_id, 
+											  season_id, 
+											  box_score_lines.player_id,
+											  players.name,
+											  box_score_lines.team_id,
+											  teams.abbr_br, 
+											  home_team_id,
+											  vegas_home_team_score,
+											  road_team_id, 
+											  vegas_road_team_score,
+											  ABS(vegas_road_team_score - vegas_home_team_score) as absolute_spread,
+											  pts + (trb * 1.2) + (ast * 1.5) + (blk * 2) + (stl * 2) - tov as fpts'))
+					->join('games', 'games.id', '=', 'box_score_lines.game_id')
+					->join('seasons', 'seasons.id', '=', 'games.season_id')
+					->join('players', 'players.id', '=', 'box_score_lines.player_id')
+					->join('teams', 'teams.id', '=', 'box_score_lines.team_id')
+					->where('seasons.id', '=', $seasonId)
+					->where('status', '=', 'Played')
+					->get()
+					->toArray();
 	}
 
 	private function getEligiblePlayers($seasonId) {
@@ -102,8 +137,7 @@ class StudiesController {
 			$team->multiplier = $team->fppg / $team->ppg;
 		}
 
-		ddAll($teams);
-
+		return $teams;
 	}
 
 	private function getTeamPpg($numGames, $games, $teamId) {
