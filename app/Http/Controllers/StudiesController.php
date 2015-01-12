@@ -46,6 +46,7 @@ class StudiesController {
 
 		foreach ($seasons as &$season) {
 			$season['eligible_players'] = $this->getEligiblePlayers($season['id']);
+			$season['teams'] = $this->getTeams($season['id']);
 		}
 
 		unset($season);
@@ -57,10 +58,17 @@ class StudiesController {
 
 	private function getEligiblePlayers($seasonId) {
 		return DB::table('box_score_lines')
-			->select(DB::raw('player_id, box_score_lines.team_id, players.name, AVG(mp) as mpg, SUM(pts + (trb * 1.2) + (ast * 1.5) + (blk * 2) + (stl * 2) - tov) / count(*) as fppg, count(*) as num_games, count(DISTINCT box_score_lines.team_id) as num_teams'))
+			->select(DB::raw('player_id, 
+							  players.name, 
+							  box_score_lines.team_id, 
+							  teams.abbr_br, 
+							  AVG(mp) as mpg, 
+							  SUM(pts + (trb * 1.2) + (ast * 1.5) + (blk * 2) + (stl * 2) - tov) / count(*) as fppg,
+							  count(*) as num_games, count(DISTINCT box_score_lines.team_id) as num_teams'))
 			->join('games', 'games.id', '=', 'box_score_lines.game_id')
 			->join('seasons', 'seasons.id', '=', 'games.season_id')
 			->join('players', 'players.id', '=', 'box_score_lines.player_id')
+			->join('teams', 'teams.id', '=', 'box_score_lines.team_id')
 			->where('seasons.id', '=', $seasonId)
 			->where('status', '=', 'Played')
 			->groupBy('player_id')
@@ -68,6 +76,64 @@ class StudiesController {
 			->having('num_games', '>=', 30)
 			->having('num_teams', '=', 1)
 			->get();
+	}
+
+	private function getTeams($seasonId) {
+		$teams = Team::all();
+
+		foreach ($teams as $team) {
+			$team->num_games = DB::table('games')
+									->select(DB::raw('COUNT(*) as num_games'))
+									->join('seasons', 'seasons.id', '=', 'games.season_id')
+									->whereRaw('seasons.id = '.$seasonId.' 
+												and (home_team_id = '.$team->id.' or road_team_id = '.$team->id.')')
+									->pluck('num_games');
+
+			$games = DB::table('games')
+									->select('*')
+									->join('seasons', 'seasons.id', '=', 'games.season_id')
+									->whereRaw('seasons.id = '.$seasonId.' 
+												and (home_team_id = '.$team->id.' or road_team_id = '.$team->id.')')
+									->get();
+
+			$team->fppg = $this->getTeamFppg($team->num_games, $team->id, $seasonId);
+			$team->ppg = $this->getTeamPpg($team->num_games, $games, $team->id);
+			
+			$team->multiplier = $team->fppg / $team->ppg;
+		}
+
+		ddAll($teams);
+
+	}
+
+	private function getTeamPpg($numGames, $games, $teamId) {
+		$totalPoints = 0;
+
+		foreach ($games as $game) {
+			$totalPoints += $this->getTeamScore($game, $teamId);
+		}
+
+		return $totalPoints / $numGames;
+	}
+
+	private function getTeamScore($game, $teamId) {
+		if ($game->home_team_id == $teamId) {
+			return $game->home_team_score;
+		}
+
+		return $game->road_team_score;
+	}
+
+	private function getTeamFppg($numGames, $teamId, $seasonId) {
+		$totalFpts = DB::table('games')
+						->select(DB::raw('SUM(pts + (trb * 1.2) + (ast * 1.5) + (blk * 2) + (stl * 2) - tov) as total_fpts'))
+						->join('seasons', 'seasons.id', '=', 'games.season_id')
+						->join('box_score_lines', 'box_score_lines.game_id', '=', 'games.id')
+						->whereRaw('seasons.id = '.$seasonId.' 
+									and box_score_lines.team_id = '.$teamId)
+						->pluck('total_fpts');
+
+		return $totalFpts / $numGames;
 	}
 
 
@@ -83,8 +149,6 @@ class StudiesController {
 		foreach ($rawData as $key => $value) {
 			$scores[$key] = $value->score;
 		}
-
-		ddAll($scores);
 
 		$fdScores = [];
 
