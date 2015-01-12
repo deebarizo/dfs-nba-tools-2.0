@@ -37,7 +37,7 @@ class StudiesController {
 			$spreads[] = $game['vegas_road_team_score'] - $game['vegas_home_team_score'];
 		}
 
-		// 
+		// create y-axis array
 
 		$seasons = Season::where('start_year', '>=', $this->seasonStartYear['earliest'])
 					->where('end_year', '<=', $this->seasonStartYear['latest'])
@@ -57,7 +57,7 @@ class StudiesController {
 
 	private function getEligiblePlayers($seasonId) {
 		return DB::table('box_score_lines')
-			->select(DB::raw('player_id, players.name, AVG(mp) as mpg, SUM(pts + (trb * 1.2) + (ast * 1.5) + (blk * 2) + (stl * 2) - tov) / count(*) as fppg, count(*) as num_games'))
+			->select(DB::raw('player_id, box_score_lines.team_id, players.name, AVG(mp) as mpg, SUM(pts + (trb * 1.2) + (ast * 1.5) + (blk * 2) + (stl * 2) - tov) / count(*) as fppg, count(*) as num_games, count(DISTINCT box_score_lines.team_id) as num_teams'))
 			->join('games', 'games.id', '=', 'box_score_lines.game_id')
 			->join('seasons', 'seasons.id', '=', 'games.season_id')
 			->join('players', 'players.id', '=', 'box_score_lines.player_id')
@@ -65,7 +65,8 @@ class StudiesController {
 			->where('status', '=', 'Played')
 			->groupBy('player_id')
 			->having('mpg', '>=', 20)
-			->having('num_games', '>=', 41)
+			->having('num_games', '>=', 30)
+			->having('num_teams', '=', 1)
 			->get();
 	}
 
