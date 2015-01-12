@@ -12,6 +12,68 @@ use Illuminate\Http\Request;
 
 class StudiesController {
 
+	private $seasonStartYear = [
+		'earliest' => 2012,
+		'latest' => 2015
+	];
+
+	/****************************************************************************************
+	CORRELATION: SPREADS AND PROJECTED FD POINTS
+	****************************************************************************************/	
+
+	public function correlationSpreadsAndProjectedFdPoints() {
+		$games = Game::select('*')
+					->join('seasons', 'seasons.id', '=', 'games.season_id')
+					->where('start_year', '>=', $this->seasonStartYear['earliest'])
+					->where('end_year', '<=', $this->seasonStartYear['latest'])
+					->get()
+					->toArray();
+
+		// create x-axis array
+
+		$spreads = [];
+		
+		foreach ($games as $game) {
+			$spreads[] = $game['vegas_road_team_score'] - $game['vegas_home_team_score'];
+		}
+
+		// 
+
+		$seasons = Season::where('start_year', '>=', $this->seasonStartYear['earliest'])
+					->where('end_year', '<=', $this->seasonStartYear['latest'])
+					->get()
+					->toArray();
+
+		foreach ($seasons as &$season) {
+			$season['eligible_players'] = $this->getEligiblePlayers($season['id']);
+		}
+
+		unset($season);
+
+		ddAll($seasons);
+
+		// $data = calculateCorrelation($spreads, ?, 'Spreads', '?');
+	}
+
+	private function getEligiblePlayers($seasonId) {
+		return DB::table('box_score_lines')
+			->select(DB::raw('player_id, players.name, AVG(mp) as mpg, SUM(pts + (trb * 1.2) + (ast * 1.5) + (blk * 2) + (stl * 2) - tov) / count(*) as fppg, count(*) as num_games'))
+			->join('games', 'games.id', '=', 'box_score_lines.game_id')
+			->join('seasons', 'seasons.id', '=', 'games.season_id')
+			->join('players', 'players.id', '=', 'box_score_lines.player_id')
+			->where('seasons.id', '=', $seasonId)
+			->where('status', '=', 'Played')
+			->groupBy('player_id')
+			->having('mpg', '>=', 20)
+			->having('num_games', '>=', 41)
+			->get();
+	}
+
+
+	/****************************************************************************************
+	CORRELATION: SCORES AND FD SCORES
+	****************************************************************************************/
+
 	public function correlationScoresAndFDScores() {
 		$rawData = DB::table('box_score_lines')->select(DB::raw('SUM(pts) as score, SUM(pts + (trb * 1.2) + (ast * 1.5) + (blk * 2) + (stl * 2) - tov) as fd_score'))->groupBy('game_id', 'team_id')->get();
 
@@ -20,6 +82,8 @@ class StudiesController {
 		foreach ($rawData as $key => $value) {
 			$scores[$key] = $value->score;
 		}
+
+		ddAll($scores);
 
 		$fdScores = [];
 
@@ -49,6 +113,11 @@ class StudiesController {
 
 		return view('studies/correlation_scores_and_fd_scores', compact('data'));
 	}
+
+
+	/****************************************************************************************
+	HISTOGRAM: SCORES
+	****************************************************************************************/
 
 	public function histogramScores() {
 		$teamScores['home_team_score'] = Game::all(['home_team_score'])->toArray();
@@ -93,6 +162,11 @@ class StudiesController {
 
 		return view('studies/histogram_scores', compact('histogram'));
 	}
+
+
+	/****************************************************************************************
+	CORRELATION: SCORES AND VEGAS SCORES
+	****************************************************************************************/
 
 	public function correlationScoresAndVegasScores() {
 		$teamScores['home_team_score'] = Game::all(['home_team_score'])->toArray();

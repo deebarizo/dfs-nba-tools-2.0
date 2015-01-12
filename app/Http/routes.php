@@ -9,6 +9,7 @@ $router->post('scrapers/fd_nba_salaries', 'ScrapersController@fd_nba_salaries');
 $router->get('studies/correlations/scores_and_vegas_scores', 'StudiesController@correlationScoresAndVegasScores');
 $router->get('studies/histograms/scores', 'StudiesController@histogramScores');
 $router->get('studies/correlations/scores_and_fd_scores', 'StudiesController@correlationScoresAndFDScores');
+$router->get('studies/correlations/spreads_and_projected_fd_points', 'StudiesController@correlationSpreadsAndProjectedFdPoints');
 
 $router->get('players/{player_id}', 'PlayersController@getPlayerStats');
 
