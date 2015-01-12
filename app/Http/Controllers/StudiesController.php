@@ -34,14 +34,47 @@ class StudiesController {
 
 			$boxScoreLines = $this->getBoxScoreLines($season['id']);
 			$boxScoreLines = $this->removeIneligiblePlayers($boxScoreLines, $season['eligible_players']);
-			$boxScoreLines = $this->addPlayerFptsErrorToBoxScoreLines($boxScoreLines, $season['eligible_players'], $season['teams']);
-
-			ddAll($boxScoreLines);
+			$season['box_score_lines'] = $this->addPlayerFptsErrorToBoxScoreLines($boxScoreLines, $season['eligible_players'], $season['teams']);
 		}
 
 		unset($season);
 
-		ddAll($seasons[0]['box_score_lines']);
+		$spreads = [];
+		$playerFptsError = [];
+
+		foreach ($seasons as $season) {
+			foreach ($season['box_score_lines'] as $boxScoreLine) {
+				if ($boxScoreLine['mp'] >= 20) {
+					$spreads[] = $boxScoreLine['absolute_spread'];
+					$playerFptsError[] = $boxScoreLine['player_fpts_error'];		
+				}
+			}
+		}
+
+		$data = calculateCorrelation($spreads, $playerFptsError, 'Spreads', 'Player Fpts Error');
+
+		# ddAll($data);
+
+		for ($x=0; $x <= 25 ; $x++) { 
+			$y = ($data['bOne'] * $x) + $data['bNaught'];
+			$lineOfBestFitJSON[] = [$x, $y];
+		}
+
+		$data['lineOfBestFitJSON'] = $lineOfBestFitJSON;
+
+		$perfectLineJSON = [];
+
+		for ($x=0; $x <= 25 ; $x++) { 
+			$y = $x * 2;
+			$perfectLineJSON[] = [$x, $y];
+		}
+
+		$data['perfectLineJSON'] = $perfectLineJSON;
+
+		$data['subhead1'] = 'Calculate Player Fpts Error:';
+		$data['subhead2'] = '(Absolute Spread * '.$data['bOne'].') + '.$data['bNaught']; 
+
+		return view('studies/correlation_spreads_and_player_fpts_error', compact('data'));		
 	}
 
 	private function addPlayerFptsErrorToBoxScoreLines($boxScoreLines, $eligiblePlayers, $teams) {
@@ -50,9 +83,6 @@ class StudiesController {
 		}
 
 		unset($boxScoreLine);
-
-		ddAll($boxScoreLines);
-		ddAll($eligiblePlayers);
 
 		return $boxScoreLines;
 	}
@@ -123,6 +153,7 @@ class StudiesController {
 											  road_team_id, 
 											  vegas_road_team_score,
 											  ABS(vegas_road_team_score - vegas_home_team_score) as absolute_spread,
+											  mp, 
 											  pts + (trb * 1.2) + (ast * 1.5) + (blk * 2) + (stl * 2) - tov as fpts'))
 					->join('games', 'games.id', '=', 'box_score_lines.game_id')
 					->join('seasons', 'seasons.id', '=', 'games.season_id')
@@ -142,7 +173,8 @@ class StudiesController {
 							  teams.abbr_br, 
 							  AVG(mp) as mpg, 
 							  SUM(pts + (trb * 1.2) + (ast * 1.5) + (blk * 2) + (stl * 2) - tov) / count(*) as fppg,
-							  count(*) as num_games, count(DISTINCT box_score_lines.team_id) as num_teams'))
+							  count(*) as num_games, 
+							  count(DISTINCT box_score_lines.team_id) as num_teams'))
 			->join('games', 'games.id', '=', 'box_score_lines.game_id')
 			->join('seasons', 'seasons.id', '=', 'games.season_id')
 			->join('players', 'players.id', '=', 'box_score_lines.player_id')
@@ -151,6 +183,8 @@ class StudiesController {
 			->where('status', '=', 'Played')
 			->groupBy('player_id')
 			->having('mpg', '>=', 20)
+			->having('fppg', '<', 38.9)
+			->having('fppg', '>=', 37)
 			->having('num_games', '>=', 30)
 			->having('num_teams', '=', 1)
 			->get();

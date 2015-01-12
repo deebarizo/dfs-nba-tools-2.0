@@ -204,7 +204,6 @@ function calculateMpMod($gameLogs, $date, $mpOtFilter) {
 // Studies
 
 function calculateCorrelation($xArray, $yArray, $xVar, $yVar) {
-
 	$dataSets = [
 		$xVar => $xArray,
 		$yVar => $yArray
@@ -233,7 +232,7 @@ function calculateCorrelation($xArray, $yArray, $xVar, $yVar) {
 		'bSquared' => []	
 	];
 
-	foreach ($dataSetsAB['Scores'] as $index => $value) {
+	foreach ($dataSetsAB[$xVar] as $index => $value) {
 		$dataSetsAB2['axb'][] = $value * $dataSetsAB[$yVar][$index];
 		$dataSetsAB2['aSquared'][] = $value * $value;
 		$dataSetsAB2['bSquared'][] = $dataSetsAB[$yVar][$index] * $dataSetsAB[$yVar][$index];
@@ -247,8 +246,8 @@ function calculateCorrelation($xArray, $yArray, $xVar, $yVar) {
 
 	$dataSetsJSON = [];
 
-	foreach ($dataSets['Scores'] as $index => $dataSet) {
-		$dataSetsJSON[] = [$dataSet, (float)($dataSets[$yVar][$index])];
+	foreach ($dataSets[$xVar] as $index => $dataSet) {
+		$dataSetsJSON[] = [(float)$dataSet, (float)$dataSets[$yVar][$index]];
 	}
 
 	// https://www.youtube.com/watch?v=JvS2triCgOY Line of Best Fit
@@ -261,7 +260,9 @@ function calculateCorrelation($xArray, $yArray, $xVar, $yVar) {
 		'correlation' => $correlation,
 		'dataSetsJSON' => $dataSetsJSON,
 		'bOne' => $bOne,
-		'bNaught' => $bNaught
+		'bNaught' => $bNaught,
+		'xVar' => $xVar,
+		'yVar' => $yVar
 	];
 
 	return $data;
