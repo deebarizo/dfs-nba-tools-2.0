@@ -34,6 +34,7 @@ class StudiesController {
 
 			$boxScoreLines = $this->getBoxScoreLines($season['id']);
 			$boxScoreLines = $this->removeIneligiblePlayers($boxScoreLines, $season['eligible_players']);
+			$boxScoreLines = $this->addPlayerFptsErrorToBoxScoreLines($boxScoreLines, $season['eligible_players'], $season['teams']);
 
 			ddAll($boxScoreLines);
 		}
@@ -43,19 +44,55 @@ class StudiesController {
 		ddAll($seasons[0]['box_score_lines']);
 	}
 
+	private function addPlayerFptsErrorToBoxScoreLines($boxScoreLines, $eligiblePlayers, $teams) {
+		foreach ($boxScoreLines as &$boxScoreLine) {
+			$boxScoreLine = $this->addPlayerFptsErrorToBoxScoreLine($boxScoreLine, $eligiblePlayers, $teams);
+		}
+
+		unset($boxScoreLine);
+
+		ddAll($boxScoreLines);
+		ddAll($eligiblePlayers);
+
+		return $boxScoreLines;
+	}
+
+	private function addPlayerFptsErrorToBoxScoreLine($boxScoreLine, $eligiblePlayers, $teams) {
+		$teamStats = $this->getTeamStats($teams, $boxScoreLine['team_id']);
+
+		foreach ($eligiblePlayers as $eligiblePlayer) {
+			if ($eligiblePlayer->player_id == $boxScoreLine['player_id']) {
+				if ($boxScoreLine['team_id'] == $boxScoreLine['home_team_id']) {
+					$boxScoreLine['vegas_score_diff'] = ($boxScoreLine['vegas_home_team_score'] * $teamStats->multiplier) - $teamStats->fppg;
+				}
+
+				if ($boxScoreLine['team_id'] == $boxScoreLine['road_team_id']) {
+					$boxScoreLine['vegas_score_diff'] = ($boxScoreLine['vegas_road_team_score'] * $teamStats->multiplier) - $teamStats->fppg;
+				}
+
+				$boxScoreLine['vegas_modifier'] = ($boxScoreLine['vegas_score_diff'] / $teamStats->fppg);
+				$boxScoreLine['projected_fpts'] = $eligiblePlayer->fppg * (1 + $boxScoreLine['vegas_modifier']);
+				$boxScoreLine['player_fpts_diff'] = $boxScoreLine['fpts'] - $boxScoreLine['projected_fpts'];
+				$boxScoreLine['player_fpts_error'] = $boxScoreLine['player_fpts_diff'] / $boxScoreLine['projected_fpts'];
+			}
+		}
+
+		return $boxScoreLine;
+	}
+
+	private function getTeamStats($teams, $teamId) {
+		foreach ($teams as $team) {
+			if ($team->id == $teamId) {
+				return $team;
+			}
+		}
+	}
+
 	private function removeIneligiblePlayers($boxScoreLines, $eligiblePlayers) {
 		foreach ($boxScoreLines as $key => $boxScoreLine) {
-			$isPlayerEligible = false;
+			$isPlayerEligible = $this->checkEligibilityOfPlayer($eligiblePlayers, $boxScoreLine);
 
-			foreach ($eligiblePlayers as $eligiblePlayer) {
-				if ($boxScoreLine['player_id'] == $eligiblePlayer->player_id) {
-					$isPlayerEligible = true;
-
-					break;
-				}					
-			}
-
-			if (!$isPlayerEligible) {
+			if (!$isPlayerEligible) { 
 				unset($boxScoreLines[$key]);
 			}
 		}
@@ -63,8 +100,14 @@ class StudiesController {
 		return $boxScoreLines;
 	}
 
-	private function isPlayerEligible($boxScoreLinePlayerId, $eligiblePlayerId) {
-	
+	private function checkEligibilityOfPlayer($eligiblePlayers, $boxScoreLine) {
+		foreach ($eligiblePlayers as $eligiblePlayer) {
+			if ($boxScoreLine['player_id'] == $eligiblePlayer->player_id) {
+				return true;
+			}		
+		}
+
+		return false;
 	}
 
 	private function getBoxScoreLines($seasonId) {
