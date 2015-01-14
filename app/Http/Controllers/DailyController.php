@@ -47,8 +47,6 @@ class DailyController {
             return view('daily_fd_nba')->with('message', $message);                
         }
 
-
-
         // fetch DFS time period (example: all day, early, late)
 
         $timePeriod = $players[0]->time_period;
@@ -84,8 +82,6 @@ class DailyController {
         }
 
         unset($player);
-
-
 
         $teamsToday = array_unique($teamsToday);
         sort($teamsToday);
@@ -146,8 +142,6 @@ class DailyController {
             }
 
             unset($player);
-
-
 
             // fetch team filters and calculate vegas filter
 
@@ -240,8 +234,6 @@ class DailyController {
 
             $playerStats[$player->player_id]['all'] = getBoxScoreLinesForPlayer(10, $player->player_id, $endDate);
         }
-
-
 
         // calculate stats
 
