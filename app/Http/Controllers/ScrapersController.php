@@ -46,6 +46,8 @@ class ScrapersController {
 			$players = Player::all();
 			$teams = Team::all();
 
+			set_time_limit(0);
+
 			$client = new Client();
 
 			$gamesWithDataCount = 0;
