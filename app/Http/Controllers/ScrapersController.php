@@ -92,16 +92,16 @@ class ScrapersController {
 					$basicStats[20] = 'pts';
 					$basicStats[21] = 'plus_minus';
 
-					$advStats[5] = 'orb_percent';
-					$advStats[6] = 'drb_percent';
-					$advStats[7] = 'trb_percent';
-					$advStats[8] = 'ast_percent';
-					$advStats[9] = 'stl_percent';
-					$advStats[10] = 'blk_percent';
-					$advStats[11] = 'tov_percent';
-					$advStats[12] = 'usg';
-					$advStats[13] = 'off_rating';
-					$advStats[14] = 'def_rating';
+					$advStats[7] = 'orb_percent';
+					$advStats[8] = 'drb_percent';
+					$advStats[9] = 'trb_percent';
+					$advStats[10] = 'ast_percent';
+					$advStats[11] = 'stl_percent';
+					$advStats[12] = 'blk_percent';
+					$advStats[13] = 'tov_percent';
+					$advStats[14] = 'usg';
+					$advStats[15] = 'off_rating';
+					$advStats[16] = 'def_rating';
 
 					// Starters
 
