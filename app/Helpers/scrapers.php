@@ -262,7 +262,7 @@ function scrapeBoxLineScoreBR($rowContents, $players, $game, $location, $teamID,
 			}
 		}
 
-		for ($n=5; $n <= 14; $n++) { 
+		for ($n=7; $n <= 16; $n++) { 
 			$rowContents[$location][$i][$advStats[$n]] = $crawlerBR->filter('table#'.$abbrBR.'_advanced > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->text();
 		}				
 	}
