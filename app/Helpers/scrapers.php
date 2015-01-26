@@ -243,7 +243,7 @@ function scrapeBoxLineScoreBR($rowContents, $players, $game, $location, $teamID,
 			}
 		}
 
-		for ($n=5; $n <= 14; $n++) { 
+		for ($n=7; $n <= 16; $n++) { 
 			$rowContents[$location][$i][$advStats[$n]] = 0;
 		}
 	} else {

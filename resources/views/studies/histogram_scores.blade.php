@@ -50,7 +50,7 @@
 		            }
 		        },
 		        series: [{
-		        	type: 'line',
+		        	type: 'column',
 		        	name: 'Score',
 		            data: <?php echo json_encode($histogram); ?>
 		        }]
