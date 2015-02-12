@@ -66,23 +66,9 @@ class DailyController {
             }
 
             $areThereVegasScores = false;
-        }
+        } unset($player);
 
-        unset($player);
-
-        // fetch box score lines up to the date for each player
-
-        $endDate = $date;
-
-        foreach ($players as $player) {
-            if (isset($player->filter)) {
-                if ($player->filter->filter == 1) {
-                    $playerStats[$player->player_id]['cs'] = getBoxScoreLinesForPlayer(11, $player->player_id, $endDate);
-                }
-            }
-
-            $playerStats[$player->player_id]['all'] = getBoxScoreLinesForPlayer(10, $player->player_id, $endDate);
-        }
+        $playerStats = $statBuilder->getBoxScoreLinesOfPlayers($players, $date);
 
         // calculate stats
 

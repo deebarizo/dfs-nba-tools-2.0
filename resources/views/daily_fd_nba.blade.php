@@ -68,9 +68,7 @@
 						<th>Pos</th>
 						<th>Sal</th>
 						<th>VR</th>
-						<th>VR-1</th>
 						<th>FP</th>
-						<th>FP-1</th>
 						<th>FPM</th>
 					</tr>
 				</thead>
@@ -157,9 +155,7 @@
 					    	<td>{{ $player->position }}</td>
 					    	<td>{{ $player->salary }}</td>
 					    	<td>{{ $player->vr }}</td>
-					    	<td>{{ $player->vr_minus_1sd }}</td>
 					    	<td>{{ $player->fppgWithVegasFilter }}</td>
-					    	<td>{{ $player->fppgMinus1WithVegasFilter }}</td>
 					    	<td>{{ $player->fppmPerGameWithVegasFilter }}</td>
 					    </tr>
 
