@@ -66,10 +66,11 @@
 						<th>Opp</th>
 						<th>Line</th>
 						<th>Pos</th>
+						<th>MP</th>
+						<th>FPPM</th>
+						<th>FP</th>
 						<th>Sal</th>
 						<th>VR</th>
-						<th>FP</th>
-						<th>FPM</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -153,10 +154,11 @@
 					    	<td>{{ $player->opp_team_abbr }}</td>
 					    	<td>{{ $line }}</td>
 					    	<td>{{ $player->position }}</td>
+					    	<td>{{ numFormat($player->mp_mod) }}</td>
+					    	<td>{{ $player->fppmWithVegasFilter }}</td>
+					    	<td>{{ $player->fppgWithVegasFilter }}</td>
 					    	<td>{{ $player->salary }}</td>
 					    	<td>{{ $player->vr }}</td>
-					    	<td>{{ $player->fppgWithVegasFilter }}</td>
-					    	<td>{{ $player->fppmWithVegasFilter }}</td>
 					    </tr>
 
 					    <?php unset($line); ?>

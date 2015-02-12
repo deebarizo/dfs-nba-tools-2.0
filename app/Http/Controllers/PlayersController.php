@@ -114,26 +114,15 @@ class PlayersController {
 
             if ($gamesPlayed > 0) {
                 $totalMp = 0;
-                $totalUsg = 0;
                 $totalFp = 0;
-                $totalFppm = 0;
-
-                $gamesAbove10Minutes = 0;
 
                 foreach ($boxScoreLines as $boxScoreLine) {
-                    if ($boxScoreLine->mp >= 10) {
-                        $totalMp += $boxScoreLine->mp;
-                        $totalUsg += $boxScoreLine->usg;
-                        $totalFp += $boxScoreLine->pts_fd;
-                        $totalFppm += $boxScoreLine->fppm;   
-
-                        $gamesAbove10Minutes++;                 
-                    }
+                    $totalMp += $boxScoreLine->mp;
+                    $totalFp += $boxScoreLine->pts_fd;
                 }
 
-                $overviews[$timePeriod]['mppg'] = numFormat($totalMp / $gamesAbove10Minutes);
-                $overviews[$timePeriod]['usg'] = numFormat($totalUsg / $gamesAbove10Minutes);
-                $overviews[$timePeriod]['fppg'] = numFormat($totalFp / $gamesAbove10Minutes);
+                $overviews[$timePeriod]['mppg'] = numFormat($totalMp / $gamesPlayed);
+                $overviews[$timePeriod]['fppg'] = numFormat($totalFp / $gamesPlayed);
 
                 // CV for FPPG
 
