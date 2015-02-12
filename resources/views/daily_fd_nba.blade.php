@@ -156,7 +156,7 @@
 					    	<td>{{ $player->salary }}</td>
 					    	<td>{{ $player->vr }}</td>
 					    	<td>{{ $player->fppgWithVegasFilter }}</td>
-					    	<td>{{ $player->fppmPerGameWithVegasFilter }}</td>
+					    	<td>{{ $player->fppmWithVegasFilter }}</td>
 					    </tr>
 
 					    <?php unset($line); ?>

@@ -100,7 +100,7 @@ function calculateFppg($player, $gameLogs) {
 }
 
 function calculateFppm($player, $gameLogs) {
-	$gamesPlayed = count($gameLogs) - ( isset($player->filter->dnp_games) ? $player->filter->dnp_games : 0 );
+	$gamesPlayed = count($gameLogs);
     
     $totalFp = 0;
     $totalMp = 0;
@@ -117,79 +117,17 @@ function calculateFppm($player, $gameLogs) {
     }
 
     if ($gamesPlayed > 0) {
-        $player->fppmPerGame = numFormat($totalFp / $totalMp);
-        $player->fppmPerGameWithVegasFilter = numFormat(($player->fppmPerGame * $player->vegas_filter) + $player->fppmPerGame);
+        $player->fppm = numFormat($totalFp / $totalMp);
+        $player->fppmWithVegasFilter = numFormat(($player->fppm * $player->vegas_filter) + $player->fppm);
     } else {
-        $player->fppmPerGame = number_format(0, 2);
-        $player->fppmPerGameWithVegasFilter = number_format(0, 2);
+        $player->fppm = number_format(0, 2);
+        $player->fppmWithVegasFilter = number_format(0, 2);
     }
 
     return $player;
 }
 
-function calculateCvForFppg($player, $gameLogs) {
-	$gamesPlayed = count($gameLogs) - ( isset($player->filter->dnp_games) ? $player->filter->dnp_games : 0 );
-
-	$totalFp = 0;
-
-	foreach ($gameLogs as $gameLog) {
-	    $totalFp += $gameLog->fd_score;
-	}
-
-	if ($gamesPlayed > 0) {
-	    $fppg = numFormat($totalFp / $gamesPlayed);
-	} else {
-	    $fppg = numFormat(0, 2);
-	}
-
-	$totalSquaredDiff = 0; // For SD
-
-	foreach ($gameLogs as $gameLog) {
-	    $totalSquaredDiff = $totalSquaredDiff + pow($gameLog->fd_score - $fppg, 2);
-	}
-
-	if ($fppg != 0) {
-	    $sd = sqrt($totalSquaredDiff / $gamesPlayed);
-	    $player->cv = numFormat( ($sd / $fppg) * 100 );
-	} else {
-	    $player->cv = number_format(0, 2);
-	}
-
-	return $player;
-}
-
-function calculateCvForFppm($player, $gameLogs) {
-	$gamesPlayed = count($gameLogs) - ( isset($player->filter->dnp_games) ? $player->filter->dnp_games : 0 );
-    
-    $totalFppm = 0;
-
-    foreach ($gameLogs as $gameLog) {
-        $totalFppm += $gameLog->fppm;
-    }
-
-    if ($gamesPlayed > 0) {
-        $fppmPerGame = numFormat($totalFppm / $gamesPlayed);
-    } else {
-        $fppmPerGame = number_format(0, 2);
-    }
-
-    $totalSquaredDiff = 0; // For SD
-
-    foreach ($gameLogs as $gameLog) {
-        $totalSquaredDiff = $totalSquaredDiff + pow($gameLog->fppm - $fppmPerGame, 2);
-    }
-
-    if ($fppmPerGame != 0) {
-        $sd = sqrt($totalSquaredDiff / $gamesPlayed);
-        $player->cv = number_format(round(($sd / $fppmPerGame) * 100, 2), 2);
-    } else {
-        $player->cv = number_format(0, 2);
-    }   
-
-    return $player;
-}
-
-function calculateMpMod($gameLogs, $date, $mpOtFilter) {
+function calculateMpMod($gameLogs, $mpOtFilter) {
 	$totalGames = 0;
 	$totalMinutes = 0;
 

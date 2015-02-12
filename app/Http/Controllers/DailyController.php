@@ -76,19 +76,11 @@ class DailyController {
             if (isset($player->filter)) {
                 if ($player->filter->filter == 1) {
                     if ($player->filter->fppg_source == 'fp cs') {
-                        $player = calculateFppg($player, $playerStats[$player->player_id]['cs']);
+                        echo $player->name."'s filter should be changed from 'fp cs' to 'mp cs' and 'cs'.<br>";
                     }                    
 
-                    if ($player->filter->cv_source == 'cs') {
-                        $player = calculateCvForFppg($player, $playerStats[$player->player_id]['cs']);
-                    }
-
-                    if ($player->filter->cv_source == 'fppm cs') {
-                        $player = calculateCvForFppm($player, $playerStats[$player->player_id]['cs']);
-                    }
-
                     if ($player->filter->fppg_source == 'mp cs') {
-                        $player->mp_mod = calculateMpMod($playerStats[$player->player_id]['cs'], $date, $player->filter->mp_ot_filter);
+                        $player->mp_mod = calculateMpMod($playerStats[$player->player_id]['cs'], $player->filter->mp_ot_filter);
 
                         if ($player->filter->fppm_source == 'cs') {
                             $player = calculateFppm($player, $playerStats[$player->player_id]['cs']);
@@ -112,7 +104,7 @@ class DailyController {
 
             // FPPM
 
-            if ( !isset($player->fppmPerGameWithVegasFilter) ) {
+            if ( !isset($player->fppmWithVegasFilter) ) {
                 $player = calculateFppm($player, $playerStats[$player->player_id]['all']);
             }
 
@@ -122,8 +114,8 @@ class DailyController {
                 } 
 
                 if ( is_numeric($player->filter->fppm_source) ) {
-                    $player->fppmPerGame = $player->filter->fppm_source;
-                    $player->fppmPerGameWithVegasFilter = numFormat(($player->fppmPerGame * $player->vegas_filter) + $player->fppmPerGame);               
+                    $player->fppm = $player->filter->fppm_source;
+                    $player->fppmWithVegasFilter = numFormat(($player->fppm * $player->vegas_filter) + $player->fppm);               
 
                     if ( is_null($player->filter->fppg_source) ) {
                         $player->mp_mod = calculateMpMod($playerStats[$player->player_id]['all'], $date, $player->filter->mp_ot_filter);
@@ -131,54 +123,17 @@ class DailyController {
                 }
             }
 
-            // CV
-
-            if ( !isset($player->cv) ) {
-                $player = calculateCvForFppg($player, $playerStats[$player->player_id]['all']);
-            }
-
             // MP MOD
 
             if (isset($player->mp_mod)) {
-                $player->fppg = $player->mp_mod * $player->fppmPerGame;
+                $player->fppg = $player->mp_mod * $player->fppm;
                 $player->fppgWithVegasFilter = numFormat(($player->fppg * $player->vegas_filter) + $player->fppg);                
             }
-        }   
-
-        unset($player);
+        } unset($player);
 
         foreach ($players as &$player) {
             $player->vr = numFormat( $player->fppgWithVegasFilter / ($player->salary / 1000) );
-
-            $player->vr_minus_1sd = numFormat( ($player->fppgWithVegasFilter - ($player->fppgWithVegasFilter * ($player->cv / 100) )  ) / ($player->salary / 1000) );
-
-            $player->fppgMinus1WithVegasFilter = numFormat($player->vr_minus_1sd * ($player->salary / 1000), 2);
-        }
-
-        unset($player);
-
-        // update database table
-
-        $dbPlayers = DB::table('player_pools')
-            ->join('players_fd', 'player_pools.id', '=', 'players_fd.player_pool_id')
-            ->join('players', 'players_fd.player_id', '=', 'players.id')
-            ->select('*')
-            ->whereRaw('player_pools.date = "'.$date.'"')
-            ->get();    
-
-        foreach ($players as $player) {
-            foreach ($dbPlayers as $dbPlayer) {
-                if ($player->player_id == $dbPlayer->player_id) {
-                    if ($player->vr_minus_1sd != $dbPlayer->vr_minus1) {
-                        DB::table('players_fd')
-                            ->whereRaw('player_id = '.$player->player_id.' AND player_pool_id = '.$player->player_pool_id)
-                            ->update(array('vr_minus1' => $player->vr_minus_1sd, 'fppg_minus1' => $player->fppgMinus1WithVegasFilter));
-
-                        break;
-                    }
-                }
-            }      
-        }
+        } unset($player);
 
         // remove players that are not playing or DTD
 
