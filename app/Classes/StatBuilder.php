@@ -171,8 +171,22 @@ class StatBuilder {
             $teamFilters[$key]->ppg = $teamPPG;
         }
 
-        ddAll($teamFilters);
+        $activeDbTeamFilters = TeamFilter::where('active', '=', 1)->get()->toArray();
 
+        foreach ($activeDbTeamFilters as $activeDbTeamFilter) {
+            foreach ($teamFilters as $teamFilter) {
+                if ($teamFilter->team_id == $activeDbTeamFilter['team_id']) {
+                    $teamFilter->ppg = $activeDbTeamFilter['ppg'];
+
+                    break;
+                }
+            }
+        }
+
+        return $teamFilters;
+    }
+
+    public function addVegasFilterToPlayers($players, $teamFilters) {
         foreach ($players as &$player) {
             foreach ($teamFilters as $teamFilter) {
                 if ($player->team_id == $teamFilter->team_id) {
@@ -183,21 +197,9 @@ class StatBuilder {
                     break;
                 }
             }
-        } unset($player); 
+        } unset($player);         
 
-        $activeDbTeamFilters = TeamFilter::where('active', '=', 1)->get();
-
-        foreach ($players as &$player) {
-            foreach ($activeDbTeamFilters as $teamFilter) {
-                if ($player->team_id == $teamFilter->team_id) {
-                    $player->team_ppg = $teamFilter->ppg;
-
-                    $player->vegas_filter = ($player->vegas_score_team - $player->team_ppg) / $player->team_ppg;
-
-                    break;
-                }
-            }
-        } unset($player);
+        return $players;
     }
 
 }

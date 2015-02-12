@@ -55,6 +55,8 @@ class DailyController {
 
             $teamFilters = $statBuilder->getTeamFilters($teamsToday, $date);
 
+            $players = $statBuilder->addVegasFilterToPlayers($players, $teamFilters);
+
             $areThereVegasScores = true;       
         }
 
