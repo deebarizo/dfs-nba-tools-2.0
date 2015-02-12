@@ -51,100 +51,11 @@ class DailyController {
         $vegasScores = scrapeForOdds($client, $date);
 
         if ($vegasScores != 'No lines yet.') {
-            foreach ($players as &$player) {
-                foreach ($vegasScores as $vegasScore) {
-                    if ($player->team_name == $vegasScore['team']) {
-                        $player->vegas_score_team = number_format(round($vegasScore['score'], 2), 2);
-                    }
+            $players = $statBuilder->addVegasInfoToPlayers($players, $vegasScores);
 
-                    if ($player->opp_team_name == $vegasScore['team']) {
-                        $player->vegas_score_opp_team = number_format(round($vegasScore['score'], 2), 2);
-                    }                
-                }
-
-                if (isset($player->vegas_score_team) === false || isset($player->vegas_score_opp_team) === false) {
-                    echo 'error: no team match in SAO<br>';
-                    echo $player->team_name.' vs '.$player->opp_team_name;
-                    exit();
-                }
-            }
-
-            unset($player);
-
-            // create line property
-
-            foreach ($players as $player) {
-                $player->line = $player->vegas_score_opp_team - $player->vegas_score_team;
-            }
-
-            unset($player);
-
-            // fetch team filters and calculate vegas filter
-
-            $gamesInCurrentSeason = Game::where('season_id', '=', 11)->get();
-
-            foreach ($teams as $key => $team) {
-                $gamesCount = 0;
-                $totalPoints = 0;
-
-                foreach ($gamesInCurrentSeason as $game) {
-                    if (strtotime($game->date) < strtotime($date)) {
-                        if ($game->home_team_id == $team->id) {
-                            $gamesCount++;
-                            $totalPoints += $game->home_team_score;
-
-                            continue;
-                        }
-
-                        if ($game->road_team_id == $team->id) {
-                            $gamesCount++;
-                            $totalPoints += $game->road_team_score;
-
-                            continue;
-                        }
-                    }
-                }
-
-                $teamPPG = $totalPoints / $gamesCount;
-
-                $teamFilters[$key] = new \stdClass();
-                $teamFilters[$key]->team_id = $team->id;
-                $teamFilters[$key]->ppg = $teamPPG;
-            }
-
-            # ddAll($teamFilters);
-
-            foreach ($players as &$player) {
-                foreach ($teamFilters as $teamFilter) {
-                    if ($player->team_id == $teamFilter->team_id) {
-                        $player->team_ppg = $teamFilter->ppg;
-
-                        $player->vegas_filter = ($player->vegas_score_team - $player->team_ppg) / $player->team_ppg;
-
-                        break;
-                    }
-                }
-            }
-
-            unset($player); 
-
-            $activeDbTeamFilters = TeamFilter::where('active', '=', 1)->get();
-
-            foreach ($players as &$player) {
-                foreach ($activeDbTeamFilters as $teamFilter) {
-                    if ($player->team_id == $teamFilter->team_id) {
-                        $player->team_ppg = $teamFilter->ppg;
-
-                        $player->vegas_filter = ($player->vegas_score_team - $player->team_ppg) / $player->team_ppg;
-
-                        break;
-                    }
-                }
-            }
+            $teamFilters = $statBuilder->getTeamFilters($teamsToday, $date);
 
             $areThereVegasScores = true;       
-
-            unset($player);
         }
 
         if ($vegasScores == 'No lines yet.') {

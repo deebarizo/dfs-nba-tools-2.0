@@ -37,7 +37,7 @@
 				<label>Teams</label>
 				<select class="form-control team-filter" style="width: 10%; margin-right: 20px">
 				  	<option value="All">All</option>
-				  	@foreach ($teamsToday as $team)
+				  	@foreach ($teamsToday['abbr'] as $team)
 					  	<option value="{{ $team }}">{{ $team }}</option>
 				  	@endforeach
 				</select>
