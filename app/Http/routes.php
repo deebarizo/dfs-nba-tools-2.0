@@ -2,6 +2,8 @@
 
 ini_set('max_execution_time', 10800); // 10800 seconds = 3 hours
 
+$router->get('/', 'PlayerPoolsController@home');
+
 $router->post('scrapers/br_nba_box_score_lines', 'ScrapersController@br_nba_box_score_lines');
 $router->post('scrapers/br_nba_games', 'ScrapersController@br_nba_games');
 $router->post('scrapers/fd_nba_salaries', 'ScrapersController@fd_nba_salaries');
@@ -33,9 +35,6 @@ $router->get('scrapers', function() {
 });
 $router->get('studies', function() {
 	return View::make('pages/studies');
-});
-$router->get('/', function() {
-	return View::make('pages/home');
 });
 $router->get('/player_search', function() {
 	return View::make('player_search');
