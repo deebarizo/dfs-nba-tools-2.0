@@ -122,59 +122,8 @@ class PlayersController {
                 }
 
                 $overviews[$timePeriod]['mppg'] = numFormat($totalMp / $gamesPlayed);
-                $overviews[$timePeriod]['fppg'] = numFormat($totalFp / $gamesPlayed);
-
-                // CV for FPPG
-
-                $totalSquaredDiff = 0; 
-
-                $fppg = numFormat($totalFp / $gamesAbove10Minutes);
-
-                foreach ($boxScoreLines as $boxScoreLine) {
-                    if ($boxScoreLine->mp >= 10) {
-                        $totalSquaredDiff += pow($boxScoreLine->pts_fd - $fppg, 2);
-                    }
-                }
-
-                if ($fppg != 0) {
-                    $overviews[$timePeriod]['sd'] = numFormat(sqrt($totalSquaredDiff / $gamesAbove10Minutes));
-                    $overviews[$timePeriod]['cv'] = numFormat(($overviews[$timePeriod]['sd'] / $fppg) * 100);
-                } else {
-                    $overviews[$timePeriod]['sd'] = numFormat(0);
-                    $overviews[$timePeriod]['cv'] = numFormat(0);
-                } 
-
-                // CV for FPPM
-
-                $totalSquaredDiff = 0; 
-
-                $fppm = numFormat($totalFppm / $gamesAbove10Minutes);
-
-                foreach ($boxScoreLines as $boxScoreLine) {
-                    if ($boxScoreLine->mp >= 10) {
-                        $totalSquaredDiff += pow($boxScoreLine->fppm - $fppm, 2);
-                    }
-                }                
-
-                if ($fppm != 0) {
-                    $overviews[$timePeriod]['sd_fppm'] = numFormat(sqrt($totalSquaredDiff / $gamesAbove10Minutes));
-                    $overviews[$timePeriod]['cv_fppm'] = numFormat(($overviews[$timePeriod]['sd_fppm'] / $fppm) * 100);
-                } else {
-                    $overviews[$timePeriod]['sd_fppm'] = numFormat(0);
-                    $overviews[$timePeriod]['cv_fppm'] = numFormat(0);
-                }  
-
-                // Get fppm based on all box score lines including those under 10 minutes
-
-                $totalMp = 0;
-                $totalFp = 0;
-
-                foreach ($boxScoreLines as $boxScoreLine) {
-                    $totalMp += $boxScoreLine->mp;
-                    $totalFp += $boxScoreLine->pts_fd;
-                }
-
                 $overviews[$timePeriod]['fppm'] = numFormat($totalFp / $totalMp);
+                $overviews[$timePeriod]['fppg'] = numFormat($overviews[$timePeriod]['mppg'] * $overviews[$timePeriod]['fppm']);
             }
         }
 

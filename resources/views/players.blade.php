@@ -105,33 +105,52 @@
 
 	<div class="row">
 		<div class="col-lg-12">
-			<h3>All</h3>
+			<h3>Overviews</h3>
 
-			<h4>Overview</h4>
+			<h4>All</h4>
 			
-			<table id="overview-all" class="table table-striped table-bordered table-hover table-condensed">
+			<table id="overview-all" style="width: 50%" class="table table-striped table-bordered table-hover table-condensed">
 				<thead>
 					<tr>
-						<th>MP</th>
-						<th>FP</th>
-						<th>CV</th>
+						<th>MPG</th>
 						<th>FPPM</th>
-						<th>CVPM</th>
-						<th>USG</th>
+						<th>FPG</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr>
 						<td>{{ $overviews['all']['mppg'] }}</td>
-						<td>{{ $overviews['all']['fppg'] }}</td>
-						<td>{{ $overviews['all']['cv'] }}</td>
 						<td>{{ $overviews['all']['fppm'] }}</td>
-						<td>{{ $overviews['all']['cv_fppm'] }}</td>
-						<td>{{ $overviews['all']['usg'] }}</td>
+						<td>{{ $overviews['all']['fppg'] }}</td>
 					</tr>
 				</tbody>
 			</table>	
 		</div>
+
+		@foreach ($stats as $yearKey => $year)
+			@if (empty($year) === false && isset($overviews[$yearKey]) === true)
+				<div class="col-lg-12">
+					<h4>{{ $yearKey }}</h4>
+					
+					<table id="overview-{{ $yearKey }}" style="width: 50%" class="table table-striped table-bordered table-hover table-condensed">
+						<thead>
+							<tr>
+								<th>MPG</th>
+								<th>FPPM</th>
+								<th>FPG</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>{{ $overviews[$yearKey]['mppg'] }}</td>
+								<td>{{ $overviews[$yearKey]['fppm'] }}</td>
+								<td>{{ $overviews[$yearKey]['fppg'] }}</td>
+							</tr>
+						</tbody>
+					</table>	
+				</div>
+			@endif
+		@endforeach	
 	</div>
 
 	<hr>
@@ -141,31 +160,6 @@
 			<div class="row">
 				<div class="col-lg-12">
 					<h3>{{ $yearKey }}</h3>
-
-					<h4>Overview</h4>
-					
-					<table id="overview-{{ $yearKey }}" class="table table-striped table-bordered table-hover table-condensed">
-						<thead>
-							<tr>
-								<th>MP</th>
-								<th>FP</th>
-								<th>CV</th>
-								<th>FPPM</th>
-								<th>CVPM</th>
-								<th>USG</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td>{{ $overviews[$yearKey]['mppg'] }}</td>
-								<td>{{ $overviews[$yearKey]['fppg'] }}</td>
-								<td>{{ $overviews[$yearKey]['cv'] }}</td>
-								<td>{{ $overviews[$yearKey]['fppm'] }}</td>
-								<td>{{ $overviews[$yearKey]['cv_fppm'] }}</td>
-								<td>{{ $overviews[$yearKey]['usg'] }}</td>
-							</tr>
-						</tbody>
-					</table>					
 
 					<h4>Game Log</h4>
 
