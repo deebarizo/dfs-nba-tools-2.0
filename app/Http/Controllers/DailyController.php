@@ -73,66 +73,57 @@ class DailyController {
         // calculate stats
 
         foreach ($players as &$player) {
-            if (isset($player->filter)) {
-                if ($player->filter->filter == 1) {
-                    if ($player->filter->fppg_source == 'fp cs') {
-                        echo $player->name."'s filter should be changed from 'fp cs' to 'mp cs' and 'cs'.<br>";
-                    }                    
+            if (isset($player->filter) && $player->filter->filter == 1) {
+                if ($player->filter->fppg_source == 'fp cs') {
+                    echo $player->name."'s filter should be changed from 'fp cs' to 'mp cs' and 'cs'.<br>";
+                }
+                
+                // FPPM Source
 
-                    if ($player->filter->fppg_source == 'mp cs') {
-                        $player->mp_mod = calculateMpMod($playerStats[$player->player_id]['cs'], $player->filter->mp_ot_filter);
+                if (is_numeric($player->filter->fppm_source) ) {
+                    $player->fppm = $player->filter->fppm_source;
+                }        
 
-                        if ($player->filter->fppm_source == 'cs') {
-                            $player = calculateFppm($player, $playerStats[$player->player_id]['cs']);
-                        }
-                    }
-
-                    if (is_numeric($player->filter->fppg_source))  {
-                        $player->mp_mod = $player->filter->fppg_source;
-                    }
-
-                    if (is_numeric($player->filter->cv_source)) {
-                        $player->cv = $player->filter->cv_source;
-                    }
-                } 
-            }
-
-            // FPPG
-            if ( !isset($player->fppgWithVegasFilter) ) {
-                $player = calculateFppg($player, $playerStats[$player->player_id]['all']);
-            }
-
-            // FPPM
-
-            if ( !isset($player->fppmWithVegasFilter) ) {
-                $player = calculateFppm($player, $playerStats[$player->player_id]['all']);
-            }
-
-            if ( isset($player->filter->fppm_source) ) {
                 if ($player->filter->fppm_source == 'cs') {
                     $player = calculateFppm($player, $playerStats[$player->player_id]['cs']);
                 } 
 
-                if ( is_numeric($player->filter->fppm_source) ) {
-                    $player->fppm = $player->filter->fppm_source;
-                    $player->fppmWithVegasFilter = numFormat(($player->fppm * $player->vegas_filter) + $player->fppm);               
+                // FPPG Source
 
-                    if ( is_null($player->filter->fppg_source) ) {
-                        $player->mp_mod = calculateMpMod($playerStats[$player->player_id]['all'], $date, $player->filter->mp_ot_filter);
-                    }
+                if (is_numeric($player->filter->fppg_source) ) {
+                    $player->mp_mod = $player->filter->fppg_source;
+                } 
+
+                if ($player->filter->fppg_source == 'mp cs') {
+                    $player->mp_mod = calculateMpMod($playerStats[$player->player_id]['cs'], $player->filter->mp_ot_filter);
                 }
+
+                if (is_null($player->filter->fppg_source) ) {
+                    $player->mp_mod = calculateMpMod($playerStats[$player->player_id]['all'], $player->filter->mp_ot_filter);
+                }
+
+
+                if (!isset($player->fppm) ) {
+                    $player = calculateFppm($player, $playerStats[$player->player_id]['all']);
+                }
+
+                if (!isset($player->mp_mod)) {
+                    ddAll($player);
+                }
+            } else {
+                $player = calculateFppm($player, $playerStats[$player->player_id]['all']);
+                $player->mp_mod = calculateMpMod($playerStats[$player->player_id]['all'], 0);
             }
 
-            // MP MOD
+            // STATS IN VIEW
 
-            if (isset($player->mp_mod)) {
-                $player->fppg = $player->mp_mod * $player->fppm;
-                $player->fppgWithVegasFilter = numFormat(($player->fppg * $player->vegas_filter) + $player->fppg);                
-            }
-        } unset($player);
+            $player->fppmWithVegasFilter = numFormat(($player->fppm * $player->vegas_filter) + $player->fppm);
 
-        foreach ($players as &$player) {
-            $player->vr = numFormat( $player->fppgWithVegasFilter / ($player->salary / 1000) );
+            $player->fppg = $player->mp_mod * $player->fppm;
+            $player->fppgWithVegasFilter = numFormat(($player->fppg * $player->vegas_filter) + $player->fppg);
+
+            $player->vr = numFormat($player->fppgWithVegasFilter / ($player->salary / 1000));
+
         } unset($player);
 
         // remove players that are not playing or DTD
@@ -153,21 +144,9 @@ class DailyController {
             }
         }
 
-        // order DTD players array by team
+        ddAll($players);
 
-        if (isset($dtdPlayers)) {
-            foreach ($dtdPlayers as $key => $row) {
-	            $teamId[$key]  = $row->team_id;
-	        }   
-
-	        array_multisort($teamId, SORT_ASC, $dtdPlayers); 	
-        } else {
-        	$dtdPlayers = [];
-        }
-
-        # ddAll($players);
-
-		return view('daily_fd_nba', compact('date', 'timePeriod', 'players', 'dtdPlayers', 'teamsToday'));
+		return view('daily_fd_nba', compact('date', 'timePeriod', 'players', 'teamsToday'));
 	}
 
     public function update_top_plays($playerFdIndex, $isPlayerActive) {

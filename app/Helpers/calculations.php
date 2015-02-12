@@ -118,10 +118,8 @@ function calculateFppm($player, $gameLogs) {
 
     if ($gamesPlayed > 0) {
         $player->fppm = numFormat($totalFp / $totalMp);
-        $player->fppmWithVegasFilter = numFormat(($player->fppm * $player->vegas_filter) + $player->fppm);
     } else {
         $player->fppm = number_format(0, 2);
-        $player->fppmWithVegasFilter = number_format(0, 2);
     }
 
     return $player;
@@ -134,6 +132,10 @@ function calculateMpMod($gameLogs, $mpOtFilter) {
 	foreach ($gameLogs as $gameLog) {
 		$totalGames++;
 		$totalMinutes += $gameLog->mp;			
+	}
+
+	if ($totalGames == 0) {
+		return 0;
 	}
 
 	return ($totalMinutes - $mpOtFilter) / $totalGames;
