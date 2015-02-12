@@ -22,7 +22,7 @@
 							<td>{{ $playerPool['site'] }}</td>
 							<td>{{ $playerPool['time_period'] }}</td>
 							<td>{{ $playerPool['buy_in'] }}</td>
-							<td><a href="#">Link</a></td>
+							<td><a href="/daily_fd_nba/{{ $playerPool['date'] }}">Link</a></td>
 						</tr>
 					@endforeach
 				</tbody>

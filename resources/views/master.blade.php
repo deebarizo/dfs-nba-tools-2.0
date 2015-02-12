@@ -33,8 +33,7 @@
 			</div>
 			<div class="collapse navbar-collapse">
 				<ul class="nav navbar-nav">
-					<li class="{!! setActive('/') !!}"><a href="/">Home</a></li>
-					<li class="{!! setActive('daily_fd_nba*') !!}{!! setActive('solver_fd_nba*') !!}"><a href="/daily_fd_nba">Daily FD</a></li>
+					<li class="{!! setActive('daily_fd_nba*') !!}{!! setActive('solver_fd_nba*') !!}{!! setActive('/') !!}"><a href="/">Daily FD</a></li>
 					<li class="{!! setActive('solver_with_top_plays_fd_nba*') !!}"><a href="/solver_with_top_plays_fd_nba">Solver Top Plays</a></li>
 					<li class="{!! setActive('lineup_builder*') !!}"><a href="/lineup_builder">Lineup Builder</a></li>
 					<li class="{!! setActive('scrapers*') !!}"><a href="/scrapers">Scrapers</a></li>
