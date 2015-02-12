@@ -10,6 +10,8 @@ use App\Models\PlayerFd;
 use App\Models\DailyFdFilter;
 use App\Models\TeamFilter;
 
+use App\Classes\StatBuilder;
+
 use Illuminate\Http\Request;
 use App\Http\Requests\RunFDNBASalariesScraperRequest;
 
@@ -31,87 +33,21 @@ class DailyController {
             return redirect('daily_fd_nba/'.$date);
 		}
 
-        // fetch all players for the date
-
-		$players = DB::table('player_pools')
-            ->join('players_fd', 'player_pools.id', '=', 'players_fd.player_pool_id')
-            ->join('players', 'players_fd.player_id', '=', 'players.id')
-            ->select('*', 'players_fd.id as player_fd_index')
-            ->whereRaw('player_pools.date = "'.$date.'"')
-            ->get();	
-
-        if (empty($players)) {
-            $message = 'Please scrape FD and BR.';
-            Session::flash('alert', 'info');
-
-            return view('daily_fd_nba')->with('message', $message);                
-        }
-
-        // fetch DFS time period (example: all day, early, late)
-
-        $timePeriod = $players[0]->time_period;
-
-        // match each player to a team id
-
         $teams = Team::all();
 
-        $teamsToday = [];
+        $statBuilder = new StatBuilder;
 
-        foreach ($players as &$player) {
-            foreach ($teams as $team) {
-                if ($player->team_id == $team->id) {
-                    $player->team_name = $team->name_br;
-                    $player->team_abbr = $team->abbr_br;
+        $players = $statBuilder->getPlayersInPlayerPool($date);
 
-                    $teamsToday[] = $player->team_abbr; 
+        $timePeriod = $statBuilder->getTimePeriodOfPlayerPool($players);
 
-                    continue;
-                }
+        $players = $statBuilder->matchPlayersToTeams($players, $teams);
 
-                if ($player->opp_team_id == $team->id) {
-                    $player->opp_team_name = $team->name_br;
-                    $player->opp_team_abbr = $team->abbr_br;
+        $teamsToday = $statBuilder->getTeamsToday($players, $teams);
 
-                    continue;
-                }
-
-                if (isset($player->team_name) && isset($player->opp_team_name)) {
-                    break;
-                }
-            }
-        }
-
-        unset($player);
-
-        $teamsToday = array_unique($teamsToday);
-        sort($teamsToday);
-
-        // fetch player filters
-
-        $dailyFdFilters = DB::select('SELECT t1.* FROM daily_fd_filters AS t1
-                                         JOIN (
-                                            SELECT player_id, MAX(created_at) AS latest FROM daily_fd_filters GROUP BY player_id
-                                         ) AS t2
-                                         ON t1.player_id = t2.player_id AND t1.created_at = t2.latest');
-
-        foreach ($players as &$player) {
-            foreach ($dailyFdFilters as $filter) {
-                if ($player->player_id == $filter->player_id) {
-                    $player->filter = $filter;
-
-                    break;
-                }
-            }
-        }
-
-        unset($player);
-
-        // fetch vegas scores
-
-        set_time_limit(0);
+        $players = $statBuilder->matchPlayersToFilters($players);
 
         $client = new Client;
-
         $vegasScores = scrapeForOdds($client, $date);
 
         if ($vegasScores != 'No lines yet.') {
