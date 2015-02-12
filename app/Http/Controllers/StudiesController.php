@@ -2,10 +2,10 @@
 
 ini_set('max_execution_time', 10800); // 10800 seconds = 3 hours
 
-use App\Season;
-use App\Team;
-use App\Game;
-use App\BoxScoreLine;
+use App\Models\Season;
+use App\Models\Team;
+use App\Models\Game;
+use App\Models\BoxScoreLine;
 
 use Illuminate\Support\Facades\DB;
 

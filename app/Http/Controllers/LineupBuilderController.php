@@ -1,20 +1,20 @@
 <?php namespace App\Http\Controllers;
 
-use App\Season;
-use App\Team;
-use App\Game;
-use App\Player;
-use App\BoxScoreLine;
-use App\PlayerPool;
-use App\PlayerFd;
-use App\DailyFdFilter;
-use App\TeamFilter;
+use App\Models\Season;
+use App\Models\Team;
+use App\Models\Game;
+use App\Models\Player;
+use App\Models\BoxScoreLine;
+use App\Models\PlayerPool;
+use App\Models\PlayerFd;
+use App\Models\DailyFdFilter;
+use App\Models\TeamFilter;
 use App\Solver;
 use App\SolverTopPlays;
-use App\Lineup;
-use App\LineupPlayer;
-use App\DefaultLineupBuyIn;
-use App\LineupBuilder;
+use App\Models\Lineup;
+use App\Models\LineupPlayer;
+use App\Models\DefaultLineupBuyIn;
+use App\Models\LineupBuilder;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\RunFDNBASalariesScraperRequest;
