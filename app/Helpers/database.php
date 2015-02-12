@@ -9,8 +9,8 @@ use App\Models\PlayerPool;
 use App\Models\PlayerFd;
 use App\Models\DailyFdFilter;
 use App\Models\TeamFilter;
-use App\Solver;
-use App\SolverTopPlays;
+use App\Classes\Solver;
+use App\Classes\SolverTopPlays;
 use App\Models\Lineup;
 use App\Models\LineupPlayer;
 
