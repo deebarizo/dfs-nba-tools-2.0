@@ -134,6 +134,8 @@ function calculateMpMod($gameLogs, $mpOtFilter) {
 		$totalMinutes += $gameLog->mp;			
 	}
 
+	# ddAll($gameLogs[0]->player_id);
+
 	if ($totalGames == 0) {
 		return 0;
 	}
