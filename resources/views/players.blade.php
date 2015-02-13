@@ -12,9 +12,9 @@
 				} 
 			?>
 
-			<h2>Players ({{ $playerInfo['name'] }}</a>)</h2>
+			<h2>Players ({{ $name }}</a>)</h2>
 
-			<p><strong>Links:</strong> <a target="_blank" href="http://www.google.com/search?q={{ $playerInfo['name'] }}+Rotoworld">RT</a> | <a target="_blank" href="http://www.google.com/search?q={{ $playerInfo['name'] }}+Basketball+Reference">BR</a> | <a target="_blank" href="http://www.google.com/search?q={{ $playerInfo['name'] }}+ESPN">ESPN</a> -- <a target="_blank" href="/daily_fd_filters/{{ $playerInfo['player_id'] }}/create"><span {!! $noFilterSpan !!} class="glyphicon glyphicon-filter" aria-hidden="true"></span></a> <a target="_blank" href="/daily_fd_filters/{{ $playerInfo['player_id'] }}/edit"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></p>
+			<p><strong>Links:</strong> <a target="_blank" href="http://www.google.com/search?q={{ $name }}+Rotoworld">RT</a> | <a target="_blank" href="http://www.google.com/search?q={{ $name }}+Basketball+Reference">BR</a> | <a target="_blank" href="http://www.google.com/search?q={{ $name }}+ESPN">ESPN</a> -- <a target="_blank" href="/daily_fd_filters/{{ $playerInfo['player_id'] }}/create"><span {!! $noFilterSpan !!} class="glyphicon glyphicon-filter" aria-hidden="true"></span></a> <a target="_blank" href="/daily_fd_filters/{{ $playerInfo['player_id'] }}/edit"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></p>
 		</div>
 	</div>
 
@@ -127,121 +127,111 @@
 			</table>	
 		</div>
 
-		@foreach ($stats as $yearKey => $year)
-			@if (empty($year) === false && isset($overviews[$yearKey]) === true)
-				<div class="col-lg-12">
-					<h4>{{ $yearKey }}</h4>
-					
-					<table id="overview-{{ $yearKey }}" style="width: 50%" class="table table-striped table-bordered table-hover table-condensed">
-						<thead>
-							<tr>
-								<th>MPG</th>
-								<th>FPPM</th>
-								<th>FPG</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td>{{ numFormat($overviews[$yearKey]['mppg']) }}</td>
-								<td>{{ numFormat($overviews[$yearKey]['fppm']) }}</td>
-								<td>{{ numFormat($overviews[$yearKey]['fppg']) }}</td>
-							</tr>
-						</tbody>
-					</table>	
-				</div>
-			@endif
-		@endforeach	
+		@foreach ($overviews as $yearKey => $overview)
+			<div class="col-lg-12">
+				<h4>{{ $yearKey }}</h4>
+				
+				<table id="overview-{{ $yearKey }}" style="width: 50%" class="table table-striped table-bordered table-hover table-condensed">
+					<thead>
+						<tr>
+							<th>MPG</th>
+							<th>FPPM</th>
+							<th>FPG</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>{{ numFormat($overview['mppg']) }}</td>
+							<td>{{ numFormat($overview['fppm']) }}</td>
+							<td>{{ numFormat($overview['fppg']) }}</td>
+						</tr>
+					</tbody>
+				</table>	
+			</div>
+		@endforeach
 	</div>
 
 	<hr>
 
-	@foreach ($stats as $yearKey => $year)
-		@if (empty($year) === false && isset($overviews[$yearKey]) === true)
-			<div class="row">
-				<div class="col-lg-12">
-					<h3>{{ $yearKey }}</h3>
+	@foreach ($boxScoreLines as $yearKey => $year)
+		<div class="row">
+			<div class="col-lg-12">
+				<h3>{{ $yearKey }}</h3>
 
-					<h4>Game Log</h4>
+				<h4>Game Log</h4>
 
-					<table style="font-size: 90%" id="game-log-{{ $yearKey }}" class="table table-striped table-bordered table-hover table-condensed">
-						<thead>
-							<tr>
-								<th>Date</th>
-								<th>H</th>
-								<th>Hs</th>
-								<th>R</th>
-								<th>Rs</th>
-								<th>Line</th>
-								<th>Links</th>
-								<th>Role</th>
-								<th>Mp</th>
-								<th>Ot</th>
-								<th>Fg</th>
-								<th>3p</th>
-								<th>Ft</th>
-								<th>Or</th>
-								<th>Dr</th>
-								<th>Tr</th>
-								<th>Ast</th>
-								<th>Bl</th>
-								<th>St</th>
-								<th>Pf</th>
-								<th>To</th>
-								<th>Pt</th>
-								<th>Usg</th>
-								<th>Fd</th>
-								<th>S</th>
-								<th>Vr</th>
-								<th>Pm</th>
-							</tr>
-						</thead>
-						<tbody>
-							@foreach ($year as $row)
-							    <tr>
-							    	<td>{{ $row->date }}</a></td>
-							    	<td>{{ $row->home_team_abbr_br }}</td>
-							    	<td>{{ $row->home_team_score }}</td>
-							    	<td>{{ $row->road_team_abbr_br }}</td>
-							    	<td>{{ $row->road_team_score }}</td>
-							    	<td>{{ $row->line }}</td>
-							    	<td><a target="_blank" href="{!! $row->link_br !!}">BR</a> | <a target="_blank" href="http://popcornmachine.net/gf?date={!! $row->date_pm !!}&game={!! $row->road_team_abbr_pm !!}{!! $row->home_team_abbr_pm !!}">PM</a></td>
-							    	<td>{{ $row->role }}</td>
-							    	@if ($row->bs_status == 'Played')
-								    	<td>{{ $row->mp }}</td>
-								    	<td>{{ $row->ot_periods }}</td>
-								    	<td>{{ $row->fg }}-{{ $row->fga }}</td>
-								    	<td>{{ $row->threep }}-{{ $row->threepa }}</td>
-								    	<td>{{ $row->ft }}-{{ $row->fta }}</td>
-								    	<td>{{ $row->orb }}</td>
-								    	<td>{{ $row->drb }}</td>
-								    	<td>{{ $row->trb }}</td>
-								    	<td>{{ $row->ast }}</td>
-								    	<td>{{ $row->blk }}</td>
-								    	<td>{{ $row->stl }}</td>
-								    	<td>{{ $row->pf }}</td>
-								    	<td>{{ $row->tov }}</td>
-								    	<td>{{ $row->pts }}</td>
-								    	<td>{{ $row->usg }}</td>
-								    	<td>{{ $row->pts_fd }}</td>
-								    	<td>{{ $row->salary }}</td>
-								    	<td>{{ $row->vr }}</td>
-								    	@if ($row->mp != 0)
-									    	<td>{{ numFormat($row->pts_fd / $row->mp) }}</td>
-									   	@else
-									   		<td>0.00</td>
-									   	@endif
-								    @else
-								    	<td style="text-align: center" colspan="19">{{ $row->bs_status }}</td>
-								    @endif
-							    </tr>
-							@endforeach
-						</tbody>
-					</table>
-				</div>
+				<table style="font-size: 100%" id="game-log-{{ $yearKey }}" class="table table-striped table-bordered table-hover table-condensed">
+					<thead>
+						<tr>
+							<th>Date</th>
+							<th>Team</th>
+							<th>Opp</th>
+							<th>Score</th>
+							<th>Links</th>
+							<th>Role</th>
+							<th>Mp</th>
+							<th>Ot</th>
+							<th>Fg</th>
+							<th>3p</th>
+							<th>Ft</th>
+							<th>Or</th>
+							<th>Dr</th>
+							<th>Tr</th>
+							<th>Ast</th>
+							<th>Bl</th>
+							<th>St</th>
+							<th>Pf</th>
+							<th>To</th>
+							<th>Pt</th>
+							<th>Usg</th>
+							<th>Fd</th>
+							<th>S</th>
+							<th>Vr</th>
+							<th>Pm</th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach ($year as $row)
+						    <tr>
+						    	<td>{{ $row->date }}</a></td>
+						    	<td>{{ $row->team_of_player }}</td>
+						    	<td>{{ $row->opp_team }}</td>
+						    	<td>{{ $row->game_score }}</td>
+						    	<td><a target="_blank" href="{!! $row->link_br !!}">BR</a> | <a target="_blank" href="http://popcornmachine.net/gf?date={!! $row->date_pm !!}&game={!! $row->road_team_abbr_pm !!}{!! $row->home_team_abbr_pm !!}">PM</a></td>
+						    	<td>{{ $row->role }}</td>
+						    	@if ($row->bs_status == 'Played')
+							    	<td>{{ $row->mp }}</td>
+							    	<td>{{ $row->ot_periods }}</td>
+							    	<td>{{ $row->fg }}-{{ $row->fga }}</td>
+							    	<td>{{ $row->threep }}-{{ $row->threepa }}</td>
+							    	<td>{{ $row->ft }}-{{ $row->fta }}</td>
+							    	<td>{{ $row->orb }}</td>
+							    	<td>{{ $row->drb }}</td>
+							    	<td>{{ $row->trb }}</td>
+							    	<td>{{ $row->ast }}</td>
+							    	<td>{{ $row->blk }}</td>
+							    	<td>{{ $row->stl }}</td>
+							    	<td>{{ $row->pf }}</td>
+							    	<td>{{ $row->tov }}</td>
+							    	<td>{{ $row->pts }}</td>
+							    	<td>{{ $row->usg }}</td>
+							    	<td>{{ $row->fdpts }}</td>
+							    	@if ($row->mp != 0)
+								    	<td>{{ numFormat($row->pts_fd / $row->mp) }}</td>
+								   	@else
+								   		<td>0.00</td>
+								   	@endif
+							    @else
+							    	<td style="text-align: center" colspan="19">{{ $row->bs_status }}</td>
+							    @endif
+						    </tr>
+						@endforeach
+					</tbody>
+				</table>
 			</div>
+		</div>
 
-			<hr>
-		@endif
+		<hr>
 	@endforeach
 
 	<script>

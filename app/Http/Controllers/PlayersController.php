@@ -158,7 +158,7 @@ class PlayersController {
             } unset($boxScoreLine);
         }
 
-        ddAll($boxScoreLines);
+        # ddAll($boxScoreLines);
 
         // Current Player Filter
 
@@ -171,7 +171,7 @@ class PlayersController {
                                          ON t1.player_id = t2.player_id AND t1.created_at = t2.latest');
 
         foreach ($dailyFdFilters as $filter) {
-            if ($statsPlayed['all'][0]->player_id == $filter->player_id) {
+            if ($player_id == $filter->player_id) {
                 $player->filter = $filter;
 
                 break;
@@ -188,16 +188,17 @@ class PlayersController {
 
         $previousFdFilters = array_slice($previousFdFilters, 1, 5);
 
-        // Player Info
+        // Player Metadata
 
-        $playerInfo['name'] = $statsPlayed['all'][0]->name;
-        $playerInfo['player_id'] = $statsPlayed['all'][0]->player_id;
+        $playerMetadata = Player::where('id', '=', $player_id)->first();
 
-        $name = $playerInfo['name'];
+        $name = $playerMetadata->name;
 
-        # ddAll($stats);
+        $playerInfo['player_id'] = $player_id;
 
-        return view('players', compact('stats', 'overviews', 'playerInfo', 'player', 'name', 'previousFdFilters'));
+        # ddAll($name);
+
+        return view('players', compact('boxScoreLines', 'overviews', 'playerInfo', 'player', 'name', 'previousFdFilters'));
 	}
 
 	private function modStats($row, $teams, $playersFd) {
