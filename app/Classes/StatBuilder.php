@@ -20,6 +20,29 @@ use Illuminate\Support\Facades\Session;
 
 class StatBuilder {
 
+    /****************************************************************************************
+    PLAYERS
+    ****************************************************************************************/
+
+    public function getTeamAbbrBr($teamId, $teams) {
+        foreach ($teams as $team) {
+            if ($teamId == $team->id) {
+                return $team->abbr_br;
+            }
+        }
+    }
+
+    public function createGameScore($teamScore, $oppTeamScore) {
+        if ($teamScore > $oppTeamScore) {
+            return '<span style="color: green">W</span> '.$teamScore.'-'.$oppTeamScore;
+        }
+
+        if ($teamScore < $oppTeamScore) {
+            return '<span style="color: red">L</span> '.$teamScore.'-'.$oppTeamScore;
+        }
+    }
+
+
 	/****************************************************************************************
 	DAILY
 	****************************************************************************************/

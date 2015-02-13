@@ -8,6 +8,8 @@ use App\Models\BoxScoreLine;
 use App\Models\PlayerPool;
 use App\Models\PlayerFd;
 
+use App\Classes\StatBuilder;
+
 use Illuminate\Http\Request;
 use App\Http\Requests\RunFDNBASalariesScraperRequest;
 
@@ -120,58 +122,43 @@ class PlayersController {
 
         // Box Score Lines
 
-        foreach ($endYears as $endYear) {
-            $stats[$endYear] = DB::table('box_score_lines')
-                ->join('games', 'box_score_lines.game_id', '=', 'games.id')
-                ->join('seasons', 'games.season_id', '=', 'seasons.id')
-                ->join('players', 'box_score_lines.player_id', '=', 'players.id')
-                ->selectRaw('*, box_score_lines.status as bs_status, (vegas_road_team_score - vegas_home_team_score) as line')
-                ->whereRaw('players.id = '.$player_id.' AND seasons.end_year = "'.$endYear.'"')
-                ->orderBy('date', 'desc')
-                ->get();
-        }
-
         $teams = Team::all();
-        $playersFd = DB::table('players_fd')
-            ->join('player_pools', 'players_fd.player_pool_id', '=', 'player_pools.id')
-            ->select('*')
-            ->get();
 
-        foreach ($stats as &$year) {
-        	foreach ($year as &$row) {
-        		$row = $this->modStats($row, $teams, $playersFd);
-        	}
-        }
-        unset($year);
-        unset($row);
-
-        // Overviews
-
-        $statsPlayed['all'] = DB::table('box_score_lines') // All end years >= 2014
-            ->join('games', 'box_score_lines.game_id', '=', 'games.id')
-            ->join('seasons', 'games.season_id', '=', 'seasons.id')
-            ->join('players', 'box_score_lines.player_id', '=', 'players.id')
-            ->selectRaw('*, box_score_lines.status as bs_status, (vegas_road_team_score - vegas_home_team_score) as line')
-            ->whereRaw('players.id = '.$player_id.' AND seasons.end_year >= 2014 AND box_score_lines.status = "Played"')
-            ->orderBy('date', 'desc')
-            ->get();
+        $statBuilder = new StatBuilder;
 
         foreach ($endYears as $endYear) {
-            $statsPlayed[$endYear] = DB::table('box_score_lines')
-                ->join('games', 'box_score_lines.game_id', '=', 'games.id')
-                ->join('seasons', 'games.season_id', '=', 'seasons.id')
-                ->join('players', 'box_score_lines.player_id', '=', 'players.id')
-                ->selectRaw('*, box_score_lines.status as bs_status, (vegas_road_team_score - vegas_home_team_score) as line')
-                ->whereRaw('players.id = '.$player_id.' AND seasons.end_year = "'.$endYear.'" AND box_score_lines.status = "Played"')
-                ->orderBy('date', 'desc')
-                ->get();
+            $boxScoreLines[$endYear] = DB::table('games')
+                    ->join('box_score_lines', 'box_score_lines.game_id', '=', 'games.id')
+                    ->join('seasons', 'games.season_id', '=', 'seasons.id')
+                    ->join('players', 'box_score_lines.player_id', '=', 'players.id')
+                    ->join('teams', 'teams.id', '=', 'box_score_lines.team_id')
+                    ->selectRaw('games.date as date, box_score_lines.team_id, abbr_br as team_of_player, home_team_id, home_team_score, road_team_id, road_team_score, vegas_home_team_score, vegas_road_team_score, link_br, DATE_FORMAT(games.date, "%Y%m%d") as date_pm, role, mp, ot_periods, fg, fga, threep, threepa, ft, fta, orb, drb, trb, ast, blk, stl, pf, tov, pts, usg, pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov as fdpts, (pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) / mp as fdppm')
+                    ->where('box_score_lines.player_id', '=', $player_id)
+                    ->where('box_score_lines.status', '=', 'Played')
+                    ->where('seasons.end_year', '=', $endYear)
+                    ->orderBy('games.date', 'desc')
+                    ->get();
+
+            foreach ($boxScoreLines[$endYear] as $boxScoreLine) {
+                if ($boxScoreLine->team_id == $boxScoreLine->home_team_id) {
+                    $oppTeamId = $boxScoreLine->road_team_id;
+                    
+                    $boxScoreLine->is_road_game = '';
+
+                    $boxScoreLine->game_score = $statBuilder->createGameScore($boxScoreLine->home_team_score, $boxScoreLine->road_team_score);
+                } else {
+                    $oppTeamId = $boxScoreLine->home_team_id;
+                    
+                    $boxScoreLine->is_road_game = '@';
+
+                    $boxScoreLine->game_score = $statBuilder->createGameScore($boxScoreLine->road_team_score, $boxScoreLine->home_team_score);
+                }
+
+                $boxScoreLine->opp_team = $statBuilder->getTeamAbbrBr($oppTeamId, $teams);
+            } unset($boxScoreLine);
         }
 
-        foreach ($statsPlayed as &$year) {
-            foreach ($year as &$row) {
-                $row = $this->modStats($row, $teams, $playersFd);
-            }
-        } unset($year); unset($row);
+        ddAll($boxScoreLines);
 
         // Current Player Filter
 
