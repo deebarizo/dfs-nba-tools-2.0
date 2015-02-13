@@ -119,9 +119,9 @@
 				</thead>
 				<tbody>
 					<tr>
-						<td>{{ $overviews['all']['mppg'] }}</td>
-						<td>{{ $overviews['all']['fppm'] }}</td>
-						<td>{{ $overviews['all']['fppg'] }}</td>
+						<td>{{ numFormat($overviews['all']['mppg']) }}</td>
+						<td>{{ numFormat($overviews['all']['fppm']) }}</td>
+						<td>{{ numFormat($overviews['all']['fppg']) }}</td>
 					</tr>
 				</tbody>
 			</table>	
@@ -142,9 +142,9 @@
 						</thead>
 						<tbody>
 							<tr>
-								<td>{{ $overviews[$yearKey]['mppg'] }}</td>
-								<td>{{ $overviews[$yearKey]['fppm'] }}</td>
-								<td>{{ $overviews[$yearKey]['fppg'] }}</td>
+								<td>{{ numFormat($overviews[$yearKey]['mppg']) }}</td>
+								<td>{{ numFormat($overviews[$yearKey]['fppm']) }}</td>
+								<td>{{ numFormat($overviews[$yearKey]['fppg']) }}</td>
 							</tr>
 						</tbody>
 					</table>	

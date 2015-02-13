@@ -50,9 +50,75 @@ class PlayersController {
 
 	public function getPlayerStats($player_id) {
 
-        // Box Score Lines
-
         $endYears = [2015, 2014];
+
+        // MPG, FPPG, FPPM
+
+        $overviews['all']['mppg'] = DB::table('box_score_lines')
+                ->join('games', 'box_score_lines.game_id', '=', 'games.id')
+                ->join('seasons', 'games.season_id', '=', 'seasons.id')
+                ->join('players', 'box_score_lines.player_id', '=', 'players.id')
+                ->selectRaw('AVG(mp) as mppg')
+                ->where('player_id', '=', $player_id)
+                ->where('box_score_lines.status', '=', 'Played')
+                ->where('seasons.end_year', '>=', $endYears[1])
+                ->pluck('mppg');
+
+        $overviews['all']['fppg'] = DB::table('box_score_lines')
+                ->join('games', 'box_score_lines.game_id', '=', 'games.id')
+                ->join('seasons', 'games.season_id', '=', 'seasons.id')
+                ->join('players', 'box_score_lines.player_id', '=', 'players.id')
+                ->selectRaw('AVG(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) as fppg')
+                ->where('player_id', '=', $player_id)
+                ->where('box_score_lines.status', '=', 'Played')
+                ->where('seasons.end_year', '>=', $endYears[1])
+                ->pluck('fppg'); 
+
+        $overviews['all']['fppm'] = DB::table('box_score_lines')
+                ->join('games', 'box_score_lines.game_id', '=', 'games.id')
+                ->join('seasons', 'games.season_id', '=', 'seasons.id')
+                ->join('players', 'box_score_lines.player_id', '=', 'players.id')
+                ->selectRaw('SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) / SUM(mp) as fppm')
+                ->where('player_id', '=', $player_id)
+                ->where('box_score_lines.status', '=', 'Played')
+                ->where('seasons.end_year', '>=', $endYears[1])
+                ->pluck('fppm'); 
+
+        foreach ($endYears as $endYear) {
+            $overviews[$endYear]['mppg'] = DB::table('box_score_lines')
+                    ->join('games', 'box_score_lines.game_id', '=', 'games.id')
+                    ->join('seasons', 'games.season_id', '=', 'seasons.id')
+                    ->join('players', 'box_score_lines.player_id', '=', 'players.id')
+                    ->selectRaw('AVG(mp) as mppg')
+                    ->where('player_id', '=', $player_id)
+                    ->where('box_score_lines.status', '=', 'Played')
+                    ->where('seasons.end_year', '=', $endYear)
+                    ->pluck('mppg');
+
+            $overviews[$endYear]['fppg'] = DB::table('box_score_lines')
+                    ->join('games', 'box_score_lines.game_id', '=', 'games.id')
+                    ->join('seasons', 'games.season_id', '=', 'seasons.id')
+                    ->join('players', 'box_score_lines.player_id', '=', 'players.id')
+                    ->selectRaw('AVG(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) as fppg')
+                    ->where('player_id', '=', $player_id)
+                    ->where('box_score_lines.status', '=', 'Played')
+                    ->where('seasons.end_year', '=', $endYear)
+                    ->pluck('fppg');
+
+            $overviews[$endYear]['fppm'] = DB::table('box_score_lines')
+                    ->join('games', 'box_score_lines.game_id', '=', 'games.id')
+                    ->join('seasons', 'games.season_id', '=', 'seasons.id')
+                    ->join('players', 'box_score_lines.player_id', '=', 'players.id')
+                    ->selectRaw('SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) / SUM(mp) as fppm')
+                    ->where('player_id', '=', $player_id)
+                    ->where('box_score_lines.status', '=', 'Played')
+                    ->where('seasons.end_year', '=', $endYear)
+                    ->pluck('fppm'); 
+        }
+
+        # ddAll($overviews);
+
+        // Box Score Lines
 
         foreach ($endYears as $endYear) {
             $stats[$endYear] = DB::table('box_score_lines')
@@ -105,27 +171,7 @@ class PlayersController {
             foreach ($year as &$row) {
                 $row = $this->modStats($row, $teams, $playersFd);
             }
-        }
-        unset($year);
-        unset($row);
-
-        foreach ($statsPlayed as $timePeriod => $boxScoreLines) {
-            $gamesPlayed = count($boxScoreLines);
-
-            if ($gamesPlayed > 0) {
-                $totalMp = 0;
-                $totalFp = 0;
-
-                foreach ($boxScoreLines as $boxScoreLine) {
-                    $totalMp += $boxScoreLine->mp;
-                    $totalFp += $boxScoreLine->pts_fd;
-                }
-
-                $overviews[$timePeriod]['mppg'] = numFormat($totalMp / $gamesPlayed);
-                $overviews[$timePeriod]['fppm'] = numFormat($totalFp / $totalMp);
-                $overviews[$timePeriod]['fppg'] = numFormat($overviews[$timePeriod]['mppg'] * $overviews[$timePeriod]['fppm']);
-            }
-        }
+        } unset($year); unset($row);
 
         // Current Player Filter
 
