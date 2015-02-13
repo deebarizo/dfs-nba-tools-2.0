@@ -27,35 +27,6 @@ date_default_timezone_set('America/Chicago');
 class DailyController {
 
 	public function daily_fd_nba($date) {
-        $boxScoreLines = BoxScoreLine::skip(78000)->take(10000)->get()->toArray();
-
-        # ddAll($boxScoreLines);
-
-        $count = 0;
-
-        foreach ($boxScoreLines as $boxScoreLine) {
-            if ($boxScoreLine['opp_team_id'] == 0) {
-                $boxScoreLineWithOppTeam = DB::table('box_score_lines')
-                                                ->where('game_id', '=', $boxScoreLine['game_id'])
-                                                ->where('team_id', '!=', $boxScoreLine['team_id'])
-                                                ->first();
-
-                $oppTeamId = $boxScoreLineWithOppTeam->team_id;
-
-                # ddAll($oppTeamId);
-
-                DB::table('box_score_lines')->where('game_id', '=', $boxScoreLine['game_id'])
-                                            ->where('team_id', '!=', $oppTeamId)
-                                            ->update(array('opp_team_id' => $oppTeamId));
-
-                $count++;
-            }
-        }
-
-
-
-        echo $count.' done'; exit();
-
         $teams = Team::all();
 
         $statBuilder = new StatBuilder;
