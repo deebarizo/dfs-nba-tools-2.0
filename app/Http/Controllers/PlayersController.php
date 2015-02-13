@@ -132,9 +132,8 @@ class PlayersController {
                     ->join('seasons', 'games.season_id', '=', 'seasons.id')
                     ->join('players', 'box_score_lines.player_id', '=', 'players.id')
                     ->join('teams', 'teams.id', '=', 'box_score_lines.team_id')
-                    ->selectRaw('games.date as date, box_score_lines.team_id, abbr_br as team_of_player, home_team_id, home_team_score, road_team_id, road_team_score, vegas_home_team_score, vegas_road_team_score, link_br, DATE_FORMAT(games.date, "%Y%m%d") as date_pm, role, mp, ot_periods, fg, fga, threep, threepa, ft, fta, orb, drb, trb, ast, blk, stl, pf, tov, pts, usg, pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov as fdpts, (pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) / mp as fdppm')
+                    ->selectRaw('games.date as date, box_score_lines.team_id, abbr_br as team_of_player, home_team_id, home_team_score, road_team_id, road_team_score, vegas_home_team_score, vegas_road_team_score, link_br, DATE_FORMAT(games.date, "%Y%m%d") as date_pm, role, mp, ot_periods, fg, fga, threep, threepa, ft, fta, orb, drb, trb, ast, blk, stl, pf, tov, pts, usg, pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov as fdpts, (pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) / mp as fdppm, status')
                     ->where('box_score_lines.player_id', '=', $player_id)
-                    ->where('box_score_lines.status', '=', 'Played')
                     ->where('seasons.end_year', '=', $endYear)
                     ->orderBy('games.date', 'desc')
                     ->get();
@@ -146,15 +145,23 @@ class PlayersController {
                     $boxScoreLine->is_road_game = '';
 
                     $boxScoreLine->game_score = $statBuilder->createGameScore($boxScoreLine->home_team_score, $boxScoreLine->road_team_score);
+
+                    $boxScoreLine->line = $statBuilder->createLine($boxScoreLine->vegas_home_team_score, $boxScoreLine->vegas_road_team_score);
                 } else {
                     $oppTeamId = $boxScoreLine->home_team_id;
                     
                     $boxScoreLine->is_road_game = '@';
 
                     $boxScoreLine->game_score = $statBuilder->createGameScore($boxScoreLine->road_team_score, $boxScoreLine->home_team_score);
+
+                    $boxScoreLine->line = $statBuilder->createLine($boxScoreLine->vegas_road_team_score, $boxScoreLine->vegas_home_team_score);
                 }
 
                 $boxScoreLine->opp_team = $statBuilder->getTeamAbbrBr($oppTeamId, $teams);
+
+                $boxScoreLine->home_team_abbr_pm = $statBuilder->getTeamAbbrPm($boxScoreLine->home_team_id, $teams);
+                $boxScoreLine->road_team_abbr_pm = $statBuilder->getTeamAbbrPm($boxScoreLine->road_team_id, $teams);
+
             } unset($boxScoreLine);
         }
 

@@ -128,26 +128,28 @@
 		</div>
 
 		@foreach ($overviews as $yearKey => $overview)
-			<div class="col-lg-12">
-				<h4>{{ $yearKey }}</h4>
-				
-				<table id="overview-{{ $yearKey }}" style="width: 50%" class="table table-striped table-bordered table-hover table-condensed">
-					<thead>
-						<tr>
-							<th>MPG</th>
-							<th>FPPM</th>
-							<th>FPG</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td>{{ numFormat($overview['mppg']) }}</td>
-							<td>{{ numFormat($overview['fppm']) }}</td>
-							<td>{{ numFormat($overview['fppg']) }}</td>
-						</tr>
-					</tbody>
-				</table>	
-			</div>
+			@if ($yearKey != 'all')
+				<div class="col-lg-12">
+					<h4>{{ $yearKey }}</h4>
+					
+					<table id="overview-{{ $yearKey }}" style="width: 50%" class="table table-striped table-bordered table-hover table-condensed">
+						<thead>
+							<tr>
+								<th>MPG</th>
+								<th>FPPM</th>
+								<th>FPG</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>{{ numFormat($overview['mppg']) }}</td>
+								<td>{{ numFormat($overview['fppm']) }}</td>
+								<td>{{ numFormat($overview['fppg']) }}</td>
+							</tr>
+						</tbody>
+					</table>	
+				</div>
+			@endif
 		@endforeach
 	</div>
 
@@ -167,6 +169,7 @@
 							<th>Team</th>
 							<th>Opp</th>
 							<th>Score</th>
+							<th>Line</th>
 							<th>Links</th>
 							<th>Role</th>
 							<th>Mp</th>
@@ -184,10 +187,8 @@
 							<th>To</th>
 							<th>Pt</th>
 							<th>Usg</th>
-							<th>Fd</th>
-							<th>S</th>
-							<th>Vr</th>
-							<th>Pm</th>
+							<th>Fdpts</th>
+							<th>Fdppm</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -196,10 +197,11 @@
 						    	<td>{{ $row->date }}</a></td>
 						    	<td>{{ $row->team_of_player }}</td>
 						    	<td>{{ $row->opp_team }}</td>
-						    	<td>{{ $row->game_score }}</td>
+						    	<td>{!! $row->game_score !!}</td>
+						    	<td>{!! $row->line !!}</td>
 						    	<td><a target="_blank" href="{!! $row->link_br !!}">BR</a> | <a target="_blank" href="http://popcornmachine.net/gf?date={!! $row->date_pm !!}&game={!! $row->road_team_abbr_pm !!}{!! $row->home_team_abbr_pm !!}">PM</a></td>
 						    	<td>{{ $row->role }}</td>
-						    	@if ($row->bs_status == 'Played')
+						    	@if ($row->status == 'Played')
 							    	<td>{{ $row->mp }}</td>
 							    	<td>{{ $row->ot_periods }}</td>
 							    	<td>{{ $row->fg }}-{{ $row->fga }}</td>
@@ -214,15 +216,15 @@
 							    	<td>{{ $row->pf }}</td>
 							    	<td>{{ $row->tov }}</td>
 							    	<td>{{ $row->pts }}</td>
-							    	<td>{{ $row->usg }}</td>
-							    	<td>{{ $row->fdpts }}</td>
+							    	<td>{{ numFormat($row->usg, 1) }}</td>
+							    	<td>{{ numFormat($row->fdpts) }}</td>
 							    	@if ($row->mp != 0)
-								    	<td>{{ numFormat($row->pts_fd / $row->mp) }}</td>
+								    	<td>{{ numFormat($row->fdppm) }}</td>
 								   	@else
 								   		<td>0.00</td>
 								   	@endif
 							    @else
-							    	<td style="text-align: center" colspan="19">{{ $row->bs_status }}</td>
+							    	<td style="text-align: center" colspan="19">{{ $row->status }}</td>
 							    @endif
 						    </tr>
 						@endforeach

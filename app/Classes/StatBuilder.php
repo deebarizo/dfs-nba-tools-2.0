@@ -32,6 +32,14 @@ class StatBuilder {
         }
     }
 
+    public function getTeamAbbrPm($teamId, $teams) {
+        foreach ($teams as $team) {
+            if ($teamId == $team->id) {
+                return $team->abbr_pm;
+            }
+        }
+    }
+
     public function createGameScore($teamScore, $oppTeamScore) {
         if ($teamScore > $oppTeamScore) {
             return '<span style="color: green">W</span> '.$teamScore.'-'.$oppTeamScore;
@@ -40,6 +48,20 @@ class StatBuilder {
         if ($teamScore < $oppTeamScore) {
             return '<span style="color: red">L</span> '.$teamScore.'-'.$oppTeamScore;
         }
+    }
+
+    public function createLine($vegasTeamScore, $oppVegasTeamScore) {
+        $diff = abs($vegasTeamScore - $oppVegasTeamScore);
+
+        if ($vegasTeamScore > $oppVegasTeamScore) {
+            return '-'.$diff;
+        }    
+
+        if ($vegasTeamScore < $oppVegasTeamScore) {
+            return '+'.$diff;
+        }       
+
+        return 'PK';
     }
 
 
