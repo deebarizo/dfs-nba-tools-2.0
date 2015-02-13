@@ -112,9 +112,9 @@
 			<table id="overview-all" style="width: 50%" class="table table-striped table-bordered table-hover table-condensed">
 				<thead>
 					<tr>
-						<th>MPG</th>
-						<th>FPPM</th>
-						<th>FPG</th>
+						<th style="width: 33%">MPG</th>
+						<th style="width: 33%">FPPM</th>
+						<th style="width: 34%">FPG</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -135,9 +135,9 @@
 					<table id="overview-{{ $yearKey }}" style="width: 50%" class="table table-striped table-bordered table-hover table-condensed">
 						<thead>
 							<tr>
-								<th>MPG</th>
-								<th>FPPM</th>
-								<th>FPG</th>
+								<th style="width: 33%">MPG</th>
+								<th style="width: 33%">FPPM</th>
+								<th style="width: 34%">FPG</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -198,12 +198,16 @@
 						    	<td>{{ $row->team_of_player }}</td>
 						    	<td>{{ $row->opp_team }}</td>
 						    	<td>{!! $row->game_score !!}</td>
-						    	<td>{!! $row->line !!}</td>
+						    	<td>{{ $row->line }}</td>
 						    	<td><a target="_blank" href="{!! $row->link_br !!}">BR</a> | <a target="_blank" href="http://popcornmachine.net/gf?date={!! $row->date_pm !!}&game={!! $row->road_team_abbr_pm !!}{!! $row->home_team_abbr_pm !!}">PM</a></td>
 						    	<td>{{ $row->role }}</td>
 						    	@if ($row->status == 'Played')
 							    	<td>{{ $row->mp }}</td>
-							    	<td>{{ $row->ot_periods }}</td>
+							    	@if ($row->ot_periods > 0)
+								    	<td><strong>{{ $row->ot_periods }}</strong></td>
+								   	@else
+								   		<td>{{ $row->ot_periods }}</td>
+								   	@endif
 							    	<td>{{ $row->fg }}-{{ $row->fga }}</td>
 							    	<td>{{ $row->threep }}-{{ $row->threepa }}</td>
 							    	<td>{{ $row->ft }}-{{ $row->fta }}</td>
