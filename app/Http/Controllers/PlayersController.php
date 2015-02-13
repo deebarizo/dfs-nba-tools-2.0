@@ -203,7 +203,7 @@ class PlayersController {
 
         $playerInfo['player_id'] = $player_id;
 
-        # ddAll($name);
+        # ddAll($boxScoreLines);
 
         return view('players', compact('boxScoreLines', 'overviews', 'playerInfo', 'player', 'name', 'previousFdFilters'));
 	}

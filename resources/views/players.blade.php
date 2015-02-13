@@ -196,7 +196,7 @@
 						    <tr>
 						    	<td>{{ $row->date }}</a></td>
 						    	<td>{{ $row->team_of_player }}</td>
-						    	<td>{{ $row->opp_team }}</td>
+						    	<td>{{ $row->is_road_game.$row->opp_team }}</td>
 						    	<td>{!! $row->game_score !!}</td>
 						    	<td>{{ $row->line }}</td>
 						    	<td><a target="_blank" href="{!! $row->link_br !!}">BR</a> | <a target="_blank" href="http://popcornmachine.net/gf?date={!! $row->date_pm !!}&game={!! $row->road_team_abbr_pm !!}{!! $row->home_team_abbr_pm !!}">PM</a></td>
