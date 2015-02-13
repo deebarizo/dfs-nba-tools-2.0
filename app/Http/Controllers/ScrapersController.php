@@ -196,7 +196,6 @@ class ScrapersController {
 					$boxScoreLine->tov = $playerData['tov'];
 					$boxScoreLine->pf = $playerData['pf'];
 					$boxScoreLine->pts = $playerData['pts'];
-					# $boxScoreLine->plus_minus = $playerData['plus_minus'];
 					$boxScoreLine->orb_percent = $playerData['orb_percent'];
 					$boxScoreLine->drb_percent = $playerData['drb_percent'];
 					$boxScoreLine->trb_percent = $playerData['trb_percent'];
@@ -211,6 +210,21 @@ class ScrapersController {
 					$boxScoreLine->save();
 	    		}
 	    	}
+	    }
+
+	    $noOppTeamIdBoxScoreLines = BoxScoreLine::where('opp_team_id', '=', 0)->get()->toArray();
+
+	    foreach ($noOppTeamIdBoxScoreLines as $noOppTeamIdBoxScoreLine) {
+            $boxScoreLineWithOppTeam = DB::table('box_score_lines')
+                                            ->where('game_id', '=', $noOppTeamIdBoxScoreLine['game_id'])
+                                            ->where('team_id', '!=', $noOppTeamIdBoxScoreLine['team_id'])
+                                            ->first();
+
+            $oppTeamId = $boxScoreLineWithOppTeam->team_id;
+
+            DB::table('box_score_lines')->where('game_id', '=', $noOppTeamIdBoxScoreLine['game_id'])
+                                        ->where('team_id', '!=', $oppTeamId)
+                                        ->update(array('opp_team_id' => $oppTeamId));
 	    }
 
 		$message = 'Success! The box score lines of '.$gamesWithDataCount.' games were scraped and saved.';
