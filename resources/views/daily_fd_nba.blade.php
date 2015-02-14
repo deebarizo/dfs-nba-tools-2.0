@@ -155,8 +155,8 @@
 					    	<td>{{ $line }}</td>
 					    	<td>{{ $player->position }}</td>
 					    	<td>{{ numFormat($player->mp_mod) }}</td>
-					    	<td>{{ $player->fppmWithVegasFilter }}</td>
-					    	<td>{{ $player->fppgWithVegasFilter }}</td>
+					    	<td>{{ $player->fppmWithAllFilters }}</td>
+					    	<td>{{ $player->fppgWithAllFilters }}</td>
 					    	<td>{{ $player->salary }}</td>
 					    	<td>{{ $player->vr }}</td>
 					    </tr>

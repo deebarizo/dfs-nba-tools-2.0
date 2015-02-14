@@ -528,10 +528,13 @@ class StatBuilder {
                     $player->mp_mod = calculateMpMod($playerStats[$player->player_id]['all'], $player->filter->mp_ot_filter);
                 }
 
+                // No FPPM Source
 
                 if (!isset($player->fppm) ) {
                     $player = calculateFppm($player, $playerStats[$player->player_id]['all']);
                 }
+
+                // No Mp Mod
 
                 if (!isset($player->mp_mod)) {
                     ddAll($player);
@@ -541,18 +544,140 @@ class StatBuilder {
                 $player->mp_mod = calculateMpMod($playerStats[$player->player_id]['all'], 0);
             }
 
+            // FILTERS
+
+            $player->fppmWithVegasFilter = ($player->fppm * $player->vegas_filter) + $player->fppm;
+            $player->fppgWithVegasFilter = numFormat($player->mp_mod * $player->fppmWithVegasFilter); // I need this for Line Filter and it must be numFormat
+
+            $player->fppmWithLineFilter = $this->getFppmBasedOnLineFilter($player);
+            $player->fppgWithLineFilter = $player->mp_mod * $player->fppmWithLineFilter;
+
             // STATS IN VIEW
+            
+            $player->fppmWithAllFilters = numFormat($player->fppmWithLineFilter);
+            $player->fppgWithAllFilters = numFormat($player->fppgWithLineFilter);
 
-            $player->fppmWithVegasFilter = numFormat(($player->fppm * $player->vegas_filter) + $player->fppm);
+            $player->vr = numFormat($player->fppgWithAllFilters / ($player->salary / 1000));
 
-            $player->fppg = $player->mp_mod * $player->fppm;
-            $player->fppgWithVegasFilter = numFormat(($player->fppg * $player->vegas_filter) + $player->fppg);
-
-            $player->vr = numFormat($player->fppgWithVegasFilter / ($player->salary / 1000));
+            # ddAll($player);
 
         } unset($player);
 
+        # ddAll($players);
+
         return $players;
+    }
+
+    private function getFppmBasedOnLineFilter($player) {
+        // 1
+
+        if ($player->fppgWithVegasFilter >= -100 && $player->fppgWithVegasFilter <= 15.74) {
+            $absFilter = (abs($player->line) * 0.0099590105826463) + -0.062472771788925;
+            $noAbsFilter = ($player->line * 0.0013742750195296) + -0.0013315510683428;
+
+            $lineFilter = $absFilter + $noAbsFilter;
+
+            return ($player->fppmWithVegasFilter * $lineFilter) + $player->fppmWithVegasFilter; 
+        }
+
+        // 2
+
+        if ($player->fppgWithVegasFilter >= 15.75 && $player->fppgWithVegasFilter <= 17.73) {
+            $absFilter = (abs($player->line) * 0.0022343456534535) + -0.011324016918622;
+            $noAbsFilter = ($player->line * 0.0032427752122044) + 0.00055266055181689;
+
+            $lineFilter = $absFilter + $noAbsFilter;
+
+            return ($player->fppmWithVegasFilter * $lineFilter) + $player->fppmWithVegasFilter; 
+        }
+
+        // 3
+
+        if ($player->fppgWithVegasFilter >= 17.74 && $player->fppgWithVegasFilter <= 19.41) {
+            $absFilter = (abs($player->line) * 0.00099913884196103) + -0.003994736167979;
+            $noAbsFilter = ($player->line * 0.0018291068082837) + 0.0018485630352972;
+
+            $lineFilter = $absFilter + $noAbsFilter;
+
+            return ($player->fppmWithVegasFilter * $lineFilter) + $player->fppmWithVegasFilter; 
+        }
+
+        // 4
+
+        if ($player->fppgWithVegasFilter >= 19.42 && $player->fppgWithVegasFilter <= 21.26) {
+            $absFilter = (abs($player->line) * -0.00021908540075569) + 0.0063423056940844;
+            $noAbsFilter = ($player->line * 0.00023017987434186) + 0.0050057191903182;
+
+            $lineFilter = $absFilter + $noAbsFilter;
+
+            return ($player->fppmWithVegasFilter * $lineFilter) + $player->fppmWithVegasFilter; 
+        }
+
+        // 5
+
+        if ($player->fppgWithVegasFilter >= 21.27 && $player->fppgWithVegasFilter <= 23.37) {
+            $absFilter = (abs($player->line) * -0.00026201861927537) + 0.0043580611754587;
+            $noAbsFilter = ($player->line * 0.001459366497387) + 0.0020222836072165;
+
+            $lineFilter = $absFilter + $noAbsFilter;
+
+            return ($player->fppmWithVegasFilter * $lineFilter) + $player->fppmWithVegasFilter; 
+        }
+
+        // 6
+
+        if ($player->fppgWithVegasFilter >= 23.38 && $player->fppgWithVegasFilter <= 25.52) {
+            $absFilter = (abs($player->line) * 0.00044376730269296) + -0.0014406736369231;
+            $noAbsFilter = ($player->line * 0.00026090347075302) + 0.0011094746798654;
+
+            $lineFilter = $absFilter + $noAbsFilter;
+
+            return ($player->fppmWithVegasFilter * $lineFilter) + $player->fppmWithVegasFilter; 
+        }
+
+        // 7
+
+        if ($player->fppgWithVegasFilter >= 25.53 && $player->fppgWithVegasFilter <= 28.23) {
+            $absFilter = (abs($player->line) * -0.002142278124001) + 0.015956396110717;
+            $noAbsFilter = ($player->line * -0.0000495151661039) + 0.0031850492840315;
+
+            $lineFilter = $absFilter + $noAbsFilter;
+
+            return ($player->fppmWithVegasFilter * $lineFilter) + $player->fppmWithVegasFilter; 
+        }
+
+        // 8
+
+        if ($player->fppgWithVegasFilter >= 28.24 && $player->fppgWithVegasFilter <= 31.59) {
+            $absFilter = (abs($player->line) * -0.0057115419949928) + 0.0357902689116409;
+            $noAbsFilter = ($player->line * -0.0003854563889886) + 0.0012655362967571;
+
+            $lineFilter = $absFilter + $noAbsFilter;
+
+            return ($player->fppmWithVegasFilter * $lineFilter) + $player->fppmWithVegasFilter; 
+        }
+
+        // 9
+
+        if ($player->fppgWithVegasFilter >= 31.60 && $player->fppgWithVegasFilter <= 35.46) {
+            $absFilter = (abs($player->line) * -0.0044383003324907) + 0.0296787454732803;
+            $noAbsFilter = ($player->line * -0.0000064391984030) + 0.0030693417404139;
+
+            $lineFilter = $absFilter + $noAbsFilter;
+
+            return ($player->fppmWithVegasFilter * $lineFilter) + $player->fppmWithVegasFilter; 
+        }
+
+        // 10
+
+        if ($player->fppgWithVegasFilter >= 35.47 && $player->fppgWithVegasFilter <= 200) {
+            $absFilter = (abs($player->line) * -0.0059866500620494) + 0.0406688399777451;
+            $noAbsFilter = ($player->line * 0.0018768345361964) + 0.0086390450606912;
+
+            $lineFilter = $absFilter + $noAbsFilter;
+
+            return ($player->fppmWithVegasFilter * $lineFilter) + $player->fppmWithVegasFilter; 
+        }
     }
 
     public function removeInactivePlayers($players) {

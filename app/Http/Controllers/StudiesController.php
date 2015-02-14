@@ -24,8 +24,13 @@ class StudiesController {
 	CATEGORIZING PROJECTED FPTS
 	****************************************************************************************/	
 
-	public function classifyingProjectedFpts($mpgMax = 20, $fppgMax = 200, $fppgMin = -100, $absoluteSpread = '') {
+	public function classifyingProjectedFpts() {
 		$numOfClassifications = 10;
+
+		$mpgMax = 20;
+		$fppgMin = -100;
+		$fppgMax = 200;
+		$absoluteSpread = '';
 
 		$statBuilder = new StatBuilder;
 
@@ -87,7 +92,7 @@ class StudiesController {
 	CORRELATION: SPREADS AND PLAYER FPTS ERROR
 	****************************************************************************************/	
 
-	public function correlationSpreadsAndPlayerFptsError($mpgMax, $fppgMax, $fppgMin, $absoluteSpread) {
+	public function correlationSpreadsAndPlayerFptsError($mpgMax, $fppgMin, $fppgMax, $absoluteSpread) {
 		$statBuilder = new StatBuilder;
 
 		$xMin = $statBuilder->getXMinBasedOnAbsoluteSpread($absoluteSpread);
@@ -146,7 +151,7 @@ class StudiesController {
 		$data['perfectLineJSON'] = $perfectLineJSON;
 
 		$data['subhead1'] = 'Calculate Player Fpts Error:';
-		$data['subhead2'] = '(Absolute Spread * '.$data['bOne'].') + '.$data['bNaught']; 
+		$data['subhead2'] = '(Absolute Spread * '.numFormat($data['bOne'], 16).') + '.numFormat($data['bNaught'], 16); 
 
 		return view('studies/correlation_spreads_and_player_fpts_error', compact('data'));		
 	}
