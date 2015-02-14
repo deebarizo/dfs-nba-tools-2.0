@@ -12,6 +12,7 @@ $router->get('studies/correlations/scores_and_vegas_scores', 'StudiesController@
 $router->get('studies/histograms/scores', 'StudiesController@histogramScores');
 $router->get('studies/correlations/scores_and_fd_scores', 'StudiesController@correlationScoresAndFDScores');
 $router->get('studies/correlations/spreads_and_player_fpts_error/{mpgMax}/{fppgMax}/{fppgMin}/{absoluteSpread}', 'StudiesController@correlationSpreadsAndPlayerFptsError');
+$router->get('studies/general/classifying_projected_fpts/', 'StudiesController@classifyingProjectedFpts');
 
 $router->get('players/{player_id}', 'PlayersController@getPlayerStats');
 
