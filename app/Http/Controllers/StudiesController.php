@@ -77,7 +77,9 @@ class StudiesController {
 			);
 		}
 
-		ddAll($playerGroups);
+		# ddAll($playerGroups);
+
+		return view('studies/general_classifying_projected_fpts', compact('playerGroups'));	
 	}
 
 
