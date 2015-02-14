@@ -208,13 +208,37 @@ class StatBuilder {
                                         })                                        
                                         ->count();
 
-            ddAll($numGamesInCurrentSeason);
+            $teamStats['team_offense'] = DB::table('seasons')
+                                ->selectRaw('SUM(pts) as team_pts, 
+                                    SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) as team_fdpts, 
+                                    SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) / SUM(pts) as team_multiplier')
+                                ->join('games', 'games.season_id', '=', 'seasons.id')
+                                ->join('box_score_lines', 'box_score_lines.game_id', '=', 'games.id')
+                                ->where('seasons.id', '=', $seasonId)
+                                ->where('box_score_lines.team_id', '=', $teamId)
+                                ->where('games.date', '<', $date)
+                                ->first();
 
-            $teamPPG = $totalPoints / $gamesCount;
+            $teamStats['opp_team_defense'] = DB::table('seasons')
+                                ->selectRaw('SUM(pts) as team_pts, 
+                                    SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) as team_fdpts, 
+                                    SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) / SUM(pts) as team_multiplier')
+                                ->join('games', 'games.season_id', '=', 'seasons.id')
+                                ->join('box_score_lines', 'box_score_lines.game_id', '=', 'games.id')
+                                ->where('seasons.id', '=', $seasonId)
+                                ->where('box_score_lines.opp_team_id', '=', $teamsToday['opp_id'][$key])
+                                ->where('games.date', '<', $date)
+                                ->first();
+
+            # ddAll($teamStats);
 
             $teamFilters[$key] = new \stdClass();
             $teamFilters[$key]->team_id = $teamId;
-            $teamFilters[$key]->ppg = $teamPPG;
+            $teamFilters[$key]->ppg = $teamStats['team_offense']->team_pts / $numGamesInCurrentSeason;
+            $teamFilters[$key]->multiplier = 
+                ($teamStats['team_offense']->team_multiplier + $teamStats['opp_team_defense']->team_multiplier) / 2;
+
+            # ddAll($teamFilters);
         }
 
         $activeDbTeamFilters = TeamFilter::where('active', '=', 1)->get()->toArray();
@@ -229,6 +253,12 @@ class StatBuilder {
             }
         }
 
+        foreach ($teamFilters as &$teamFilter) {
+            $teamFilter->fppg = $teamFilter->ppg * $teamFilter->multiplier;
+        } unset($teamFilter);
+
+        # ddAll($teamFilters);
+
         return $teamFilters;
     }
 
@@ -236,9 +266,10 @@ class StatBuilder {
         foreach ($players as &$player) {
             foreach ($teamFilters as $teamFilter) {
                 if ($player->team_id == $teamFilter->team_id) {
-                    $player->team_ppg = $teamFilter->ppg;
+                    $player->team_fppg = $teamFilter->fppg;
 
-                    $player->vegas_filter = ($player->vegas_score_team - $player->team_ppg) / $player->team_ppg;
+                    $player->vegas_filter = 
+                        (($player->vegas_score_team * $teamFilter->multiplier) - $player->team_fppg) / $player->team_fppg;
 
                     break;
                 }
