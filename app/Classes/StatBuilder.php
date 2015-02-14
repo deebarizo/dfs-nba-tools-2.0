@@ -71,7 +71,7 @@ class StatBuilder {
             ->where('status', '=', 'Played')
             ->groupBy('player_id')
             ->having('mpg', '>=', $mpgMax)
-            ->having('fppg', '<', $fppgMax)
+            ->having('fppg', '<=', $fppgMax)
             ->having('fppg', '>=', $fppgMin)
             ->having('num_games', '>=', 41)
             ->having('num_teams', '=', 1)

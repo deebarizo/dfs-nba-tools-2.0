@@ -56,11 +56,12 @@ class StudiesController {
 		$playerGroups = [];
 
 		for ($i = 1; $i <= $numOfClassifications; $i++) { 
-			$minKey = ($i * $classificationInterval) - $classificationInterval;
-			$maxKey = ($i * $classificationInterval) - 1;
+			$min = numFormat($projectedFpts[($i * $classificationInterval) - $classificationInterval]);
+			$max = numFormat($projectedFpts[($i * $classificationInterval) - 1]);
 
-			$min = $projectedFpts[$minKey];
-			$max = $projectedFpts[$maxKey];
+			if ($i > 1 && $min == $playerGroups[$i-1]['max']) {
+				$min += 0.01;
+			}
 
 			if ($i == 1) {
 				$min = -100;
@@ -71,8 +72,8 @@ class StudiesController {
 			}
 
 			$playerGroups[$i] = array(
-				'min' => $min,
-				'max' => $max
+				'min' => numFormat($min),
+				'max' => numFormat($max)
 			);
 		}
 
