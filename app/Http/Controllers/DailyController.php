@@ -27,6 +27,8 @@ date_default_timezone_set('America/Chicago');
 class DailyController {
 
 	public function daily_fd_nba($date) {
+        $seasonId = 11;
+
         $teams = Team::all();
 
         $statBuilder = new StatBuilder;
@@ -47,7 +49,7 @@ class DailyController {
         if ($vegasScores != 'No lines yet.') {
             $players = $statBuilder->addVegasInfoToPlayers($players, $vegasScores);
 
-            $teamFilters = $statBuilder->getTeamFilters($teamsToday, $date);
+            $teamFilters = $statBuilder->getTeamFilters($teamsToday, $date, $seasonId);
 
             $players = $statBuilder->addVegasFilterToPlayers($players, $teamFilters);
 

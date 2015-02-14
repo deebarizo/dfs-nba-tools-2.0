@@ -133,10 +133,22 @@ class StatBuilder {
         sort($teamsId);
         $teamsToday['id'] = $teamsId;
 
-        # dd($teamsToday);
+        foreach ($teamsToday['id'] as $key => $teamId) {
+            $teamsToday['opp_id'][$key] = $this->getOppTeamId($players, $teamId);
+        }
+
+        # ddAll($teamsToday);
 
         return $teamsToday;
 	}
+
+    private function getOppTeamId($players, $teamId) {
+        foreach ($players as $player) {
+            if ($teamId == $player->team_id) {
+                return $player->opp_team_id;
+            }
+        }
+    }
 
 	public function matchPlayersToFilters($players) {
         $dailyFdFilters = DB::select('SELECT t1.* FROM daily_fd_filters AS t1
@@ -184,30 +196,19 @@ class StatBuilder {
         return $players;
     }
 
-    public function getTeamFilters($teamsToday, $date) {
+    public function getTeamFilters($teamsToday, $date, $seasonId) {
+        # ddAll($teamsToday);
+
         foreach ($teamsToday['id'] as $key => $teamId) {
-            $gamesInCurrentSeason = Game::where('season_id', '=', 11)->get();
+            $numGamesInCurrentSeason = Game::where('season_id', '=', $seasonId)
+                                        ->where('date', '<', $date)
+                                        ->where(function($query) use($teamId) {
+                                            return $query->where('home_team_id', '=', $teamId) 
+                                                         ->orWhere('road_team_id', '=', $teamId);
+                                        })                                        
+                                        ->count();
 
-            $gamesCount = 0;
-            $totalPoints = 0;
-
-            foreach ($gamesInCurrentSeason as $game) {
-                if (strtotime($game->date) < strtotime($date)) {
-                    if ($game->home_team_id == $teamId) {
-                        $gamesCount++;
-                        $totalPoints += $game->home_team_score;
-
-                        continue;
-                    }
-
-                    if ($game->road_team_id == $teamId) {
-                        $gamesCount++;
-                        $totalPoints += $game->road_team_score;
-
-                        continue;
-                    }
-                }
-            }
+            ddAll($numGamesInCurrentSeason);
 
             $teamPPG = $totalPoints / $gamesCount;
 
