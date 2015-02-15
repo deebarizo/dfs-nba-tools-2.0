@@ -376,14 +376,26 @@ class StatBuilder {
 
     public function addVegasInfoToPlayers($players, $vegasScores) {
         foreach ($players as &$player) {
-            foreach ($vegasScores as $vegasScore) {
+            foreach ($vegasScores as $key => $vegasScore) {
                 if ($player->team_name == $vegasScore['team']) {
                     $player->vegas_score_team = number_format(round($vegasScore['score'], 2), 2);
+
+                    if ($key % 2 == 0) { // even or odd check         
+                        $player->is_player_on_home_team = '';
+                    } else {
+                        $player->is_player_on_home_team = '<span style="color: #bbb" class="glyphicon glyphicon-home" aria-hidden="true"></span>';
+                    }
                 }
 
                 if ($player->opp_team_name == $vegasScore['team']) {
                     $player->vegas_score_opp_team = number_format(round($vegasScore['score'], 2), 2);
-                }                
+
+                    if ($key % 2 == 0) { // even or odd check         
+                        $player->is_player_on_road_team = '';
+                    } else {
+                        $player->is_player_on_road_team = '<span style="color: #bbb" class="glyphicon glyphicon-home" aria-hidden="true"></span>';
+                    }
+                }       
             }
 
             if (isset($player->vegas_score_team) === false || isset($player->vegas_score_opp_team) === false) {

@@ -64,6 +64,8 @@ function scrapeForOdds($client, $date) {
 
 	unset($vegasScore);
 
+	# ddAll($vegasScores);
+
 	return $vegasScores;
 }
 
