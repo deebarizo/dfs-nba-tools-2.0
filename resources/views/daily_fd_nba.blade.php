@@ -156,8 +156,8 @@
 							    	<button class="edit-target-percentage-button" type="button">Submit</button>
 								</div>
 			    			</td>
-					    	<td>{{ $player->team_abbr }}</td>
-					    	<td>{{ $player->opp_team_abbr }}</td>
+					    	<td>{{ $player->team_abbr }} <a target="_blank" href="http://www.basketball-reference.com/teams/{{ $player->team_abbr }}/2015.html#all_advanced"><img src="/files/br-icon.png" /></a></td>
+					    	<td>{{ $player->opp_team_abbr }} <a target="_blank" href="http://www.basketball-reference.com/teams/{{ $player->opp_team_abbr }}/2015.html#all_advanced"><img src="/files/br-icon.png" /></a></td>
 					    	<td>{{ $line }}</td>
 					    	<td>{{ $player->position }}</td>
 					    	<td>{{ numFormat($player->mp_mod) }}</td>
