@@ -563,10 +563,12 @@ class StatBuilder {
             $player->fppmWithVegasFilter = ($player->fppm * $player->vegas_filter) + $player->fppm;
             $player->fppgWithVegasFilter = numFormat($player->mp_mod * $player->fppmWithVegasFilter); // I need this for Line Filter and it must be numFormat
 
-            $player->fppmWithLineFilter = $this->getFppmBasedOnLineFilter($player);
+            $player->fppmWithLineFilter = $this->getFppmBasedOnLineFilter($player, null);
             $player->fppgWithLineFilter = $player->mp_mod * $player->fppmWithLineFilter;
 
             // STATS IN VIEW
+
+            $player->fppmTotalFilter = numFormat(($player->vegas_filter + $this->getFppmBasedOnLineFilter($player, 'line filter')) * 100, 2);
             
             $player->fppmWithAllFilters = numFormat($player->fppmWithLineFilter);
             $player->fppgWithAllFilters = numFormat($player->fppgWithLineFilter);
@@ -582,7 +584,7 @@ class StatBuilder {
         return $players;
     }
 
-    private function getFppmBasedOnLineFilter($player) {
+    private function getFppmBasedOnLineFilter($player, $doYouWantLineFilter) {
         // 1
 
         if ($player->fppgWithVegasFilter >= -100 && $player->fppgWithVegasFilter <= 15.74) {
@@ -590,6 +592,7 @@ class StatBuilder {
             $noAbsFilter = ($player->line * 0.0013742750195296) + -0.0013315510683428;
 
             $lineFilter = $absFilter + $noAbsFilter;
+            if ($doYouWantLineFilter == 'line filter') { return $lineFilter; }
 
             return ($player->fppmWithVegasFilter * $lineFilter) + $player->fppmWithVegasFilter; 
         }
@@ -601,6 +604,7 @@ class StatBuilder {
             $noAbsFilter = ($player->line * 0.0032427752122044) + 0.00055266055181689;
 
             $lineFilter = $absFilter + $noAbsFilter;
+            if ($doYouWantLineFilter == 'line filter') { return $lineFilter; }
 
             return ($player->fppmWithVegasFilter * $lineFilter) + $player->fppmWithVegasFilter; 
         }
@@ -612,6 +616,7 @@ class StatBuilder {
             $noAbsFilter = ($player->line * 0.0018291068082837) + 0.0018485630352972;
 
             $lineFilter = $absFilter + $noAbsFilter;
+            if ($doYouWantLineFilter == 'line filter') { return $lineFilter; }
 
             return ($player->fppmWithVegasFilter * $lineFilter) + $player->fppmWithVegasFilter; 
         }
@@ -623,6 +628,7 @@ class StatBuilder {
             $noAbsFilter = ($player->line * 0.00023017987434186) + 0.0050057191903182;
 
             $lineFilter = $absFilter + $noAbsFilter;
+            if ($doYouWantLineFilter == 'line filter') { return $lineFilter; }
 
             return ($player->fppmWithVegasFilter * $lineFilter) + $player->fppmWithVegasFilter; 
         }
@@ -634,6 +640,7 @@ class StatBuilder {
             $noAbsFilter = ($player->line * 0.001459366497387) + 0.0020222836072165;
 
             $lineFilter = $absFilter + $noAbsFilter;
+            if ($doYouWantLineFilter == 'line filter') { return $lineFilter; }
 
             return ($player->fppmWithVegasFilter * $lineFilter) + $player->fppmWithVegasFilter; 
         }
@@ -645,6 +652,7 @@ class StatBuilder {
             $noAbsFilter = ($player->line * 0.00026090347075302) + 0.0011094746798654;
 
             $lineFilter = $absFilter + $noAbsFilter;
+            if ($doYouWantLineFilter == 'line filter') { return $lineFilter; }
 
             return ($player->fppmWithVegasFilter * $lineFilter) + $player->fppmWithVegasFilter; 
         }
@@ -656,6 +664,7 @@ class StatBuilder {
             $noAbsFilter = ($player->line * -0.0000495151661039) + 0.0031850492840315;
 
             $lineFilter = $absFilter + $noAbsFilter;
+            if ($doYouWantLineFilter == 'line filter') { return $lineFilter; }
 
             return ($player->fppmWithVegasFilter * $lineFilter) + $player->fppmWithVegasFilter; 
         }
@@ -667,6 +676,7 @@ class StatBuilder {
             $noAbsFilter = ($player->line * -0.0003854563889886) + 0.0012655362967571;
 
             $lineFilter = $absFilter + $noAbsFilter;
+            if ($doYouWantLineFilter == 'line filter') { return $lineFilter; }
 
             return ($player->fppmWithVegasFilter * $lineFilter) + $player->fppmWithVegasFilter; 
         }
@@ -678,6 +688,7 @@ class StatBuilder {
             $noAbsFilter = ($player->line * -0.0000064391984030) + 0.0030693417404139;
 
             $lineFilter = $absFilter + $noAbsFilter;
+            if ($doYouWantLineFilter == 'line filter') { return $lineFilter; }
 
             return ($player->fppmWithVegasFilter * $lineFilter) + $player->fppmWithVegasFilter; 
         }
@@ -689,6 +700,7 @@ class StatBuilder {
             $noAbsFilter = ($player->line * 0.0018768345361964) + 0.0086390450606912;
 
             $lineFilter = $absFilter + $noAbsFilter;
+            if ($doYouWantLineFilter == 'line filter') { return $lineFilter; }
 
             return ($player->fppmWithVegasFilter * $lineFilter) + $player->fppmWithVegasFilter; 
         }

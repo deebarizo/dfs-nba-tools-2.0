@@ -74,17 +74,18 @@
 		</div>
 
 		<div class="col-lg-12">
-			<table id="daily" class="table table-striped table-bordered table-hover table-condensed">
+			<table style="font-size: 90%" id="daily" class="table table-striped table-bordered table-hover table-condensed">
 				<thead>
 					<tr>
 						<th>Name</th>
 						<th>Mods</th>
 						<th>Target %</th>
 						<th>Time</th>
-						<th style="width: 65px">Team</th>
-						<th style="width: 65px">Opp</th>
+						<th style="width: 55px">Team</th>
+						<th style="width: 55px">Opp</th>
 						<th>Line</th>
 						<th>Pos</th>
+						<th>Filter</th>
 						<th>MP</th>
 						<th>FPPM</th>
 						<th>FP</th>
@@ -174,6 +175,7 @@
 					    	<td><a target="_blank" href="#">{{ $player->opp_team_abbr }}{!! $player->is_player_on_road_team !!}</a> (<a target="_blank" href="http://www.basketball-reference.com/teams/{{ $player->opp_team_abbr }}/2015.html#all_advanced">br</a>)</td>
 					    	<td>{{ $line }}</td>
 					    	<td>{{ $player->position }}</td>
+					    	<td>{{ $player->fppmTotalFilter }}</td>
 					    	<td>{{ numFormat($player->mp_mod) }}</td>
 					    	<td>{{ $player->fppmWithAllFilters }}</td>
 					    	<td>{{ $player->fppgWithAllFilters }}</td>
