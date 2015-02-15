@@ -22,7 +22,15 @@
 		<div class="col-lg-12">
 			<h3>{{ $date }} {{ $timePeriod }} | <a target="_blank" href="/solver_with_top_plays_fd_nba/{{ $date }}">Solver (With Top Plays)</a> <!-- |  <a target="_blank" href="/solver_fd_nba/{{ $date }}">Solver</a> --></h3>
 
-			<form class="form-inline" style="margin: 15px 0 10px 0">
+			<form class="form-inline" style="margin: 0 0 10px 0">
+
+				<label>Times</label>
+				<select class="form-control time-filter" style="width: 10%; margin-right: 20px">
+				  	<option value="All">All</option>
+				  	@foreach ($gameTimes as $gameTime)
+					  	<option value="{{ $gameTime }}">{{ $gameTime }}</option>
+				  	@endforeach
+				</select>
 
 				<label>Teams</label>
 				<select class="form-control team-filter" style="width: 10%; margin-right: 20px">
@@ -48,12 +56,16 @@
 				<input class="form-control" type="radio" name="salary-toggle" id="less-than" value="less-than"><=				
 				<input style="width: 10%; margin-right: 20px; outline: none" class="salary-reset btn btn-default" name="salary-reset" value="Salary Reset">
 
+			</form>
+		</div>
+
+		<div class="col-lg-12">
+			<form class="form-inline" style="margin: 0 0 10px 0">
 				<label>Show Only Top Plays</label>
 				<select class="form-control top-plays-filter" style="width: 10%; margin-right: 20px">
 				  	<option value="0">No</option>
 				  	<option value="1">Yes</option>
 				</select>
-			
 			</form>
 		</div>
 

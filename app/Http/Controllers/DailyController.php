@@ -70,9 +70,15 @@ class DailyController {
 
         $players = $statBuilder->removeInactivePlayers($players);
 
-        # ddAll($players);
+        $gameTimes = [];
+        foreach ($vegasScores as $vegasScore) {
+            $gameTimes[] = $vegasScore['time'];
+        }
+        $gameTimes = array_unique($gameTimes);
 
-		return view('daily_fd_nba', compact('date', 'timePeriod', 'players', 'teamsToday'));
+        # ddAll($vegasScores);
+
+		return view('daily_fd_nba', compact('date', 'timePeriod', 'players', 'teamsToday', 'gameTimes'));
 	}
 
     public function update_top_plays($playerFdIndex, $isPlayerActive) {
