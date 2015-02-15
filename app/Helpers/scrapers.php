@@ -12,6 +12,17 @@ function scrapeForOdds($client, $date) {
 		$vegasScores[$i]['team'] = $crawlerSAO->filter('div#nba')->nextAll()->filter('tr.team > td.name')->eq($i)->text();
 
 		$vegasScores[$i]['line'] = $crawlerSAO->filter('div#nba')->nextAll()->filter('tr.team > td.currentline')->eq($i)->text();
+
+		if ($i % 2 == 0) { // even or odd check
+			$timeIndex = $i / 2;
+		} else {
+			$timeIndex = ($i / 2) - 0.5;
+		}
+
+		$time = $crawlerSAO->filter('div#nba')->nextAll()->filter('tr.time > td')->eq($timeIndex)->text();
+		$time = preg_replace("/ EST/", "", $time);
+		$vegasScores[$i]['time'] = date('g:i A', strtotime('-65 minutes', strtotime($time)));
+
 		if ($vegasScores[$i]['line'] == '') {
 			return 'No lines yet.';
 		}

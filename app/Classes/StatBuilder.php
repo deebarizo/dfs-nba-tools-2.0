@@ -385,6 +385,8 @@ class StatBuilder {
                     } else {
                         $player->is_player_on_home_team = '<span style="color: #bbb" class="glyphicon glyphicon-home" aria-hidden="true"></span>';
                     }
+
+                    $player->game_time = $vegasScore['time'];
                 }
 
                 if ($player->opp_team_name == $vegasScore['team']) {

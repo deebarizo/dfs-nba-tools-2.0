@@ -68,6 +68,7 @@
 						<th>Name</th>
 						<th>Mods</th>
 						<th>Target %</th>
+						<th>Time</th>
 						<th style="width: 65px">Team</th>
 						<th style="width: 65px">Opp</th>
 						<th>Line</th>
@@ -156,6 +157,7 @@
 							    	<button class="edit-target-percentage-button" type="button">Submit</button>
 								</div>
 			    			</td>
+			    			<td>{{ $player->game_time }}</td>
 					    	<td><a target="_blank" href="#">{{ $player->team_abbr }}{!! $player->is_player_on_home_team !!}</a> (<a target="_blank" href="http://www.basketball-reference.com/teams/{{ $player->team_abbr }}/2015.html#all_advanced">br</a>)</td>
 					    	<td><a target="_blank" href="#">{{ $player->opp_team_abbr }}{!! $player->is_player_on_road_team !!}</a> (<a target="_blank" href="http://www.basketball-reference.com/teams/{{ $player->opp_team_abbr }}/2015.html#all_advanced">br</a>)</td>
 					    	<td>{{ $line }}</td>
