@@ -7,7 +7,7 @@ $(document).ready(function() {
 	$('#daily').dataTable({
 		"scrollY": "600px",
 		"paging": false,
-		"order": [[11, "desc"]]
+		"order": [[12, "desc"]]
 	});
 
 	$('#daily_filter').hide();
@@ -227,6 +227,7 @@ $(document).ready(function() {
 		runTeamFilter(filter);
 		runTopPlaysFilter(filter);
 		runSalaryInputFilter(filter);
+		runTimeFilter(filter);
 	}
 
 	function getFilter() {
@@ -237,12 +238,14 @@ $(document).ready(function() {
 			salary: $('.salary-input').val(), 
 			salaryToggle: $('input:radio[name=salary-toggle]:checked').val()
 		};
+		time = $('select.time-filter').val();
 
 		filter = {
 			position: position,
 			team: team,
 			showOnlyTopPlays: showOnlyTopPlays,
-			salaryInput: salaryInput
+			salaryInput: salaryInput,
+			time: time
 		};
 
 		return filter;
@@ -338,8 +341,7 @@ $(document).ready(function() {
 		runFilter();
 	});
 
-	$("input[name=salary-toggle]:radio").change(function () 
-	{
+	$("input[name=salary-toggle]:radio").change(function() {
 		runFilter();
 	});
 
@@ -374,5 +376,32 @@ $(document).ready(function() {
 
 		runFilter();
 	});
+
+
+	//// Time filter ////
+
+	$('select.time-filter').on('change', function() {
+		runFilter();
+	});
+
+	function runTimeFilter(filter) {
+		if (filter.time == 'All') {
+			return;
+		}
+
+		$('tr.player-row').each(function() {
+			var playerRow = $(this);
+
+			hideTimesNotSelected(playerRow, filter.time);
+		});				
+	}
+
+	function hideTimesNotSelected(playerRow, time) {
+		var playerRowTime = $(playerRow).find('td.time').text();
+
+		if (playerRowTime != time) {
+			$(playerRow).addClass('hide-player-row');
+		}
+	}
 
 });
