@@ -226,17 +226,23 @@ $(document).ready(function() {
 		runPositionFilter(filter);
 		runTeamFilter(filter);
 		runTopPlaysFilter(filter);
+		runSalaryInputFilter(filter);
 	}
 
 	function getFilter() {
 		position = $('select.position-filter').val();
 		team = $('select.team-filter').val();
 		showOnlyTopPlays = $('select.top-plays-filter').val();
+		salaryInput = {
+			salary: $('.salary-input').val(), 
+			salaryToggle: $('input:radio[name=salary-toggle]:checked').val()
+		};
 
 		filter = {
 			position: position,
 			team: team,
-			showOnlyTopPlays: showOnlyTopPlays
+			showOnlyTopPlays: showOnlyTopPlays,
+			salaryInput: salaryInput
 		};
 
 		return filter;
@@ -324,5 +330,49 @@ $(document).ready(function() {
 			$(playerRow).addClass('hide-player-row');
 		}
 	}
+
+
+	//// Salary input filter ////
+
+	$('.salary-input').on('input', function() {
+		runFilter();
+	});
+
+	$("input[name=salary-toggle]:radio").change(function () 
+	{
+		runFilter();
+	});
+
+	function runSalaryInputFilter(filter) {
+		$('tr.player-row').each(function() {
+			var playerRow = $(this);
+
+			hideBasedOnSalaryInput(playerRow, filter['salaryInput']);
+		});		
+	}
+
+	function hideBasedOnSalaryInput(playerRow, salaryInput) {
+		var salary = parseInt($(playerRow).find('td.salary').text());
+
+		if (salary < salaryInput['salary'] && salaryInput['salaryToggle'] == 'greater-than') {
+			$(playerRow).addClass('hide-player-row');
+
+			return;
+		}
+
+		if (salary > salaryInput['salary'] && salaryInput['salaryToggle'] == 'less-than') {
+			$(playerRow).addClass('hide-player-row');
+		}
+	}
+
+
+	//// Salary reset button ////
+
+	$('.salary-reset').on('click', function(event) { 
+		$('.salary-input').val(0);
+		$('#greater-than').prop('checked', true);
+
+		runFilter();
+	});
 
 });

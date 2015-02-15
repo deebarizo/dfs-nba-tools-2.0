@@ -24,6 +24,14 @@
 
 			<form class="form-inline" style="margin: 15px 0 10px 0">
 
+				<label>Teams</label>
+				<select class="form-control team-filter" style="width: 10%; margin-right: 20px">
+				  	<option value="All">All</option>
+				  	@foreach ($teamsToday['abbr'] as $team)
+					  	<option value="{{ $team }}">{{ $team }}</option>
+				  	@endforeach
+				</select>			
+
 				<label>Positions</label>
 				<select class="form-control position-filter" style="width: 10%; margin-right: 20px">
 				  	<option value="All">All</option>
@@ -34,13 +42,11 @@
 				  	<option value="C">C</option>
 				</select>
 
-				<label>Teams</label>
-				<select class="form-control team-filter" style="width: 10%; margin-right: 20px">
-				  	<option value="All">All</option>
-				  	@foreach ($teamsToday['abbr'] as $team)
-					  	<option value="{{ $team }}">{{ $team }}</option>
-				  	@endforeach
-				</select>
+				<label>Salary</label>
+				<input class="salary-input form-control" type="number" value="0" style="width: 10%">
+				<input class="form-control" type="radio" name="salary-toggle" id="greater-than" value="greater-than" checked="checked">>=
+				<input class="form-control" type="radio" name="salary-toggle" id="less-than" value="less-than"><=				
+				<input style="width: 10%; margin-right: 20px; outline: none" class="salary-reset btn btn-default" name="salary-reset" value="Salary Reset">
 
 				<label>Show Only Top Plays</label>
 				<select class="form-control top-plays-filter" style="width: 10%; margin-right: 20px">
@@ -157,7 +163,7 @@
 					    	<td>{{ numFormat($player->mp_mod) }}</td>
 					    	<td>{{ $player->fppmWithAllFilters }}</td>
 					    	<td>{{ $player->fppgWithAllFilters }}</td>
-					    	<td>{{ $player->salary }}</td>
+					    	<td class="salary">{{ $player->salary }}</td>
 					    	<td>{{ $player->vr }}</td>
 					    </tr>
 
