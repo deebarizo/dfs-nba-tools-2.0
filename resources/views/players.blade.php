@@ -125,11 +125,9 @@
 					</tr>
 				</tbody>
 			</table>	
-		</div>
 
-		@foreach ($overviews as $yearKey => $overview)
-			@if ($yearKey != 'all')
-				<div class="col-lg-12">
+			@foreach ($overviews as $yearKey => $overview)
+				@if ($yearKey != 'all')
 					<h4>{{ $yearKey }}</h4>
 					
 					<table id="overview-{{ $yearKey }}" style="width: 50%" class="table table-striped table-bordered table-hover table-condensed">
@@ -148,9 +146,13 @@
 							</tr>
 						</tbody>
 					</table>	
-				</div>
-			@endif
-		@endforeach
+				@endif
+			@endforeach
+
+			<div class="fpts-profile-chart"></div>
+
+		</div>
+
 	</div>
 
 	<hr>
@@ -241,10 +243,38 @@
 	@endforeach
 
 	<script>
+
 		$(document).ready(function() {
-			$( ".previous-filters-link" ).click(function() {
+			$( ".previous-filters-link" ).on('click', function() {
 				$( "#previous-fd-filters" ).toggle();
 			});
+
+			$(function () {
+			        $('.fpts-profile-chart').highcharts({
+			            chart: {
+			                type: 'column'
+			            },
+			            title: {
+			                text: '<?php echo $endYears[0]; ?> Fpts Profile'
+			            },
+			            xAxis: {
+			                categories: ['PTS', '2P', '3P', 'FT', 'TRB', 'ORB', 'DRB', 'AST', 'TO', 'STL', 'BLK']
+			            },
+			            credits: {
+			                enabled: false
+			            },
+			            legend: false,
+			            series: [{
+		                	data: <?php echo json_encode($fptsProfile['view']); ?>
+		                }],
+		                plotOptions: {
+		                	column: {colorByPoint: true}
+		                }
+			        });
+			    });
 		});
+
+
+
 	</script>
 @stop

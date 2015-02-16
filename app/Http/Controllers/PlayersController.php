@@ -54,6 +54,58 @@ class PlayersController {
 
         $endYears = [2015, 2014];
 
+        // Player fpts profile
+
+        $fptsProfile['all'] = DB::table('seasons')
+                ->join('games', 'games.season_id', '=', 'seasons.id')
+                ->join('box_score_lines', 'box_score_lines.game_id', '=', 'games.id')
+                ->join('players', 'players.id', '=', 'box_score_lines.player_id')
+                ->selectRaw('FORMAT(SUM(pts) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as pts, 
+                    FORMAT(SUM((fg - threep) * 2) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as 2p,
+                    FORMAT(SUM((threep) * 3) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as 3p,
+                    FORMAT(SUM(ft) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as ft,
+                    FORMAT(SUM(trb * 1.2) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as trb,
+                    FORMAT(SUM(orb * 1.2) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as orb,
+                    FORMAT(SUM(drb * 1.2) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as drb,
+                    FORMAT(SUM(ast * 1.5) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as ast,
+                    FORMAT((SUM(tov) * -1) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as tov,
+                    FORMAT(SUM(stl * 2) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as stl,
+                    FORMAT(SUM(blk * 2) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as blk')
+                ->where('player_id', '=', $player_id)
+                ->where('box_score_lines.status', '=', 'Played')
+                ->where('seasons.end_year', '>=', $endYears[1])
+                ->first();
+
+        foreach ($endYears as $endYear) {
+            $fptsProfile[$endYear] = DB::table('seasons')
+                    ->join('games', 'games.season_id', '=', 'seasons.id')
+                    ->join('box_score_lines', 'box_score_lines.game_id', '=', 'games.id')
+                    ->join('players', 'players.id', '=', 'box_score_lines.player_id')
+                    ->selectRaw('FORMAT(SUM(pts) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as pts, 
+                        FORMAT(SUM((fg - threep) * 2) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as 2p,
+                        FORMAT(SUM((threep) * 3) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as 3p,
+                        FORMAT(SUM(ft) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as ft,
+                        FORMAT(SUM(trb * 1.2) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as trb,
+                        FORMAT(SUM(orb * 1.2) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as orb,
+                        FORMAT(SUM(drb * 1.2) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as drb,
+                        FORMAT(SUM(ast * 1.5) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as ast,
+                        FORMAT((SUM(tov) * -1) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as tov,
+                        FORMAT(SUM(stl * 2) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as stl,
+                        FORMAT(SUM(blk * 2) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as blk')
+                    ->where('player_id', '=', $player_id)
+                    ->where('box_score_lines.status', '=', 'Played')
+                    ->where('seasons.end_year', '=', $endYear)
+                    ->first();
+        }
+
+        $fptsProfile['view'] = [];
+
+        foreach ($fptsProfile[$endYears[0]] as $stat) {
+            $fptsProfile['view'][] = (float)$stat;
+        } 
+
+        # ddAll($fptsProfile);
+
         // MPG, FPPG, FPPM
 
         $overviews['all']['mppg'] = DB::table('box_score_lines')
@@ -205,7 +257,7 @@ class PlayersController {
 
         # ddAll($boxScoreLines);
 
-        return view('players', compact('boxScoreLines', 'overviews', 'playerInfo', 'player', 'name', 'previousFdFilters'));
+        return view('players', compact('boxScoreLines', 'overviews', 'playerInfo', 'player', 'name', 'previousFdFilters', 'fptsProfile', 'endYears'));
 	}
 
 	private function modStats($row, $teams, $playersFd) {
