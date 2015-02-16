@@ -27,14 +27,14 @@ class StudiesController {
 	public function classifyingProjectedFpts() {
 		$numOfClassifications = 10;
 
-		$mpgMax = 20;
+		$mpgMin = numFormat(20);
 		$fppgMin = -100;
 		$fppgMax = 200;
 		$absoluteSpread = '';
 
 		$statBuilder = new StatBuilder;
 
-		$seasons = $statBuilder->getSpreadsAndPlayerFptsErrorBySeason($this->seasonStartYear['earliest'], $this->seasonStartYear['latest'], $mpgMax, $fppgMax, $fppgMin, $absoluteSpread);
+		$seasons = $statBuilder->getSpreadsAndPlayerFptsErrorBySeason($this->seasonStartYear['earliest'], $this->seasonStartYear['latest'], $mpgMin, $fppgMax, $fppgMin, $absoluteSpread);
 
 		$numOfBoxScoreLines = 0;
 		$count = 0;
@@ -84,7 +84,7 @@ class StudiesController {
 
 		# ddAll($playerGroups);
 
-		return view('studies/general_classifying_projected_fpts', compact('playerGroups'));	
+		return view('studies/general_classifying_projected_fpts', compact('playerGroups', 'mpgMin'));	
 	}
 
 
@@ -92,7 +92,7 @@ class StudiesController {
 	CORRELATION: SPREADS AND PLAYER FPTS ERROR
 	****************************************************************************************/	
 
-	public function correlationSpreadsAndPlayerFptsError($mpgMax, $fppgMin, $fppgMax, $absoluteSpread) {
+	public function correlationSpreadsAndPlayerFptsError($mpgMin, $fppgMin, $fppgMax, $absoluteSpread) {
 		$statBuilder = new StatBuilder;
 
 		$xMin = $statBuilder->getXMinBasedOnAbsoluteSpread($absoluteSpread);
@@ -101,7 +101,7 @@ class StudiesController {
             $absoluteSpread = '';
         }
 
-        $seasons = $statBuilder->getSpreadsAndPlayerFptsErrorBySeason($this->seasonStartYear['earliest'], $this->seasonStartYear['latest'], $mpgMax, $fppgMax, $fppgMin, $absoluteSpread);
+        $seasons = $statBuilder->getSpreadsAndPlayerFptsErrorBySeason($this->seasonStartYear['earliest'], $this->seasonStartYear['latest'], $mpgMin, $fppgMax, $fppgMin, $absoluteSpread);
 
 		# ddAll($seasons[0]['box_score_lines']);
 

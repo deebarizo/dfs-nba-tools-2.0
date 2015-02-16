@@ -38,7 +38,7 @@
 					<li class="{!! setActive('lineup_builder*') !!}"><a href="/lineup_builder">Lineup Builder</a></li>
 					<li class="{!! setActive('scrapers*') !!}"><a href="/scrapers">Scrapers</a></li>
 					<li class="{!! setActive('player_search*') !!}{!! setActive('players*') !!}"><a href="/player_search">Player Search</a></li>
-					<!-- <li class="{!! setActive('studies*') !!}"><a href="/studies">Studies</a></li> -->
+					<li class="{!! setActive('studies*') !!}"><a href="/studies">Studies</a></li>
 				</ul>
 			</div><!--/.nav-collapse -->
 		</div>

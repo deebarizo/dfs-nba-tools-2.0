@@ -37,7 +37,7 @@ $router->get('scrapers', function() {
 $router->get('studies', function() {
 	return View::make('pages/studies');
 });
-$router->get('/player_search', function() {
+$router->get('player_search', function() {
 	return View::make('player_search');
 });
 
