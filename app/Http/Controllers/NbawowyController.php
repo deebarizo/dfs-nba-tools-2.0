@@ -27,10 +27,15 @@ use Goutte\Client;
 
 use Illuminate\Support\Facades\Session;
 
+date_default_timezone_set('America/Chicago');
+
 class NbawowyController {
 
     public function nbawowy_form() {
-        return view('pages/nbawowy_form');
+        $beginningOfSeasonDate = '2014-10-28';
+        $yesterdayDate = date('Y-m-d', strtotime('-1 day', strtotime(date('Y-m-d'))));
+
+        return view('pages/nbawowy_form', compact('beginningOfSeasonDate', 'yesterdayDate'));
     }
 
 	public function nbawowy($name = 'Jose_Calderon', 
