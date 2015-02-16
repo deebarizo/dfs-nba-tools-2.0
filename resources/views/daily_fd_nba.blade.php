@@ -171,8 +171,8 @@
 								</div>
 			    			</td>
 			    			<td class="time">{{ $player->game_time }}</td>
-					    	<td><a target="_blank" href="#">{{ $player->team_abbr }}{!! $player->is_player_on_home_team !!}</a> (<a target="_blank" href="http://www.basketball-reference.com/teams/{{ $player->team_abbr }}/2015.html#all_advanced">br</a>)</td>
-					    	<td><a target="_blank" href="#">{{ $player->opp_team_abbr }}{!! $player->is_player_on_road_team !!}</a> (<a target="_blank" href="http://www.basketball-reference.com/teams/{{ $player->opp_team_abbr }}/2015.html#all_advanced">br</a>)</td>
+					    	<td><a target="_blank" href="/teams/{{ $player->team_abbr }}">{{ $player->team_abbr }}{!! $player->is_player_on_home_team !!}</a> (<a target="_blank" href="http://www.basketball-reference.com/teams/{{ $player->team_abbr }}/2015.html#all_advanced">br</a>)</td>
+					    	<td><a target="_blank" href="/teams/{{ $player->opp_team_abbr }}">{{ $player->opp_team_abbr }}{!! $player->is_player_on_road_team !!}</a> (<a target="_blank" href="http://www.basketball-reference.com/teams/{{ $player->opp_team_abbr }}/2015.html#all_advanced">br</a>)</td>
 					    	<td>{{ $line }}</td>
 					    	<td>{{ $player->position }}</td>
 					    	<td>{{ $player->fppmTotalFilter }}</td>

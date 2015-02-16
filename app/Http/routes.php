@@ -63,3 +63,5 @@ $router->get('lineup_builder/{date}/create', 'LineupBuilderController@createLine
 $router->get('lineup_builder/{date}/create/{hash}', 'LineupBuilderController@createLineup');
 
 $router->get('get_player_name_autocomplete', 'PlayersController@getPlayerNameAutocomplete');
+
+$router->get('teams/{abbr_br}', 'TeamsController@getTeamStats');

@@ -260,6 +260,7 @@
 			            xAxis: {
 			                categories: ['PTS', '2P', '3P', 'FT', 'TRB', 'ORB', 'DRB', 'AST', 'TO', 'STL', 'BLK']
 			            },
+			            yAxis: {min: -20, max: 70},
 			            credits: {
 			                enabled: false
 			            },
