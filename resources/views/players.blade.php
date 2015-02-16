@@ -249,33 +249,32 @@
 				$( "#previous-fd-filters" ).toggle();
 			});
 
-			$(function () {
-			        $('.fpts-profile-chart').highcharts({
-			            chart: {
-			                type: 'column'
-			            },
-			            title: {
-			                text: '<?php echo $endYears[0]; ?> Fpts Profile'
-			            },
-			            xAxis: {
-			                categories: ['PTS', '2P', '3P', 'FT', 'TRB', 'ORB', 'DRB', 'AST', 'TO', 'STL', 'BLK']
-			            },
-			            yAxis: {min: -20, max: 70},
-			            credits: {
-			                enabled: false
-			            },
-			            legend: false,
-			            series: [{
-		                	data: <?php echo json_encode($fptsProfile['view']); ?>
-		                }],
-		                plotOptions: {
-		                	column: {colorByPoint: true}
-		                }
-			        });
-			    });
+			$(function() {
+		        $('.fpts-profile-chart').highcharts({
+		            chart: {
+		                type: 'column'
+		            },
+		            title: {
+		                text: '2015 Fpts Profile'
+		            },
+		            xAxis: {
+		                categories: ['PTS', '2P', '3P', 'FT', 'TRB', 'ORB', 'DRB', 'AST', 'TO', 'STL', 'BLK']
+		            },
+		            yAxis: {min: -20, max: 70},
+		            credits: {
+		                enabled: false
+		            },
+		            legend: false,
+		            series: [{
+	                	data: <?php echo json_encode($fptsProfile['view']); ?>
+	                }],
+	                plotOptions: {
+	                	column: {colorByPoint: true}
+	                }
+		        });
+		    });
+
 		});
-
-
 
 	</script>
 @stop
