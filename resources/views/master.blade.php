@@ -39,6 +39,7 @@
 					<li class="{!! setActive('scrapers*') !!}"><a href="/scrapers">Scrapers</a></li>
 					<li class="{!! setActive('player_search*') !!}{!! setActive('players*') !!}"><a href="/player_search">Player Search</a></li>
 					<li class="{!! setActive('teams*') !!}"><a href="/teams/ATL">Teams</a></li>
+					<li class="{!! setActive('nbawowy*') !!}"><a href="/nbawowy">nbawowy!</a></li>
 					<li class="{!! setActive('studies*') !!}"><a href="/studies">Studies</a></li>
 				</ul>
 			</div><!--/.nav-collapse -->

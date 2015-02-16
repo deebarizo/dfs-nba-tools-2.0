@@ -35,22 +35,21 @@ class NbawowyController {
         $beginningOfSeasonDate = '2014-10-28';
         $yesterdayDate = date('Y-m-d', strtotime('-1 day', strtotime(date('Y-m-d'))));
 
-        return view('pages/nbawowy_form', compact('beginningOfSeasonDate', 'yesterdayDate'));
+        return view('nbawowy/form', compact('beginningOfSeasonDate', 'yesterdayDate'));
     }
 
-	public function nbawowy($name = 'Jose_Calderon', 
-                            $startDate = '2014-10-28',
-                            $endDate = '2015-02-11',
-                            $playerOff = 'Carmelo_Anthony') {
-
+	public function nbawowy($name, $startDate, $endDate, $playerOff) {
         $name = preg_replace("/_/", " ", $name);
-        $playerOff = preg_replace("/_/", "%20", $playerOff);
+        $playerOffInUrl = preg_replace("/_/", "%20", $playerOff);
+        $playerOffInView = preg_replace("/_/", " ", $playerOff);
 
         $nbawowyBuilder = new NbawowyBuilder;
 
-        $stats = $nbawowyBuilder->getStats($name, $startDate, $endDate, $playerOff);
+        $stats = $nbawowyBuilder->getStats($name, $startDate, $endDate, $playerOffInUrl);
 
-        ddAll($stats);
+        # ddAll($stats);
+
+        return view('nbawowy/results', compact('name', 'startDate', 'endDate', 'playerOffInView', 'stats'));
 	}
 
 }

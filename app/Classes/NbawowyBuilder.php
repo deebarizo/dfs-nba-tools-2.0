@@ -73,7 +73,10 @@ class NbawowyBuilder {
 
         		continue;
         	}
-        }        
+        }     
+
+        $stats['2p_total'] = $stats['2p_made'] + $stats['2p_missed'];
+        $stats['3p_total'] = $stats['3p_made'] + $stats['3p_missed'];  
 
         $stats['2p_percentage'] = numFormat($stats['2p_made'] / ($stats['2p_made'] + $stats['2p_missed']), 3);
         $stats['3p_percentage'] = numFormat($stats['3p_made'] / ($stats['3p_made'] + $stats['3p_missed']), 3);
@@ -102,6 +105,8 @@ class NbawowyBuilder {
         			continue;
         	}
         }     
+
+        $stats['ft_total'] = $stats['ft_made'] + $stats['ft_missed'];
 
         $stats['ft_percentage'] = numFormat($stats['ft_made'] / ($stats['ft_made'] + $stats['ft_missed']), 3);
 
