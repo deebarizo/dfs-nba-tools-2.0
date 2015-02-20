@@ -44,10 +44,14 @@ class NbawowyController {
         $name = preg_replace("/_/", " ", $name);
 
         $playerOnInUrl = preg_replace("/_/", "%20", $playerOn);
+        $playerOnInUrl = $this->modBlank($playerOnInUrl);
         $playerOnInView = preg_replace("/_/", " ", $playerOn);
 
         $playerOffInUrl = preg_replace("/_/", "%20", $playerOff);
+        $playerOffInUrl = $this->modBlank($playerOffInUrl);
         $playerOffInView = preg_replace("/_/", " ", $playerOff);
+
+        # dd($playerOffInUrl);
 
         $nbawowyBuilder = new NbawowyBuilder;
 
@@ -57,5 +61,13 @@ class NbawowyController {
 
         return view('nbawowy/results', compact('name', 'startDate', 'endDate', 'playerOnInView', 'playerOffInView', 'team', 'stats'));
 	}
+
+    private function modBlank($player) {
+        if ($player == 'none') {
+            return '';
+        }
+
+        return $player;
+    }
 
 }

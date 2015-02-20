@@ -80,11 +80,24 @@ class NbawowyBuilder {
         	}
         }     
 
+        if (array_key_exists('3p_made', $stats) == false) {
+            $stats['3p_made'] = 0;
+        }
+
+        if (array_key_exists('3p_missed', $stats) == false) {
+            $stats['3p_missed'] = 0;
+        }
+
         $stats['2p_total'] = $stats['2p_made'] + $stats['2p_missed'];
         $stats['3p_total'] = $stats['3p_made'] + $stats['3p_missed'];  
 
         $stats['2p_percentage'] = numFormat($stats['2p_made'] / ($stats['2p_made'] + $stats['2p_missed']), 3);
-        $stats['3p_percentage'] = numFormat($stats['3p_made'] / ($stats['3p_made'] + $stats['3p_missed']), 3);
+        
+        if ($stats['3p_made'] > 0) {
+            $stats['3p_percentage'] = numFormat($stats['3p_made'] / ($stats['3p_made'] + $stats['3p_missed']), 3);
+        } else {
+            $stats['3p_percentage'] = numFormat(0);
+        }
 
         // Free throws
 

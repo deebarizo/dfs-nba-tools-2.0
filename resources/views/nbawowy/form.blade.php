@@ -49,12 +49,23 @@
 
 				var playerOn = $('input.player-on').val();
 				playerOn = playerOn.replace(/ /g, '_');
+				playerOn = modBlank(playerOn);
 
 				var playerOff = $('input.player-off').val();
 				playerOff = playerOff.replace(/ /g, '_');
+				playerOff = modBlank(playerOff);
+
 
 				window.open('/nbawowy/'+name+'/'+startingDate+'/'+endingDate+'/on/'+playerOn+'/off/'+playerOff+'/'+team, '_blank');
 			});
+
+			function modBlank(player) {
+				if (player == '') {
+					return 'none';
+				}
+
+				return player;
+			}
 		});
 
 	</script>
