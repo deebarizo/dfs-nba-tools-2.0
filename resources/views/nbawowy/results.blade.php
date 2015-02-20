@@ -8,6 +8,7 @@
 			<strong>Name: </strong> {{ $name }}</br>
 			<strong>Start Date: </strong> {{ $startDate }}</br>
 			<strong>End Date: </strong> {{ $endDate }}</br>
+			<strong>Player On: </strong> {{ $playerOnInView }}</br>
 			<strong>Player Off: </strong> {{ $playerOffInView }}</br></br>
 
 			<table class="table table-striped table-bordered table-hover table-condensed">

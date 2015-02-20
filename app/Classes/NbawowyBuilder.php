@@ -20,12 +20,17 @@ use Illuminate\Support\Facades\Session;
 
 class NbawowyBuilder {
 
-	public function getStats($name, $startDate, $endDate, $playerOff) {
+	public function getStats($name, $startDate, $endDate, $playerOn, $playerOff, $team) {
+
 		// Minutes
 
-        $json = file_get_contents('http://nbawowy.com/api/both/m/poss/q/[1,2,3,4,0,5,6,7]/team/Knicks/vs/[76ers,Bobcats,Bucks,Bulls,Cavaliers,Celtics,Clippers,Grizzlies,Hawks,Heat,Hornets,Jazz,Kings,Knicks,Lakers,Magic,Mavericks,Nets,Nuggets,Pacers,Pelicans,Pistons,Raptors,Rockets,Spurs,Suns,Thunder,Timberwolves,Trail%20Blazers,Warriors,Wizards]/on/[]/off/['.$playerOff.']/from/'.$startDate.'/to/'.$endDate);
+        $testUrl = 'http://nbawowy.com/api/both/m/poss/q/[1,2,3,4,0,5,6,7]/team/'.$team.'/vs/[76ers,Bobcats,Bucks,Bulls,Cavaliers,Celtics,Clippers,Grizzlies,Hawks,Heat,Hornets,Jazz,Kings,Knicks,Lakers,Magic,Mavericks,Nets,Nuggets,Pacers,Pelicans,Pistons,Raptors,Rockets,Spurs,Suns,Thunder,Timberwolves,Trail%20Blazers,Warriors,Wizards]/on/['.$playerOn.']/off/['.$playerOff.']/from/'.$startDate.'/to/'.$endDate;
+
+        $json = file_get_contents($testUrl);
 
         $players = json_decode($json, true);
+
+        # ddAll($testUrl);
 
         foreach ($players as $player) {
         	if ($player['_id']['name'] == $name) {
@@ -37,7 +42,7 @@ class NbawowyBuilder {
 
         // Field goals
 
-        $json = file_get_contents('http://nbawowy.com/api/both/fga/q/[1,2,3,4,0,5,6,7]/team/Knicks/vs/[76ers,Bobcats,Bucks,Bulls,Cavaliers,Celtics,Clippers,Grizzlies,Hawks,Heat,Hornets,Jazz,Kings,Knicks,Lakers,Magic,Mavericks,Nets,Nuggets,Pacers,Pelicans,Pistons,Raptors,Rockets,Spurs,Suns,Thunder,Timberwolves,Trail%20Blazers,Warriors,Wizards]/on/[]/off/['.$playerOff.']/from/'.$startDate.'/to/'.$endDate);
+        $json = file_get_contents('http://nbawowy.com/api/both/fga/q/[1,2,3,4,0,5,6,7]/team/'.$team.'/vs/[76ers,Bobcats,Bucks,Bulls,Cavaliers,Celtics,Clippers,Grizzlies,Hawks,Heat,Hornets,Jazz,Kings,Knicks,Lakers,Magic,Mavericks,Nets,Nuggets,Pacers,Pelicans,Pistons,Raptors,Rockets,Spurs,Suns,Thunder,Timberwolves,Trail%20Blazers,Warriors,Wizards]/on/['.$playerOn.']/off/['.$playerOff.']/from/'.$startDate.'/to/'.$endDate);
 
         $players = json_decode($json, true);
 
@@ -83,7 +88,7 @@ class NbawowyBuilder {
 
         // Free throws
 
-        $json = file_get_contents('http://nbawowy.com/api/both/fta/q/[1,2,3,4,0,5,6,7]/team/Knicks/vs/[76ers,Bobcats,Bucks,Bulls,Cavaliers,Celtics,Clippers,Grizzlies,Hawks,Heat,Hornets,Jazz,Kings,Knicks,Lakers,Magic,Mavericks,Nets,Nuggets,Pacers,Pelicans,Pistons,Raptors,Rockets,Spurs,Suns,Thunder,Timberwolves,Trail%20Blazers,Warriors,Wizards]/on/[]/off/['.$playerOff.']/from/'.$startDate.'/to/'.$endDate);
+        $json = file_get_contents('http://nbawowy.com/api/both/fta/q/[1,2,3,4,0,5,6,7]/team/'.$team.'/vs/[76ers,Bobcats,Bucks,Bulls,Cavaliers,Celtics,Clippers,Grizzlies,Hawks,Heat,Hornets,Jazz,Kings,Knicks,Lakers,Magic,Mavericks,Nets,Nuggets,Pacers,Pelicans,Pistons,Raptors,Rockets,Spurs,Suns,Thunder,Timberwolves,Trail%20Blazers,Warriors,Wizards]/on/['.$playerOn.']/off/['.$playerOff.']/from/'.$startDate.'/to/'.$endDate);
 
         $players = json_decode($json, true);
 
@@ -112,7 +117,7 @@ class NbawowyBuilder {
 
         // Rebounds
 
-        $json = file_get_contents('http://nbawowy.com/api/both/reb/q/[1,2,3,4,0,5,6,7]/team/Knicks/vs/[76ers,Bobcats,Bucks,Bulls,Cavaliers,Celtics,Clippers,Grizzlies,Hawks,Heat,Hornets,Jazz,Kings,Knicks,Lakers,Magic,Mavericks,Nets,Nuggets,Pacers,Pelicans,Pistons,Raptors,Rockets,Spurs,Suns,Thunder,Timberwolves,Trail%20Blazers,Warriors,Wizards]/on/[]/off/['.$playerOff.']/from/'.$startDate.'/to/'.$endDate);
+        $json = file_get_contents('http://nbawowy.com/api/both/reb/q/[1,2,3,4,0,5,6,7]/team/'.$team.'/vs/[76ers,Bobcats,Bucks,Bulls,Cavaliers,Celtics,Clippers,Grizzlies,Hawks,Heat,Hornets,Jazz,Kings,Knicks,Lakers,Magic,Mavericks,Nets,Nuggets,Pacers,Pelicans,Pistons,Raptors,Rockets,Spurs,Suns,Thunder,Timberwolves,Trail%20Blazers,Warriors,Wizards]/on/['.$playerOn.']/off/['.$playerOff.']/from/'.$startDate.'/to/'.$endDate);
 
         $players = json_decode($json, true);
 
@@ -128,7 +133,7 @@ class NbawowyBuilder {
 
         // Assists
 
-        $json = file_get_contents('http://nbawowy.com/api/both/ast/q/[1,2,3,4,0,5,6,7]/team/Knicks/vs/[76ers,Bobcats,Bucks,Bulls,Cavaliers,Celtics,Clippers,Grizzlies,Hawks,Heat,Hornets,Jazz,Kings,Knicks,Lakers,Magic,Mavericks,Nets,Nuggets,Pacers,Pelicans,Pistons,Raptors,Rockets,Spurs,Suns,Thunder,Timberwolves,Trail%20Blazers,Warriors,Wizards]/on/[]/off/['.$playerOff.']/from/'.$startDate.'/to/'.$endDate);
+        $json = file_get_contents('http://nbawowy.com/api/both/ast/q/[1,2,3,4,0,5,6,7]/team/'.$team.'/vs/[76ers,Bobcats,Bucks,Bulls,Cavaliers,Celtics,Clippers,Grizzlies,Hawks,Heat,Hornets,Jazz,Kings,Knicks,Lakers,Magic,Mavericks,Nets,Nuggets,Pacers,Pelicans,Pistons,Raptors,Rockets,Spurs,Suns,Thunder,Timberwolves,Trail%20Blazers,Warriors,Wizards]/on/['.$playerOn.']/off/['.$playerOff.']/from/'.$startDate.'/to/'.$endDate);
 
         $players = json_decode($json, true);
 
@@ -144,7 +149,7 @@ class NbawowyBuilder {
 
         // Turnovers
 
-        $json = file_get_contents('http://nbawowy.com/api/both/tov/q/[1,2,3,4,0,5,6,7]/team/Knicks/vs/[76ers,Bobcats,Bucks,Bulls,Cavaliers,Celtics,Clippers,Grizzlies,Hawks,Heat,Hornets,Jazz,Kings,Knicks,Lakers,Magic,Mavericks,Nets,Nuggets,Pacers,Pelicans,Pistons,Raptors,Rockets,Spurs,Suns,Thunder,Timberwolves,Trail%20Blazers,Warriors,Wizards]/on/[]/off/['.$playerOff.']/from/'.$startDate.'/to/'.$endDate);
+        $json = file_get_contents('http://nbawowy.com/api/both/tov/q/[1,2,3,4,0,5,6,7]/team/'.$team.'/vs/[76ers,Bobcats,Bucks,Bulls,Cavaliers,Celtics,Clippers,Grizzlies,Hawks,Heat,Hornets,Jazz,Kings,Knicks,Lakers,Magic,Mavericks,Nets,Nuggets,Pacers,Pelicans,Pistons,Raptors,Rockets,Spurs,Suns,Thunder,Timberwolves,Trail%20Blazers,Warriors,Wizards]/on/['.$playerOn.']/off/['.$playerOff.']/from/'.$startDate.'/to/'.$endDate);
 
         $players = json_decode($json, true);
 
@@ -160,7 +165,7 @@ class NbawowyBuilder {
 
         // Steals
 
-        $json = file_get_contents('http://nbawowy.com/api/both/stl/q/[1,2,3,4,0,5,6,7]/team/Knicks/vs/[76ers,Bobcats,Bucks,Bulls,Cavaliers,Celtics,Clippers,Grizzlies,Hawks,Heat,Hornets,Jazz,Kings,Knicks,Lakers,Magic,Mavericks,Nets,Nuggets,Pacers,Pelicans,Pistons,Raptors,Rockets,Spurs,Suns,Thunder,Timberwolves,Trail%20Blazers,Warriors,Wizards]/on/[]/off/['.$playerOff.']/from/'.$startDate.'/to/'.$endDate);
+        $json = file_get_contents('http://nbawowy.com/api/both/stl/q/[1,2,3,4,0,5,6,7]/team/'.$team.'/vs/[76ers,Bobcats,Bucks,Bulls,Cavaliers,Celtics,Clippers,Grizzlies,Hawks,Heat,Hornets,Jazz,Kings,Knicks,Lakers,Magic,Mavericks,Nets,Nuggets,Pacers,Pelicans,Pistons,Raptors,Rockets,Spurs,Suns,Thunder,Timberwolves,Trail%20Blazers,Warriors,Wizards]/on/['.$playerOn.']/off/['.$playerOff.']/from/'.$startDate.'/to/'.$endDate);
 
         $players = json_decode($json, true);
 
@@ -176,7 +181,7 @@ class NbawowyBuilder {
 
         // Blocks
 
-        $json = file_get_contents('http://nbawowy.com/api/both/blk/q/[1,2,3,4,0,5,6,7]/team/Knicks/vs/[76ers,Bobcats,Bucks,Bulls,Cavaliers,Celtics,Clippers,Grizzlies,Hawks,Heat,Hornets,Jazz,Kings,Knicks,Lakers,Magic,Mavericks,Nets,Nuggets,Pacers,Pelicans,Pistons,Raptors,Rockets,Spurs,Suns,Thunder,Timberwolves,Trail%20Blazers,Warriors,Wizards]/on/[]/off/['.$playerOff.']/from/'.$startDate.'/to/'.$endDate);
+        $json = file_get_contents('http://nbawowy.com/api/both/blk/q/[1,2,3,4,0,5,6,7]/team/'.$team.'/vs/[76ers,Bobcats,Bucks,Bulls,Cavaliers,Celtics,Clippers,Grizzlies,Hawks,Heat,Hornets,Jazz,Kings,Knicks,Lakers,Magic,Mavericks,Nets,Nuggets,Pacers,Pelicans,Pistons,Raptors,Rockets,Spurs,Suns,Thunder,Timberwolves,Trail%20Blazers,Warriors,Wizards]/on/['.$playerOn.']/off/['.$playerOff.']/from/'.$startDate.'/to/'.$endDate);
 
         $players = json_decode($json, true);
 

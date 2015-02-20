@@ -20,7 +20,13 @@
 				<label>Ending Date</label>
 				<input class="form-control ending-date" type="text" value="{{ $yesterdayDate }}" style="width: 10%; margin-bottom: 10px">	
 
-				<label>Player Off</label>
+				<label>Team (Example: Knicks)</label>
+				<input class="form-control team" type="text" style="width: 15%; margin-bottom: 10px">
+
+				<label>Player On (Separate Players with a Comma But No Space)</label>
+				<input class="form-control player-on" type="text" style="width: 15%; margin-bottom: 10px">
+
+				<label>Player Off (Separate Players with a Comma But No Space)</label>
 				<input class="form-control player-off" type="text" style="width: 15%; margin-bottom: 20px">
 
 				<input style="width: 10%; outline: none" class="btn btn-primary submit-info" value="Submit">
@@ -39,10 +45,15 @@
 				var startingDate = $('input.starting-date').val();
 				var endingDate = $('input.ending-date').val();
 
-				var playerOff = $('input.player-off').val();
-				playerOff = playerOff.replace(' ', '_');
+				var team = $('input.team').val();
 
-				window.open('/nbawowy/'+name+'/'+startingDate+'/'+endingDate+'/off/'+playerOff, '_blank');
+				var playerOn = $('input.player-on').val();
+				playerOn = playerOn.replace(/ /g, '_');
+
+				var playerOff = $('input.player-off').val();
+				playerOff = playerOff.replace(/ /g, '_');
+
+				window.open('/nbawowy/'+name+'/'+startingDate+'/'+endingDate+'/on/'+playerOn+'/off/'+playerOff+'/'+team, '_blank');
 			});
 		});
 

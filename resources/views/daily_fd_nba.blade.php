@@ -54,7 +54,7 @@
 				<input class="salary-input form-control" type="number" value="0" style="width: 10%">
 				<input class="form-control" type="radio" name="salary-toggle" id="greater-than" value="greater-than" checked="checked">>=
 				<input class="form-control" type="radio" name="salary-toggle" id="less-than" value="less-than"><=				
-				<input style="width: 10%; margin-right: 20px; outline: none" class="salary-reset btn btn-default" name="salary-reset" value="Salary Reset">
+				<input style="width: 10%; margin-right: 20px; outline: none; margin-left: 5px" class="salary-reset btn btn-default" name="salary-reset" value="Salary Reset">
 
 			</form>
 		</div>

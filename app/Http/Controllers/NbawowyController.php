@@ -32,24 +32,30 @@ date_default_timezone_set('America/Chicago');
 class NbawowyController {
 
     public function nbawowy_form() {
+        $name = 'nbawowy! (Form)';
+
         $beginningOfSeasonDate = '2014-10-28';
         $yesterdayDate = date('Y-m-d', strtotime('-1 day', strtotime(date('Y-m-d'))));
 
-        return view('nbawowy/form', compact('beginningOfSeasonDate', 'yesterdayDate'));
+        return view('nbawowy/form', compact('name', 'beginningOfSeasonDate', 'yesterdayDate'));
     }
 
-	public function nbawowy($name, $startDate, $endDate, $playerOff) {
+	public function nbawowy($name, $startDate, $endDate, $playerOn, $playerOff, $team) {
         $name = preg_replace("/_/", " ", $name);
+
+        $playerOnInUrl = preg_replace("/_/", "%20", $playerOn);
+        $playerOnInView = preg_replace("/_/", " ", $playerOn);
+
         $playerOffInUrl = preg_replace("/_/", "%20", $playerOff);
         $playerOffInView = preg_replace("/_/", " ", $playerOff);
 
         $nbawowyBuilder = new NbawowyBuilder;
 
-        $stats = $nbawowyBuilder->getStats($name, $startDate, $endDate, $playerOffInUrl);
+        $stats = $nbawowyBuilder->getStats($name, $startDate, $endDate, $playerOnInUrl, $playerOffInUrl, $team);
 
         # ddAll($stats);
 
-        return view('nbawowy/results', compact('name', 'startDate', 'endDate', 'playerOffInView', 'stats'));
+        return view('nbawowy/results', compact('name', 'startDate', 'endDate', 'playerOnInView', 'playerOffInView', 'team', 'stats'));
 	}
 
 }
