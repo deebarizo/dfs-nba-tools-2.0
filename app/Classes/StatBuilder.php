@@ -528,10 +528,12 @@ class StatBuilder {
                     $player = calculateFppm($player, $playerStats[$player->player_id]['cs']);
                 } 
 
+                # ddAll(count($playerStats[$player->player_id]['cs']));
+
                 // FPPG Source
 
                 if (is_numeric($player->filter->fppg_source) ) {
-                    $player->mp_mod = $player->filter->fppg_source;
+                    $player->mp_mod = (($player->filter->fppg_source * count($playerStats[$player->player_id]['cs'])) - $player->filter->mp_ot_filter) / count($playerStats[$player->player_id]['cs']);
                 } 
 
                 if ($player->filter->fppg_source == 'mp cs') {
