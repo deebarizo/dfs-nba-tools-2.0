@@ -197,7 +197,7 @@
 		****************************************************************************************/
 
 		var baseUrl = '<?php echo url(); ?>';
-		var defaultTargetPercentage = 10;
+		var defaultTargetPercentage = 20;
 
 	</script>
 

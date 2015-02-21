@@ -6,7 +6,7 @@ class SolverTopPlays {
 	GLOBAL VARIABLES
 	****************************************************************************************/
 
-	private $lineupBuilderIterations = 250;
+	private $lineupBuilderIterations = 100;
 	private $targetPercentageModifier = 0;
 	private $minimumTotalSalary = 59700; // 1% of cap
 	private $maximumTotalSalary = 60000;
