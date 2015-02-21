@@ -55,6 +55,7 @@ class ScrapersController {
 			foreach ($games as $game) {
 				$gamesWithDataCount++;
 
+				$crawlerBR = $client->getClient()->setDefaultOption('config/curl/'.CURLOPT_TIMEOUT, 10000);
 				$crawlerBR = $client->request('GET', $game->link_br);
 
 				$twoTeamsID = [
