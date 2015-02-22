@@ -62,9 +62,11 @@
 					@endforeach
 					<tr class="lineup-row">
 						<td colspan="2">
-							<div class="input-group" style="margin: 0 auto">
+							<div class="input-group inline" style="margin: 0 auto">
 						  		<span class="input-group-addon">$</span>
-						  		<input style="width: 75px" type="text" class="form-control lineup-buy-in-amount" value="{{ $lineup['metadata']->lineup_buy_in }}">
+						  		<input style="width: 75px; margin-right: 30px" type="text" class="form-control lineup-buy-in-amount" value="{{ $lineup['metadata']->lineup_buy_in }}"> 
+
+						  		<div style="display: inline-block; margin-top: 7px"><strong>Avg/Player: </strong> $<span class="avg-salary-per-player-left"></span></div>
 							</div>
 						</td>
 						<td><span class="lineup-salary-total">{{ $lineup['metadata']->total_salary }}</span></td>

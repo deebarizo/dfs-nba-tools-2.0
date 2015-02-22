@@ -14,6 +14,29 @@ $(document).ready(function() {
 
 
 	/****************************************************************************************
+	CALCULATE AVERAGE SALARY PER PLAYER LEFT
+	****************************************************************************************/
+
+	calculateAvgSalaryPerPlayerLeft();
+
+	function calculateAvgSalaryPerPlayerLeft() {
+		var totalSalary = $('span.lineup-salary-total').text();
+
+		if (totalSalary == 0) {
+			$('span.avg-salary-per-player-left').text(0);
+
+			return;
+		}
+
+		var numEmptyRosterSpots = $('td.lineup-player-name:empty').length;
+
+		var avgSalaryPerPlayerLeft = parseInt((60000 - totalSalary) / numEmptyRosterSpots);
+
+		$('span.avg-salary-per-player-left').text(avgSalaryPerPlayerLeft);
+	}
+
+
+	/****************************************************************************************
 	UPDATE AVAILABLE PLAYER LINK
 	****************************************************************************************/
 
@@ -37,6 +60,8 @@ $(document).ready(function() {
 
 		updateAvailablePlayerRow(availablePlayerRow, iconDiv, status);
 		updateLineupPlayerRow(status, playerPoolId, playerId, position, name, salary);
+
+		calculateAvgSalaryPerPlayerLeft();
 	});
 
 	function isPositionFull(position) {
@@ -61,6 +86,8 @@ $(document).ready(function() {
 
 		updateAvailablePlayerRow(availablePlayerRow, iconDiv, status);
 		updateLineupPlayerRow(status, null, playerId, null, null, null);
+
+		calculateAvgSalaryPerPlayerLeft();
 	});
 
 
