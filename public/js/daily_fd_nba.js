@@ -97,6 +97,7 @@ $(document).ready(function() {
 				$('a[data-hasqtip='+dataHasQtip+']').parent('span.target-percentage-group').prev('span.target-percentage-amount').text(newTargetPercentage);
 
 				showTotalTargetPercentage();
+				showTotalTargetPercentageOfVisibleRows();
             }
         });	
 	}
@@ -193,10 +194,14 @@ $(document).ready(function() {
 	function addTargetPercentages(position) {
 		var totalTargetPercentage = 0;
 
-		$('span.target-percentage-amount:visible').each(function() {
-			var targetPercentageAmount = $(this).text();
+		$('span.target-percentage-amount').each(function() {
+			var positionOfPlayer = $(this).closest('tr').data('player-position');
 
-			totalTargetPercentage += addTargetPercentage(targetPercentageAmount);
+			if (position == positionOfPlayer) {
+				var targetPercentageAmount = $(this).text();
+
+				totalTargetPercentage += addTargetPercentage(targetPercentageAmount);			
+			}
 		});			
 
 		return totalTargetPercentage;
@@ -208,6 +213,22 @@ $(document).ready(function() {
 		}
 
 		return parseInt(targetPercentageAmount);
+	}
+
+	showTotalTargetPercentageOfVisibleRows();
+
+	function showTotalTargetPercentageOfVisibleRows() {
+		var totalTargetPercentage = 0;
+
+		$('span.target-percentage-amount:visible').each(function() {
+			var targetPercentageAmount = $(this).text();
+
+			totalTargetPercentage += addTargetPercentage(targetPercentageAmount);
+		});			
+
+		totalTargetPercentage = totalTargetPercentage+'%';		
+
+		$('span.total-target-percentage-visible').text(totalTargetPercentage);
 	}
 
 
@@ -230,6 +251,9 @@ $(document).ready(function() {
 		runTopPlaysFilter(filter);
 		runSalaryInputFilter(filter);
 		runTimeFilter(filter);
+
+		showTotalTargetPercentage();
+		showTotalTargetPercentageOfVisibleRows();
 	}
 
 	function getFilter() {
@@ -258,8 +282,6 @@ $(document).ready(function() {
 
 	$('select.position-filter').on('change', function() {
 		runFilter();
-
-		showTotalTargetPercentage();
 	});
 
 	function runPositionFilter(filter) {
