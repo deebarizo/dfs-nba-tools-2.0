@@ -22,13 +22,13 @@ $(document).ready(function() {
 	function calculateAvgSalaryPerPlayerLeft() {
 		var totalSalary = $('span.lineup-salary-total').text();
 
-		if (totalSalary == 0) {
+		var numEmptyRosterSpots = $('td.lineup-player-name:empty').length;
+
+		if (totalSalary == 0 || totalSalary == 60000 || numEmptyRosterSpots == 0) {
 			$('span.avg-salary-per-player-left').text(0);
 
 			return;
 		}
-
-		var numEmptyRosterSpots = $('td.lineup-player-name:empty').length;
 
 		var avgSalaryPerPlayerLeft = parseInt((60000 - totalSalary) / numEmptyRosterSpots);
 
