@@ -22,6 +22,10 @@ class NbawowyBuilder {
 
 	public function getStats($name, $startDate, $endDate, $playerOn, $playerOff, $team) {
 
+        if ($team == 'Trail Blazers') {
+            $team = 'Trail%20Blazers';
+        }
+
 		// Minutes
 
         $testUrl = 'http://nbawowy.com/api/both/m/poss/q/[1,2,3,4,0,5,6,7]/team/'.$team.'/vs/[76ers,Bobcats,Bucks,Bulls,Cavaliers,Celtics,Clippers,Grizzlies,Hawks,Heat,Hornets,Jazz,Kings,Knicks,Lakers,Magic,Mavericks,Nets,Nuggets,Pacers,Pelicans,Pistons,Raptors,Rockets,Spurs,Suns,Thunder,Timberwolves,Trail%20Blazers,Warriors,Wizards]/on/['.$playerOn.']/off/['.$playerOff.']/from/'.$startDate.'/to/'.$endDate;

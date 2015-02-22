@@ -386,7 +386,7 @@ $(document).ready(function() {
 			return;
 		}
 
-		if (salary > salaryInput['salary'] && salaryInput['salaryToggle'] == 'less-than') {
+		if (salary >= salaryInput['salary'] && salaryInput['salaryToggle'] == 'less-than') {
 			$(playerRow).addClass('hide-player-row');
 		}
 	}
