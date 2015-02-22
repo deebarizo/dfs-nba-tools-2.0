@@ -123,6 +123,14 @@
 								$targetPercentage = '---';
 								$targetPercentageGroup = 'hide-target-percentage-group';
 							}
+
+							if (!isset($player->is_player_on_home_team)) {
+								$player->is_player_on_home_team = '';
+							}
+
+							if (!isset($player->is_player_on_road_team)) {
+								$player->is_player_on_road_team = '';
+							}
 						?>
 
 					    <tr data-player-fd-index="{{ $player->player_fd_index }}" 
@@ -170,7 +178,13 @@
 							    	<button class="edit-target-percentage-button" type="button">Submit</button>
 								</div>
 			    			</td>
-			    			<td class="time">{{ $player->game_time }}</td>
+			    			<td class="time">
+			    				@if (isset($player->game_time))
+				    				{{ $player->game_time }}
+				    			@else
+				    				No lines yet.
+				    			@endif
+			    			</td>
 					    	<td><a target="_blank" href="/teams/{{ $player->team_abbr }}">{{ $player->team_abbr }}{!! $player->is_player_on_home_team !!}</a> (<a target="_blank" href="http://www.basketball-reference.com/teams/{{ $player->team_abbr }}/2015.html#all_advanced">br</a>)</td>
 					    	<td><a target="_blank" href="/teams/{{ $player->opp_team_abbr }}">{{ $player->opp_team_abbr }}{!! $player->is_player_on_road_team !!}</a> (<a target="_blank" href="http://www.basketball-reference.com/teams/{{ $player->opp_team_abbr }}/2015.html#all_advanced">br</a>)</td>
 					    	<td>{{ $line }}</td>

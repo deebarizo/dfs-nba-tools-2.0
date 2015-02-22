@@ -562,8 +562,16 @@ class StatBuilder {
 
             // FILTERS
 
+            if (!isset($player->vegas_filter)) {
+                $player->vegas_filter = 0;
+            }
+
             $player->fppmWithVegasFilter = ($player->fppm * $player->vegas_filter) + $player->fppm;
             $player->fppgWithVegasFilter = numFormat($player->mp_mod * $player->fppmWithVegasFilter); // I need this for Line Filter and it must be numFormat
+
+            if (!isset($player->line)) {
+                $player->line = 0;
+            }
 
             $player->fppmWithLineFilter = $this->getFppmBasedOnLineFilter($player, null);
             $player->fppgWithLineFilter = $player->mp_mod * $player->fppmWithLineFilter;

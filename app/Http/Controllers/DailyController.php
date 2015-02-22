@@ -71,11 +71,16 @@ class DailyController {
         $players = $statBuilder->removeInactivePlayers($players);
 
         $gameTimes = [];
-        foreach ($vegasScores as $vegasScore) {
-            $gameTimes[] = $vegasScore['time'];
-        }
-        $gameTimes = array_unique($gameTimes);
 
+        if ($vegasScores == 'No lines yet.') {
+            $gameTimes[] = 'No lines yet.';
+        } else {
+            foreach ($vegasScores as $vegasScore) {
+                $gameTimes[] = $vegasScore['time'];
+            }
+            $gameTimes = array_unique($gameTimes);
+        }
+    
         # ddAll($vegasScores);
 
 		return view('daily_fd_nba', compact('date', 'timePeriod', 'players', 'teamsToday', 'gameTimes'));
