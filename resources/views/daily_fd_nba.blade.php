@@ -66,6 +66,9 @@
 				  	<option value="0">No</option>
 				  	<option value="1">Yes</option>
 				</select>
+
+				<label>Default Target %</label>
+				<input class="default-target-percentage form-control" type="number" value="20" style="width: 10%">
 			</form>
 		</div>
 
@@ -211,7 +214,6 @@
 		****************************************************************************************/
 
 		var baseUrl = '<?php echo url(); ?>';
-		var defaultTargetPercentage = 20;
 
 	</script>
 

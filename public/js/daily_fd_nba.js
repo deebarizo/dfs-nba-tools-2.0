@@ -124,6 +124,8 @@ $(document).ready(function() {
 		$(this).hide();
 		$(this).after('<img src="/files/spiffygif_16x16.gif" alt="Please wait..." />');
 
+		var defaultTargetPercentage = $('input.default-target-percentage').val();
+
 		var $this = $(this);
 		
     	$.ajax({
