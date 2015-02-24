@@ -214,29 +214,29 @@ $(document).ready(function() {
 
 	function addTargetPercentagesOfSalaries() {
 		var totalPercentagesBySalaries = {
-			'plus-7000': 0,
-			'minus-7000': 0
+			plus: 0,
+			minus: 0
 		};
 
-		var salaries = ['plus-7000', 'minus-7000'];
+		var salaries = ['plus', 'minus'];
 
 		$('span.target-percentage-amount').each(function() {
 			var salary = $(this).closest('td').siblings('td.salary').text();
 
-			if (salary >= 7000) {
+			if (salary >= 6500) {
 				var targetPercentageAmount = $(this).text();
 
-				totalPercentagesBySalaries['plus-7000'] += addTargetPercentage(targetPercentageAmount);		
+				totalPercentagesBySalaries['plus'] += addTargetPercentage(targetPercentageAmount);		
 			}	
 		});
 
 		$('span.target-percentage-amount').each(function() {
 			var salary = $(this).closest('td').siblings('td.salary').text();
 
-			if (salary < 7000) {
+			if (salary < 6500) {
 				var targetPercentageAmount = $(this).text();
 
-				totalPercentagesBySalaries['minus-7000'] += addTargetPercentage(targetPercentageAmount);		
+				totalPercentagesBySalaries['minus'] += addTargetPercentage(targetPercentageAmount);		
 			}	
 		});		
 

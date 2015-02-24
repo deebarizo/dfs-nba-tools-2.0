@@ -77,10 +77,10 @@
 				<span style="margin-right: 10px"><strong>PG: </strong> <span class="total-target-percentage-PG"></span>%</span>
 				<span style="margin-right: 10px"><strong>SG: </strong> <span class="total-target-percentage-SG"></span>%</span>
 				<span style="margin-right: 10px"><strong>SF: </strong> <span class="total-target-percentage-SF"></span>%</span>
-				<span style="margin-right: 10px"><strong>PF: </strong> <span class="total-target-percentage-SF"></span>%</span>
+				<span style="margin-right: 10px"><strong>PF: </strong> <span class="total-target-percentage-PF"></span>%</span>
 				<span style="margin-right: 40px"><strong>C: </strong> <span class="total-target-percentage-C"></span>%</span>
-				<span style="margin-right: 10px"><strong>+7000: </strong> <span class="total-target-percentage-plus-7000"></span>%</span>
-				<span style="margin-right: 40px"><strong>-7000: </strong> <span class="total-target-percentage-minus-7000"></span>%</span>
+				<span style="margin-right: 10px"><strong>Plus: </strong> <span class="total-target-percentage-plus"></span>%</span>
+				<span style="margin-right: 40px"><strong>Minus: </strong> <span class="total-target-percentage-minus"></span>%</span>
 				<span><strong>Total: </strong> <span class="total-target-percentage"></span>%</span>
 			</p>
 		</div>
