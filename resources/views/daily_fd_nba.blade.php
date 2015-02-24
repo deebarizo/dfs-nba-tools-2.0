@@ -60,7 +60,7 @@
 		</div>
 
 		<div class="col-lg-12">
-			<form class="form-inline" style="margin: 0 10px 1px">
+			<form class="form-inline" style="margin: 0 0 10px 0">
 				<label>Show Only Top Plays</label>
 				<select class="form-control top-plays-filter" style="width: 10%; margin-right: 20px">
 				  	<option value="0">No</option>
@@ -72,16 +72,16 @@
 			</form>
 		</div>
 
-		<div class="col-lg-12" style="margin: 3px 0 5px 0">
+		<div class="col-lg-12" style="margin: 2px 0 3px 0">
 			<p>
-				<strong>PG%: </strong> <span style="margin-right: 10px" class="total-target-percentage-pg"></span>
-				<strong>SG%: </strong> <span style="margin-right: 10px" class="total-target-percentage-sg"></span>
-				<strong>SF%: </strong> <span style="margin-right: 10px" class="total-target-percentage-sf"></span>
-				<strong>PF%: </strong> <span style="margin-right: 10px" class="total-target-percentage-pf"></span>
-				<strong>C%: </strong> <span style="margin-right: 20px" class="total-target-percentage-c"></span>
-				<strong>+7000%: </strong> <span style="margin-right: 10px" class="total-target-percentage-plus-7000"></span>
-				<strong>-7000%: </strong> <span style="margin-right: 20px" class="total-target-percentage-minus-7000"></span>
-				<strong>Total%: </strong> <span style="margin-right: 20px" class="total-target-percentage"></span>
+				<span style="margin-right: 10px"><strong>PG: </strong> <span class="total-target-percentage-PG"></span>%</span>
+				<span style="margin-right: 10px"><strong>SG: </strong> <span class="total-target-percentage-SG"></span>%</span>
+				<span style="margin-right: 10px"><strong>SF: </strong> <span class="total-target-percentage-SF"></span>%</span>
+				<span style="margin-right: 10px"><strong>PF: </strong> <span class="total-target-percentage-SF"></span>%</span>
+				<span style="margin-right: 40px"><strong>C: </strong> <span class="total-target-percentage-C"></span>%</span>
+				<span style="margin-right: 10px"><strong>+7000: </strong> <span class="total-target-percentage-plus-7000"></span>%</span>
+				<span style="margin-right: 40px"><strong>-7000: </strong> <span class="total-target-percentage-minus-7000"></span>%</span>
+				<span><strong>Total: </strong> <span class="total-target-percentage"></span>%</span>
 			</p>
 		</div>
 

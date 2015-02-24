@@ -177,33 +177,85 @@ $(document).ready(function() {
 	showTotalTargetPercentage();
 
 	function showTotalTargetPercentage() {
-		var position = $('select.position-filter').val();
+		addTargetPercentagesOfPositions();
 
-		var totalTargetPercentage = addTargetPercentages(position);
-		totalTargetPercentage = Math.round(totalTargetPercentage);
-		totalTargetPercentage = totalTargetPercentage+'%';
+		addTargetPercentagesOfSalaries();
 		
-		if (position == 'All') {
-			totalTargetPercentage = 'N/A';
-		}
-
-		$('span.total-target-percentage').text(totalTargetPercentage);
+		addTargetPercentagesOfAll();
 	}
 
-	function addTargetPercentages(position) {
-		var totalTargetPercentage = 0;
+	function addTargetPercentagesOfPositions() {
+		var totalPercentagesByPosition = {
+			PG: 0,
+			SG: 0,
+			SF: 0,
+			PF: 0,
+			C: 0
+		};
+
+		var positions = ['PG', 'SG', 'SF', 'PF', 'C'];
+
+		for (var i = 0; i < positions.length; i++) {
+			$('span.target-percentage-amount').each(function() {
+				var positionOfPlayer = $(this).closest('tr').data('player-position');
+
+				if (positions[i] == positionOfPlayer) {
+					var targetPercentageAmount = $(this).text();
+
+					totalPercentagesByPosition[positions[i]] += addTargetPercentage(targetPercentageAmount);		
+				}	
+			});
+		};
+
+		for (var i = 0; i < positions.length; i++) {
+			$('span.total-target-percentage-'+positions[i]).text(totalPercentagesByPosition[positions[i]]);
+		};
+	}
+
+	function addTargetPercentagesOfSalaries() {
+		var totalPercentagesBySalaries = {
+			'plus-7000': 0,
+			'minus-7000': 0
+		};
+
+		var salaries = ['plus-7000', 'minus-7000'];
 
 		$('span.target-percentage-amount').each(function() {
-			var positionOfPlayer = $(this).closest('tr').data('player-position');
+			var salary = $(this).closest('td').siblings('td.salary').text();
 
-			if (position == positionOfPlayer) {
+			if (salary >= 7000) {
 				var targetPercentageAmount = $(this).text();
 
-				totalTargetPercentage += addTargetPercentage(targetPercentageAmount);			
-			}
-		});			
+				totalPercentagesBySalaries['plus-7000'] += addTargetPercentage(targetPercentageAmount);		
+			}	
+		});
 
-		return totalTargetPercentage;
+		$('span.target-percentage-amount').each(function() {
+			var salary = $(this).closest('td').siblings('td.salary').text();
+
+			if (salary < 7000) {
+				var targetPercentageAmount = $(this).text();
+
+				totalPercentagesBySalaries['minus-7000'] += addTargetPercentage(targetPercentageAmount);		
+			}	
+		});		
+
+		for (var i = 0; i < salaries.length; i++) {
+			$('span.total-target-percentage-'+salaries[i]).text(totalPercentagesBySalaries[salaries[i]]);
+		};
+	}
+
+	function addTargetPercentagesOfAll() {
+		var totalPercentage = 0;
+
+		$('span.target-percentage-amount').each(function() {
+			var salary = $(this).closest('td').siblings('td.salary').text();
+			var targetPercentageAmount = $(this).text();
+
+			totalPercentage += addTargetPercentage(targetPercentageAmount);		
+		});		
+
+		$('span.total-target-percentage').text(totalPercentage);
 	}
 
 	function addTargetPercentage(targetPercentageAmount) {
