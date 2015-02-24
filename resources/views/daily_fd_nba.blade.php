@@ -144,7 +144,7 @@
 					    	class="player-row">
 					    	<td><a target="_blank" href="/players/{{ $player->player_id }}">{{ $player->name }}</a>
 			    			</td>
-			    			<td>
+			    			<td style="text-align: center">
 					    		<a {!! $noFilterQtip !!} target="_blank" href="/daily_fd_filters/{{ $player->player_id }}/create">
 					    			<span {!! $spanFilterLink !!} class="glyphicon glyphicon-filter" aria-hidden="true"></span>
 				    			</a> 
@@ -168,7 +168,6 @@
 									</table>
 								</div>
 								@endif
-				    			<a target="_blank" href="/daily_fd_filters/{{ $player->player_id }}/edit"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a> 
 				    			<a href="#"><span class="glyphicon glyphicon-lock daily-lock {{ $playerLockedClass }}" aria-hidden="true"></span></a>
 			    			</td>
 			    			<td style="text-align: center">
