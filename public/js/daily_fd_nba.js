@@ -97,7 +97,6 @@ $(document).ready(function() {
 				$('a[data-hasqtip='+dataHasQtip+']').parent('span.target-percentage-group').prev('span.target-percentage-amount').text(newTargetPercentage);
 
 				showTotalTargetPercentage();
-				showTotalTargetPercentageOfVisibleRows();
             }
         });	
 	}
@@ -215,22 +214,6 @@ $(document).ready(function() {
 		return parseInt(targetPercentageAmount);
 	}
 
-	showTotalTargetPercentageOfVisibleRows();
-
-	function showTotalTargetPercentageOfVisibleRows() {
-		var totalTargetPercentage = 0;
-
-		$('span.target-percentage-amount:visible').each(function() {
-			var targetPercentageAmount = $(this).text();
-
-			totalTargetPercentage += addTargetPercentage(targetPercentageAmount);
-		});			
-
-		totalTargetPercentage = totalTargetPercentage+'%';		
-
-		$('span.total-target-percentage-visible').text(totalTargetPercentage);
-	}
-
 
 	/********************************************
 	FILTERS
@@ -253,7 +236,6 @@ $(document).ready(function() {
 		runTimeFilter(filter);
 
 		showTotalTargetPercentage();
-		showTotalTargetPercentageOfVisibleRows();
 	}
 
 	function getFilter() {
