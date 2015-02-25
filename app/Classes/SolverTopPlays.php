@@ -7,8 +7,8 @@ class SolverTopPlays {
 	****************************************************************************************/
 
 	private $lineupBuilderIterations = 1000;
-	private $targetPercentageModifier = 0;
-	private $minimumTotalSalary = 59700; 
+	private $targetPercentageModifier = -100;
+	private $minimumTotalSalary = 59400; 
 	private $maximumTotalSalary = 60000;
 
 

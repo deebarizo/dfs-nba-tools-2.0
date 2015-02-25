@@ -285,13 +285,6 @@ $(document).ready(function() {
 			return false;
 		}
 
-		var validSalary = $('span.lineup-salary-total-valid').length;
-
-		if (!validSalary) {
-			alert('This total salary for this lineup is not valid.');
-			return false;
-		}
-
 		return true;
 	}
 

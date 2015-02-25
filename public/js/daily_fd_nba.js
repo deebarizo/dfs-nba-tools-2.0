@@ -7,7 +7,24 @@ $(document).ready(function() {
 	$('#daily').dataTable({
 		"scrollY": "600px",
 		"paging": false,
-		"order": [[13, "desc"]]
+		"order": [[14, "desc"]],
+		"columns": [
+		    { "width": "41%" },
+		    { "width": "2%" },
+		    { "width": "13%" },
+		    { "width": "7%" },
+		   	{ "width": "14%" },
+		   	{ "width": "14%" },
+		   	{ "width": "1%" },
+		   	{ "width": "1%" },
+		   	{ "width": "1%" },
+		   	{ "width": "1%" },
+		   	{ "width": "1%" },
+		   	{ "width": "1%" },
+		   	{ "width": "1%" },
+		   	{ "width": "1%" },
+		   	{ "width": "1%" }
+		]
 	});
 
 	$('#daily_filter').hide();
@@ -186,11 +203,26 @@ $(document).ready(function() {
 
 	function addTargetPercentagesOfPositions() {
 		var totalPercentagesByPosition = {
-			PG: 0,
-			SG: 0,
-			SF: 0,
-			PF: 0,
-			C: 0
+			PG: {
+				percentage: 0,
+				salary: 0
+			},
+			SG: {
+				percentage: 0,
+				salary: 0
+			},
+			SF: {
+				percentage: 0,
+				salary: 0
+			},
+			PF: {
+				percentage: 0,
+				salary: 0
+			},
+			C: {
+				percentage: 0,
+				salary: 0
+			}
 		};
 
 		var positions = ['PG', 'SG', 'SF', 'PF', 'C'];
@@ -199,17 +231,31 @@ $(document).ready(function() {
 			$('span.target-percentage-amount').each(function() {
 				var positionOfPlayer = $(this).closest('tr').data('player-position');
 
+				var salary = $(this).closest('td').siblings('td.salary').text();
+
 				if (positions[i] == positionOfPlayer) {
 					var targetPercentageAmount = $(this).text();
 
-					totalPercentagesByPosition[positions[i]] += addTargetPercentage(targetPercentageAmount);		
+					totalPercentagesByPosition[positions[i]]['percentage'] += addTargetPercentage(targetPercentageAmount);
+
+					var weightedSalary = salary * addTargetPercentage(targetPercentageAmount) / 100;
+
+					totalPercentagesByPosition[positions[i]]['salary'] += weightedSalary;
 				}	
 			});
 		};
 
 		for (var i = 0; i < positions.length; i++) {
-			$('span.total-target-percentage-'+positions[i]).text(totalPercentagesByPosition[positions[i]]);
+			$('span.total-target-percentage-'+positions[i]).text(totalPercentagesByPosition[positions[i]]['percentage']);
 		};
+
+		var totalWeightedSalary = 0;
+
+		for (var i = 0; i < positions.length; i++) {
+			totalWeightedSalary += totalPercentagesByPosition[positions[i]]['salary'];
+		};
+
+		$('span.total-weighted-salary').text(totalWeightedSalary);
 	}
 
 	function addTargetPercentagesOfSalaries() {

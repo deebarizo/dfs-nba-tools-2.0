@@ -585,13 +585,21 @@ class StatBuilder {
 
             $player->vr = numFormat($player->fppgWithAllFilters / ($player->salary / 1000));
 
-            # ddAll($player);
+            $player->svr = numFormat($this->calculateSvr($player->vr, $player->salary));
 
         } unset($player);
 
         # ddAll($players);
 
         return $players;
+    }
+
+    private function calculateSvr($vr, $salary) {
+        $salaryDifferential = $salary - 6500;
+
+        $salaryFilter = $salaryDifferential / 1000 / 100; // 1% for every 1000 salary
+
+        return ($vr * $salaryFilter) + $vr;
     }
 
     private function getFppmBasedOnLineFilter($player, $doYouWantLineFilter) {
