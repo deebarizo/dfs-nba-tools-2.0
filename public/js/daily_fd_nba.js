@@ -9,9 +9,9 @@ $(document).ready(function() {
 		"paging": false,
 		"order": [[13, "desc"]],
 		"columns": [
-		    { "width": "42%" },
+		    { "width": "46%" },
 		    { "width": "2%" },
-		    { "width": "13%" },
+		    { "width": "12%" },
 		    { "width": "7%" },
 		   	{ "width": "14%" },
 		   	{ "width": "14%" },

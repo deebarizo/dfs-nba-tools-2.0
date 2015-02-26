@@ -125,20 +125,6 @@
 								$line = 'None';
 							}
 
-							$isPlayerLocked = $player->top_play_index;
-
-							if ($isPlayerLocked == 1) {
-								$playerLockedClass = ' daily-lock-active';
-
-								$targetPercentage = $player->target_percentage;
-								$targetPercentageGroup = '';
-							} else {
-								$playerLockedClass = '';
-
-								$targetPercentage = '---';
-								$targetPercentageGroup = 'hide-target-percentage-group';
-							}
-
 							if (!isset($player->is_player_on_home_team)) {
 								$player->is_player_on_home_team = '';
 							}
@@ -154,7 +140,7 @@
 					    	class="player-row">
 					    	<td><a target="_blank" href="/players/{{ $player->player_id }}">{{ $player->name }}</a>
 			    			</td>
-			    			<td style="text-align: center">
+			    			<td>
 					    		<a {!! $noFilterQtip !!} target="_blank" href="/daily_fd_filters/{{ $player->player_id }}/create">
 					    			<span {!! $spanFilterLink !!} class="glyphicon glyphicon-filter" aria-hidden="true"></span>
 				    			</a> 
@@ -178,20 +164,18 @@
 									</table>
 								</div>
 								@endif
-				    			<a href="#"><span class="glyphicon glyphicon-lock daily-lock {{ $playerLockedClass }}" aria-hidden="true"></span></a>
-			    			</td>
-			    			<td style="text-align: center">
-			    				<span class="target-percentage-amount">{{ $targetPercentage }}</span><span class="target-percentage-group {{ $targetPercentageGroup }}">
+				    			<a href="#"><span class="glyphicon glyphicon-lock daily-lock daily-lock-active" aria-hidden="true"></span></a>
+				    			<span class="target-percentage-group">
 				    				<a class="target-percentage-qtip edit-target-percentage-link" href="#">
 				    					<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
 				    				</a>
 								</span>
-								
 								<div class="edit-target-percentage-tooltip">
 									<input type="text" class="edit-target-percentage-input" value="{{ $player->target_percentage }}">
 							    	<button class="edit-target-percentage-button" type="button">Submit</button>
 								</div>
 			    			</td>
+			    			<td class="target-percentage-amount">{{ $player->target_percentage }}</td>
 			    			<td class="time">
 			    				@if (isset($player->game_time))
 				    				{{ $player->game_time }}

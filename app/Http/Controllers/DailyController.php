@@ -81,7 +81,7 @@ class DailyController {
             $gameTimes = array_unique($gameTimes);
         }
     
-        # ddAll($vegasScores);
+        # ddAll($players);
 
 		return view('daily_fd_nba', compact('date', 'timePeriod', 'players', 'teamsToday', 'gameTimes'));
 	}
