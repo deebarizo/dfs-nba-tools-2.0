@@ -4,6 +4,13 @@ $(document).ready(function() {
 	CREATE TABLE
 	********************************************/
 
+	$.fn.dataTable.ext.order['dom-text-numeric'] = function  ( settings, col )
+	{
+	    return this.api().column( col, {order:'index'} ).nodes().map( function ( td, i ) {
+	        return $(td).text() * 1;
+	    } );
+	}
+
 	$('#daily').dataTable({
 		// "scrollY": "600px",
 		"paging": false,
@@ -11,7 +18,7 @@ $(document).ready(function() {
 		"columns": [
 		    { "width": "46%" },
 		    { "width": "2%" },
-		    { "width": "12%" },
+		    { "width": "12%", "orderDataType": "dom-text-numeric" },
 		    { "width": "7%" },
 		   	{ "width": "14%" },
 		   	{ "width": "14%" },
@@ -67,10 +74,6 @@ $(document).ready(function() {
 
 			var playerFdIndex = $('a[data-hasqtip='+dataHasQtip+']').parent('span.target-percentage-group').parent('td').parent('tr').data('player-fd-index');
 
-			// var targetPercentageAmount = $('a[data-hasqtip='+dataHasQtip+']').parent('span.target-percentage-group').prev('span.target-percentage-amount').text();
-
-			// $(this).val(targetPercentageAmount);
-
 			var newTargetPercentage = $(this).val();
 
 			updateTargetPercentage(newTargetPercentage, dataHasQtip, playerFdIndex);
@@ -87,30 +90,19 @@ $(document).ready(function() {
 	});
 
 	function updateTargetPercentage(newTargetPercentage, dataHasQtip, playerFdIndex) {
-		$('a[data-hasqtip='+dataHasQtip+']').parent('span.target-percentage-group').addClass('hide-target-percentage-group');
-		$('a[data-hasqtip='+dataHasQtip+']').parent('span.target-percentage-group').prev('span.target-percentage-amount').html('<img src="/files/spiffygif_16x16.gif" alt="Please wait..." />');
+		$('a[data-hasqtip='+dataHasQtip+']').closest('td').siblings('td.target-percentage-amount').html('<img src="/files/spiffygif_16x16.gif" alt="Please wait..." />');
 
 		$.ajax({
             url: baseUrl+'/daily_fd_nba/update_target_percentage/'+playerFdIndex+'/'+newTargetPercentage,
             type: 'POST',
             success: function() {
-            	$('a[data-hasqtip='+dataHasQtip+']').parent('span.target-percentage-group').prev('span.target-percentage-amount').html('');
+            	$('a[data-hasqtip='+dataHasQtip+']').closest('td').siblings('td.target-percentage-amount').html('');
 
             	var targetPercentageTooltipInput = $('div#qtip-'+dataHasQtip+'-content').children('div.edit-target-percentage-tooltip').children('input.edit-target-percentage-input');
 
-            	if (newTargetPercentage == 0) {
-            		$(targetPercentageTooltipInput).val(0);
+           		$(targetPercentageTooltipInput).val(newTargetPercentage);
 
-            		newTargetPercentage = '---';
-
-            		$('a[data-hasqtip='+dataHasQtip+']').parent('span.target-percentage-group').addClass('hide-target-percentage-group');
-            	} else {
-            		$(targetPercentageTooltipInput).val(newTargetPercentage);
-
-            		$('a[data-hasqtip='+dataHasQtip+']').parent('span.target-percentage-group').removeClass('hide-target-percentage-group');
-            	}
-
-				$('a[data-hasqtip='+dataHasQtip+']').parent('span.target-percentage-group').prev('span.target-percentage-amount').text(newTargetPercentage);
+				$('a[data-hasqtip='+dataHasQtip+']').closest('td').siblings('td.target-percentage-amount').text(newTargetPercentage);
 
 				showTotalTargetPercentage();
             }
@@ -134,7 +126,7 @@ $(document).ready(function() {
 	$(".daily-lock").click(function(e) {
 		e.preventDefault();
 
-		var playerFdIndex = $(this).parent().parent().parent().data('player-fd-index');
+		var playerFdIndex = $(this).closest('tr').data('player-fd-index');
 		var isPlayerActive = $(this).hasClass("daily-lock-active");
 
 		$(this).hide();
@@ -148,37 +140,28 @@ $(document).ready(function() {
             url: baseUrl+'/daily_fd_nba/update_top_plays/'+playerFdIndex+'/'+isPlayerActive,
             type: 'POST',
             success: function() {
-				$this.toggleClass("daily-lock-active");
+            	$this.toggleClass("daily-lock-active");
 
-				$this.show();
+            	$this.siblings('img').remove();
 
-				var spanTargetPercentageAmount = $this.parent('a').parent('td').next('td').children('span.target-percentage-amount');
-				var spanTargetPercentageGroup = $this.parent('a').parent('td').next('td').children('span.target-percentage-group');
-				var editTargetPercentageInput = $this.parent('a').parent('td').next('td').children('div.edit-target-percentage-tooltip').children('input.edit-target-percentage-input');
+            	$this.show();
+
+				var tdTargetPercentageAmount = $this.parent('a').parent('td').siblings('td.target-percentage-amount');
+				var editTargetPercentageInput = $this.closest('a').siblings('div.edit-target-percentage-tooltip').find('input.edit-target-percentage-input');
 
 				if ($this.hasClass('daily-lock-active')) {
-					$(spanTargetPercentageAmount).text(defaultTargetPercentage);
-					$(spanTargetPercentageGroup).removeClass('hide-target-percentage-group');
+					$(tdTargetPercentageAmount).text(defaultTargetPercentage);
 					$(editTargetPercentageInput).val(defaultTargetPercentage);
 				} else {
-					$(spanTargetPercentageAmount).text('---');
-					$(spanTargetPercentageGroup ).addClass('hide-target-percentage-group');
+					$(tdTargetPercentageAmount).text(0);
 					$(editTargetPercentageInput).val('0');
 				}
 
-				$this.next('img').remove();
-
-				var targetPercentageAmount = $this.parent('a').parent('td').next('td').children('span.target-percentage-amount').text();
-
-				if (targetPercentageAmount == '---') {
-					var newTargetPercentage = 0;
-				} else {
-					var newTargetPercentage = targetPercentageAmount;
-				}
+				var targetPercentageAmount = tdTargetPercentageAmount.text();
 
 				var dataHasQtip = $this.parent('a').parent('td').next('td').children('span.target-percentage-group').children('a.target-percentage-qtip').data('hasqtip');
 
-				updateTargetPercentage(newTargetPercentage, dataHasQtip, playerFdIndex);
+				updateTargetPercentage(targetPercentageAmount, dataHasQtip, playerFdIndex);
             }
         });
 
@@ -227,7 +210,7 @@ $(document).ready(function() {
 		var positions = ['PG', 'SG', 'SF', 'PF', 'C'];
 
 		for (var i = 0; i < positions.length; i++) {
-			$('span.target-percentage-amount').each(function() {
+			$('td.target-percentage-amount').each(function() {
 				var positionOfPlayer = $(this).closest('tr').data('player-position');
 
 				var salary = $(this).closest('td').siblings('td.salary').text();
@@ -245,7 +228,7 @@ $(document).ready(function() {
 		};
 
 		for (var i = 0; i < positions.length; i++) {
-			$('span.total-target-percentage-'+positions[i]).text(totalPercentagesByPosition[positions[i]]['percentage']);
+			$('td.total-target-percentage-'+positions[i]).text(totalPercentagesByPosition[positions[i]]['percentage']);
 		};
 
 		var totalWeightedSalary = 0;
@@ -265,7 +248,7 @@ $(document).ready(function() {
 
 		var salaries = ['plus', 'minus'];
 
-		$('span.target-percentage-amount').each(function() {
+		$('td.target-percentage-amount').each(function() {
 			var salary = $(this).closest('td').siblings('td.salary').text();
 
 			if (salary >= 6500) {
@@ -275,7 +258,7 @@ $(document).ready(function() {
 			}	
 		});
 
-		$('span.target-percentage-amount').each(function() {
+		$('td.target-percentage-amount').each(function() {
 			var salary = $(this).closest('td').siblings('td.salary').text();
 
 			if (salary < 6500) {
@@ -293,7 +276,7 @@ $(document).ready(function() {
 	function addTargetPercentagesOfAll() {
 		var totalPercentage = 0;
 
-		$('span.target-percentage-amount').each(function() {
+		$('td.target-percentage-amount').each(function() {
 			var salary = $(this).closest('td').siblings('td.salary').text();
 			var targetPercentageAmount = $(this).text();
 
