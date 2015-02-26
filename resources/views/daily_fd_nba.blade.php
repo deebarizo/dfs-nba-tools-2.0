@@ -78,7 +78,10 @@
 				<span style="margin-right: 20px"><strong>SG: </strong> <span class="total-target-percentage-SG"></span>%</span>
 				<span style="margin-right: 20px"><strong>SF: </strong> <span class="total-target-percentage-SF"></span>%</span>
 				<span style="margin-right: 20px"><strong>PF: </strong> <span class="total-target-percentage-PF"></span>%</span>
-				<span style="margin-right: 60px"><strong>C: </strong> <span class="total-target-percentage-C"></span>%</span>
+				<span style="margin-right: 40px"><strong>C: </strong> <span class="total-target-percentage-C"></span>%</span>
+				<span style="margin-right: 20px"><strong>+6500: </strong> <span class="total-target-percentage-plus"></span>%</span>
+				<span style="margin-right: 40px"><strong>-6500: </strong> <span class="total-target-percentage-minus"></span>%</span>
+				<span style="margin-right: 60px"><strong>Total: </strong> <span class="total-target-percentage"></span>%</span>
 
 				<span><strong>Weighted Salary: </strong> <span class="total-weighted-salary"></span></span>
 			</p>
@@ -102,7 +105,7 @@
 						<th>FP</th>
 						<th>Sal</th>
 						<th>VR</th>
-						<th>sVR</th>
+						<!-- <th>sVR</th> -->
 					</tr>
 				</thead>
 				<tbody>
@@ -178,7 +181,7 @@
 				    			<a href="#"><span class="glyphicon glyphicon-lock daily-lock {{ $playerLockedClass }}" aria-hidden="true"></span></a>
 			    			</td>
 			    			<td style="text-align: center">
-			    				<span class="target-percentage-amount">{{ $targetPercentage }}</span><span class="target-percentage-group {{ $targetPercentageGroup }}">% 
+			    				<span class="target-percentage-amount">{{ $targetPercentage }}</span><span class="target-percentage-group {{ $targetPercentageGroup }}">
 				    				<a class="target-percentage-qtip edit-target-percentage-link" href="#">
 				    					<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
 				    				</a>
@@ -206,7 +209,7 @@
 					    	<td>{{ $player->fppgWithAllFilters }}</td>
 					    	<td class="salary">{{ $player->salary }}</td>
 					    	<td>{{ $player->vr }}</td>
-					    	<td>{{ $player->svr }}</td>
+					    	<!-- <td>{{ $player->svr }}</td> -->
 					    </tr>
 
 					    <?php unset($line); ?>

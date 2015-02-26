@@ -597,7 +597,7 @@ class StatBuilder {
     private function calculateSvr($vr, $salary) {
         $salaryDifferential = $salary - 6500;
 
-        $salaryFilter = $salaryDifferential / 1000 / 100; // 1% for every 1000 salary
+        $salaryFilter = $salaryDifferential / 333 / 100; // 3% for every 1000 salary
 
         return ($vr * $salaryFilter) + $vr;
     }

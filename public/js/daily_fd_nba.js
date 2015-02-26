@@ -5,17 +5,16 @@ $(document).ready(function() {
 	********************************************/
 
 	$('#daily').dataTable({
-		"scrollY": "600px",
+		// "scrollY": "600px",
 		"paging": false,
-		"order": [[14, "desc"]],
+		"order": [[13, "desc"]],
 		"columns": [
-		    { "width": "41%" },
+		    { "width": "42%" },
 		    { "width": "2%" },
 		    { "width": "13%" },
 		    { "width": "7%" },
 		   	{ "width": "14%" },
 		   	{ "width": "14%" },
-		   	{ "width": "1%" },
 		   	{ "width": "1%" },
 		   	{ "width": "1%" },
 		   	{ "width": "1%" },
@@ -57,7 +56,7 @@ $(document).ready(function() {
             hide: {
             	event: false
             }
-        });
+        }).bind('click', function(event) { event.preventDefault(); return false; });
     }); 
 
     $('.edit-target-percentage-input').keypress(function (event) {
