@@ -106,9 +106,9 @@ $(document).ready(function() {
 
            		$(targetPercentageTooltipInput).val(newTargetPercentage);
 
-            	if (newTargetPercentage == 0) {
+            	if (newTargetPercentage == 0 && playerRow != null) {
             		playerRow.find('span.daily-lock').removeClass("daily-lock-active");
-            	} else {
+            	} else if (newTargetPercentage > 0 && playerRow != null) {
             		playerRow.find('span.daily-lock').addClass("daily-lock-active");
             	}
 
@@ -171,7 +171,9 @@ $(document).ready(function() {
 
 				var dataHasQtip = $this.parent('a').parent('td').next('td').children('span.target-percentage-group').children('a.target-percentage-qtip').data('hasqtip');
 
-				updateTargetPercentage(targetPercentageAmount, dataHasQtip, playerFdIndex);
+				updateTargetPercentage(targetPercentageAmount, dataHasQtip, playerFdIndex, null);
+
+				showTotalTargetPercentage();
             }
         });
 
@@ -237,8 +239,10 @@ $(document).ready(function() {
 			});
 		};
 
+		// console.log(totalPercentagesByPosition);
+
 		for (var i = 0; i < positions.length; i++) {
-			$('td.total-target-percentage-'+positions[i]).text(totalPercentagesByPosition[positions[i]]['percentage']);
+			$('span.total-target-percentage-'+positions[i]).text(totalPercentagesByPosition[positions[i]]['percentage']);
 		};
 
 		var totalWeightedSalary = 0;
