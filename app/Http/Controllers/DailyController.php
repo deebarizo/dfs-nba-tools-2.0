@@ -103,6 +103,12 @@ class DailyController {
 
         $playerFd->target_percentage = $newTargetPercentage;
 
+        if ($newTargetPercentage > 0) {
+            $playerFd->top_play_index = 1;
+        } else {
+            $playerFd->top_play_index = 0;
+        }
+
         $playerFd->save();
     }
 

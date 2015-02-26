@@ -125,6 +125,14 @@
 								$line = 'None';
 							}
 
+							$isPlayerLocked = $player->top_play_index;
+
+							if ($isPlayerLocked == 1) {
+								$playerLockedClass = 'daily-lock-active';
+							} else {
+								$playerLockedClass = '';
+							}
+
 							if (!isset($player->is_player_on_home_team)) {
 								$player->is_player_on_home_team = '';
 							}
@@ -164,7 +172,7 @@
 									</table>
 								</div>
 								@endif
-				    			<a href="#"><span class="glyphicon glyphicon-lock daily-lock daily-lock-active" aria-hidden="true"></span></a>
+				    			<a href="#"><span class="glyphicon glyphicon-lock daily-lock {{ $playerLockedClass }}" aria-hidden="true"></span></a>
 				    			<span class="target-percentage-group">
 				    				<a class="target-percentage-qtip edit-target-percentage-link" href="#">
 				    					<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>

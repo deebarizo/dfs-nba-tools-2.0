@@ -68,15 +68,19 @@ $(document).ready(function() {
 
     $('.edit-target-percentage-input').keypress(function (event) {
         if (event.which == 13) {
-			var rawDataHasQtip = $(this).parent('div.edit-target-percentage-tooltip').parent('div.qtip-content').parent('div.qtip').attr('id');
+			var rawDataHasQtip = $(this).closest('div.qtip').attr('id');
 
 			var dataHasQtip = rawDataHasQtip.replace(/qtip-/gi, '');
 
-			var playerFdIndex = $('a[data-hasqtip='+dataHasQtip+']').parent('span.target-percentage-group').parent('td').parent('tr').data('player-fd-index');
+			var playerRow = $('a[data-hasqtip='+dataHasQtip+']').closest('tr');
+
+			var playerFdIndex = playerRow.data('player-fd-index');
 
 			var newTargetPercentage = $(this).val();
 
-			updateTargetPercentage(newTargetPercentage, dataHasQtip, playerFdIndex);
+			// console.log(playerFdIndex); return;
+
+			updateTargetPercentage(newTargetPercentage, dataHasQtip, playerFdIndex, playerRow);
 		}
     });
 
@@ -89,7 +93,7 @@ $(document).ready(function() {
 		$(this).prev(".edit-target-percentage-input").trigger(e);
 	});
 
-	function updateTargetPercentage(newTargetPercentage, dataHasQtip, playerFdIndex) {
+	function updateTargetPercentage(newTargetPercentage, dataHasQtip, playerFdIndex, playerRow) {
 		$('a[data-hasqtip='+dataHasQtip+']').closest('td').siblings('td.target-percentage-amount').html('<img src="/files/spiffygif_16x16.gif" alt="Please wait..." />');
 
 		$.ajax({
@@ -101,6 +105,12 @@ $(document).ready(function() {
             	var targetPercentageTooltipInput = $('div#qtip-'+dataHasQtip+'-content').children('div.edit-target-percentage-tooltip').children('input.edit-target-percentage-input');
 
            		$(targetPercentageTooltipInput).val(newTargetPercentage);
+
+            	if (newTargetPercentage == 0) {
+            		playerRow.find('span.daily-lock').removeClass("daily-lock-active");
+            	} else {
+            		playerRow.find('span.daily-lock').addClass("daily-lock-active");
+            	}
 
 				$('a[data-hasqtip='+dataHasQtip+']').closest('td').siblings('td.target-percentage-amount').text(newTargetPercentage);
 
