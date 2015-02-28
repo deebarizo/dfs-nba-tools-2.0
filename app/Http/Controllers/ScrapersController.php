@@ -55,7 +55,7 @@ class ScrapersController {
 			foreach ($games as $game) {
 				$gamesWithDataCount++;
 
-				$crawlerBR = $client->getClient()->setDefaultOption('config/curl/'.CURLOPT_TIMEOUT, 10000);
+				$crawlerBR = $client->getClient()->setDefaultOption('config/curl/'.CURLOPT_TIMEOUT, 50000);
 				$crawlerBR = $client->request('GET', $game->link_br);
 
 				$twoTeamsID = [
@@ -254,6 +254,7 @@ class ScrapersController {
 		$gamesCount = Game::where('season_id', '=', $season->id)->count();
 
 		$client = new Client();
+		$crawler = $client->getClient()->setDefaultOption('config/curl/'.CURLOPT_TIMEOUT, 50000);
 		$crawler = $client->request('GET', 'http://www.basketball-reference.com/leagues/NBA_'.$endYear.'_games.html');
 
 		$status_code = $client->getResponse()->getStatus();
