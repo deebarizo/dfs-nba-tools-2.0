@@ -273,11 +273,18 @@ class StatBuilder {
 	DAILY
 	****************************************************************************************/
 
-	public function getPlayersInPlayerPool($date) {
+	public function getPlayersInPlayerPool($site, $sport, $timePeriod, $date) {
+        $site = strtoupper($site);
+        $sport = strtoupper($sport);
+        $timePeriod = preg_replace('/-/', ' ', $timePeriod);
+
 		$players = DB::table('player_pools')
             ->join('players_fd', 'player_pools.id', '=', 'players_fd.player_pool_id')
             ->join('players', 'players_fd.player_id', '=', 'players.id')
             ->select('*', 'players_fd.id as player_fd_index')
+            ->where('player_pools.site', '=', $site)
+            ->where('player_pools.sport', '=', $sport)
+            ->where('player_pools.time_period', '=', $timePeriod)
             ->where('player_pools.date', '=', $date)
             ->get();
 

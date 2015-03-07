@@ -26,6 +26,13 @@ class PlayerPoolsController {
 		$playerPools = PlayerPool::orderBy('date', 'desc')->take(50)->get()->toArray();
 
 		foreach ($playerPools as &$playerPool) {
+			$playerPool['site_in_url'] = strtolower($playerPool['site']);
+
+			$playerPool['sport_in_url'] = strtolower($playerPool['sport']);
+
+			$timePeriodInUrl = strtolower($playerPool['time_period']);
+			$playerPool['time_period_in_url'] = preg_replace('/\s/', '-', $timePeriodInUrl);
+
 			if ($playerPool['buy_in'] == '') {
 				$playerPool['buy_in'] = 'N/A';
 

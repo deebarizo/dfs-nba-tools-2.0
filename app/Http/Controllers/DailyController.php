@@ -26,14 +26,16 @@ date_default_timezone_set('America/Chicago');
 
 class DailyController {
 
-	public function daily_fd_nba($date) {
+	public function daily($site, $sport, $timePeriod, $date) {
         $seasonId = 11;
 
         $teams = Team::all();
 
         $statBuilder = new StatBuilder;
 
-        $players = $statBuilder->getPlayersInPlayerPool($date);
+        $players = $statBuilder->getPlayersInPlayerPool($site, $sport, $timePeriod, $date);
+
+        # ddAll($players);
 
         $timePeriod = $statBuilder->getTimePeriodOfPlayerPool($players);
 

@@ -16,8 +16,7 @@ $router->get('studies/general/classifying_projected_fpts/', 'StudiesController@c
 
 $router->get('players/{player_id}', 'PlayersController@getPlayerStats');
 
-$router->get('daily_fd_nba', 'DailyController@daily_fd_nba');
-$router->get('daily_fd_nba/{date}', 'DailyController@daily_fd_nba');
+$router->get('daily/{site}/{sport}/{timePeriod}/{date}', 'DailyController@daily');
 $router->post('daily_fd_nba/update_top_plays/{playerFdIndex}/{isPlayerActive}', 'DailyController@update_top_plays');
 $router->post('daily_fd_nba/update_target_percentage/{playerFdIndex}/{newTargetPercentage}', 'DailyController@updateTargetPercentage');
 

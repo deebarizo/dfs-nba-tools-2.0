@@ -10,6 +10,7 @@
 					<tr>
 						<th>Date</th>
 						<th>Site</th>
+						<th>Sport</th>
 						<th>Time Period</th>
 						<th>Buy In</th>
 						<th>Link</th>
@@ -20,9 +21,10 @@
 						<tr>
 							<td>{{ $playerPool['date'] }}</td>
 							<td>{{ $playerPool['site'] }}</td>
+							<td>{{ $playerPool['sport'] }}</td>
 							<td>{{ $playerPool['time_period'] }}</td>
 							<td>{{ $playerPool['buy_in'] }}</td>
-							<td><a href="/daily_fd_nba/{{ $playerPool['date'] }}">Link</a></td>
+							<td><a href="/daily/{{ $playerPool['site_in_url'] }}/{{ $playerPool['sport_in_url'] }}/{{ $playerPool['time_period_in_url'] }}/{{ $playerPool['date'] }}">Link</a></td>
 						</tr>
 					@endforeach
 				</tbody>
