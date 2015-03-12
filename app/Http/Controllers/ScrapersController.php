@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\RunFDNBASalariesScraperRequest;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Input;
 
 use vendor\symfony\DomCrawler\Symfony\Component\DomCrawler\Crawler;
 use Goutte\Client;
@@ -22,8 +23,34 @@ use Illuminate\Support\Facades\Session;
 
 class ScrapersController {
 
-	public function dk_mlb_salaries() {
-		
+	public function dk_mlb_salaries(Request $request) {
+		$timePeriod = $request->input('time_period');
+
+		Input::file('csv')->move('files/dk/mlb/'.$timePeriod, $request->input('date').'.csv');
+
+		dd($timePeriod);
+
+		if (($handle = fopen($csvFile, 'r')) !== false) {
+			$row = 0;
+
+			while (($csvData = fgetcsv($handle, 5000, ',')) !== false) {
+			    if ($row != 0) {
+			    	$game_info = preg_replace('/(\w+@\w+)(.*)/', '$1', $csvData[3]);
+				    $player[$row] = array(
+				       	'position' => $csvData[0],
+				       	'name' => $csvData[1],
+				       	'salary' => $csvData[2],
+				       	'game_info' => $gameInfo
+				    );
+				}
+			}
+
+			$row++;
+		}	
+
+		ddAll($player);
+
+		return $csvFile;
 	}
 
 	public function br_nba_box_score_lines(Request $request) {

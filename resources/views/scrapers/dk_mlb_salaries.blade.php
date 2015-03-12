@@ -20,11 +20,11 @@
 		    </div>
 		@endif
 
-		{!!	Form::open(['url' => 'scrapers/dk_mlb_salaries']) !!}
+		{!! Form::open(array('url'=>'scrapers/dk_mlb_salaries', 'files'=>true)) !!}
 			<div class="col-lg-2"> 
 				<div class="form-group {{ $errors->has('date') ? 'has-error' : '' }}">
 					{!! Form::label('date', 'Date:') !!}
-					{!! Form::text('date', $today_date, ['class' => 'form-control']) !!}
+					{!! Form::text('date', '2015-04-06', ['class' => 'form-control']) !!}
 					{!! $errors->first('date', '<span class="help-block">:message</span>') !!}
 				</div>
 			</div>
@@ -39,9 +39,9 @@
 			<div class="col-lg-3"> 
 				<div class="form-group {{ $errors->has('time_period') ? 'has-error' : '' }}">
 					{!! Form::label('time_period', 'Time Period:') !!}<br>
-					{!! Form::radio('time_period', 'All Day', true) !!} All Day &nbsp;
-					{!! Form::radio('time_period', 'Early') !!} Early &nbsp;
-					{!! Form::radio('time_period', 'Late') !!} Late
+					{!! Form::radio('time_period', 'all-day', true) !!} All Day &nbsp;
+					{!! Form::radio('time_period', 'early') !!} Early &nbsp;
+					{!! Form::radio('time_period', 'late') !!} Late
 					{!! $errors->first('time_period', '<span class="help-block">:message</span>') !!}
 				</div>
 			</div>
