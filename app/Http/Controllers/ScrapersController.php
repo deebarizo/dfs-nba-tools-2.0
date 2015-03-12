@@ -22,6 +22,10 @@ use Illuminate\Support\Facades\Session;
 
 class ScrapersController {
 
+	public function dk_mlb_salaries() {
+		
+	}
+
 	public function br_nba_box_score_lines(Request $request) {
 		$endYear = $request->input('season');
 		$season = Season::where('end_year', $endYear)->first();

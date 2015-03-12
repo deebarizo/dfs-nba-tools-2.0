@@ -7,6 +7,7 @@ $router->get('/', 'PlayerPoolsController@home');
 $router->post('scrapers/br_nba_box_score_lines', 'ScrapersController@br_nba_box_score_lines');
 $router->post('scrapers/br_nba_games', 'ScrapersController@br_nba_games');
 $router->post('scrapers/fd_nba_salaries', 'ScrapersController@fd_nba_salaries');
+$router->post('scrapers/dk_mlb_salaries', 'ScrapersController@dk_mlb_salaries');
 
 $router->get('studies/correlations/scores_and_vegas_scores', 'StudiesController@correlationScoresAndVegasScores');
 $router->get('studies/histograms/scores', 'StudiesController@histogramScores');
@@ -28,6 +29,9 @@ $router->get('scrapers/br_nba_games', function() {
 });
 $router->get('scrapers/fd_nba_salaries', function() {
 	return View::make('scrapers/fd_nba_salaries');
+});
+$router->get('scrapers/dk_mlb_salaries', function() {
+	return View::make('scrapers/dk_mlb_salaries');
 });
 
 $router->get('scrapers', function() {
