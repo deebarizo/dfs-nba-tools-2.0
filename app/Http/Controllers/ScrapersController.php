@@ -24,31 +24,87 @@ use Illuminate\Support\Facades\Session;
 class ScrapersController {
 
 	public function dk_mlb_salaries(Request $request) {
+
+		$timePeriodInUrl = strtolower($request->input('time_period'));
+		$timePeriodInUrl = preg_replace('/\s/', '-', $timePeriodInUrl);
+
+		$csvDirectory = 'files/dk/mlb/'.$timePeriodInUrl.'/';
+		$csvName = $request->input('date').'.csv';
+		$csvFile = $csvDirectory.$csvName;
+
+		Input::file('csv')->move($csvDirectory, $csvName);
+
+		/********************************************
+		SET DATA FOR PLAYER POOLS TABLE
+		********************************************/
+
+		$date = $request->input('date');
+		
+		$sport = 'MLB';
+
 		$timePeriod = $request->input('time_period');
 
-		Input::file('csv')->move('files/dk/mlb/'.$timePeriod, $request->input('date').'.csv');
+		$site = 'DK';
 
-		dd($timePeriod);
+		$url = 'csv file';
+
+		$playerPoolExists = PlayerPool::where('date', $date)
+										 ->where('sport', $sport)
+										 ->where('time_period', $timePeriod)
+										 ->where('site', $site)
+										 ->where('url', $url)
+										 ->count();
+
+		if ($playerPoolExists) {
+			$message = 'This player pool is already in the database.';
+			Session::flash('alert', 'info');
+
+			return redirect('scrapers/dk_mlb_salaries')->with('message', $message);	 
+		}
+		
+		/********************************************
+		INSERT DATA TO PLAYER POOLS TABLE
+		********************************************/
+/*
+		$playerPool = new PlayerPool;
+
+		$playerPool->date = $date;
+		$playerPool->sport = $sport;
+		$playerPool->time_period = $timePeriod;
+		$playerPool->site = $site;
+		$playerPool->url = $url;
+
+		$playerPool->save();
+
+		return 'bob';
+/*
+		/********************************************
+		PARSE CSV
+		********************************************/
 
 		if (($handle = fopen($csvFile, 'r')) !== false) {
 			$row = 0;
 
 			while (($csvData = fgetcsv($handle, 5000, ',')) !== false) {
 			    if ($row != 0) {
-			    	$game_info = preg_replace('/(\w+@\w+)(.*)/', '$1', $csvData[3]);
+			    	$gameInfo = preg_replace('/(\w+@\w+)(.*)/', '$1', $csvData[3]);
 				    $player[$row] = array(
 				       	'position' => $csvData[0],
 				       	'name' => $csvData[1],
 				       	'salary' => $csvData[2],
 				       	'game_info' => $gameInfo
 				    );
+
+				    ddAll($player[$row]);
 				}
+
+				$row++;
 			}
 
-			$row++;
+			
 		}	
 
-		ddAll($player);
+		
 
 		return $csvFile;
 	}
@@ -449,6 +505,7 @@ class ScrapersController {
 		$playerPool = new PlayerPool;
 
 		$playerPool->date = $metadata['date'];
+		$playerPool->sport = 'NBA';
 		$playerPool->time_period = $metadata['time_period'];
 		$playerPool->site = $metadata['site'];
 		$playerPool->url = $metadata['url'];
