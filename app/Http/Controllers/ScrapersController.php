@@ -10,6 +10,7 @@ use App\Models\BoxScoreLine;
 use App\Models\PlayerPool;
 use App\Models\PlayerFd;
 use App\Models\MlbPlayer;
+use App\Models\MlbTeam;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\RunFDNBASalariesScraperRequest;
@@ -78,7 +79,7 @@ class ScrapersController {
 		$playerPool->save();
 
 		return 'bob';
-/*
+*/
 		/********************************************
 		PARSE CSV
 		********************************************/
@@ -88,12 +89,14 @@ class ScrapersController {
 
 			while (($csvData = fgetcsv($handle, 5000, ',')) !== false) {
 			    if ($row != 0) {
-			    	$gameInfo = preg_replace('/(\w+@\w+)(.*)/', '$1', $csvData[3]);
+			    	
 				    $player[$row] = array(
 				       	'position' => $csvData[0],
 				       	'name' => $csvData[1],
 				       	'salary' => $csvData[2],
-				       	'game_info' => $gameInfo
+				       	'game_info' => $csvData[3],
+				       	'home_team_abbr_dk' => preg_replace("/(.+@)(\w+)(\s.+)/", "$2", $csvData[3]),
+				       	'road_team_abbr_dk' => preg_replace("/(@.+)/", "", $csvData[3])
 				    );
 
 				    $playerExists = MlbPlayer::where('name', $player[$row]['name'])->count();
@@ -106,7 +109,23 @@ class ScrapersController {
 				    	$mlbPlayer->save();
 				    }
 
-				    # ddAll($player[$row]);
+				    $locations = ['home', 'road'];
+
+				    foreach ($locations as $location) {
+				    	$teamExists[$location] = MlbTeam::where('abbr_dk', $player[$row][$location.'_team_abbr_dk'])->count();
+
+					    if (!$teamExists[$location]) {
+					    	$mlbTeam = new MlbTeam;
+
+					    	$mlbTeam->abbr_dk = $player[$row][$location.'_team_abbr_dk'];
+
+					    	$mlbTeam->save();
+					    }
+				    }
+
+				    # echo '<pre>';
+				    # var_dump($player[$row]);
+				    # echo '</pre>';
 				}
 
 				$row++;
