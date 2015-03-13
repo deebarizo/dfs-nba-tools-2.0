@@ -127,7 +127,26 @@ class ScrapersController {
 					    }
 				    }
 
-				    prf($player[$row]);
+				    $playerId = MlbPlayer::where('name', $player[$row]['name'])->pluck('id');
+
+				    $playerTeamExists = MlbPlayerTeam::where('mlb_player_id', $playerId)
+				    								 ->where('end_date', '>=', $date)
+				    								 ->count();
+
+				    if (!$playerTeamExists) {
+				    	foreach ($locations as $location) {
+				    		$abbrEspn = MlbTeam::where('abbr_dk', $player[$row][$location.'_team_abbr_dk'])->pluck('abbr_espn');
+
+				    		$client = new Client();
+
+							$crawler = $client->getClient()->setDefaultOption('config/curl/'.CURLOPT_TIMEOUT, 50000);
+							$crawler = $client->request('GET', 'http://espn.go.com/mlb/team/roster/_/name/'.$abbrEspn);
+
+				    		prf($abbrEspn);
+				    	}
+
+				    	prf($player[$row]);
+				    }
 				}
 
 				$row++;
