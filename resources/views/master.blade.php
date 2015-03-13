@@ -23,7 +23,7 @@
 		else { $titleTag = ''; }
 	?>
 
-	<title>{{ $titleTag }}DFS NBA Tools</title>
+	<title>{{ $titleTag }}DFS Tools</title>
 </head>
 <body>
 	<div class="navbar navbar-inverse" role="navigation">
