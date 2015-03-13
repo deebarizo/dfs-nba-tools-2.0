@@ -89,6 +89,8 @@ class ScrapersController {
 
 			while (($csvData = fgetcsv($handle, 5000, ',')) !== false) {
 			    if ($row != 0) {
+			    	$time = preg_replace("/(\w+@\w+\s)(\d\d:\d\d\w\w)(\s.+)/", "$2", $csvData[3]);
+			    	$time = date('g:i A', strtotime('-1 hour', strtotime($time)));
 			    	
 				    $player[$row] = array(
 				       	'position' => $csvData[0],
@@ -96,7 +98,8 @@ class ScrapersController {
 				       	'salary' => $csvData[2],
 				       	'game_info' => $csvData[3],
 				       	'home_team_abbr_dk' => preg_replace("/(.+@)(\w+)(\s.+)/", "$2", $csvData[3]),
-				       	'road_team_abbr_dk' => preg_replace("/(@.+)/", "", $csvData[3])
+				       	'road_team_abbr_dk' => preg_replace("/(@.+)/", "", $csvData[3]),
+				       	'time' => $time
 				    );
 
 				    $playerExists = MlbPlayer::where('name', $player[$row]['name'])->count();
@@ -123,9 +126,7 @@ class ScrapersController {
 					    }
 				    }
 
-				    # echo '<pre>';
-				    # var_dump($player[$row]);
-				    # echo '</pre>';
+				    prf($player[$row]);
 				}
 
 				$row++;

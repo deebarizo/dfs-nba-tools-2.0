@@ -18,6 +18,12 @@ function ddAll($var) {
 	exit();
 }
 
+function prf($var) {
+    echo '<pre>';
+    print_r($var);
+    echo '</pre>';
+}
+
 
 
 
