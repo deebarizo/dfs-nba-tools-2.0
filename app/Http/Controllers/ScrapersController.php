@@ -13,6 +13,8 @@ use App\Models\MlbPlayer;
 use App\Models\MlbTeam;
 use App\Models\MlbPlayerTeam;
 
+use App\Classes\Scraper;
+
 use Illuminate\Http\Request;
 use App\Http\Requests\RunFDNBASalariesScraperRequest;
 
@@ -28,130 +30,20 @@ class ScrapersController {
 
 	public function dk_mlb_salaries(Request $request) {
 
-		$timePeriodInUrl = strtolower($request->input('time_period'));
-		$timePeriodInUrl = preg_replace('/\s/', '-', $timePeriodInUrl);
+		$scraper = new Scraper;
 
-		$csvDirectory = 'files/dk/mlb/'.$timePeriodInUrl.'/';
-		$csvName = $request->input('date').'.csv';
-		$csvFile = $csvDirectory.$csvName;
+		$csvFile = $scraper->getCsvFile($request, 'DK', 'MLB');
 
-		Input::file('csv')->move($csvDirectory, $csvName);
-
-		/********************************************
-		SET DATA FOR PLAYER POOLS TABLE
-		********************************************/
-
-		$date = $request->input('date');
-		
-		$sport = 'MLB';
-
-		$timePeriod = $request->input('time_period');
-
-		$site = 'DK';
-
-		$url = 'csv file';
-
-		$playerPoolExists = PlayerPool::where('date', $date)
-										 ->where('sport', $sport)
-										 ->where('time_period', $timePeriod)
-										 ->where('site', $site)
-										 ->where('url', $url)
-										 ->count();
-
+		$playerPoolExists = $scraper->insertDataToPlayerPoolsTable($request, 'DK', 'MLB', 'csv file');
+/*
 		if ($playerPoolExists) {
 			$message = 'This player pool is already in the database.';
 			Session::flash('alert', 'info');
 
-			return redirect('scrapers/dk_mlb_salaries')->with('message', $message);	 
+			return redirect('scrapers/dk_mlb_salaries')->with('message', $message);				
 		}
-		
-		/********************************************
-		INSERT DATA TO PLAYER POOLS TABLE
-		********************************************/
-/*
-		$playerPool = new PlayerPool;
-
-		$playerPool->date = $date;
-		$playerPool->sport = $sport;
-		$playerPool->time_period = $timePeriod;
-		$playerPool->site = $site;
-		$playerPool->url = $url;
-
-		$playerPool->save();
-
-		return 'bob';
 */
-		/********************************************
-		PARSE CSV
-		********************************************/
-
-		if (($handle = fopen($csvFile, 'r')) !== false) {
-			$row = 0;
-
-			while (($csvData = fgetcsv($handle, 5000, ',')) !== false) {
-			    if ($row != 0) {
-			    	$time = preg_replace("/(\w+@\w+\s)(\d\d:\d\d\w\w)(\s.+)/", "$2", $csvData[3]);
-			    	$time = date('g:i A', strtotime('-1 hour', strtotime($time)));
-			    	
-				    $player[$row] = array(
-				       	'position' => $csvData[0],
-				       	'name' => $csvData[1],
-				       	'salary' => $csvData[2],
-				       	'game_info' => $csvData[3],
-				       	'home_team_abbr_dk' => preg_replace("/(.+@)(\w+)(\s.+)/", "$2", $csvData[3]),
-				       	'road_team_abbr_dk' => preg_replace("/(@.+)/", "", $csvData[3]),
-				       	'time' => $time
-				    );
-
-				    $playerExists = MlbPlayer::where('name', $player[$row]['name'])->count();
-
-				    if (!$playerExists) {
-				    	$mlbPlayer = new MlbPlayer;
-
-				    	$mlbPlayer->name = $player[$row]['name'];
-
-				    	$mlbPlayer->save();
-				    }
-
-				    $locations = ['home', 'road'];
-
-				    foreach ($locations as $location) {
-				    	$teamExists[$location] = MlbTeam::where('abbr_dk', $player[$row][$location.'_team_abbr_dk'])->count();
-
-					    if (!$teamExists[$location]) {
-					    	$mlbTeam = new MlbTeam;
-
-					    	$mlbTeam->abbr_dk = $player[$row][$location.'_team_abbr_dk'];
-
-					    	$mlbTeam->save();
-					    }
-				    }
-
-				    $playerId = MlbPlayer::where('name', $player[$row]['name'])->pluck('id');
-
-				    $playerTeamExists = MlbPlayerTeam::where('mlb_player_id', $playerId)
-				    								 ->where('end_date', '>=', $date)
-				    								 ->count();
-
-				    if (!$playerTeamExists) {
-				    	foreach ($locations as $location) {
-				    		$abbrEspn = MlbTeam::where('abbr_dk', $player[$row][$location.'_team_abbr_dk'])->pluck('abbr_espn');
-
-				    		$client = new Client();
-
-							$crawler = $client->getClient()->setDefaultOption('config/curl/'.CURLOPT_TIMEOUT, 50000);
-							$crawler = $client->request('GET', 'http://espn.go.com/mlb/team/roster/_/name/'.$abbrEspn);
-
-				    		prf($abbrEspn);
-				    	}
-
-				    	prf($player[$row]);
-				    }
-				}
-
-				$row++;
-			}
-		}	
+		$scraper->parseCsvFile($request, $csvFile, 'DK', 'MLB');
 	}
 
 	public function br_nba_box_score_lines(Request $request) {
