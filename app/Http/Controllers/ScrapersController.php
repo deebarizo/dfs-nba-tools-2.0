@@ -11,6 +11,7 @@ use App\Models\PlayerPool;
 use App\Models\PlayerFd;
 use App\Models\MlbPlayer;
 use App\Models\MlbTeam;
+use App\Models\MlbPlayerTeam;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\RunFDNBASalariesScraperRequest;

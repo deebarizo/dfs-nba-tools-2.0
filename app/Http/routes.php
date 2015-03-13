@@ -71,3 +71,5 @@ $router->get('teams/{abbr_br}', 'TeamsController@getTeamStats');
 
 $router->get('nbawowy/', 'NbawowyController@nbawowy_form');
 $router->get('nbawowy/{name}/{startDate}/{endDate}/on/{playerOn}/off/{playerOff}/{team}', 'NbawowyController@nbawowy');
+
+$router->get('one-of', 'OneOfController@matchMlbPlayersToTeams');
