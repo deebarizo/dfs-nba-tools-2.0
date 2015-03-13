@@ -9,6 +9,7 @@ use App\Models\Player;
 use App\Models\BoxScoreLine;
 use App\Models\PlayerPool;
 use App\Models\PlayerFd;
+use App\Models\MlbPlayer;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\RunFDNBASalariesScraperRequest;
@@ -95,18 +96,22 @@ class ScrapersController {
 				       	'game_info' => $gameInfo
 				    );
 
-				    ddAll($player[$row]);
+				    $playerExists = MlbPlayer::where('name', $player[$row]['name'])->count();
+
+				    if (!$playerExists) {
+				    	$mlbPlayer = new MlbPlayer;
+
+				    	$mlbPlayer->name = $player[$row]['name'];
+
+				    	$mlbPlayer->save();
+				    }
+
+				    # ddAll($player[$row]);
 				}
 
 				$row++;
 			}
-
-			
 		}	
-
-		
-
-		return $csvFile;
 	}
 
 	public function br_nba_box_score_lines(Request $request) {
