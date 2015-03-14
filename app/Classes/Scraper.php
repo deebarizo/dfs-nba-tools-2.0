@@ -54,7 +54,7 @@ class Scraper {
 										 ->count();
 
 		if ($playerPoolExists) {
-			return true;
+			return array(true, 'Player pool already exists.');
 		}
 
 		$playerPool = new PlayerPool;
@@ -67,18 +67,18 @@ class Scraper {
 
 		$playerPool->save();
 
-		return false;
+		return array(false, $playerPool->id);
 	}
 
-	public function parseCsvFile($request, $csvFile, $site, $sport) {
+	public function parseCsvFile($request, $csvFile, $site, $sport, $playerPoolId) {
 		if ($site == 'DK' && $sport == 'MLB') {
-			$this->parseCsvFileDkMlb($request, $csvFile);
+			$this->parseCsvFileDkMlb($request, $csvFile, $playerPoolId);
 
 			return;
 		}
 	}
 
-	private function parseCsvFileDkMlb($request, $csvFile) {
+	private function parseCsvFileDkMlb($request, $csvFile, $playerPoolId) {
 		if (($handle = fopen($csvFile, 'r')) !== false) {
 			$row = 0;
 
@@ -88,6 +88,7 @@ class Scraper {
 			    	$time = date('g:i A', strtotime('-1 hour', strtotime($time)));
 			    	
 				    $player[$row] = array(
+				    	'player_pool_id' => $playerPoolId,
 				       	'position' => $csvData[0],
 				       	'name' => $csvData[1],
 				       	'name_espn' => $csvData[1],
@@ -130,6 +131,8 @@ class Scraper {
 				    if (!$this->playerTeamExists($playerId, $request)) {
 				    	$this->addPlayerTeam($locations, $player, $row, $playerId, $request);
 				    }
+
+				    prf($player[$row]);
 				}
 
 				$row++;

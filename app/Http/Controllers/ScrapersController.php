@@ -34,7 +34,7 @@ class ScrapersController {
 
 		$csvFile = $scraper->getCsvFile($request, 'DK', 'MLB');
 
-		$playerPoolExists = $scraper->insertDataToPlayerPoolsTable($request, 'DK', 'MLB', 'csv file');
+		list($playerPoolExists, $playerPoolId) = $scraper->insertDataToPlayerPoolsTable($request, 'DK', 'MLB', 'csv file');
 /*
 		if ($playerPoolExists) {
 			$message = 'This player pool is already in the database.';
@@ -43,7 +43,7 @@ class ScrapersController {
 			return redirect('scrapers/dk_mlb_salaries')->with('message', $message);				
 		}
 */
-		$scraper->parseCsvFile($request, $csvFile, 'DK', 'MLB');
+		$scraper->parseCsvFile($request, $csvFile, 'DK', 'MLB', $playerPoolId);
 	}
 
 	public function br_nba_box_score_lines(Request $request) {
