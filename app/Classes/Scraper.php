@@ -12,6 +12,7 @@ use App\Models\PlayerFd;
 use App\Models\MlbPlayer;
 use App\Models\MlbTeam;
 use App\Models\MlbPlayerTeam;
+use App\Models\DkMlbPlayer;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\RunFDNBASalariesScraperRequest;
@@ -109,7 +110,7 @@ class Scraper {
 
 				    	$mlbPlayer->save();
 				    } elseif ($playerExists) {
-				    	$player[$row]['name_espn'] = $mlbPlayer = MlbPlayer::where('name', $player[$row]['name'])->pluck('name_espn');
+				    	$player[$row]['name_espn'] = MlbPlayer::where('name', $player[$row]['name'])->pluck('name_espn');
 				    }
 
 				    $locations = ['home', 'road'];
@@ -132,12 +133,51 @@ class Scraper {
 				    	$this->addPlayerTeam($locations, $player, $row, $playerId, $request);
 				    }
 
-				    prf($player[$row]);
+				    $teamId = MlbPlayerTeam::where('mlb_player_id', $playerId)->where('end_date', '>', $request->input('date'))->pluck('mlb_team_id');
+
+				    $oppTeamId = $this->getOppTeamId($teamId, 
+				    								 $player[$row]['home_team_abbr_dk'], 
+				    								 $player[$row]['road_team_abbr_dk'],
+				    								 $player[$row]['name'],
+				    								 $player[$row]['position']);
+
+				    if (!is_int($oppTeamId)) {
+					    prf('Opp Team Id: '.$oppTeamId);
+					    prf($player[$row]);			    	
+				    }
+	
+				    $dkMlbPlayer = new DkMlbPlayer;
+
+				    $dkMlbPlayer->player_pool_id = $playerPoolId;
+				    $dkMlbPlayer->mlb_player_id = $playerId;
+				    $dkMlbPlayer->target_percentage = 0;
+				    $dkMlbPlayer->mlb_team_id = $teamId;
+				    $dkMlbPlayer->mlb_opp_team_id = $oppTeamId;
+				    $dkMlbPlayer->position = $player[$row]['position'];
+				    $dkMlbPlayer->salary = $player[$row]['salary'];
+
+				    $dkMlbPlayer->save();
 				}
 
 				$row++;
 			}
 		}	
+	}
+
+	private function getOppTeamId($teamId, $homeTeamAbbrDk, $roadTeamAbbrDk, $name, $position) {
+		$teamAbbrDk = MlbTeam::where('id', $teamId)->pluck('abbr_dk');
+
+		if ($name == 'Jose Ramirez' && $position == 'SP') {
+			$teamAbbrDk = 'NYY';
+		}
+
+		if ($teamAbbrDk == $homeTeamAbbrDk) {
+			return MlbTeam::where('abbr_dk', $roadTeamAbbrDk)->pluck('id');
+		}
+
+		if ($teamAbbrDk == $roadTeamAbbrDk) {
+			return MlbTeam::where('abbr_dk', $homeTeamAbbrDk)->pluck('id');
+		}
 	}
 
 	private function playerTeamExists($playerId, $request) {

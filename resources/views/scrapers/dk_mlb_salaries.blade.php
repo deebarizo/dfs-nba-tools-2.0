@@ -24,7 +24,7 @@
 			<div class="col-lg-2"> 
 				<div class="form-group {{ $errors->has('date') ? 'has-error' : '' }}">
 					{!! Form::label('date', 'Date:') !!}
-					{!! Form::text('date', '2015-04-06', ['class' => 'form-control']) !!}
+					{!! Form::text('date', $today_date, ['class' => 'form-control']) !!}
 					{!! $errors->first('date', '<span class="help-block">:message</span>') !!}
 				</div>
 			</div>

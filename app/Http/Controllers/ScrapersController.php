@@ -35,15 +35,20 @@ class ScrapersController {
 		$csvFile = $scraper->getCsvFile($request, 'DK', 'MLB');
 
 		list($playerPoolExists, $playerPoolId) = $scraper->insertDataToPlayerPoolsTable($request, 'DK', 'MLB', 'csv file');
-/*
+
 		if ($playerPoolExists) {
 			$message = 'This player pool is already in the database.';
 			Session::flash('alert', 'info');
 
 			return redirect('scrapers/dk_mlb_salaries')->with('message', $message);				
 		}
-*/
+
 		$scraper->parseCsvFile($request, $csvFile, 'DK', 'MLB', $playerPoolId);
+
+		$message = 'Success!';
+		Session::flash('alert', 'info');
+
+		return redirect('scrapers/dk_mlb_salaries')->with('message', $message);	 
 	}
 
 	public function br_nba_box_score_lines(Request $request) {
