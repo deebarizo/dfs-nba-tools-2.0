@@ -90,6 +90,7 @@ class Scraper {
 				    $player[$row] = array(
 				       	'position' => $csvData[0],
 				       	'name' => $csvData[1],
+				       	'name_espn' => $csvData[1],
 				       	'salary' => $csvData[2],
 				       	'game_info' => $csvData[3],
 				       	'home_team_abbr_dk' => preg_replace("/(.+@)(\w+)(\s.+)/", "$2", $csvData[3]),
@@ -103,8 +104,11 @@ class Scraper {
 				    	$mlbPlayer = new MlbPlayer;
 
 				    	$mlbPlayer->name = $player[$row]['name'];
+				    	$mlbPlayer->name_espn = $player[$row]['name'];
 
 				    	$mlbPlayer->save();
+				    } elseif ($playerExists) {
+				    	$player[$row]['name_espn'] = $mlbPlayer = MlbPlayer::where('name', $player[$row]['name'])->pluck('name_espn');
 				    }
 
 				    $locations = ['home', 'road'];
@@ -157,6 +161,8 @@ class Scraper {
 					$espnPlayerName = $node->filter('td')->eq(1)->text();
 
 					if ($espnPlayerName == $player[$row]['name']) {
+						// Insert to mlb_players_teams
+
 						$mlbPlayerTeam = new MlbPlayerTeam;
 
 						$mlbPlayerTeam->mlb_player_id = $playerId;
@@ -165,6 +171,14 @@ class Scraper {
 						$mlbPlayerTeam->end_date = '3000-01-01';
 
 						$mlbPlayerTeam->save();
+
+						// Insert to mlb_players
+
+						$mlbPlayer = MlbPlayer::where('name', $espnPlayerName)->first();
+
+						$mlbPlayer->name_espn = $espnPlayerName;
+
+						$mlbPlayer->save();
 
 						return;
 					}
@@ -179,6 +193,8 @@ class Scraper {
 		echo 'This player is not matched with a team:</br></br>';
 
     	prf($player[$row]);
+
+    	return;
 	}
 
 }
