@@ -24,6 +24,14 @@ function prf($var) {
     echo '</pre>';
 }
 
+function urlToUpper($string) {
+	$string = strtoupper($string);
+
+	$string = preg_replace('/-/', ' ', $string);
+
+	return $string;
+}
+
 
 
 

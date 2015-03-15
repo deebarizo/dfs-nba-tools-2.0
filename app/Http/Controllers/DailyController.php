@@ -27,6 +27,14 @@ date_default_timezone_set('America/Chicago');
 class DailyController {
 
 	public function daily($site, $sport, $timePeriod, $date) {
+        if ($site == 'dk' && $sport == 'mlb') {
+            $statBuilder = new StatBuilder;
+
+            $players = $statBuilder->getPlayersForDkMlbDaily($timePeriod, $date);
+
+            return view('daily_dk_mlb', compact('date', 'timePeriod', 'players'));
+        }
+
         $seasonId = 11;
 
         $teams = Team::all();

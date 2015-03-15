@@ -7,18 +7,42 @@ use App\Models\Player;
 use App\Models\BoxScoreLine;
 use App\Models\PlayerPool;
 use App\Models\PlayerFd;
-use App\Models\DailyFdFilter;
-use App\Models\TeamFilter;
-use App\Classes\Solver;
-use App\Classes\SolverTopPlays;
-use App\Models\Lineup;
-use App\Models\LineupPlayer;
+use App\Models\MlbPlayer;
+use App\Models\MlbTeam;
+use App\Models\MlbPlayerTeam;
+use App\Models\DkMlbPlayer;
+
+use Illuminate\Http\Request;
+use App\Http\Requests\RunFDNBASalariesScraperRequest;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Input;
+
+use vendor\symfony\DomCrawler\Symfony\Component\DomCrawler\Crawler;
+use Goutte\Client;
 
 use Illuminate\Support\Facades\Session;
 
 class StatBuilder {
+
+    /****************************************************************************************
+    DAILY DK MLB
+    ****************************************************************************************/
+
+    public function getPlayersForDkMlbDaily($timePeriod, $date) {
+        $timePeriod = urlToUpper($timePeriod);
+
+        $players = DB::table('player_pools')
+                     ->join('dk_mlb_players', 'dk_mlb_players.player_pool_id', '=', 'player_pools.id')
+                     ->join('mlb_players', 'dk_mlb_players.mlb_player_id', '=', 'mlb_players.id')
+                     ->join('mlb_teams', 'mlb_teams.id', '=', 'dk_mlb_players.mlb_team_id')
+                     ->where('player_pools.time_period', $timePeriod)
+                     ->where('player_pools.date', $date)
+                     ->get();
+
+        return $players;
+    }
+
 
     /****************************************************************************************
     STUDIES
@@ -270,7 +294,7 @@ class StatBuilder {
 
 
 	/****************************************************************************************
-	DAILY
+	DAILY NBA
 	****************************************************************************************/
 
 	public function getPlayersInPlayerPool($site, $sport, $timePeriod, $date) {
