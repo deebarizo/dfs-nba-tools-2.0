@@ -7,6 +7,8 @@ use App\Models\Player;
 use App\Models\BoxScoreLine;
 use App\Models\PlayerPool;
 use App\Models\PlayerFd;
+use App\Models\DailyFdFilter;
+use App\Models\TeamFilter;
 use App\Models\MlbPlayer;
 use App\Models\MlbTeam;
 use App\Models\MlbPlayerTeam;
@@ -30,15 +32,22 @@ class StatBuilder {
     ****************************************************************************************/
 
     public function getPlayersForDkMlbDaily($timePeriod, $date) {
-        $timePeriod = urlToUpper($timePeriod);
-
         $players = DB::table('player_pools')
+                     ->select('dk_mlb_players.id as dk_mlb_players_id', 'date', 'buy_in', 'player_pool_id', 'mlb_player_id', 'target_percentage', 'mlb_team_id', 'position', 'salary', 'name', 'abbr_dk')
                      ->join('dk_mlb_players', 'dk_mlb_players.player_pool_id', '=', 'player_pools.id')
                      ->join('mlb_players', 'dk_mlb_players.mlb_player_id', '=', 'mlb_players.id')
                      ->join('mlb_teams', 'mlb_teams.id', '=', 'dk_mlb_players.mlb_team_id')
                      ->where('player_pools.time_period', $timePeriod)
                      ->where('player_pools.date', $date)
                      ->get();
+
+        foreach ($players as &$player) {
+            if ($player->target_percentage > 0) {
+                $player->css_lock_class = 'daily-lock-active';
+            } else {
+                $player->css_lock_class = '';
+            }
+        } unset($player);
 
         return $players;
     }
