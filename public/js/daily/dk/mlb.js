@@ -103,13 +103,23 @@ $(document).ready(function() {
 	$(".daily-lock").click(function(e) {
 		e.preventDefault();
 
-		var playerFdIndex = $(this).closest('tr').data('player-fd-index');
-		var isPlayerActive = $(this).hasClass("daily-lock-active");
+		var dkMlbPlayersId = $(this).closest('tr').data('dk-mlb-players-id');
 
 		$(this).hide();
 		$(this).after('<img src="/files/spiffygif_16x16.gif" alt="Please wait..." />');
 
 		var defaultTargetPercentage = $('input.default-target-percentage').val();
+
+		if (defaultTargetPercentage <= 0) {
+			$(this).siblings('img').remove();
+			$(this).show();
+			alert('Default target percentage must be more than 0.');
+			return;
+		}
+
+		console.log('dkMlbPlayersId: '+dkMlbPlayersId);
+		console.log('defaultTargetPercentage: '+defaultTargetPercentage);
+		return;
 
 		var $this = $(this);
 		
