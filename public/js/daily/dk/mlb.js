@@ -12,25 +12,19 @@ $(document).ready(function() {
 	}
 
 	$('#daily').dataTable({
-		// "scrollY": "600px",
 		"paging": false,
-		"order": [[5, "desc"]]
+		"order": [[5, "desc"]],
+		"columns": [
+		    { "width": "40%" },
+		    { "width": "12%" },
+		    { "width": "12%", "orderDataType": "dom-text-numeric" },
+		    { "width": "12%" },
+		   	{ "width": "12%" },
+		   	{ "width": "12%" }
+		]
 	});
 
 	$('#daily_filter').hide();
-
-
-	/********************************************
-	PLAYER STATS FILTER TOOLTIP
-	********************************************/
-
-    $('.player-filter').each(function() {
-        $(this).qtip({
-            content: {
-                text: $(this).next('.player-filter-tooltip')
-            }
-        });
-    });  
 
 
 	/********************************************
@@ -61,8 +55,6 @@ $(document).ready(function() {
 			var playerFdIndex = playerRow.data('player-fd-index');
 
 			var newTargetPercentage = $(this).val();
-
-			// console.log(playerFdIndex); return;
 
 			updateTargetPercentage(newTargetPercentage, dataHasQtip, playerFdIndex, playerRow);
 		}
@@ -102,15 +94,6 @@ $(document).ready(function() {
             }
         });	
 	}
-
-
-	/********************************************
-	TOGGLE DTD PLAYERS
-	********************************************/
-
-	$(".show-toggle-dtd-players").click(function(){
-	  $("#daily-dtd").toggle();
-	}); 
 
 
 	/********************************************
