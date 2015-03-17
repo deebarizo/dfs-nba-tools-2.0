@@ -104,24 +104,15 @@ class DailyController {
 		return view('daily_fd_nba', compact('date', 'timePeriod', 'players', 'teamsToday', 'gameTimes'));
 	}
 
-    public function processLockForDkMlb(Request $request) {
+    public function updateTargetPercentageForDkMlb(Request $request) {
         $dkMlbPlayersId = $request->input('dkMlbPlayersId');
-        $defaultTargetPercentage = $request->input('defaultTargetPercentage');
-        $playerActive = $request->input('playerActive');
+        $targetPercentage = $request->input('targetPercentage');
 
         $dkMlbPlayer = DkMlbPlayer::find($dkMlbPlayersId);
 
-        if ($playerActive) {
-            $dkMlbPlayer->target_percentage = 0;
-        }
-
-        if (!$playerActive) {
-            $dkMlbPlayer->target_percentage = $defaultTargetPercentage;
-        }
+        $dkMlbPlayer->target_percentage = $targetPercentage;
 
         $dkMlbPlayer->save();
-
-        return $dkMlbPlayer->target_percentage;
     }
 
     public function update_top_plays($playerFdIndex, $isPlayerActive) {

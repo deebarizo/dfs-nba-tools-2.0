@@ -44,19 +44,22 @@ $(document).ready(function() {
         }).bind('click', function(event) { event.preventDefault(); return false; });
     }); 
 
-    $('.edit-target-percentage-input').keypress(function (event) {
+    $('.edit-target-percentage-input').keypress(function(event) {
         if (event.which == 13) {
 			var rawDataHasQtip = $(this).closest('div.qtip').attr('id');
-
 			var dataHasQtip = rawDataHasQtip.replace(/qtip-/gi, '');
 
 			var playerRow = $('a[data-hasqtip='+dataHasQtip+']').closest('tr');
 
-			var playerFdIndex = playerRow.data('player-fd-index');
+			var dkMlbPlayersId = playerRow.data('dk-mlb-players-id');
 
-			var newTargetPercentage = $(this).val();
+			var targetPercentage = $(this).val();
 
-			updateTargetPercentage(newTargetPercentage, dataHasQtip, playerFdIndex, playerRow);
+        	var spanTargetPercentage = playerRow.find('span.target-percentage-amount');
+			$(spanTargetPercentage).hide();
+			$(spanTargetPercentage).after('<img src="/files/spiffygif_16x16.gif" alt="Please wait..." />');
+
+			updateTargetPercentage(dataHasQtip, playerRow, dkMlbPlayersId, targetPercentage, 'tooltip');
 		}
     });
 
@@ -77,57 +80,79 @@ $(document).ready(function() {
 	$(".daily-lock").click(function(e) {
 		e.preventDefault();
 
+		var defaultTargetPercentage = $('input.default-target-percentage').val();
+
+		if (defaultTargetPercentage <= 0) {
+			return;
+		}
+
 		var dkMlbPlayersId = $(this).closest('tr').data('dk-mlb-players-id');
 
 		$(this).hide();
 		$(this).after('<img src="/files/spiffygif_16x16.gif" alt="Please wait..." />');
 
-		var defaultTargetPercentage = $('input.default-target-percentage').val();
-		
 		var playerActive = $(this).hasClass("daily-lock-active");
 		if (playerActive) {
 			playerActive = 1;
+			var targetPercentage = 0;
 		} else {
 			playerActive = 0;
+			var targetPercentage = defaultTargetPercentage;
 		}
 
-		if (defaultTargetPercentage <= 0) {
-			$(this).siblings('img').remove();
-			$(this).show();
-			alert('Default target percentage must be more than 0.');
-			return;
-		}
+		var dataHasQtip = $(this).closest('td').find('a.target-percentage-qtip').data('hasqtip');
 
-		var $this = $(this);
-		
+		var playerRow = $(this).closest('tr.player-row');
+
+		updateTargetPercentage(dataHasQtip, playerRow, dkMlbPlayersId, targetPercentage, 'lock');
+	});
+
+
+	/********************************************
+	UDPATE TARGET PERCENTAGE
+	********************************************/
+
+	function updateTargetPercentage(dataHasQtip, playerRow, dkMlbPlayersId, targetPercentage, event) {
     	$.ajax({
-            url: baseUrl+'/daily/dk/mlb/process_lock_for_dk_mlb/',
+            url: baseUrl+'/daily/dk/mlb/update_target_percentage_for_dk_mlb/',
             data: {
             	dkMlbPlayersId: dkMlbPlayersId,
-            	defaultTargetPercentage: defaultTargetPercentage,
-            	playerActive: playerActive
+            	targetPercentage: targetPercentage
             },
             type: 'POST',
-            success: function(targetPercentage) {
-            	$this.toggleClass("daily-lock-active");
+            success: function() {
+            	playerRow.find('span.target-percentage-amount').text(targetPercentage);
 
-            	$this.siblings('img').remove();
+            	playerRow.find('input.edit-target-percentage-input').val(targetPercentage);
 
-            	$this.show();
-
-            	$this.closest('tr.player-row').find('td.target-percentage-amount').text(targetPercentage);
-
-            	$this.closest('td').find('div.edit-target-percentage-tooltip').find('input.edit-target-percentage-input').val(targetPercentage);
-
-            	var dataHasQtip = $this.closest('td').find('a.target-percentage-qtip').data('hasqtip');
             	$('#qtip-'+dataHasQtip+'-content').find('input.edit-target-percentage-input').val(targetPercentage);
 
 				showTotalTargetPercentage();
-            }
-        });
 
-		
-	});
+				var lockButton = playerRow.find('.daily-lock');
+
+				if (event == 'lock') {
+					lockButton.toggleClass("daily-lock-active");
+			       	lockButton.siblings('img').remove();
+					lockButton.show();
+				}
+
+				if (event == 'tooltip' && targetPercentage == 0) {
+					lockButton.removeClass("daily-lock-active");
+				}
+
+				if (event == 'tooltip' && targetPercentage > 0) {
+					lockButton.addClass("daily-lock-active");
+				}
+
+				if (event == 'tooltip') {
+        			var spanTargetPercentage = playerRow.find('span.target-percentage-amount');
+					$(spanTargetPercentage).siblings('img').remove();
+					$(spanTargetPercentage).show();				
+				}
+            }
+        });		
+	}
 
 
 	/********************************************

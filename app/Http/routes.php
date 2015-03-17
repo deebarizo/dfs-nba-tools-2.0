@@ -41,7 +41,7 @@ $router->get('daily/{site}/{sport}/{timePeriod}/{date}', 'DailyController@daily'
 $router->post('daily_fd_nba/update_top_plays/{playerFdIndex}/{isPlayerActive}', 'DailyController@update_top_plays');
 $router->post('daily_fd_nba/update_target_percentage/{playerFdIndex}/{newTargetPercentage}', 'DailyController@updateTargetPercentage');
 
-$router->post('daily/dk/mlb/process_lock_for_dk_mlb', 'DailyController@processLockForDkMlb');
+$router->post('daily/dk/mlb/update_target_percentage_for_dk_mlb', 'DailyController@updateTargetPercentageForDkMlb');
 
 
 /****************************************************************************************

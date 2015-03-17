@@ -92,7 +92,7 @@
 					    	data-abbr-dk="{{ $player->abbr_dk }}"
 					    	class="player-row">
 					    	<td>{{ $player->name }}</td>
-			    			<td>
+			    			<td class="mods">
 				    			<a href="#"><span class="glyphicon glyphicon-lock daily-lock {{ $player->css_lock_class }}" aria-hidden="true"></span></a>
 				    			<span class="target-percentage-group">
 				    				<a class="target-percentage-qtip edit-target-percentage-link" href="#">
@@ -104,7 +104,7 @@
 							    	<button class="edit-target-percentage-button" type="button">Submit</button>
 								</div>
 			    			</td>
-			    			<td class="target-percentage-amount">{{ $player->target_percentage }}</td>
+			    			<td class="target-percentage-amount"><span class="target-percentage-amount">{{ $player->target_percentage }}</span></td>
 					    	<td>{{ $player->abbr_dk }}</td>
 					    	<td>{{ $player->position }}</td>
 					    	<td>{{ $player->salary }}</td>
