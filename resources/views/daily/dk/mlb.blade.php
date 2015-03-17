@@ -13,6 +13,14 @@
 
 			<form class="form-inline" style="margin: 0 0 10px 0">
 
+				<label>Teams</label>
+				<select class="form-control team-filter" style="width: 10%; margin-right: 20px">
+				  	<option value="All">All</option>
+				  	@foreach ($teams as $team)
+					  	<option value="{{ $team->abbr_dk }}">{{ $team->abbr_dk }}</option>
+				  	@endforeach
+				</select>	
+
 				<label>Positions</label>
 				<select class="form-control position-filter" style="width: 10%; margin-right: 20px">
 				  	<option value="All">All</option>

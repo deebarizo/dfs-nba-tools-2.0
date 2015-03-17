@@ -52,6 +52,21 @@ class StatBuilder {
         return $players;
     }
 
+    public function getTeamsForDkMlbDaily($timePeriod, $date) {
+        $teams = DB::table('player_pools')
+                     ->select('abbr_dk')
+                     ->join('dk_mlb_players', 'dk_mlb_players.player_pool_id', '=', 'player_pools.id')
+                     ->join('mlb_players', 'dk_mlb_players.mlb_player_id', '=', 'mlb_players.id')
+                     ->join('mlb_teams', 'mlb_teams.id', '=', 'dk_mlb_players.mlb_team_id')
+                     ->distinct()
+                     ->where('player_pools.time_period', $timePeriod)
+                     ->where('player_pools.date', $date)
+                     ->orderBy('abbr_dk')
+                     ->get();
+
+        return $teams;
+    }
+
 
     /****************************************************************************************
     STUDIES

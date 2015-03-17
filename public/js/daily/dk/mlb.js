@@ -311,7 +311,6 @@ $(document).ready(function() {
 		runTeamFilter(filter);
 		runTopPlaysFilter(filter);
 		runSalaryInputFilter(filter);
-		runTimeFilter(filter);
 
 		showTotalTargetPercentage();
 	}
@@ -324,15 +323,15 @@ $(document).ready(function() {
 			salary: $('.salary-input').val(), 
 			salaryToggle: $('input:radio[name=salary-toggle]:checked').val()
 		};
-		time = $('select.time-filter').val();
 
 		filter = {
 			position: position,
 			team: team,
 			showOnlyTopPlays: showOnlyTopPlays,
-			salaryInput: salaryInput,
-			time: time
+			salaryInput: salaryInput
 		};
+
+		// console.log(filter);
 
 		return filter;
 	}
@@ -357,7 +356,7 @@ $(document).ready(function() {
 	}
 
 	function hidePositionsNotSelected(playerRow, position) {
-		var playerRowPosition = $(playerRow).data('player-position');
+		var playerRowPosition = $(playerRow).data('position');
 
 		if (playerRowPosition != position) {
 			$(playerRow).addClass('hide-player-row');
@@ -384,7 +383,7 @@ $(document).ready(function() {
 	}
 
 	function hideTeamsNotSelected(playerRow, team) {
-		var playerRowTeam = $(playerRow).data('player-team');
+		var playerRowTeam = $(playerRow).data('abbr-dk');
 
 		if (playerRowTeam != team) {
 			$(playerRow).addClass('hide-player-row');
@@ -438,7 +437,7 @@ $(document).ready(function() {
 	}
 
 	function hideBasedOnSalaryInput(playerRow, salaryInput) {
-		var salary = parseInt($(playerRow).find('td.salary').text());
+		var salary = parseInt((playerRow).data('salary'));
 
 		if (salary < salaryInput['salary'] && salaryInput['salaryToggle'] == 'greater-than') {
 			$(playerRow).addClass('hide-player-row');
@@ -460,32 +459,5 @@ $(document).ready(function() {
 
 		runFilter();
 	});
-
-
-	//// Time filter ////
-
-	$('select.time-filter').on('change', function() {
-		runFilter();
-	});
-
-	function runTimeFilter(filter) {
-		if (filter.time == 'All') {
-			return;
-		}
-
-		$('tr.player-row').each(function() {
-			var playerRow = $(this);
-
-			hideTimesNotSelected(playerRow, filter.time);
-		});				
-	}
-
-	function hideTimesNotSelected(playerRow, time) {
-		var playerRowTime = $(playerRow).find('td.time').text();
-
-		if (playerRowTime != time) {
-			$(playerRow).addClass('hide-player-row');
-		}
-	}
 
 });
