@@ -69,32 +69,6 @@ $(document).ready(function() {
 		$(this).prev(".edit-target-percentage-input").trigger(e);
 	});
 
-	function updateTargetPercentage(newTargetPercentage, dataHasQtip, playerFdIndex, playerRow) {
-		$('a[data-hasqtip='+dataHasQtip+']').closest('td').siblings('td.target-percentage-amount').html('<img src="/files/spiffygif_16x16.gif" alt="Please wait..." />');
-
-		$.ajax({
-            url: baseUrl+'/daily_fd_nba/update_target_percentage/'+playerFdIndex+'/'+newTargetPercentage,
-            type: 'POST',
-            success: function() {
-            	$('a[data-hasqtip='+dataHasQtip+']').closest('td').siblings('td.target-percentage-amount').html('');
-
-            	var targetPercentageTooltipInput = $('div#qtip-'+dataHasQtip+'-content').children('div.edit-target-percentage-tooltip').children('input.edit-target-percentage-input');
-
-           		$(targetPercentageTooltipInput).val(newTargetPercentage);
-
-            	if (newTargetPercentage == 0 && playerRow != null) {
-            		playerRow.find('span.daily-lock').removeClass("daily-lock-active");
-            	} else if (newTargetPercentage > 0 && playerRow != null) {
-            		playerRow.find('span.daily-lock').addClass("daily-lock-active");
-            	}
-
-				$('a[data-hasqtip='+dataHasQtip+']').closest('td').siblings('td.target-percentage-amount').text(newTargetPercentage);
-
-				showTotalTargetPercentage();
-            }
-        });	
-	}
-
 
 	/********************************************
 	ADD/REMOVE TOP PLAYS
@@ -147,12 +121,8 @@ $(document).ready(function() {
 
             	var dataHasQtip = $this.closest('td').find('a.target-percentage-qtip').data('hasqtip');
             	$('#qtip-'+dataHasQtip+'-content').find('input.edit-target-percentage-input').val(targetPercentage);
-				
-/*
-				updateTargetPercentage(targetPercentageAmount, dataHasQtip, playerFdIndex, null);
 
 				showTotalTargetPercentage();
-*/
             }
         });
 
@@ -176,35 +146,43 @@ $(document).ready(function() {
 
 	function addTargetPercentagesOfPositions() {
 		var totalPercentagesByPosition = {
-			PG: {
-				percentage: 0,
-				salary: 0
-			},
-			SG: {
-				percentage: 0,
-				salary: 0
-			},
-			SF: {
-				percentage: 0,
-				salary: 0
-			},
-			PF: {
+			SP: {
 				percentage: 0,
 				salary: 0
 			},
 			C: {
 				percentage: 0,
 				salary: 0
+			},
+			'1B': {
+				percentage: 0,
+				salary: 0
+			},
+			'2B': {
+				percentage: 0,
+				salary: 0
+			},
+			'3B': {
+				percentage: 0,
+				salary: 0
+			},
+			SS: {
+				percentage: 0,
+				salary: 0
+			},
+			OF: {
+				percentage: 0,
+				salary: 0
 			}
 		};
 
-		var positions = ['PG', 'SG', 'SF', 'PF', 'C'];
+		var positions = ['SP', 'C', '1B', '2B', '3B', 'SS', 'OF'];
 
 		for (var i = 0; i < positions.length; i++) {
 			$('td.target-percentage-amount').each(function() {
-				var positionOfPlayer = $(this).closest('tr').data('player-position');
+				var positionOfPlayer = $(this).closest('tr.player-row').data('position');
 
-				var salary = $(this).closest('td').siblings('td.salary').text();
+				var salary = $(this).closest('tr.player-row').data('salary');
 
 				if (positions[i] == positionOfPlayer) {
 					var targetPercentageAmount = $(this).text();
@@ -241,10 +219,12 @@ $(document).ready(function() {
 
 		var salaries = ['plus', 'minus'];
 
-		$('td.target-percentage-amount').each(function() {
-			var salary = $(this).closest('td').siblings('td.salary').text();
+		var salaryMidpoint = 5000;
 
-			if (salary >= 6500) {
+		$('td.target-percentage-amount').each(function() {
+			var salary = $(this).closest('tr.player-row').data('salary');
+
+			if (salary >= salaryMidpoint) {
 				var targetPercentageAmount = $(this).text();
 
 				totalPercentagesBySalaries['plus'] += addTargetPercentage(targetPercentageAmount);		
@@ -252,9 +232,9 @@ $(document).ready(function() {
 		});
 
 		$('td.target-percentage-amount').each(function() {
-			var salary = $(this).closest('td').siblings('td.salary').text();
+			var salary = $(this).closest('tr.player-row').data('salary');
 
-			if (salary < 6500) {
+			if (salary < salaryMidpoint) {
 				var targetPercentageAmount = $(this).text();
 
 				totalPercentagesBySalaries['minus'] += addTargetPercentage(targetPercentageAmount);		
@@ -270,7 +250,7 @@ $(document).ready(function() {
 		var totalPercentage = 0;
 
 		$('td.target-percentage-amount').each(function() {
-			var salary = $(this).closest('td').siblings('td.salary').text();
+			var salary = $(this).closest('tr.player-row').data('salary');
 			var targetPercentageAmount = $(this).text();
 
 			totalPercentage += addTargetPercentage(targetPercentageAmount);		
