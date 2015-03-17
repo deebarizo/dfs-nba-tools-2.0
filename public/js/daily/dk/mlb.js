@@ -209,9 +209,30 @@ $(document).ready(function() {
 
 				var salary = $(this).closest('tr.player-row').data('salary');
 
-				if (positions[i] == positionOfPlayer) {
-					var targetPercentageAmount = $(this).text();
+				var targetPercentageAmount = $(this).text();
+				
+				if (positionOfPlayer.indexOf('/') > -1) {
+					var splitPosition = [
+						positionOfPlayer.replace(/\w+\//, ''),
+						positionOfPlayer3 = positionOfPlayer.replace(/\/\w+/, '')
+					];
 
+					for (var n = 0; n < splitPosition.length; n++) {
+						if (positions[i] == splitPosition[n]) {
+							totalPercentagesByPosition[positions[i]]['percentage'] += addTargetPercentage(targetPercentageAmount) / 2;
+
+							var weightedSalary = (salary * addTargetPercentage(targetPercentageAmount) / 100) / 2;
+
+							totalPercentagesByPosition[positions[i]]['salary'] += weightedSalary;
+						}
+
+							
+					};
+
+					return;
+				} 
+
+				if (positions[i] == positionOfPlayer) {
 					totalPercentagesByPosition[positions[i]]['percentage'] += addTargetPercentage(targetPercentageAmount);
 
 					var weightedSalary = salary * addTargetPercentage(targetPercentageAmount) / 100;
