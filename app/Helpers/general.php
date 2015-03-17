@@ -24,10 +24,10 @@ function prf($var) {
     echo '</pre>';
 }
 
-function urlToUpper($string) {
-	$string = strtoupper($string);
-
+function urlToUcFirst($string) {
 	$string = preg_replace('/-/', ' ', $string);
+
+	$string = ucfirst($string);
 
 	return $string;
 }

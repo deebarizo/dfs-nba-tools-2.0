@@ -9,6 +9,10 @@ use App\Models\PlayerPool;
 use App\Models\PlayerFd;
 use App\Models\DailyFdFilter;
 use App\Models\TeamFilter;
+use App\Models\MlbPlayer;
+use App\Models\MlbTeam;
+use App\Models\MlbPlayerTeam;
+use App\Models\DkMlbPlayer;
 
 use App\Classes\StatBuilder;
 
@@ -30,7 +34,7 @@ class DailyController {
         if ($site == 'dk' && $sport == 'mlb') {
             $statBuilder = new StatBuilder;
 
-            $timePeriod = urlToUpper($timePeriod);
+            $timePeriod = urlToUcFirst($timePeriod);
 
             $players = $statBuilder->getPlayersForDkMlbDaily($timePeriod, $date);
 
@@ -99,6 +103,30 @@ class DailyController {
 
 		return view('daily_fd_nba', compact('date', 'timePeriod', 'players', 'teamsToday', 'gameTimes'));
 	}
+
+    public function processLockForDkMlb(Request $request) {
+        $dkMlbPlayersId = $request->input('dkMlbPlayersId');
+        $defaultTargetPercentage = $request->input('defaultTargetPercentage');
+        $playerActive = $request->input('playerActive');
+
+        $dkMlbPlayer = DkMlbPlayer::find($dkMlbPlayersId);
+
+        if ($playerActive) {
+            $dkMlbPlayer->target_percentage = 0;
+        }
+
+        if (!$playerActive) {
+            $dkMlbPlayer->target_percentage = $defaultTargetPercentage;
+            echo('bob');
+        }
+
+        prf($dkMlbPlayer);
+        prf($defaultTargetPercentage);
+        prf($playerActive);
+        prf($dkMlbPlayer->target_percentage);
+
+        $dkMlbPlayer->save();
+    }
 
     public function update_top_plays($playerFdIndex, $isPlayerActive) {
         $playerFd = PlayerFd::find($playerFdIndex);

@@ -109,6 +109,13 @@ $(document).ready(function() {
 		$(this).after('<img src="/files/spiffygif_16x16.gif" alt="Please wait..." />');
 
 		var defaultTargetPercentage = $('input.default-target-percentage').val();
+		
+		var playerActive = $(this).hasClass("daily-lock-active");
+		if (playerActive) {
+			playerActive = 1;
+		} else {
+			playerActive = 0;
+		}
 
 		if (defaultTargetPercentage <= 0) {
 			$(this).siblings('img').remove();
@@ -117,14 +124,15 @@ $(document).ready(function() {
 			return;
 		}
 
-		console.log('dkMlbPlayersId: '+dkMlbPlayersId);
-		console.log('defaultTargetPercentage: '+defaultTargetPercentage);
-		return;
-
 		var $this = $(this);
 		
     	$.ajax({
-            url: baseUrl+'/daily_fd_nba/update_top_plays/'+playerFdIndex+'/'+isPlayerActive,
+            url: baseUrl+'/daily/dk/mlb/process_lock_for_dk_mlb/',
+            data: {
+            	dkMlbPlayersId: dkMlbPlayersId,
+            	defaultTargetPercentage: defaultTargetPercentage,
+            	playerActive: playerActive
+            },
             type: 'POST',
             success: function() {
             	$this.toggleClass("daily-lock-active");
@@ -132,7 +140,7 @@ $(document).ready(function() {
             	$this.siblings('img').remove();
 
             	$this.show();
-
+/*
 				var tdTargetPercentageAmount = $this.parent('a').parent('td').siblings('td.target-percentage-amount');
 				var editTargetPercentageInput = $this.closest('a').siblings('div.edit-target-percentage-tooltip').find('input.edit-target-percentage-input');
 
@@ -151,6 +159,7 @@ $(document).ready(function() {
 				updateTargetPercentage(targetPercentageAmount, dataHasQtip, playerFdIndex, null);
 
 				showTotalTargetPercentage();
+*/
             }
         });
 
