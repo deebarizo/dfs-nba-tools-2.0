@@ -358,9 +358,23 @@ $(document).ready(function() {
 	function hidePositionsNotSelected(playerRow, position) {
 		var playerRowPosition = $(playerRow).data('position');
 
-		if (playerRowPosition != position) {
-			$(playerRow).addClass('hide-player-row');
+		if (playerRowPosition == position) {
+			return;
 		}
+
+		playerRowPosition2 = playerRowPosition.replace(/\w+\//, '');
+
+		if (playerRowPosition2 == position) {
+			return;
+		}
+
+		playerRowPosition3 = playerRowPosition.replace(/\/\w+/, '');
+
+		if (playerRowPosition3 == position) {
+			return;
+		}
+
+		$(playerRow).addClass('hide-player-row');
 	}
 
 
