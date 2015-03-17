@@ -134,28 +134,21 @@ $(document).ready(function() {
             	playerActive: playerActive
             },
             type: 'POST',
-            success: function() {
+            success: function(targetPercentage) {
             	$this.toggleClass("daily-lock-active");
 
             	$this.siblings('img').remove();
 
             	$this.show();
+
+            	$this.closest('tr.player-row').find('td.target-percentage-amount').text(targetPercentage);
+
+            	$this.closest('td').find('div.edit-target-percentage-tooltip').find('input.edit-target-percentage-input').val(targetPercentage);
+
+            	var dataHasQtip = $this.closest('td').find('a.target-percentage-qtip').data('hasqtip');
+            	$('#qtip-'+dataHasQtip+'-content').find('input.edit-target-percentage-input').val(targetPercentage);
+				
 /*
-				var tdTargetPercentageAmount = $this.parent('a').parent('td').siblings('td.target-percentage-amount');
-				var editTargetPercentageInput = $this.closest('a').siblings('div.edit-target-percentage-tooltip').find('input.edit-target-percentage-input');
-
-				if ($this.hasClass('daily-lock-active')) {
-					$(tdTargetPercentageAmount).text(defaultTargetPercentage);
-					$(editTargetPercentageInput).val(defaultTargetPercentage);
-				} else {
-					$(tdTargetPercentageAmount).text(0);
-					$(editTargetPercentageInput).val('0');
-				}
-
-				var targetPercentageAmount = tdTargetPercentageAmount.text();
-
-				var dataHasQtip = $this.parent('a').parent('td').next('td').children('span.target-percentage-group').children('a.target-percentage-qtip').data('hasqtip');
-
 				updateTargetPercentage(targetPercentageAmount, dataHasQtip, playerFdIndex, null);
 
 				showTotalTargetPercentage();

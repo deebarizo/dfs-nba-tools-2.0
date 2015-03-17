@@ -117,15 +117,11 @@ class DailyController {
 
         if (!$playerActive) {
             $dkMlbPlayer->target_percentage = $defaultTargetPercentage;
-            echo('bob');
         }
 
-        prf($dkMlbPlayer);
-        prf($defaultTargetPercentage);
-        prf($playerActive);
-        prf($dkMlbPlayer->target_percentage);
-
         $dkMlbPlayer->save();
+
+        return $dkMlbPlayer->target_percentage;
     }
 
     public function update_top_plays($playerFdIndex, $isPlayerActive) {
