@@ -12,6 +12,7 @@ $(document).ready(function() {
 	}
 
 	$('#daily').dataTable({
+		"scrollY": "600px",
 		"paging": false,
 		"order": [[5, "desc"]],
 		"columns": [
@@ -164,8 +165,6 @@ $(document).ready(function() {
 	function showTotalTargetPercentage() {
 		addTargetPercentagesOfPositions();
 
-		addTargetPercentagesOfSalaries();
-		
 		addTargetPercentagesOfAll();
 	}
 
@@ -173,31 +172,38 @@ $(document).ready(function() {
 		var totalPercentagesByPosition = {
 			SP: {
 				percentage: 0,
-				salary: 0
+				salary: 0,
+				maxPercentage: 200
 			},
 			C: {
 				percentage: 0,
-				salary: 0
+				salary: 0,
+				maxPercentage: 100
 			},
 			'1B': {
 				percentage: 0,
-				salary: 0
+				salary: 0,
+				maxPercentage: 100
 			},
 			'2B': {
 				percentage: 0,
-				salary: 0
+				salary: 0,
+				maxPercentage: 100
 			},
 			'3B': {
 				percentage: 0,
-				salary: 0
+				salary: 0,
+				maxPercentage: 100
 			},
 			SS: {
 				percentage: 0,
-				salary: 0
+				salary: 0,
+				maxPercentage: 100
 			},
 			OF: {
 				percentage: 0,
-				salary: 0
+				salary: 0,
+				maxPercentage: 300
 			}
 		};
 
@@ -225,8 +231,6 @@ $(document).ready(function() {
 
 							totalPercentagesByPosition[positions[i]]['salary'] += weightedSalary;
 						}
-
-							
 					};
 
 					return;
@@ -246,6 +250,21 @@ $(document).ready(function() {
 
 		for (var i = 0; i < positions.length; i++) {
 			$('span.total-target-percentage-'+positions[i]).text(totalPercentagesByPosition[positions[i]]['percentage']);
+
+			if (totalPercentagesByPosition[positions[i]]['percentage'] == totalPercentagesByPosition[positions[i]]['maxPercentage']) {
+				$('span.total-target-percentage-with-percentage-sign-'+positions[i]).css('color', 'green');
+				continue;
+			}
+
+			if (totalPercentagesByPosition[positions[i]]['percentage'] < totalPercentagesByPosition[positions[i]]['maxPercentage']) {
+				$('span.total-target-percentage-with-percentage-sign-'+positions[i]).css('color', 'blue');
+				continue;
+			}
+
+			if (totalPercentagesByPosition[positions[i]]['percentage'] > totalPercentagesByPosition[positions[i]]['maxPercentage']) {
+				$('span.total-target-percentage-with-percentage-sign-'+positions[i]).css('color', 'red');
+				continue;
+			}
 		};
 
 		var totalWeightedSalary = 0;
@@ -255,41 +274,21 @@ $(document).ready(function() {
 		};
 
 		$('span.total-weighted-salary').text(totalWeightedSalary);
-	}
 
-	function addTargetPercentagesOfSalaries() {
-		var totalPercentagesBySalaries = {
-			plus: 0,
-			minus: 0
-		};
+		if (totalWeightedSalary <= 50000 && totalWeightedSalary >= 49500) {
+			$('span.total-weighted-salary-with-percentage-sign').css('color', 'green');
+			return;
+		}
 
-		var salaries = ['plus', 'minus'];
+		if (totalWeightedSalary > 50000) {
+			$('span.total-weighted-salary-with-percentage-sign').css('color', 'red');
+			return;
+		}
 
-		var salaryMidpoint = 5000;
-
-		$('td.target-percentage-amount').each(function() {
-			var salary = $(this).closest('tr.player-row').data('salary');
-
-			if (salary >= salaryMidpoint) {
-				var targetPercentageAmount = $(this).text();
-
-				totalPercentagesBySalaries['plus'] += addTargetPercentage(targetPercentageAmount);		
-			}	
-		});
-
-		$('td.target-percentage-amount').each(function() {
-			var salary = $(this).closest('tr.player-row').data('salary');
-
-			if (salary < salaryMidpoint) {
-				var targetPercentageAmount = $(this).text();
-
-				totalPercentagesBySalaries['minus'] += addTargetPercentage(targetPercentageAmount);		
-			}	
-		});		
-
-		for (var i = 0; i < salaries.length; i++) {
-			$('span.total-target-percentage-'+salaries[i]).text(totalPercentagesBySalaries[salaries[i]]);
-		};
+		if (totalWeightedSalary < 50000) {
+			$('span.total-weighted-salary-with-percentage-sign').css('color', 'blue');
+			return;
+		}
 	}
 
 	function addTargetPercentagesOfAll() {
@@ -303,6 +302,21 @@ $(document).ready(function() {
 		});		
 
 		$('span.total-target-percentage').text(totalPercentage);
+
+		if (totalPercentage == 1000) {
+			$('span.total-target-percentage-with-percentage-sign').css('color', 'green');
+			return;
+		}
+
+		if (totalPercentage > 1000) {
+			$('span.total-target-percentage-with-percentage-sign').css('color', 'red');
+			return;
+		}
+
+		if (totalPercentage < 1000) {
+			$('span.total-target-percentage-with-percentage-sign').css('color', 'blue');
+			return;
+		}
 	}
 
 	function addTargetPercentage(targetPercentageAmount) {
