@@ -34,6 +34,7 @@ class DailyController {
         if ($site == 'dk' && $sport == 'mlb') {
             $statBuilder = new StatBuilder;
 
+            $timePeriodInUrl = $timePeriod;
             $timePeriod = urlToUcFirst($timePeriod);
 
             $players = $statBuilder->getPlayersForDkMlbDaily($timePeriod, $date);
@@ -41,7 +42,7 @@ class DailyController {
 
             # ddAll($players);
 
-            return view('daily/dk/mlb', compact('date', 'timePeriod', 'players', 'teams'));
+            return view('daily/dk/mlb', compact('date', 'timePeriodInUrl', 'timePeriod', 'players', 'teams'));
         }
 
         $seasonId = 11;

@@ -9,7 +9,7 @@
 	
 	<div class="row">
 		<div class="col-lg-12">
-			<h3>{{ $date }} {{ $timePeriod }} | <a target="_blank" href="solver/dk/mlb/{{ $timePeriod }}/{{ $date }}">Solver</a></h3>
+			<h3>{{ $date }} {{ $timePeriod }} | <a target="_blank" href="/solver_top_plays/dk/mlb/{{ $timePeriodInUrl }}/{{ $date }}">Solver</a></h3>
 
 			<form class="form-inline" style="margin: 0 0 10px 0">
 
