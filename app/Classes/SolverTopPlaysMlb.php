@@ -43,14 +43,6 @@ class SolverTopPlaysMlb {
 			'salary' => 0
 		];
 
-		foreach ($players as $key => $player) {
-			$salaries[$key] = $player->salary;
-		}
-
-		array_multisort($salaries, SORT_DESC, $players);
-
-		ddAll($players);
-
 		while(count($positions) > 0) {
 			$positions = array_values($positions); // reorder array keys
 
@@ -64,23 +56,24 @@ class SolverTopPlaysMlb {
 			$count = 0;
 
 			foreach ($players as $key => $player) {
-				if ($player->position == $randomPosition['name']) {
+				if ($player->position == $randomPosition['name'] && $player->eligible_for_lineup == 1) {
 					$count++;
 
 					if ($count == $withinPositionRandomCount) {
-						if ($this->validateLineupSalary($lineup, $player)) {
+						if ($lineup['salary'] + $player->salary < 50000 && $this->duplicatePlayerInLineup($lineup['players'], $player) == false) {
 							$lineup['players'][] = $player;
 							$lineup['salary'] += $player->salary;
 
 							$positions[$positionKey]['remaining_spots']--;
-							$positions[$positionKey]['num_of_players']--;
-
-							if ($positions[$positionKey]['remaining_spots'] == 0) {
-								unset($positions[$positionKey]);
-							}
 						}
 
-						unset($players[$key]);
+						$positions[$positionKey]['num_of_players']--;
+
+						if ($positions[$positionKey]['remaining_spots'] == 0) {
+							unset($positions[$positionKey]);
+						}
+
+						$player->eligible_for_lineup = 0;
 
 						break;
 					}
@@ -88,17 +81,18 @@ class SolverTopPlaysMlb {
 			}
 		}
 
+		if ($lineup['salary'] < 49500) { // over 1% salary cap unused
+			
+		} 
+
 		$lineup['players'] = $this->sortLineup($lineup['players']);
 
-		ddAll($lineup);
+		prf($lineup);
+		prf($players);
 	}
 
-	private function validateLineupSalary($lineup, $player) {
-		$numOfLineupSpotsLeft = 10 - count($lineup['players']);
-
-		$avgSalaryLeft = (50000 - $player->salary) / $numOfLineupSpotsLeft;
-
-		return;
+	private duplicatePlayerInLineup($lineupPlayers, $player) {
+		
 	}
 
 	private function sortLineup($lineupPlayers) { // http://stackoverflow.com/questions/11145393/sorting-a-php-array-of-arrays-by-custom-order
@@ -241,9 +235,11 @@ class SolverTopPlaysMlb {
 
 				unset($players[$key]);
 			}
-			
 		}
-		unset($player);
+
+		foreach ($players as $key => &$player) {
+			$player->eligible_for_lineup = 1;
+		}
 
 		# ddAll($players);
 
