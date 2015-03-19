@@ -39,8 +39,17 @@ class SolverTopPlaysMlb {
 
 	private function generateLineup($players, $positions) {
 		$lineup = [
-			'players' => []
+			'players' => [],
+			'salary' => 0
 		];
+
+		foreach ($players as $key => $player) {
+			$salaries[$key] = $player->salary;
+		}
+
+		array_multisort($salaries, SORT_DESC, $players);
+
+		ddAll($players);
 
 		while(count($positions) > 0) {
 			$positions = array_values($positions); // reorder array keys
@@ -48,12 +57,7 @@ class SolverTopPlaysMlb {
 			$numOfUnfilledPositions = count($positions) - 1; // because keys start at 0
 
 			$positionKey = rand(0, $numOfUnfilledPositions);
-			if (isset($positions[$positionKey])) {
-				$randomPosition = $positions[$positionKey];
-			} else {
-				prf($positionKey);
-				ddAll($positions);
-			}
+			$randomPosition = $positions[$positionKey];
 
 			$withinPositionRandomCount = rand(1, $randomPosition['num_of_players']);
 
@@ -64,13 +68,16 @@ class SolverTopPlaysMlb {
 					$count++;
 
 					if ($count == $withinPositionRandomCount) {
-						$lineup['players'][] = $player;
+						if ($this->validateLineupSalary($lineup, $player)) {
+							$lineup['players'][] = $player;
+							$lineup['salary'] += $player->salary;
 
-						$positions[$positionKey]['remaining_spots']--;
-						$positions[$positionKey]['num_of_players']--;
+							$positions[$positionKey]['remaining_spots']--;
+							$positions[$positionKey]['num_of_players']--;
 
-						if ($positions[$positionKey]['remaining_spots'] == 0) {
-							unset($positions[$positionKey]);
+							if ($positions[$positionKey]['remaining_spots'] == 0) {
+								unset($positions[$positionKey]);
+							}
 						}
 
 						unset($players[$key]);
@@ -84,6 +91,14 @@ class SolverTopPlaysMlb {
 		$lineup['players'] = $this->sortLineup($lineup['players']);
 
 		ddAll($lineup);
+	}
+
+	private function validateLineupSalary($lineup, $player) {
+		$numOfLineupSpotsLeft = 10 - count($lineup['players']);
+
+		$avgSalaryLeft = (50000 - $player->salary) / $numOfLineupSpotsLeft;
+
+		return;
 	}
 
 	private function sortLineup($lineupPlayers) { // http://stackoverflow.com/questions/11145393/sorting-a-php-array-of-arrays-by-custom-order
@@ -101,10 +116,10 @@ class SolverTopPlaysMlb {
 		];
 
 		foreach ($SPs as $key => $SP) {
-			$name[$key] = $SP->name;
+			$names[$key] = $SP->name;
 		}
 
-		array_multisort($name, SORT_ASC, $SPs);
+		array_multisort($names, SORT_ASC, $SPs);
 
 		$lineupPlayers[0] = $SPs[0];
 		$lineupPlayers[1] = $SPs[1];
@@ -118,10 +133,10 @@ class SolverTopPlaysMlb {
 		];
 
 		foreach ($OFs as $key => $OF) {
-			$name[$key] = $OF->name;
+			$names[$key] = $OF->name;
 		}
 
-		array_multisort($name, SORT_ASC, $OFs);
+		array_multisort($names, SORT_ASC, $OFs);
 
 		$lineupPlayers[7] = $OFs[0];
 		$lineupPlayers[8] = $OFs[1];
