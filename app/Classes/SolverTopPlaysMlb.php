@@ -81,7 +81,7 @@ class SolverTopPlaysMlb {
 			}
 		}
 
-		$lineup = $this->sortLineup($lineup['players']);
+		$lineup['players'] = $this->sortLineup($lineup['players']);
 
 		ddAll($lineup);
 	}
@@ -94,6 +94,38 @@ class SolverTopPlaysMlb {
 			$posB = array_search($b->position, $positionOrder);
 			return $posA - $posB;
 		});
+
+		$SPs = [
+			$lineupPlayers[0], 
+			$lineupPlayers[1]
+		];
+
+		foreach ($SPs as $key => $SP) {
+			$name[$key] = $SP->name;
+		}
+
+		array_multisort($name, SORT_ASC, $SPs);
+
+		$lineupPlayers[0] = $SPs[0];
+		$lineupPlayers[1] = $SPs[1];
+
+		# ddAll($lineupPlayers);
+
+		$OFs = [
+			$lineupPlayers[7],
+			$lineupPlayers[8],
+			$lineupPlayers[9]
+		];
+
+		foreach ($OFs as $key => $OF) {
+			$name[$key] = $OF->name;
+		}
+
+		array_multisort($name, SORT_ASC, $OFs);
+
+		$lineupPlayers[7] = $OFs[0];
+		$lineupPlayers[8] = $OFs[1];
+		$lineupPlayers[9] = $OFs[2];
 
 		return $lineupPlayers;
 	}
