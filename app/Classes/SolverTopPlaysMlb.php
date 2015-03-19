@@ -60,7 +60,7 @@ class SolverTopPlaysMlb {
 					$count++;
 
 					if ($count == $withinPositionRandomCount) {
-						if ($lineup['salary'] + $player->salary < 50000 && $this->duplicatePlayerInLineup($lineup['players'], $player) == false) {
+						if ($this->eligiblePlayerForLineup($lineup, $player)) {
 							$lineup['players'][] = $player;
 							$lineup['salary'] += $player->salary;
 
@@ -82,17 +82,45 @@ class SolverTopPlaysMlb {
 		}
 
 		if ($lineup['salary'] < 49500) { // over 1% salary cap unused
-			
+			$lineup = $this->upgradeLineupToUseSalaryCap($lineup, $position);
 		} 
 
 		$lineup['players'] = $this->sortLineup($lineup['players']);
 
 		prf($lineup);
-		prf($players);
+		ddAll($players);
 	}
 
-	private duplicatePlayerInLineup($lineupPlayers, $player) {
-		
+	private function upgradeLineupToUseSalaryCap($lineup, $position) {
+		$salaryLeft = 50000 - $lineup['salary'];
+
+		ddAll($salaryLeft);
+	}
+
+	private function eligiblePlayerForLineup($lineup, $player) {
+		if ($lineup['salary'] + $player->salary > 50000) {
+			return false;
+		}
+
+		foreach ($lineup['players'] as $lineupPlayer) {
+			if ($lineupPlayer->mlb_player_id == $player->mlb_player_id) {
+				return false;
+			}
+		}
+
+		$stackCount = 0;
+
+		foreach ($lineup['players'] as $lineupPlayer) {
+			if ($lineupPlayer->mlb_team_id == $player->mlb_team_id && $lineupPlayer->position != 'SP') {
+				$stackCount++;
+			}			
+		}
+
+		if ($stackCount > 6) {
+			return false;
+		}
+
+		return true;
 	}
 
 	private function sortLineup($lineupPlayers) { // http://stackoverflow.com/questions/11145393/sorting-a-php-array-of-arrays-by-custom-order
