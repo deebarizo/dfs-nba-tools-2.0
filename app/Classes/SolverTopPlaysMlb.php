@@ -42,26 +42,60 @@ class SolverTopPlaysMlb {
 			'players' => []
 		];
 
-		$positionKey = rand(0, 6);
-		$randomPosition = $positions[$positionKey];
+		while(count($positions) > 0) {
+			$positions = array_values($positions); // reorder array keys
 
-		$withinPositionRandomCount = rand(1, $randomPosition['num_of_players']);
+			$numOfUnfilledPositions = count($positions) - 1; // because keys start at 0
 
-		$count = 0;
+			$positionKey = rand(0, $numOfUnfilledPositions);
+			if (isset($positions[$positionKey])) {
+				$randomPosition = $positions[$positionKey];
+			} else {
+				prf($positionKey);
+				ddAll($positions);
+			}
 
-		foreach ($players as $player) {
-			if ($player->position == $randomPosition['name']) {
-				$count++;
+			$withinPositionRandomCount = rand(1, $randomPosition['num_of_players']);
 
-				if ($count == $withinPositionRandomCount) {
-					$lineup['players'][] = $player;
+			$count = 0;
 
-					break;
+			foreach ($players as $key => $player) {
+				if ($player->position == $randomPosition['name']) {
+					$count++;
+
+					if ($count == $withinPositionRandomCount) {
+						$lineup['players'][] = $player;
+
+						$positions[$positionKey]['remaining_spots']--;
+						$positions[$positionKey]['num_of_players']--;
+
+						if ($positions[$positionKey]['remaining_spots'] == 0) {
+							unset($positions[$positionKey]);
+						}
+
+						unset($players[$key]);
+
+						break;
+					}
 				}
 			}
 		}
 
+		$lineup = $this->sortLineup($lineup['players']);
+
 		ddAll($lineup);
+	}
+
+	private function sortLineup($lineupPlayers) { // http://stackoverflow.com/questions/11145393/sorting-a-php-array-of-arrays-by-custom-order
+		$positionOrder = ['SP', 'C', '1B', '2B', '3B', 'SS', 'OF'];
+
+		usort($lineupPlayers, function ($a, $b) use($positionOrder) {
+			$posA = array_search($a->position, $positionOrder);
+			$posB = array_search($b->position, $positionOrder);
+			return $posA - $posB;
+		});
+
+		return $lineupPlayers;
 	}
 
 	private function getPositions($timePeriod, $date) {
