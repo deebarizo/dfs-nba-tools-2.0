@@ -43,7 +43,7 @@ class SolverTopPlaysMlb {
 			'salary' => 0
 		];
 
-		ddAll($positions);
+		# ddAll($positions);
 
 		for ($i = 0; $i < 1000; $i++) { 
 			$unfilledPositions = [];
@@ -58,23 +58,32 @@ class SolverTopPlaysMlb {
 
 			if ($numOfUnfilledPositions > 0) {
 				if ($numOfUnfilledPositions <= 8) {
-					$positionKey = rand(0, $numOfUnfilledPositions - 1); // minus one because index starts at 0
-					$randomPosition = $unfilledPositions[$positionKey];
+					$numOfPlayersPerLineupSpot = [];
+
+					foreach ($unfilledPositions as $key => $unfilledPosition) {
+						$numOfPlayersPerLineupSpot[$key] = $unfilledPosition['num_of_players_per_lineup_spot'];
+					}
+
+					array_multisort($numOfPlayersPerLineupSpot, SORT_ASC, $unfilledPositions);
+
+					$selectedPosition = $unfilledPositions[0]; // unfilled position with least amount of number of players per lineup spot
+
+					# ddAll($selectedPosition);
 				} else {
 					foreach ($unfilledPositions as $unfilledPosition) {
 						if ($unfilledPosition->name == 'SP') {
-							$randomPosition = $unfilledPosition;
+							$selectedPosition = $unfilledPosition;
 							break;
 						}
 					}
 				}
 
-				$withinPositionRandomCount = rand(1, $randomPosition['num_of_players']);	
+				$withinPositionRandomCount = rand(1, $selectedPosition['num_of_players']);	
 
 				$count = 0;
 
 				foreach ($players as $key => $player) {
-					if ($player->position == $randomPosition['name'] && $player->eligible_for_lineup == 1) {
+					if ($player->position == $selectedPosition['name'] && $player->eligible_for_lineup == 1) {
 						$count++;
 
 						if ($count == $withinPositionRandomCount) {
@@ -83,7 +92,7 @@ class SolverTopPlaysMlb {
 								$lineup['salary'] += $player->salary;
 
 								foreach ($positions as &$position) {
-									if ($position['name'] == $randomPosition['name']) {
+									if ($position['name'] == $selectedPosition['name']) {
 										$position['remaining_spots']--;
 										break;
 									}
@@ -92,7 +101,7 @@ class SolverTopPlaysMlb {
 							}
 
 							foreach ($positions as &$position) {
-								if ($position['name'] == $randomPosition['name']) {
+								if ($position['name'] == $selectedPosition['name']) {
 									$position['num_of_players']--;
 									break;
 								}
@@ -119,7 +128,6 @@ class SolverTopPlaysMlb {
 
 		if (count($lineup['players']) != 10) {
 			prf($lineup);
-			prf($players);
 			ddAll($positions);
 		}
 
@@ -143,7 +151,7 @@ class SolverTopPlaysMlb {
 
 		$eligiblePositions = [];
 
-		for ($i = 0; $i < 50000; $i++) { 
+		for ($i = 0; $i < 1000; $i++) { 
 			if ($lineup['salary'] < 49500) {
 				foreach ($positions as $position) {
 					if ($position['num_of_players'] > 0) {
@@ -151,36 +159,37 @@ class SolverTopPlaysMlb {
 					}
 				}
 
-				$positionKey = rand(0, count($eligiblePositions) - 1);
-				$randomPosition = $eligiblePositions[$positionKey];
+				foreach ($eligiblePositions as $eligiblePosition) { 
+					$selectedPosition = $eligiblePosition;
 
-				foreach ($lineup['players'] as $lineupPlayer) {
-					if ($lineupPlayer->position == $randomPosition['name']) {
-						$lineupPlayerToReplace = $lineupPlayer;
-						break;
+					foreach ($lineup['players'] as $lineupPlayer) {
+						if ($lineupPlayer->position == $selectedPosition['name']) {
+							$lineupPlayerToReplace = $lineupPlayer;
+							break;
+						}
 					}
-				}
 
-				# prf($lineup);
-				# prf($lineupPlayerToReplace);
+					# prf($lineup);
+					# prf($lineupPlayerToReplace);
 
-				foreach ($players as $player) {
-					if ($player->position == $randomPosition['name'] 
-						&& $player->eligible_for_lineup == 1 
-						&& $player->salary > $lineupPlayerToReplace->salary
-						&& $player->salary - $lineupPlayerToReplace->salary <= 50000 - $lineup['salary']) 
-					{
-						if ($this->validStack($lineup, $player, $lineupPlayerToReplace)) {
-							foreach ($lineup['players'] as &$lineupPlayer) {
-								if ($lineupPlayerToReplace->mlb_player_id == $lineupPlayer->mlb_player_id) {
-									$lineupPlayer = $player;
+					foreach ($players as $player) {
+						if ($player->position == $selectedPosition['name'] 
+							&& $player->eligible_for_lineup == 1 
+							&& $player->salary > $lineupPlayerToReplace->salary
+							&& $player->salary - $lineupPlayerToReplace->salary <= 50000 - $lineup['salary']) 
+						{
+							if ($this->validStack($lineup, $player, $lineupPlayerToReplace)) {
+								foreach ($lineup['players'] as &$lineupPlayer) {
+									if ($lineupPlayerToReplace->mlb_player_id == $lineupPlayer->mlb_player_id) {
+										$lineupPlayer = $player;
 
-									$lineup['salary'] += $player->salary - $lineupPlayerToReplace->salary;
+										$lineup['salary'] += $player->salary - $lineupPlayerToReplace->salary;
 
-									break;
+										break;
+									}
 								}
+								unset($lineupPlayer);
 							}
-							unset($lineupPlayer);
 						}
 					}
 				}
@@ -226,7 +235,7 @@ class SolverTopPlaysMlb {
 		$avgSalaryLeft = (50000 - $lineup['salary']) / (10 - count($lineup['players']));
 
 		if ($player->position != 'SP') {
-			if ($player->salary > $avgSalaryLeft + 500 || $player->salary < $avgSalaryLeft - 500) {
+			if ($player->salary > $avgSalaryLeft) {
 				return false;
 			}
 		}
@@ -260,6 +269,8 @@ class SolverTopPlaysMlb {
 			$posB = array_search($b->position, $positionOrder);
 			return $posA - $posB;
 		});
+
+		$names = [];
 
 		$SPs = [
 			$lineupPlayers[0], 
@@ -344,6 +355,7 @@ class SolverTopPlaysMlb {
 
 		foreach ($positions as &$position) {
 			$position['num_of_players'] = $this->addNumberOfPlayersPerPosition($position, $numOfPlayersInPositions);
+			$position['num_of_players_per_lineup_spot'] = $position['num_of_players'] / $position['remaining_spots'];
 			$position['unfilled'] = 1;
 		}
 		unset($position);
