@@ -35,14 +35,33 @@ class SolverTopPlaysMlb {
 		$positions = $this->getPositions($timePeriod, $date);
 
 		$lineup = $this->generateLineup($players, $positions);
-
-		# ddAll($players);
 	}	
 
 	private function generateLineup($players, $positions) {
+		$lineup = [
+			'players' => []
+		];
+
 		$positionKey = rand(0, 6);
+		$randomPosition = $positions[$positionKey];
 
+		$withinPositionRandomCount = rand(1, $randomPosition['num_of_players']);
 
+		$count = 0;
+
+		foreach ($players as $player) {
+			if ($player->position == $randomPosition['name']) {
+				$count++;
+
+				if ($count == $withinPositionRandomCount) {
+					$lineup['players'][] = $player;
+
+					break;
+				}
+			}
+		}
+
+		ddAll($lineup);
 	}
 
 	private function getPositions($timePeriod, $date) {
@@ -69,16 +88,16 @@ class SolverTopPlaysMlb {
 
 		foreach ($numOfPlayersInPositions as $key => $numOfPlayersInPosition) {
 			if (preg_match('/\//', $numOfPlayersInPosition->name)) {
-				$firstSlashPosition = preg_replace('/(\w+)(\/)(\w+)/', '$1', $numOfPlayersInPosition->name);
-				$secondSlashPosition = preg_replace('/(\w+)(\/)(\w+)/', '$3', $numOfPlayersInPosition->name);
+				$slashPositionName[0] = preg_replace('/(\w+)(\/)(\w+)/', '$1', $numOfPlayersInPosition->name);
+				$slashPositionName[1] = preg_replace('/(\w+)(\/)(\w+)/', '$3', $numOfPlayersInPosition->name);
 
 				$slashPosition = new \stdClass();
-				$slashPosition->name = $firstSlashPosition;
+				$slashPosition->name = $slashPositionName[0];
 				$slashPosition->number = $numOfPlayersInPosition->number;
 				$slashPositions[] = $slashPosition;
 
 				$slashPosition = new \stdClass();
-				$slashPosition->name = $secondSlashPosition;
+				$slashPosition->name = $slashPositionName[1];
 				$slashPosition->number = $numOfPlayersInPosition->number;
 				$slashPositions[] = $slashPosition;
 
@@ -91,8 +110,23 @@ class SolverTopPlaysMlb {
 		} 
 		unset($numOfPlayersInPosition);
 
-		prf($slashPositions);
-		prf($numOfPlayersInPositions);
+		foreach ($positions as &$position) {
+			$position['num_of_players'] = $this->addNumberOfPlayersPerPosition($position, $numOfPlayersInPositions);
+		}
+		unset($position);
+
+		# prf($numOfPlayersInPositions);
+		# ddAll($positions);
+
+		return $positions;
+	}
+
+	private function addNumberOfPlayersPerPosition($position, $numOfPlayersInPositions) {
+		foreach ($numOfPlayersInPositions as $numOfPlayersInPosition) {
+			if ($position['name'] == $numOfPlayersInPosition->name) {
+				return $numOfPlayersInPosition->number;
+			}
+		}
 	}
 
 	private function addSlashPosition($numOfPlayersInPosition, $slashPositions) {
@@ -117,12 +151,43 @@ class SolverTopPlaysMlb {
 						->where('target_percentage', '>', 0)
 						->get();
 
-		foreach ($players as &$player) {
-			$player->in_lineup = 0;
-		} 
+		foreach ($players as $key => $player) {
+			if (preg_match('/\//', $player->position)) {
+				list($slashPlayer[0], $slashPlayer[1]) = $this->splitUpSlashPlayers($player);
+
+				$players[] = $slashPlayer[0];
+				$players[] = $slashPlayer[1];
+
+				unset($players[$key]);
+			}
+			
+		}
 		unset($player);
 
+		# ddAll($players);
+
 		return $players;
+	}
+
+	private function splitUpSlashPlayers($player) {
+		$slashPositions[0] = preg_replace('/(\w+)(\/)(\w+)/', '$1', $player->position);
+		$slashPositions[1] = preg_replace('/(\w+)(\/)(\w+)/', '$3', $player->position);
+
+		foreach ($slashPositions as $key => $slashPosition) {
+			$slashPlayer[$key] = new \stdClass();
+
+			$slashPlayer[$key]->buy_in = $player->buy_in;
+			$slashPlayer[$key]->mlb_player_id = $player->mlb_player_id;
+			$slashPlayer[$key]->target_percentage = $player->target_percentage / 2;
+			$slashPlayer[$key]->mlb_team_id = $player->mlb_team_id;
+			$slashPlayer[$key]->position = $slashPosition;
+			$slashPlayer[$key]->salary = $player->salary;
+			$slashPlayer[$key]->name = $player->name;
+		}
+
+		# prf($slashPlayer);
+
+		return array($slashPlayer[0], $slashPlayer[1]);
 	}
 
 }
