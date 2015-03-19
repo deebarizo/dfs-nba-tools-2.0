@@ -43,7 +43,9 @@ class SolverTopPlaysMlb {
 			'salary' => 0
 		];
 
-		for ($i = 0; $i < 100; $i++) { 
+		ddAll($positions);
+
+		for ($i = 0; $i < 1000; $i++) { 
 			$unfilledPositions = [];
 
 			foreach ($positions as $position) {
@@ -55,10 +57,19 @@ class SolverTopPlaysMlb {
 			$numOfUnfilledPositions = count($unfilledPositions);
 
 			if ($numOfUnfilledPositions > 0) {
-				$positionKey = rand(0, $numOfUnfilledPositions - 1); // minus one because index starts at 0
-				$randomPosition = $unfilledPositions[$positionKey];
+				if ($numOfUnfilledPositions <= 8) {
+					$positionKey = rand(0, $numOfUnfilledPositions - 1); // minus one because index starts at 0
+					$randomPosition = $unfilledPositions[$positionKey];
+				} else {
+					foreach ($unfilledPositions as $unfilledPosition) {
+						if ($unfilledPosition->name == 'SP') {
+							$randomPosition = $unfilledPosition;
+							break;
+						}
+					}
+				}
 
-				$withinPositionRandomCount = rand(1, $randomPosition['num_of_players']);
+				$withinPositionRandomCount = rand(1, $randomPosition['num_of_players']);	
 
 				$count = 0;
 
@@ -106,27 +117,118 @@ class SolverTopPlaysMlb {
 			}
 		}
 
-		$lineup['players'] = $this->sortLineup($lineup['players']);
+		if (count($lineup['players']) != 10) {
+			prf($lineup);
+			prf($players);
+			ddAll($positions);
+		}
 
-		if ($lineup['salary'] < 49500) { // over 1% salary cap unused
-			$lineup = $this->upgradeLineupToUseSalaryCap($lineup, $positions);
+		if ($lineup['salary'] < 49500) { 
+			$lineup = $this->upgradeLineupToUseSalaryCap($lineup, $positions, $players);
 		} 
 
-		prf($positions);
-		ddAll($lineup);
+		$lineup['players'] = $this->sortLineup($lineup['players']);
+
+		prf($lineup['salary']);
+		ddAll($lineup['players']);
 	}
 
-	private function upgradeLineupToUseSalaryCap($lineup, $positions) {
-		$salaryLeftToMeetGoal = 49500 - $lineup['salary'];
+	private function upgradeLineupToUseSalaryCap($lineup, $positions, $players) {
+		foreach ($players as &$player) {
+			$player->eligible_for_lineup = 1;
+		}
+		unset($player);
 
-		prf($salaryLeftToMeetGoal);
-		prf($positions);
-		ddAll($lineup);
+		$salaryLeft = 50000 - $lineup['salary'];
+
+		$eligiblePositions = [];
+
+		for ($i = 0; $i < 50000; $i++) { 
+			if ($lineup['salary'] < 49500) {
+				foreach ($positions as $position) {
+					if ($position['num_of_players'] > 0) {
+						$eligiblePositions[] = $position;
+					}
+				}
+
+				$positionKey = rand(0, count($eligiblePositions) - 1);
+				$randomPosition = $eligiblePositions[$positionKey];
+
+				foreach ($lineup['players'] as $lineupPlayer) {
+					if ($lineupPlayer->position == $randomPosition['name']) {
+						$lineupPlayerToReplace = $lineupPlayer;
+						break;
+					}
+				}
+
+				# prf($lineup);
+				# prf($lineupPlayerToReplace);
+
+				foreach ($players as $player) {
+					if ($player->position == $randomPosition['name'] 
+						&& $player->eligible_for_lineup == 1 
+						&& $player->salary > $lineupPlayerToReplace->salary
+						&& $player->salary - $lineupPlayerToReplace->salary <= 50000 - $lineup['salary']) 
+					{
+						if ($this->validStack($lineup, $player, $lineupPlayerToReplace)) {
+							foreach ($lineup['players'] as &$lineupPlayer) {
+								if ($lineupPlayerToReplace->mlb_player_id == $lineupPlayer->mlb_player_id) {
+									$lineupPlayer = $player;
+
+									$lineup['salary'] += $player->salary - $lineupPlayerToReplace->salary;
+
+									break;
+								}
+							}
+							unset($lineupPlayer);
+						}
+					}
+				}
+			} else {
+				break;
+			}
+		}
+
+		return $lineup;
+	}
+
+	private function validStack($lineup, $player, $lineupPlayerToReplace) {
+		if ($lineupPlayerToReplace->position == 'SP') {
+			return true;
+		}
+
+		foreach ($lineup['players'] as $lineupPlayer) {
+			if ($lineupPlayer->mlb_player_id == $lineupPlayerToReplace->mlb_player_id) {
+				return false;
+			}
+		}
+
+		$stackCount = 0;
+
+		foreach ($lineup['players'] as $lineupPlayer) {
+			if ($lineupPlayer->mlb_team_id == $lineupPlayer->mlb_team_id && $lineupPlayer->mlb_player_id != $lineupPlayerToReplace->mlb_player_id) {
+				$stackCount++;
+			} 
+		}
+
+		if ($stackCount == 6) {
+			return false;
+		}
+
+		return true;
 	}
 
 	private function eligiblePlayerForLineup($lineup, $player) {
 		if ($lineup['salary'] + $player->salary > 50000) {
 			return false;
+		}
+
+		$avgSalaryLeft = (50000 - $lineup['salary']) / (10 - count($lineup['players']));
+
+		if ($player->position != 'SP') {
+			if ($player->salary > $avgSalaryLeft + 500 || $player->salary < $avgSalaryLeft - 500) {
+				return false;
+			}
 		}
 
 		foreach ($lineup['players'] as $lineupPlayer) {
@@ -143,7 +245,7 @@ class SolverTopPlaysMlb {
 			}			
 		}
 
-		if ($stackCount > 6) {
+		if ($stackCount == 6) {
 			return false;
 		}
 
