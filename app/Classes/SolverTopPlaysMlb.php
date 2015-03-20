@@ -31,10 +31,21 @@ class SolverTopPlaysMlb {
 		$timePeriod = urlToUcFirst($timePeriodInUrl);
 
 		$players = $this->getPlayers($timePeriod, $date);
+		$buyIn = $players[0]->buy_in;
 
 		$positions = $this->getPositions($timePeriod, $date);
 
-		$lineup = $this->generateLineup($players, $positions);
+		$lineups = [];
+
+		for ($i = 0; $i < 20; $i++) { 
+			$lineup = $this->generateLineup($players, $positions);
+
+			if ($lineup['salary'] >= 49500) {
+				$lineups[] = $lineup;
+			}
+		}
+
+		ddAll($lineups);
 	}	
 
 	private function generateLineup($players, $positions) {
@@ -127,8 +138,13 @@ class SolverTopPlaysMlb {
 		}
 
 		if (count($lineup['players']) != 10) {
-			prf($lineup);
-			ddAll($positions);
+			# prf('lineup does not have 10 players');
+			# prf($lineup);
+			# ddAll($players);
+
+			$lineup['salary'] = 0;
+
+			return $lineup;
 		}
 
 		if ($lineup['salary'] < 49500) { 
@@ -137,8 +153,10 @@ class SolverTopPlaysMlb {
 
 		$lineup['players'] = $this->sortLineup($lineup['players']);
 
-		prf($lineup['salary']);
-		ddAll($lineup['players']);
+		# prf($lineup['salary']);
+		# ddAll($lineup['players']);
+
+		return $lineup;
 	}
 
 	private function upgradeLineupToUseSalaryCap($lineup, $positions, $players) {
