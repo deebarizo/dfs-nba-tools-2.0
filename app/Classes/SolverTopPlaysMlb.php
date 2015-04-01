@@ -27,6 +27,20 @@ use Illuminate\Support\Facades\Session;
 
 class SolverTopPlaysMlb {
 
+	/****************************************************************************************
+	GLOBAL VARIABLES
+	****************************************************************************************/
+
+	private $lineupBuilderIterations = 200;
+	private $targetPercentageModifier = 0;
+	private $minimumTotalSalary = 49500; 
+	private $maximumTotalSalary = 50000;
+
+
+	/****************************************************************************************
+	GENERATE LINEUPS
+	****************************************************************************************/
+
 	public function generateLineups($timePeriodInUrl, $date) {
 		$timePeriod = urlToUcFirst($timePeriodInUrl);
 
@@ -37,16 +51,21 @@ class SolverTopPlaysMlb {
 
 		$lineups = [];
 
-		for ($i = 0; $i < 20; $i++) { 
-			$lineup = $this->generateLineup($players, $positions);
+		for ($i = 0; $i < $this->lineupBuilderIterations; $i++) { 
+			do {
+				$lineup = $this->generateLineup($players, $positions);
+			} while ($lineup['total_salary'] > $this->maximumTotalSalary || $lineup['total_salary'] < $this->minimumTotalSalary);
 
-			if ($lineup['salary'] >= 49500) {
-				$lineups[] = $lineup;
-			}
+			$lineups[] = $lineup;
 		}
 
 		ddAll($lineups);
 	}	
+
+
+	/****************************************************************************************
+	GENERATE LINEUP
+	****************************************************************************************/
 
 	private function generateLineup($players, $positions) {
 		$lineup = [
@@ -54,87 +73,81 @@ class SolverTopPlaysMlb {
 			'salary' => 0
 		];
 
-		# ddAll($positions);
+		ddAll($positions);
 
-		for ($i = 0; $i < 1000; $i++) { 
-			$unfilledPositions = [];
+		foreach ($positions as $position) {
+			
+		}
 
-			foreach ($positions as $position) {
-				if ($position['unfilled'] == 1) {
-					$unfilledPositions[] = $position;
+		$numOfUnfilledPositions = count($unfilledPositions);
+
+		if ($numOfUnfilledPositions > 0) {
+			if ($numOfUnfilledPositions <= 8) {
+				$numOfPlayersPerLineupSpot = [];
+
+				foreach ($unfilledPositions as $key => $unfilledPosition) {
+					$numOfPlayersPerLineupSpot[$key] = $unfilledPosition['num_of_players_per_lineup_spot'];
+				}
+
+				array_multisort($numOfPlayersPerLineupSpot, SORT_ASC, $unfilledPositions);
+
+				$selectedPosition = $unfilledPositions[0]; // unfilled position with least amount of number of players per lineup spot
+
+				# ddAll($selectedPosition);
+			} else {
+				foreach ($unfilledPositions as $unfilledPosition) {
+					if ($unfilledPosition->name == 'SP') {
+						$selectedPosition = $unfilledPosition;
+						break;
+					}
 				}
 			}
 
-			$numOfUnfilledPositions = count($unfilledPositions);
+			$withinPositionRandomCount = rand(1, $selectedPosition['num_of_players']);	
 
-			if ($numOfUnfilledPositions > 0) {
-				if ($numOfUnfilledPositions <= 8) {
-					$numOfPlayersPerLineupSpot = [];
+			$count = 0;
 
-					foreach ($unfilledPositions as $key => $unfilledPosition) {
-						$numOfPlayersPerLineupSpot[$key] = $unfilledPosition['num_of_players_per_lineup_spot'];
-					}
+			foreach ($players as $key => $player) {
+				if ($player->position == $selectedPosition['name'] && $player->eligible_for_lineup == 1) {
+					$count++;
 
-					array_multisort($numOfPlayersPerLineupSpot, SORT_ASC, $unfilledPositions);
-
-					$selectedPosition = $unfilledPositions[0]; // unfilled position with least amount of number of players per lineup spot
-
-					# ddAll($selectedPosition);
-				} else {
-					foreach ($unfilledPositions as $unfilledPosition) {
-						if ($unfilledPosition->name == 'SP') {
-							$selectedPosition = $unfilledPosition;
-							break;
-						}
-					}
-				}
-
-				$withinPositionRandomCount = rand(1, $selectedPosition['num_of_players']);	
-
-				$count = 0;
-
-				foreach ($players as $key => $player) {
-					if ($player->position == $selectedPosition['name'] && $player->eligible_for_lineup == 1) {
-						$count++;
-
-						if ($count == $withinPositionRandomCount) {
-							if ($this->eligiblePlayerForLineup($lineup, $player)) {
-								$lineup['players'][] = $player;
-								$lineup['salary'] += $player->salary;
-
-								foreach ($positions as &$position) {
-									if ($position['name'] == $selectedPosition['name']) {
-										$position['remaining_spots']--;
-										break;
-									}
-								}
-								unset($position);
-							}
+					if ($count == $withinPositionRandomCount) {
+						if ($this->eligiblePlayerForLineup($lineup, $player)) {
+							$lineup['players'][] = $player;
+							$lineup['salary'] += $player->salary;
 
 							foreach ($positions as &$position) {
 								if ($position['name'] == $selectedPosition['name']) {
-									$position['num_of_players']--;
+									$position['remaining_spots']--;
 									break;
 								}
 							}
 							unset($position);
-
-							foreach ($positions as &$position) {
-								if ($position['remaining_spots'] == 0) {
-									$position['unfilled'] = 0;
-								}
-							}
-							unset($position);
-
-							$player->eligible_for_lineup = 0;
-
-							break;
 						}
+
+						foreach ($positions as &$position) {
+							if ($position['name'] == $selectedPosition['name']) {
+								$position['num_of_players']--;
+								break;
+							}
+						}
+						unset($position);
+
+						foreach ($positions as &$position) {
+							if ($position['remaining_spots'] == 0) {
+								$position['unfilled'] = 0;
+							}
+						}
+						unset($position);
+
+						$player->eligible_for_lineup = 0;
+
+						break;
 					}
 				}
-			} else {
-				break;
 			}
+		} else {
+			break;
 		}
 
 		if (count($lineup['players']) != 10) {
