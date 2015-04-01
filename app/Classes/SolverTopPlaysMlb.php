@@ -54,7 +54,9 @@ class SolverTopPlaysMlb {
 		for ($i = 0; $i < $this->lineupBuilderIterations; $i++) { 
 			do {
 				$lineup = $this->generateLineup($players, $positions);
-			} while ($lineup['total_salary'] > $this->maximumTotalSalary || $lineup['total_salary'] < $this->minimumTotalSalary);
+			} while ($lineup['total_salary'] > $this->maximumTotalSalary || 
+				$lineup['total_salary'] < $this->minimumTotalSalary || 
+				$lineup['num_of_duplicate_players'] > 0);
 
 			ddAll($lineup);
 
@@ -82,14 +84,45 @@ class SolverTopPlaysMlb {
 			$lineup['players'][] = $this->generateRandomPlayerPerPosition($players, $position);
 		}
 
-		ddAll($lineup);
+		$lineup['num_of_duplicate_players'] = $this->getNumberOfDuplicatePlayers($lineup['players']);
 
 		$lineup['players'] = $this->sortLineup($lineup['players']);
+
+		$lineup['total_salary'] = 0;
+
+		foreach ($lineup['players'] as $player) {
+			$lineup['total_salary'] += $player->salary;
+		}
 
 		# prf($lineup['salary']);
 		# ddAll($lineup['players']);
 
 		return $lineup;
+	}
+
+	private function getNumberOfDuplicatePlayers($lineupPlayers) {
+
+		// check SP
+
+		if ($lineupPlayers[0]->mlb_player_id == $lineupPlayers[1]->mlb_player_id) {
+			return 1;
+		}
+
+		// check OF
+
+		if ($lineupPlayers[7]->mlb_player_id == $lineupPlayers[8]->mlb_player_id) {
+			return 1;
+		}
+
+		if ($lineupPlayers[7]->mlb_player_id == $lineupPlayers[9]->mlb_player_id) {
+			return 1;
+		}
+
+		if ($lineupPlayers[8]->mlb_player_id == $lineupPlayers[9]->mlb_player_id) {
+			return 1;
+		}
+
+		return 0;
 	}
 
 	private function generateRandomPlayerPerPosition($players, $position) {
@@ -276,13 +309,16 @@ class SolverTopPlaysMlb {
 
 	private function getPositions($timePeriod, $date) {
 		$positions = [
-			['name' => 'SP', 'remaining_spots' => 2],
-			['name' => 'C', 'remaining_spots' => 1],
-			['name' => '1B', 'remaining_spots' => 1],
-			['name' => '2B', 'remaining_spots' => 1],
-			['name' => '3B', 'remaining_spots' => 1],
-			['name' => 'SS', 'remaining_spots' => 1],
-			['name' => 'OF', 'remaining_spots' => 3]
+			['name' => 'SP'],
+			['name' => 'SP'],
+			['name' => 'C'],
+			['name' => '1B'],
+			['name' => '2B'],
+			['name' => '3B'],
+			['name' => 'SS'],
+			['name' => 'OF'],
+			['name' => 'OF'],
+			['name' => 'OF']
 		];
 
 		$numOfPlayersInPositions = DB::table('player_pools')
@@ -322,7 +358,6 @@ class SolverTopPlaysMlb {
 
 		foreach ($positions as &$position) {
 			$position['num_of_players'] = $this->addNumberOfPlayersPerPosition($position, $numOfPlayersInPositions);
-			$position['unfilled'] = 1;
 		}
 		unset($position);
 
