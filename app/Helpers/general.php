@@ -24,10 +24,10 @@ function prf($var) {
     echo '</pre>';
 }
 
-function urlToUcFirst($string) {
+function urlToUcWords($string) {
 	$string = preg_replace('/-/', ' ', $string);
 
-	$string = ucfirst($string);
+	$string = ucwords($string);
 
 	return $string;
 }

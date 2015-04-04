@@ -25,7 +25,7 @@ class SolverTopPlaysMlbController {
 	public function solverTopPlaysMlb($siteInUrl, $timePeriodInUrl, $date) {
 		$solverTopPlaysMlb = new SolverTopPlaysMlb;
 
-		$timePeriod = urlToUcFirst($timePeriodInUrl);
+		$timePeriod = urlToUcWords($timePeriodInUrl);
 
 		if ($siteInUrl == 'dk') {
 			list($lineups, $players) = $solverTopPlaysMlb->generateLineups($timePeriod, $date);
@@ -34,7 +34,7 @@ class SolverTopPlaysMlbController {
 		$playerPoolId = $lineups[0]['players'][0]->player_pool_id;
 		$buyIn = $lineups[0]['players'][0]->buy_in;
 
-		$defaultLineupBuyIn = 1;
+		$defaultLineupBuyIn = getDefaultLineupBuyIn();
 
 		# ddAll($lineups);
 

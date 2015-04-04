@@ -3,7 +3,7 @@
 @section('content')
 	<div class="row" style="font-size: 90%">
 		<div class="col-lg-12">
-			<h2 id="heading">Solver With Top Plays | {{ $date }} {{ $timePeriod }}</h2>
+			<h2 id="heading">DK MLB | Solver With Top Plays | {{ $date }} {{ $timePeriod }}</h2>
 		</div>
 
 		<div class="col-lg-4">
@@ -30,7 +30,7 @@
 		<div class="col-lg-3">
 			<p>
 				<strong>Default Lineup Buy In: </strong> 
-				$<span class="default-lineup-buy-in-amount">1</span> 
+				$<span class="default-lineup-buy-in-amount">{{ $defaultLineupBuyIn }}</span> 
 				(<span class="default-lineup-buy-in-percentage">@if ($buyIn != 0){{ numFormat($defaultLineupBuyIn / $buyIn * 100, 2) }}@else{{0.00}}@endif</span>%)
 				[<a href="#" class="edit-default-lineup-buy-in-link">Edit</a>]
 			</p>
@@ -215,5 +215,5 @@
 
 	</script>
 
-	<script src="/js/solver_top_plays.js"></script>
+	<script src="/js/solver_top_plays/dk/mlb.js"></script>
 @stop
