@@ -31,7 +31,7 @@ class SolverTopPlaysMlb {
 	GLOBAL VARIABLES
 	****************************************************************************************/
 
-	private $lineupBuilderIterations = 200;
+	private $lineupBuilderIterations = 50;
 	private $targetPercentageModifier = 0;
 	private $minimumTotalSalary = 49500; 
 	private $maximumTotalSalary = 50000;
@@ -56,15 +56,43 @@ class SolverTopPlaysMlb {
 				$lineup = $this->generateLineup($players, $positions);
 			} while ($lineup['total_salary'] > $this->maximumTotalSalary || 
 				$lineup['total_salary'] < $this->minimumTotalSalary || 
-				$lineup['num_of_duplicate_players'] > 0);
+				$this->getNumberOfDuplicatePlayers($lineup['players']) > 0);
 
-			ddAll($lineup);
+			# ddAll($lineup);
 
 			$lineups[] = $lineup;
 		}
 
+		$lineups = $this->removeDuplicateLineups($lineups);
+
 		ddAll($lineups);
 	}	
+
+	private function removeDuplicateLineups($lineups) {
+		$hashes = [];
+
+		foreach ($lineups as $lineup) {
+			$hashes[] = $lineup['hash'];
+		}
+
+		$uniqueHashes = array_unique($hashes);
+
+		$uniqueLineups = [];
+
+		foreach ($uniqueHashes as $uniqueHash) {
+			$uniqueLineups[] = $this->getLineupByHash($uniqueHash, $lineups);
+		}
+
+		return $uniqueLineups;
+	}
+
+	public function getLineupByHash($uniqueHash, $lineups) {
+		foreach ($lineups as $lineup) {
+			if ($uniqueHash == $lineup['hash']) {
+				return $lineup;
+			}
+		}
+	}
 
 
 	/****************************************************************************************
@@ -72,10 +100,7 @@ class SolverTopPlaysMlb {
 	****************************************************************************************/
 
 	private function generateLineup($players, $positions) {
-		$lineup = [
-			'players' => [],
-			'salary' => 0
-		];
+		$lineup['players'] = [];
 
 		# prf($players);
 		# ddAll($positions);
@@ -84,14 +109,18 @@ class SolverTopPlaysMlb {
 			$lineup['players'][] = $this->generateRandomPlayerPerPosition($players, $position);
 		}
 
-		$lineup['num_of_duplicate_players'] = $this->getNumberOfDuplicatePlayers($lineup['players']);
-
 		$lineup['players'] = $this->sortLineup($lineup['players']);
 
 		$lineup['total_salary'] = 0;
 
 		foreach ($lineup['players'] as $player) {
 			$lineup['total_salary'] += $player->salary;
+		}
+
+		$lineup['hash'] = '';
+
+		foreach ($lineup['players'] as $player) {
+			$lineup['hash'] .= $player->mlb_player_id;
 		}
 
 		# prf($lineup['salary']);
