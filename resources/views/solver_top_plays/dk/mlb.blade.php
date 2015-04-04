@@ -3,7 +3,7 @@
 @section('content')
 	<div class="row" style="font-size: 90%">
 		<div class="col-lg-12">
-			<h2 id="heading">FD NBA | Solver With Top Plays | {{ $date }} {{ $timePeriod }}</h2>
+			<h2 id="heading">Solver With Top Plays | {{ $date }} {{ $timePeriod }}</h2>
 		</div>
 
 		<div class="col-lg-4">

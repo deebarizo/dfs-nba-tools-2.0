@@ -41,9 +41,7 @@ class SolverTopPlaysMlb {
 	GENERATE LINEUPS
 	****************************************************************************************/
 
-	public function generateLineups($timePeriodInUrl, $date) {
-		$timePeriod = urlToUcFirst($timePeriodInUrl);
-
+	public function generateLineups($timePeriod, $date) {
 		$players = $this->getPlayers($timePeriod, $date);
 		$buyIn = $players[0]->buy_in;
 
@@ -67,7 +65,7 @@ class SolverTopPlaysMlb {
 
 		$lineups = $this->sortLineups($lineups);
 
-		ddAll($lineups);
+		return array($lineups, $players);
 	}	
 
 	private function sortLineups($lineups) {
@@ -456,7 +454,7 @@ class SolverTopPlaysMlb {
 
 	private function getPlayers($timePeriod, $date) {
 		$players = DB::table('player_pools')
-						->select('buy_in', 'mlb_player_id', 'target_percentage', 'mlb_team_id', 'position', 'salary', 'name')
+						->select('buy_in', 'mlb_player_id', 'target_percentage', 'mlb_team_id', 'position', 'salary', 'name', 'player_pool_id')
 						->join('dk_mlb_players', 'dk_mlb_players.player_pool_id', '=', 'player_pools.id')
 						->join('mlb_players', 'mlb_players.id', '=', 'dk_mlb_players.mlb_player_id')
 						->where('time_period', $timePeriod)

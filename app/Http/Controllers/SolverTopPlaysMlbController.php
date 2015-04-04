@@ -25,9 +25,24 @@ class SolverTopPlaysMlbController {
 	public function solverTopPlaysMlb($siteInUrl, $timePeriodInUrl, $date) {
 		$solverTopPlaysMlb = new SolverTopPlaysMlb;
 
+		$timePeriod = urlToUcFirst($timePeriodInUrl);
+
 		if ($siteInUrl == 'dk') {
-			$solverTopPlaysMlb->generateLineups($timePeriodInUrl, $date);
+			list($lineups, $players) = $solverTopPlaysMlb->generateLineups($timePeriod, $date);
 		}
+
+		$playerPoolId = $lineups[0]['players'][0]->player_pool_id;
+		$buyIn = $lineups[0]['players'][0]->buy_in;
+
+		ddAll($lineups);
+
+        return view('solver_top_plays/dk/mlb', 
+                     compact('date', 
+                             'timePeriod', 
+                             'playerPoolId', 
+                             'buyIn', 
+                             'lineups', 
+                             'players')); 
 	}
 
 }
