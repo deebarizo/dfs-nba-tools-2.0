@@ -31,7 +31,7 @@ class SolverTopPlaysMlb {
 	GLOBAL VARIABLES
 	****************************************************************************************/
 
-	private $lineupBuilderIterations = 50;
+	private $lineupBuilderIterations = 250;
 	private $targetPercentageModifier = 0;
 	private $minimumTotalSalary = 49500; 
 	private $maximumTotalSalary = 50000;
@@ -54,8 +54,8 @@ class SolverTopPlaysMlb {
 		for ($i = 0; $i < $this->lineupBuilderIterations; $i++) { 
 			do {
 				$lineup = $this->generateLineup($players, $positions);
-			} while ($lineup['total_salary'] > $this->maximumTotalSalary || 
-				$lineup['total_salary'] < $this->minimumTotalSalary || 
+			} while ($lineup['salary'] > $this->maximumTotalSalary || 
+				$lineup['salary'] < $this->minimumTotalSalary || 
 				$this->getNumberOfDuplicatePlayers($lineup['players']) > 0);
 
 			# ddAll($lineup);
@@ -65,8 +65,22 @@ class SolverTopPlaysMlb {
 
 		$lineups = $this->removeDuplicateLineups($lineups);
 
+		$lineups = $this->sortLineups($lineups);
+
 		ddAll($lineups);
 	}	
+
+	private function sortLineups($lineups) {
+		foreach ($lineups as $key => $lineup) {
+			$targetPercentages[$key] = $lineup['target_percentage'];
+			$biggestStacks[$key] = $lineup['biggest_stack'];
+			$salaries[$key] = $lineup['salary'];
+		}
+
+		array_multisort($targetPercentages, SORT_DESC, $biggestStacks, SORT_DESC, $salaries, SORT_DESC, $lineups);
+
+		return $lineups;
+	}
 
 	private function removeDuplicateLineups($lineups) {
 		$hashes = [];
@@ -111,10 +125,10 @@ class SolverTopPlaysMlb {
 
 		$lineup['players'] = $this->sortLineup($lineup['players']);
 
-		$lineup['total_salary'] = 0;
+		$lineup['salary'] = 0;
 
 		foreach ($lineup['players'] as $player) {
-			$lineup['total_salary'] += $player->salary;
+			$lineup['salary'] += $player->salary;
 		}
 
 		$lineup['hash'] = '';
@@ -123,10 +137,34 @@ class SolverTopPlaysMlb {
 			$lineup['hash'] .= $player->mlb_player_id;
 		}
 
+		$lineup['target_percentage'] = 0;
+
+		foreach ($lineup['players'] as $player) {
+			$lineup['target_percentage'] += $player->target_percentage;
+		}
+
+		$lineup['biggest_stack'] = $this->calculateBiggestStack($lineup);
+
 		# prf($lineup['salary']);
 		# ddAll($lineup['players']);
 
 		return $lineup;
+	}
+
+	private function calculateBiggestStack($lineup) {
+		$teamIds = [];
+
+		foreach ($lineup['players'] as $player) {
+			if ($player->position != 'SP') {
+				$teamIds[] = $player->mlb_team_id;
+			}
+		}
+
+		$stacksByTeamId = array_count_values($teamIds);
+
+		rsort($stacksByTeamId);
+
+		return $stacksByTeamId[0];
 	}
 
 	private function getNumberOfDuplicatePlayers($lineupPlayers) {
