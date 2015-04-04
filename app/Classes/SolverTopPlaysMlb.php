@@ -454,9 +454,10 @@ class SolverTopPlaysMlb {
 
 	private function getPlayers($timePeriod, $date) {
 		$players = DB::table('player_pools')
-						->select('buy_in', 'mlb_player_id', 'target_percentage', 'mlb_team_id', 'position', 'salary', 'name', 'player_pool_id')
+						->select('buy_in', 'mlb_player_id', 'target_percentage', 'mlb_team_id', 'position', 'salary', 'name', 'player_pool_id', 'abbr_dk')
 						->join('dk_mlb_players', 'dk_mlb_players.player_pool_id', '=', 'player_pools.id')
 						->join('mlb_players', 'mlb_players.id', '=', 'dk_mlb_players.mlb_player_id')
+						->join('mlb_teams', 'mlb_teams.id', '=', 'dk_mlb_players.mlb_team_id')
 						->where('time_period', $timePeriod)
 						->where('date', $date)
 						->where('target_percentage', '>', 0)
@@ -493,6 +494,7 @@ class SolverTopPlaysMlb {
 			$slashPlayer[$key]->mlb_player_id = $player->mlb_player_id;
 			$slashPlayer[$key]->target_percentage = $player->target_percentage / 2;
 			$slashPlayer[$key]->mlb_team_id = $player->mlb_team_id;
+			$slashPlayer[$key]->abbr_dk = $player->abbr_dk;
 			$slashPlayer[$key]->position = $slashPosition;
 			$slashPlayer[$key]->salary = $player->salary;
 			$slashPlayer[$key]->name = $player->name;

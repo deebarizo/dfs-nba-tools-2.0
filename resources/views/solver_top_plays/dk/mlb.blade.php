@@ -14,7 +14,7 @@
 
 				<span style="margin-left: 20px">
 					<strong>Unspent Buy In: </strong>
-					$<span class="unspent-buy-in-amount">{{ $unspentBuyIn }}</span>
+					$<span class="unspent-buy-in-amount">Add This</span>
 				</span>
 			</p>
 
@@ -30,7 +30,7 @@
 		<div class="col-lg-3">
 			<p>
 				<strong>Default Lineup Buy In: </strong> 
-				$<span class="default-lineup-buy-in-amount">{{ $defaultLineupBuyIn }}</span> 
+				$<span class="default-lineup-buy-in-amount">1</span> 
 				(<span class="default-lineup-buy-in-percentage">@if ($buyIn != 0){{ numFormat($defaultLineupBuyIn / $buyIn * 100, 2) }}@else{{0.00}}@endif</span>%)
 				[<a href="#" class="edit-default-lineup-buy-in-link">Edit</a>]
 			</p>
@@ -67,7 +67,7 @@
 				<select class="form-control player-filter show-player-filter" style="width: 150px">
 				  	<option value="Default" selected>-</option>
 				  	@foreach ($players as $player)
-				  		<option value="{{ $player->player_id }}">{{ $player->name }}</option>
+				  		<option value="{{ $player->mlb_player_id }}">{{ $player->name }}</option>
 				  	@endforeach
 				</select>
 			</form>
@@ -89,7 +89,7 @@
 				<select class="form-control player-filter hide-player-filter" style="width: 150px">
 				  	<option value="Default" selected>-</option>
 				  	@foreach ($players as $player)
-				  		<option value="{{ $player->player_id }}">{{ $player->name }}</option>
+				  		<option value="{{ $player->mlb_player_id }}">{{ $player->name }}</option>
 				  	@endforeach
 				</select>
 			</form>
@@ -135,15 +135,13 @@
 			@foreach ($lineups as $lineup)
 				<table data-player-pool-id="{{ $playerPoolId }}" 
 					   data-hash="{{ $lineup['hash'] }}" 
-					   data-total-salary="{{ $lineup['total_salary'] }}" 
+					   data-lineup-salary="{{ $lineup['salary'] }}" 
 					   class="table 
 					   		  table-striped 
 					   		  table-bordered 
 					   		  table-hover 
 					   		  table-condensed 
-					   		  lineup 
-					   		  {{ $lineup['css_class_blue_border'] }} 
-					   		  {{ $lineup['css_class_money_lineup'] }}">
+					   		  lineup">
 					<thead>
 						<tr>
 							<th style="width: 10%">Pos</th>
@@ -153,39 +151,41 @@
 						</tr>
 					</thead>
 					<tbody>
-						@foreach ($lineup['roster_spots'] as $key => $rosterSpot)
+						@foreach ($lineup['players'] as $key => $player)
 							<tr class="roster-spot" 
-								data-player-id="{{ $rosterSpot->player_id }}"
-								data-target-percentage="{{ $rosterSpot->target_percentage }}" 
-								data-team-abbr-br="{{ $rosterSpot->abbr_br }}">
-								<td class="position">{{ $rosterSpot->position }}</td>	
-								<td class="{{ $lineup['team_css_classes'][$key] }}">{{ $rosterSpot->abbr_br }}</td>
-								<td class="roster-spot-name">{{ $rosterSpot->name }}</td>
-								<td>{{ $rosterSpot->salary }}</td>
+								data-player-id="{{ $player->mlb_player_id }}"
+								data-target-percentage="{{ $player->target_percentage }}" 
+								data-team-abbr="{{ $player->abbr_dk }}"
+								data-position="{{ $player->position }}"
+								data-name="{{ $player->name }}"
+								data-salary="{{ $player->salary }}">
+								<td>{{ $player->position }}</td>	
+								<td>{{ $player->abbr_dk }}</td>
+								<td>{{ $player->name }}</td>
+								<td>{{ $player->salary }}</td>
 							</tr>
 						@endforeach
-
 						<tr class="update-lineup-row">
 							<td class="update-lineup-td" style="text-align: center" colspan="3">
-								<span class="edit-lineup-buy-in {{ $lineup['css_class_edit_info'] }}">
-									$<span class="lineup-buy-in-amount">{{ $lineup['buy_in'] }}</span> 
-									(<span class="lineup-buy-in-percentage">{{ $lineup['buy_in_percentage'] }}</span>%) | 
+								<span class="edit-lineup-buy-in">
+									$<span class="lineup-buy-in-amount">Add This</span> 
+									(<span class="lineup-buy-in-percentage">Add This</span>%) | 
 									<a href="#" class="edit-lineup-buy-in-link">Edit</a> | 
-									<a href="#" class="play-or-unplay-lineup-link"><span class="play-or-unplay-lineup-anchor-text">{{ $lineup['play_or_unplay_anchor_text'] }}</span></a> | <a href="{{ url() }}/lineup_builder/{{ $date }}/create/{{ $lineup['hash'] }}" target="_blank"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a> | 
+									<a href="#" class="play-or-unplay-lineup-link"><span class="play-or-unplay-lineup-anchor-text">Add This</span></a> | <a href="{{ url() }}/lineup_builder/{{ $date }}/create/{{ $lineup['hash'] }}" target="_blank"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a> | 
 								</span>
-								<a href="#" class="add-or-remove-lineup-link"><span class="add-or-remove-lineup-anchor-text">{{ $lineup['anchor_text'] }}</span></a>
+								<a href="#" class="add-or-remove-lineup-link"><span class="add-or-remove-lineup-anchor-text">Add This</span></a>
 								<span class="add-or-remove-lineup-link-loading-gif">
 									<img src="/files/spiffygif_16x16.gif" alt="Please wait..." />
 								</span>
 							</td>
-							<td style="color: green"><strong>{{ $lineup['total_salary'] }}</strong></td>
+							<td style="color: green"><strong>{{ $lineup['salary'] }}</strong></td>
 						</tr>
 					</tbody>
 				</table>
 
 				<div class="input-group edit-lineup-buy-in-amount edit-lineup-buy-in-amount-hidden" style="width: 45%; margin: -12px auto 20px auto">
 					<div class="input-group-addon">$</div>
-				   	<input type="text" class="form-control edit-lineup-buy-in-input" value="{{ $lineup['buy_in'] }}">
+				   	<input type="text" class="form-control edit-lineup-buy-in-input" value="Add This">
 				   	<span class="input-group-btn">
 				    	<button class="btn btn-default edit-lineup-buy-in-button" type="button">Submit</button>
 				   	</span>
@@ -211,7 +211,6 @@
 		var playerPoolId = <?php echo json_encode($playerPoolId); ?>;
 		var buyIn = $("span.buy-in-amount").text();
 		var defaultLineupBuyIn = $("span.default-lineup-buy-in-amount").text();
-		var areThereActiveLineups = <?php echo $areThereActiveLineups; ?>;
 		var topPlays = <?php echo json_encode($players); ?>;
 
 	</script>

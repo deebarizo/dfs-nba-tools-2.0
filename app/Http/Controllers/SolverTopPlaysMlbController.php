@@ -34,13 +34,16 @@ class SolverTopPlaysMlbController {
 		$playerPoolId = $lineups[0]['players'][0]->player_pool_id;
 		$buyIn = $lineups[0]['players'][0]->buy_in;
 
-		ddAll($lineups);
+		$defaultLineupBuyIn = 1;
+
+		# ddAll($lineups);
 
         return view('solver_top_plays/dk/mlb', 
                      compact('date', 
                              'timePeriod', 
                              'playerPoolId', 
                              'buyIn', 
+                             'defaultLineupBuyIn',
                              'lineups', 
                              'players')); 
 	}
