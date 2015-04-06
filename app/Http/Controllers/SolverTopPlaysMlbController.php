@@ -31,6 +31,10 @@ class SolverTopPlaysMlbController {
 			list($lineups, $players) = $solverTopPlaysMlb->generateLineups($timePeriod, $date);
 		}
 
+        # ddAll($lineups);
+
+        $lineups = $solverTopPlaysMlb->addActiveLineups($lineups, $timePeriod, $date);
+
 		$playerPoolId = $lineups[0]['players'][0]->player_pool_id;
 		$buyIn = $lineups[0]['players'][0]->buy_in;
 
@@ -70,7 +74,7 @@ class SolverTopPlaysMlbController {
         }
 
         if ($addOrRemove == 'Remove') {
-            removeLineup($playerPoolId, $hash);
+            $solverTopPlaysMlb->removeLineup($playerPoolId, $hash);
         }
     }
 

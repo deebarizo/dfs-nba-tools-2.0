@@ -141,7 +141,9 @@
 					   		  table-bordered 
 					   		  table-hover 
 					   		  table-condensed 
-					   		  lineup">
+					   		  lineup 
+					   		  {{ $lineup['css_class_active_lineup'] }} 
+					   		  {{ $lineup['css_class_money_lineup'] }}">
 					<thead>
 						<tr>
 							<th style="width: 10%">Pos</th>

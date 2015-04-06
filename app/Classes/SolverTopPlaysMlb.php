@@ -40,6 +40,89 @@ class SolverTopPlaysMlb {
 
 
 	/****************************************************************************************
+	GLOBAL FUNCTIONS
+	****************************************************************************************/
+
+	private function getActiveLineupHashes($timePeriod, $date) {
+		return DB::table('lineups')
+					->join('player_pools', 'player_pools.id', '=', 'lineups.player_pool_id')
+					->where('time_period', $timePeriod)
+					->where('date', $date)
+					->lists('hash');
+	}
+
+
+	/****************************************************************************************
+	ADD ACTIVE LINEUPS
+	****************************************************************************************/
+
+	public function addActiveLineups($lineups, $timePeriod, $date) {
+		$activeLineups = $this->getActiveLineups($timePeriod, $date);
+
+		foreach ($activeLineups as $activeLineup) {
+			$lineups[] = $activeLineup;
+		}
+
+		return $lineups;
+	}
+
+	private function getActiveLineups($timePeriod, $date) {
+		$activeLineupPlayers = DB::table('lineups')
+							->select('player_pools.buy_in', 'dk_mlb_players.mlb_player_id', 'target_percentage', 'mlb_team_id', 'lineup_dk_mlb_players.position', 'salary', 'name', 'lineups.player_pool_id', 'abbr_dk', 'total_salary', 'hash', 'money')
+							->join('player_pools', 'player_pools.id', '=', 'lineups.player_pool_id')
+							->join('lineup_dk_mlb_players', 'lineup_dk_mlb_players.lineup_id', '=', 'lineups.id')
+							->leftJoin('dk_mlb_players', 'dk_mlb_players.mlb_player_id', '=', 'lineup_dk_mlb_players.mlb_player_id')
+							->leftJoin('mlb_players', 'mlb_players.id', '=', 'lineup_dk_mlb_players.mlb_player_id')
+							->leftJoin('mlb_teams', 'mlb_teams.id', '=', 'dk_mlb_players.mlb_team_id')
+							->where('time_period', $timePeriod)
+							->where('date', $date)
+							->where('active', 1)
+							->get();
+
+		# ddAll($activeLineupPlayers);
+
+		$activeLineupHashes = $this->getActiveLineupHashes($timePeriod, $date);
+
+		$activeLineups = [];
+
+		foreach ($activeLineupHashes as $hash) {
+			foreach ($activeLineupPlayers as $player) {
+				if ($player->hash == $hash) {
+					if ($player->money == 0) {
+						$moneyLineupCss = '';
+					}
+
+					if ($player->money == 1) {
+						$moneyLineupCss = 'money-lineup';
+					}
+
+					$activeLineups[] = [
+						'salary' => $player->total_salary,
+						'hash' => $hash,
+						'css_class_edit_info' => '',
+						'css_class_active_lineup' => 'active-lineup',
+						'css_class_money_lineup' => $moneyLineupCss
+					];	
+
+					break;				
+				}
+			}
+		}
+
+		foreach ($activeLineups as &$lineup) {
+			foreach ($activeLineupPlayers as $player) {
+				if ($player->hash == $lineup['hash']) {
+					$lineup['players'][] = $player;
+				}
+			}
+		}
+		unset($lineup);
+
+		return $activeLineups;
+	}
+
+
+	/****************************************************************************************
 	GENERATE LINEUPS
 	****************************************************************************************/
 
@@ -49,6 +132,10 @@ class SolverTopPlaysMlb {
 
 		$positions = $this->getPositions($timePeriod, $date);
 
+		$activeLineupHashes = $this->getActiveLineupHashes($timePeriod, $date);
+
+		# ddAll($activeLineupHashes);
+
 		$lineups = [];
 
 		for ($i = 0; $i < $this->lineupBuilderIterations; $i++) { 
@@ -56,7 +143,8 @@ class SolverTopPlaysMlb {
 				$lineup = $this->generateLineup($players, $positions);
 			} while ($lineup['salary'] > $this->maximumTotalSalary || 
 				$lineup['salary'] < $this->minimumTotalSalary || 
-				$this->getNumberOfDuplicatePlayers($lineup['players']) > 0);
+				$this->getNumberOfDuplicatePlayers($lineup['players']) > 0 || 
+				$this->isActiveLineup($lineup['hash'], $activeLineupHashes));
 
 			# ddAll($lineup);
 
@@ -69,6 +157,16 @@ class SolverTopPlaysMlb {
 
 		return array($lineups, $players);
 	}	
+
+	private function isActiveLineup($lineupHash, $activeLineupHashes) {
+		foreach ($activeLineupHashes as $key => $activeLineupHash) {
+			if ($activeLineupHash == $lineupHash) {
+				return true;
+			}
+		}
+
+		return false;
+	}
 
 	private function sortLineups($lineups) {
 		foreach ($lineups as $key => $lineup) {
@@ -146,6 +244,8 @@ class SolverTopPlaysMlb {
 		$lineup['biggest_stack'] = $this->calculateBiggestStack($lineup);
 
 		$lineup['css_class_edit_info'] = 'edit-lineup-buy-in-hidden';
+		$lineup['css_class_active_lineup'] = '';
+		$lineup['css_class_money_lineup'] = '';
 
 		# prf($lineup['salary']);
 		# ddAll($lineup['players']);
@@ -208,66 +308,6 @@ class SolverTopPlaysMlb {
 				}
 			}
 		}
-	}
-
-	private function upgradeLineupToUseSalaryCap($lineup, $positions, $players) {
-		foreach ($players as &$player) {
-			$player->eligible_for_lineup = 1;
-		}
-		unset($player);
-
-		$salaryLeft = 50000 - $lineup['salary'];
-
-		$eligiblePositions = [];
-
-		for ($i = 0; $i < 1000; $i++) { 
-			if ($lineup['salary'] < 49500) {
-				foreach ($positions as $position) {
-					if ($position['num_of_players'] > 0) {
-						$eligiblePositions[] = $position;
-					}
-				}
-
-				foreach ($eligiblePositions as $eligiblePosition) { 
-					$selectedPosition = $eligiblePosition;
-
-					foreach ($lineup['players'] as $lineupPlayer) {
-						if ($lineupPlayer->position == $selectedPosition['name']) {
-							$lineupPlayerToReplace = $lineupPlayer;
-							break;
-						}
-					}
-
-					# prf($lineup);
-					# prf($lineupPlayerToReplace);
-
-					foreach ($players as $player) {
-						if ($player->position == $selectedPosition['name'] 
-							&& $player->eligible_for_lineup == 1 
-							&& $player->salary > $lineupPlayerToReplace->salary
-							&& $player->salary - $lineupPlayerToReplace->salary <= 50000 - $lineup['salary']) 
-						{
-							if ($this->validStack($lineup, $player, $lineupPlayerToReplace)) {
-								foreach ($lineup['players'] as &$lineupPlayer) {
-									if ($lineupPlayerToReplace->mlb_player_id == $lineupPlayer->mlb_player_id) {
-										$lineupPlayer = $player;
-
-										$lineup['salary'] += $player->salary - $lineupPlayerToReplace->salary;
-
-										break;
-									}
-								}
-								unset($lineupPlayer);
-							}
-						}
-					}
-				}
-			} else {
-				break;
-			}
-		}
-
-		return $lineup;
 	}
 
 	private function validStack($lineup, $player, $lineupPlayerToReplace) {
@@ -534,6 +574,21 @@ class SolverTopPlaysMlb {
 
 	        $lineupPlayer->save();
 	    }
+	}
+
+	public function removeLineup($playerPoolId, $hash) {
+	    $lineupId = DB::table('lineups')
+	        ->where('player_pool_id', $playerPoolId)
+	        ->where('hash', $hash)
+	        ->pluck('id');
+
+	    DB::table('lineup_dk_mlb_players')
+	        ->where('lineup_id', $lineupId)
+	        ->delete();
+
+	    DB::table('lineups')
+	        ->where('id', $lineupId)
+	        ->delete();
 	}
 
 }
