@@ -455,25 +455,33 @@ $(document).ready(function() {
 		$(this).children(".add-or-remove-lineup-anchor-text").text('');
 		$(this).next(".add-or-remove-lineup-link-loading-gif").show();
 
-		var hash = $(this).parent().parent().parent().parent().data('hash');
-		var totalSalary = $(this).parent().parent().parent().parent().data('total-salary');
-		
-		var playerIdsOfLineup = [];
+		var lineup = $(this).closest('table.lineup');
 
-		var rosterSpots = $(this).parent().parent().parent('tbody').find('tr.roster-spot');
+		var hash = lineup.data('hash');
+		var totalSalary = lineup.data('salary');
+		
+		var players = [];
+
+		var rosterSpots = lineup.find('tr.roster-spot');
 
 		$(rosterSpots).each(function() {
-			var playerId = $(this).data('player-id');
+			var id = $(this).data('id');
+			var position = $(this).data('position');
 
-			playerIdsOfLineup.push(playerId);
+			var player = {
+				id: id,
+				position: position
+			};
+
+			players.push(player);
 		});
 
 		var $this = $(this);
 
-		console.log(playerIdsOfLineup);
+		// console.log(players); return;
 
     	$.ajax({
-            url: baseUrl+'/solver_top_plays/add_or_remove_lineup/',
+            url: baseUrl+'/solver_top_plays/dk/mlb/add_or_remove_lineup/',
            	type: 'POST',
            	data: { 
            		playerPoolId: playerPoolId,
@@ -481,29 +489,29 @@ $(document).ready(function() {
            		totalSalary: totalSalary,
            		buyIn: lineupBuyIn,
            		addOrRemove: addOrRemove,
-           		playerIdsOfLineup: playerIdsOfLineup
+           		players: players
            	},
             success: function() {
-				$this.parent().parent().parent().parent().toggleClass("active-lineup");	
-				$this.parent().parent().parent().parent().removeClass("money-lineup");	
-				$this.prev().toggleClass("edit-lineup-buy-in-hidden");	
-				$this.next(".add-or-remove-lineup-link-loading-gif").hide();
+				lineup.toggleClass("active-lineup");	
+				lineup.removeClass("money-lineup");	
+				lineup.find('.edit-lineup-buy-in').toggleClass("edit-lineup-buy-in-hidden");	
+				lineup.find(".add-or-remove-lineup-link-loading-gif").hide();
 
 				switch(addOrRemove) {
 				    case "Add":
-				    	$this.prev().children('.lineup-buy-in-amount').text(lineupBuyIn);
-				    	$this.prev().children('.lineup-buy-in-percentage').text(lineupBuyInPercentage);
-						$this.parent().parent().parent().parent().next().children(".edit-lineup-buy-in-input").val(lineupBuyIn);								
+				    	lineup.find('.lineup-buy-in-amount').text(lineupBuyIn);
+				    	lineup.find('.lineup-buy-in-percentage').text(lineupBuyInPercentage);
+						lineup.find(".edit-lineup-buy-in-input").val(lineupBuyIn);
 						
-						$this.children(".add-or-remove-lineup-anchor-text").text("Remove");
+						lineup.find(".add-or-remove-lineup-anchor-text").text("Remove");
 						
 				        break;
 				    
 				    case "Remove":
-				    	$this.parent().parent().parent().parent().next().addClass("edit-lineup-buy-in-amount-hidden");
+				    	lineup.find('edit-lineup-buy-in-amount').addClass("edit-lineup-buy-in-amount-hidden");
 
-				        $this.children(".add-or-remove-lineup-anchor-text").text("Add");
-				        $this.prev().find(".play-or-unplay-lineup-anchor-text").text("Play");
+				        lineup.find(".add-or-remove-lineup-anchor-text").text("Add");
+				        lineup.find(".play-or-unplay-lineup-anchor-text").text("Play");
 
 				        break;
 				}

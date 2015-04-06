@@ -35,7 +35,7 @@ class DailyController {
             $statBuilder = new StatBuilder;
 
             $timePeriodInUrl = $timePeriod;
-            $timePeriod = urlToUcFirst($timePeriod);
+            $timePeriod = urlToUcWords($timePeriod);
 
             $players = $statBuilder->getPlayersForDkMlbDaily($timePeriod, $date);
             $teams = $statBuilder->getTeamsForDkMlbDaily($timePeriod, $date);

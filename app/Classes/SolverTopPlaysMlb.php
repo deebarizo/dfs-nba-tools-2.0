@@ -13,6 +13,8 @@ use App\Models\MlbPlayer;
 use App\Models\MlbTeam;
 use App\Models\MlbPlayerTeam;
 use App\Models\DkMlbPlayer;
+use App\Models\Lineup;
+use App\Models\LineupDkMlbPlayer;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\RunFDNBASalariesScraperRequest;
@@ -142,6 +144,8 @@ class SolverTopPlaysMlb {
 		}
 
 		$lineup['biggest_stack'] = $this->calculateBiggestStack($lineup);
+
+		$lineup['css_class_edit_info'] = 'edit-lineup-buy-in-hidden';
 
 		# prf($lineup['salary']);
 		# ddAll($lineup['players']);
@@ -503,6 +507,33 @@ class SolverTopPlaysMlb {
 		# prf($slashPlayer);
 
 		return array($slashPlayer[0], $slashPlayer[1]);
+	}
+
+
+    /****************************************************************************************
+    AJAX
+    ****************************************************************************************/	
+
+	public function addLineup($playerPoolId, $hash, $totalSalary, $buyIn, $players) {
+	    $lineup = new Lineup; 
+
+	    $lineup->player_pool_id = $playerPoolId;
+	    $lineup->hash = $hash;
+	    $lineup->total_salary = $totalSalary; 
+	    $lineup->buy_in = $buyIn;
+	    $lineup->active = 1;
+
+	    $lineup->save();    
+
+	    foreach ($players as $player) {
+	        $lineupPlayer = new LineupDkMlbPlayer;
+
+	        $lineupPlayer->lineup_id = $lineup->id;
+	        $lineupPlayer->mlb_player_id = $player['id'];
+	        $lineupPlayer->position = $player['position'];
+
+	        $lineupPlayer->save();
+	    }
 	}
 
 }

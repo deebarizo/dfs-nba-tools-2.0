@@ -135,7 +135,7 @@
 			@foreach ($lineups as $lineup)
 				<table data-player-pool-id="{{ $playerPoolId }}" 
 					   data-hash="{{ $lineup['hash'] }}" 
-					   data-lineup-salary="{{ $lineup['salary'] }}" 
+					   data-salary="{{ $lineup['salary'] }}" 
 					   class="table 
 					   		  table-striped 
 					   		  table-bordered 
@@ -153,7 +153,7 @@
 					<tbody>
 						@foreach ($lineup['players'] as $key => $player)
 							<tr class="roster-spot" 
-								data-player-id="{{ $player->mlb_player_id }}"
+								data-id="{{ $player->mlb_player_id }}"
 								data-target-percentage="{{ $player->target_percentage }}" 
 								data-team-abbr="{{ $player->abbr_dk }}"
 								data-position="{{ $player->position }}"
@@ -167,13 +167,13 @@
 						@endforeach
 						<tr class="update-lineup-row">
 							<td class="update-lineup-td" style="text-align: center" colspan="3">
-								<span class="edit-lineup-buy-in">
+								<span class="edit-lineup-buy-in {{ $lineup['css_class_edit_info'] }}">
 									$<span class="lineup-buy-in-amount">Add This</span> 
 									(<span class="lineup-buy-in-percentage">Add This</span>%) | 
 									<a href="#" class="edit-lineup-buy-in-link">Edit</a> | 
 									<a href="#" class="play-or-unplay-lineup-link"><span class="play-or-unplay-lineup-anchor-text">Add This</span></a> | <a href="{{ url() }}/lineup_builder/{{ $date }}/create/{{ $lineup['hash'] }}" target="_blank"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a> | 
 								</span>
-								<a href="#" class="add-or-remove-lineup-link"><span class="add-or-remove-lineup-anchor-text">Add This</span></a>
+								<a href="#" class="add-or-remove-lineup-link"><span class="add-or-remove-lineup-anchor-text">Add</span></a>
 								<span class="add-or-remove-lineup-link-loading-gif">
 									<img src="/files/spiffygif_16x16.gif" alt="Please wait..." />
 								</span>

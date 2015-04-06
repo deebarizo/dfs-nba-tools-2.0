@@ -48,4 +48,30 @@ class SolverTopPlaysMlbController {
                              'players')); 
 	}
 
+
+    /****************************************************************************************
+    AJAX
+    ****************************************************************************************/
+
+    public function addOrRemoveLineup(Request $request) {
+        $playerPoolId = $request->input('playerPoolId');
+        $hash = $request->input('hash');
+        $totalSalary = $request->input('totalSalary');
+        $buyIn = $request->input('buyIn');
+        $addOrRemove = $request->input('addOrRemove');
+        $players = $request->input('players');
+
+        prf($players);
+
+        $solverTopPlaysMlb = new SolverTopPlaysMlb;
+
+        if ($addOrRemove == 'Add') {
+            $solverTopPlaysMlb->addLineup($playerPoolId, $hash, $totalSalary, $buyIn, $players);
+        }
+
+        if ($addOrRemove == 'Remove') {
+            removeLineup($playerPoolId, $hash);
+        }
+    }
+
 }
