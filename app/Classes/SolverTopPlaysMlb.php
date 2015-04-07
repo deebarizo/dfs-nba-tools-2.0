@@ -101,7 +101,8 @@ class SolverTopPlaysMlb {
 						'hash' => $hash,
 						'css_class_edit_info' => '',
 						'css_class_active_lineup' => 'active-lineup',
-						'css_class_money_lineup' => $moneyLineupCss
+						'css_class_money_lineup' => $moneyLineupCss,
+						'add_or_remove_anchor_text' => 'Remove'
 					];	
 
 					break;				
@@ -246,6 +247,7 @@ class SolverTopPlaysMlb {
 		$lineup['css_class_edit_info'] = 'edit-lineup-buy-in-hidden';
 		$lineup['css_class_active_lineup'] = '';
 		$lineup['css_class_money_lineup'] = '';
+		$lineup['add_or_remove_anchor_text'] = 'Add';
 
 		# prf($lineup['salary']);
 		# ddAll($lineup['players']);
