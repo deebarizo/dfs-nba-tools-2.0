@@ -401,7 +401,7 @@ $(document).ready(function() {
 	$(".edit-lineup-buy-in-link").click(function(e) {
 		e.preventDefault();
 
-		$(this).parent().parent().parent().parent().parent().next().toggleClass("edit-lineup-buy-in-amount-hidden");
+		$(this).closest('table.lineup').next('.edit-lineup-buy-in-amount').toggleClass("edit-lineup-buy-in-amount-hidden");
 	});
 
 	$(".edit-lineup-buy-in-button").click(function(e) {
@@ -501,7 +501,7 @@ $(document).ready(function() {
 				    case "Add":
 				    	lineup.find('.lineup-buy-in-amount').text(lineupBuyIn);
 				    	lineup.find('.lineup-buy-in-percentage').text(lineupBuyInPercentage);
-						lineup.find(".edit-lineup-buy-in-input").val(lineupBuyIn);
+						lineup.next('.edit-lineup-buy-in-amount').find('.edit-lineup-buy-in-input').val(lineupBuyIn);
 						
 						lineup.find(".add-or-remove-lineup-anchor-text").text("Remove");
 						

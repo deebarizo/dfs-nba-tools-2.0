@@ -187,7 +187,7 @@
 
 				<div class="input-group edit-lineup-buy-in-amount edit-lineup-buy-in-amount-hidden" style="width: 45%; margin: -12px auto 20px auto">
 					<div class="input-group-addon">$</div>
-				   	<input type="text" class="form-control edit-lineup-buy-in-input" value="Add This">
+				   	<input type="text" class="form-control edit-lineup-buy-in-input" value="{{ $lineup['buy_in'] }}">
 				   	<span class="input-group-btn">
 				    	<button class="btn btn-default edit-lineup-buy-in-button" type="button">Submit</button>
 				   	</span>
