@@ -68,7 +68,7 @@ class SolverTopPlaysMlb {
 
 	private function getActiveLineups($timePeriod, $date) {
 		$activeLineupPlayers = DB::table('lineups')
-							->select('player_pools.buy_in', 'dk_mlb_players.mlb_player_id', 'target_percentage', 'mlb_team_id', 'lineup_dk_mlb_players.position', 'salary', 'name', 'lineups.player_pool_id', 'abbr_dk', 'total_salary', 'hash', 'money')
+							->select('player_pools.buy_in as daily_buy_in', 'dk_mlb_players.mlb_player_id', 'target_percentage', 'mlb_team_id', 'lineup_dk_mlb_players.position', 'salary', 'name', 'lineups.player_pool_id', 'abbr_dk', 'total_salary', 'hash', 'money', 'lineups.buy_in as lineup_buy_in')
 							->join('player_pools', 'player_pools.id', '=', 'lineups.player_pool_id')
 							->join('lineup_dk_mlb_players', 'lineup_dk_mlb_players.lineup_id', '=', 'lineups.id')
 							->leftJoin('dk_mlb_players', 'dk_mlb_players.mlb_player_id', '=', 'lineup_dk_mlb_players.mlb_player_id')
@@ -90,10 +90,12 @@ class SolverTopPlaysMlb {
 				if ($player->hash == $hash) {
 					if ($player->money == 0) {
 						$moneyLineupCss = '';
+						$playOrUnplayAnchorText = 'Play';
 					}
 
 					if ($player->money == 1) {
 						$moneyLineupCss = 'money-lineup';
+						$playOrUnplayAnchorText = 'Unplay';
 					}
 
 					$activeLineups[] = [
@@ -102,7 +104,10 @@ class SolverTopPlaysMlb {
 						'css_class_edit_info' => '',
 						'css_class_active_lineup' => 'active-lineup',
 						'css_class_money_lineup' => $moneyLineupCss,
-						'add_or_remove_anchor_text' => 'Remove'
+						'add_or_remove_anchor_text' => 'Remove',
+						'buy_in' => $player->lineup_buy_in,
+						'buy_in_percentage' => numFormat($player->lineup_buy_in / $player->daily_buy_in * 100, 2),
+						'play_or_unplay_anchor_text' => $playOrUnplayAnchorText
 					];	
 
 					break;				
@@ -118,6 +123,8 @@ class SolverTopPlaysMlb {
 			}
 		}
 		unset($lineup);
+
+		# ddAll($activeLineups);
 
 		return $activeLineups;
 	}
@@ -248,6 +255,11 @@ class SolverTopPlaysMlb {
 		$lineup['css_class_active_lineup'] = '';
 		$lineup['css_class_money_lineup'] = '';
 		$lineup['add_or_remove_anchor_text'] = 'Add';
+
+		$lineup['buy_in'] = 0;
+		$lineup['buy_in_percentage'] = 0;
+
+		$lineup['play_or_unplay_anchor_text'] = 'Play';
 
 		# prf($lineup['salary']);
 		# ddAll($lineup['players']);

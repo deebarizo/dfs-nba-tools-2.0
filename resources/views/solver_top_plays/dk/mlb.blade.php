@@ -170,10 +170,10 @@
 						<tr class="update-lineup-row">
 							<td class="update-lineup-td" style="text-align: center" colspan="3">
 								<span class="edit-lineup-buy-in {{ $lineup['css_class_edit_info'] }}">
-									$<span class="lineup-buy-in-amount">Add This</span> 
-									(<span class="lineup-buy-in-percentage">Add This</span>%) | 
+									$<span class="lineup-buy-in-amount">{{ $lineup['buy_in'] }}</span> 
+									(<span class="lineup-buy-in-percentage">{{ $lineup['buy_in_percentage'] }}</span>%) | 
 									<a href="#" class="edit-lineup-buy-in-link">Edit</a> | 
-									<a href="#" class="play-or-unplay-lineup-link"><span class="play-or-unplay-lineup-anchor-text">Add This</span></a> | <a href="{{ url() }}/lineup_builder/{{ $date }}/create/{{ $lineup['hash'] }}" target="_blank"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a> | 
+									<a href="#" class="play-or-unplay-lineup-link"><span class="play-or-unplay-lineup-anchor-text">{{ $lineup['play_or_unplay_anchor_text'] }}</span></a> | <a href="{{ url() }}/lineup_builder/{{ $date }}/create/{{ $lineup['hash'] }}" target="_blank"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a> | 
 								</span>
 								<a href="#" class="add-or-remove-lineup-link"><span class="add-or-remove-lineup-anchor-text">{{ $lineup['add_or_remove_anchor_text'] }}</span></a>
 								<span class="add-or-remove-lineup-link-loading-gif">
