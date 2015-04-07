@@ -14,7 +14,7 @@
 
 				<span style="margin-left: 20px">
 					<strong>Unspent Buy In: </strong>
-					$<span class="unspent-buy-in-amount">Add This</span>
+					$<span class="unspent-buy-in-amount">{{ $unspentBuyIn }}</span>
 				</span>
 			</p>
 

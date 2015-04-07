@@ -53,6 +53,22 @@ class SolverTopPlaysMlb {
 
 
 	/****************************************************************************************
+	CALCULATE SPENT BUY IN
+	****************************************************************************************/
+
+	public function calculateUnspentBuyIn($timePeriod, $date, $buyIn) {
+		$activeLineups = $this->getActiveLineups($timePeriod, $date);
+
+		$spentBuyIn = 0;
+
+		foreach ($activeLineups as $activeLineup) {
+			$spentBuyIn += $activeLineup['buy_in'];
+		}
+
+		return $buyIn - $spentBuyIn;
+	}
+
+	/****************************************************************************************
 	ADD ACTIVE LINEUPS
 	****************************************************************************************/
 

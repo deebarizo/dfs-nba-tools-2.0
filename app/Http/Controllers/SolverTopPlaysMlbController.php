@@ -38,7 +38,9 @@ class SolverTopPlaysMlbController {
 		$playerPoolId = $lineups[0]['players'][0]->player_pool_id;
 		$buyIn = $lineups[0]['players'][0]->buy_in;
 
-		$defaultLineupBuyIn = getDefaultLineupBuyIn();
+		$unspentBuyIn = $solverTopPlaysMlb->calculateUnspentBuyIn($timePeriod, $date, $buyIn);
+
+        $defaultLineupBuyIn = getDefaultLineupBuyIn();
 
 		# ddAll($lineups);
 
@@ -47,6 +49,7 @@ class SolverTopPlaysMlbController {
                              'timePeriod', 
                              'playerPoolId', 
                              'buyIn', 
+                             'unspentBuyIn',
                              'defaultLineupBuyIn',
                              'lineups', 
                              'players')); 
