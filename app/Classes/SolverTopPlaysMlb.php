@@ -147,6 +147,13 @@ class SolverTopPlaysMlb {
 		# ddAll($activeLineupPlayers);
 
 		$players = $this->getPlayers($timePeriod, $date);
+
+		foreach ($players as $player) {
+			$player->unspent_target_percentage = $this->addUnspentTargetPercentage($player, $activeLineupPlayers);
+		}
+
+		# ddAll($players);
+
 		$buyIn = $players[0]->buy_in;
 
 		$positions = $this->getPositions($timePeriod, $date);
@@ -182,6 +189,16 @@ class SolverTopPlaysMlb {
 
 		return array($lineups, $players);
 	}	
+
+	private function addUnspentTargetPercentage($player, $activeLineupPlayers) {
+		foreach ($activeLineupPlayers as $activeLineupPlayer) {
+			if ($activeLineupPlayer['id_position'] == $player->id_position) {
+				return $activeLineupPlayer['unspent_target_percentage'];
+			}
+		}
+
+		return $player->target_percentage;
+	}
 
 	private function getActiveLineupPlayers($activeLineups) {
 		$activeLineupPlayerIdPositions = [];
@@ -244,12 +261,12 @@ class SolverTopPlaysMlb {
 
 	private function sortLineups($lineups) {
 		foreach ($lineups as $key => $lineup) {
-			$targetPercentages[$key] = $lineup['target_percentage'];
+			$unspentTargetPercentages[$key] = $lineup['unspent_target_percentage'];
 			$biggestStacks[$key] = $lineup['biggest_stack'];
 			$salaries[$key] = $lineup['salary'];
 		}
 
-		array_multisort($targetPercentages, SORT_DESC, $biggestStacks, SORT_DESC, $salaries, SORT_DESC, $lineups);
+		array_multisort($unspentTargetPercentages, SORT_DESC, $biggestStacks, SORT_DESC, $salaries, SORT_DESC, $lineups);
 
 		return $lineups;
 	}
@@ -309,10 +326,10 @@ class SolverTopPlaysMlb {
 			$lineup['hash'] .= $player->mlb_player_id;
 		}
 
-		$lineup['target_percentage'] = 0;
+		$lineup['unspent_target_percentage'] = 0;
 
 		foreach ($lineup['players'] as $player) {
-			$lineup['target_percentage'] += $player->target_percentage;
+			$lineup['unspent_target_percentage'] += $player->unspent_target_percentage;
 		}
 
 		$lineup['biggest_stack'] = $this->calculateBiggestStack($lineup);
