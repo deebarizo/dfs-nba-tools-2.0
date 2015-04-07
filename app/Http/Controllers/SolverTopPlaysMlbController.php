@@ -27,13 +27,13 @@ class SolverTopPlaysMlbController {
 
 		$timePeriod = urlToUcWords($timePeriodInUrl);
 
+        $activeLineups = $solverTopPlaysMlb->getActiveLineups($timePeriod, $date);
+
 		if ($siteInUrl == 'dk') {
-			list($lineups, $players) = $solverTopPlaysMlb->generateLineups($timePeriod, $date);
+			list($lineups, $players) = $solverTopPlaysMlb->generateLineups($timePeriod, $date, $activeLineups);
 		}
 
         # ddAll($lineups);
-
-        $lineups = $solverTopPlaysMlb->addActiveLineups($lineups, $timePeriod, $date);
 
 		$playerPoolId = $lineups[0]['players'][0]->player_pool_id;
 		$buyIn = $lineups[0]['players'][0]->buy_in;
