@@ -171,7 +171,7 @@ class SolverTopPlaysMlb {
 		foreach ($players as $key => $player) {
 			$player->unspent_target_percentage = $this->addUnspentTargetPercentage($player, $activeLineupPlayers);
 
-			if ($player->unspent_target_percentage <= 0) {
+			if ($player->unspent_target_percentage <= 1) {
 				unset($players[$key]);
 			}
 		}
@@ -180,7 +180,7 @@ class SolverTopPlaysMlb {
 
 		$buyIn = $players[0]->buy_in;
 
-		$positions = $this->getPositions($timePeriod, $date);
+		$positions = $this->getPositions($players);
 
 		$activeLineupHashes = $this->getActiveLineupHashes($timePeriod, $date);
 
@@ -211,7 +211,7 @@ class SolverTopPlaysMlb {
 			$lineups[] = $activeLineup;
 		}
 
-		ddAll($lineups);
+		# ddAll($lineups);
 
 		return array($lineups, $players);
 	}	
@@ -539,7 +539,7 @@ class SolverTopPlaysMlb {
 		return $lineupPlayers;
 	}
 
-	private function getPositions($timePeriod, $date) {
+	private function getPositions($players) {
 		$positions = [
 			['name' => 'SP'],
 			['name' => 'SP'],
@@ -553,58 +553,26 @@ class SolverTopPlaysMlb {
 			['name' => 'OF']
 		];
 
-		$numOfPlayersInPositions = DB::table('player_pools')
-										->select(DB::raw('position as name, count(*) as number'))
-										->join('dk_mlb_players', 'dk_mlb_players.player_pool_id', '=', 'player_pools.id')
-										->where('time_period', $timePeriod)
-										->where('date', $date)
-										->where('target_percentage', '>', 0)
-										->groupBy('position')
-										->get();
-
-		$slashPositions = [];
-
-		foreach ($numOfPlayersInPositions as $key => $numOfPlayersInPosition) {
-			if (preg_match('/\//', $numOfPlayersInPosition->name)) {
-				$slashPositionName[0] = preg_replace('/(\w+)(\/)(\w+)/', '$1', $numOfPlayersInPosition->name);
-				$slashPositionName[1] = preg_replace('/(\w+)(\/)(\w+)/', '$3', $numOfPlayersInPosition->name);
-
-				$slashPosition = new \stdClass();
-				$slashPosition->name = $slashPositionName[0];
-				$slashPosition->number = $numOfPlayersInPosition->number;
-				$slashPositions[] = $slashPosition;
-
-				$slashPosition = new \stdClass();
-				$slashPosition->name = $slashPositionName[1];
-				$slashPosition->number = $numOfPlayersInPosition->number;
-				$slashPositions[] = $slashPosition;
-
-				unset($numOfPlayersInPositions[$key]);
-			}
-		}
-
-		foreach ($numOfPlayersInPositions as &$numOfPlayersInPosition) {
-			$numOfPlayersInPosition->number += $this->addSlashPosition($numOfPlayersInPosition, $slashPositions);
-		} 
-		unset($numOfPlayersInPosition);
-
 		foreach ($positions as &$position) {
-			$position['num_of_players'] = $this->addNumberOfPlayersPerPosition($position, $numOfPlayersInPositions);
+			$position['num_of_players'] = $this->addNumberOfPlayersPerPosition($position, $players);
 		}
 		unset($position);
 
-		# prf($numOfPlayersInPositions);
-		# ddAll($positions);
+		# ddAll($players);
 
 		return $positions;
 	}
 
-	private function addNumberOfPlayersPerPosition($position, $numOfPlayersInPositions) {
-		foreach ($numOfPlayersInPositions as $numOfPlayersInPosition) {
-			if ($position['name'] == $numOfPlayersInPosition->name) {
-				return $numOfPlayersInPosition->number;
+	private function addNumberOfPlayersPerPosition($position, $players) {
+		$numberOfPlayers = 0;
+
+		foreach ($players as $player) {
+			if ($player->position == $position['name']) {
+				$numberOfPlayers++;
 			}
 		}
+
+		return $numberOfPlayers;
 	}
 
 	private function addSlashPosition($numOfPlayersInPosition, $slashPositions) {
