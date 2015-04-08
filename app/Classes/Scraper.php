@@ -141,9 +141,11 @@ class Scraper {
 				    								 $player[$row]['name'],
 				    								 $player[$row]['position']);
 
-				    if (!is_int($oppTeamId)) {
+				    if (!is_int($oppTeamId) || is_null($oppTeamId)) {
 					    prf('Opp Team Id: '.$oppTeamId);
-					    prf($player[$row]);			    	
+					    prf($player[$row]);		
+
+					    $oppTeamId = 30;	    	
 				    }
 	
 				    $dkMlbPlayer = new DkMlbPlayer;
@@ -202,6 +204,7 @@ class Scraper {
 			$crawler->filter('tr')->each(function ($node) use($player, $row, $playerId, $mlbTeam, $request) {
 				if ($node->filter('td')->eq(1)->count()) {
 					$espnPlayerName = $node->filter('td')->eq(1)->text();
+					$espnPlayerName = preg_replace('/DL\d+/', '', $espnPlayerName);
 
 					if ($espnPlayerName == $player[$row]['name']) {
 						// Insert to mlb_players_teams

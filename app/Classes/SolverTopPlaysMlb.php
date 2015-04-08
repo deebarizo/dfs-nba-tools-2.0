@@ -74,18 +74,38 @@ class SolverTopPlaysMlb {
 	****************************************************************************************/
 
 	public function getActiveLineups($timePeriod, $date) {
-		$activeLineupPlayers = DB::table('lineups')
-							->select(DB::raw('player_pools.buy_in as daily_buy_in, dk_mlb_players.mlb_player_id, target_percentage, mlb_team_id, lineup_dk_mlb_players.position, salary, name, lineups.player_pool_id, abbr_dk, total_salary, hash, money, lineups.buy_in as lineup_buy_in, CONCAT_WS("", lineup_dk_mlb_players.mlb_player_id, lineup_dk_mlb_players.position) as id_position'))
-							->join('player_pools', 'player_pools.id', '=', 'lineups.player_pool_id')
+		$activeLineupPlayers = DB::table('player_pools')
+							->select(DB::raw('player_pools.buy_in as daily_buy_in, lineup_dk_mlb_players.mlb_player_id, lineup_dk_mlb_players.position, name, lineups.player_pool_id, total_salary, hash, money, lineups.buy_in as lineup_buy_in, CONCAT_WS("", lineup_dk_mlb_players.mlb_player_id, lineup_dk_mlb_players.position) as id_position'))
+							->join('lineups', 'player_pools.id', '=', 'lineups.player_pool_id')
 							->join('lineup_dk_mlb_players', 'lineup_dk_mlb_players.lineup_id', '=', 'lineups.id')
-							->leftJoin('dk_mlb_players', 'dk_mlb_players.mlb_player_id', '=', 'lineup_dk_mlb_players.mlb_player_id')
 							->leftJoin('mlb_players', 'mlb_players.id', '=', 'lineup_dk_mlb_players.mlb_player_id')
-							->leftJoin('mlb_teams', 'mlb_teams.id', '=', 'dk_mlb_players.mlb_team_id')
-							->where('time_period', $timePeriod)
-							->where('date', $date)
-							->where('active', 1)
+							->where('player_pools.time_period', $timePeriod)
+							->where('player_pools.date', $date)
+							->where('lineups.active', 1)
 							->get();
 
+		$dkMlbPlayers = DB::table('player_pools')
+						->select('*')
+						->leftJoin('dk_mlb_players', 'dk_mlb_players.player_pool_id', '=', 'player_pools.id')
+						->leftJoin('mlb_teams', 'mlb_teams.id', '=', 'dk_mlb_players.mlb_team_id')
+						->where('player_pools.time_period', $timePeriod)
+						->where('player_pools.date', $date)
+						->get();
+
+		foreach ($activeLineupPlayers as $activeLineupPlayer) {
+			foreach ($dkMlbPlayers as $dkMlbPlayer) {
+				if ($activeLineupPlayer->mlb_player_id == $dkMlbPlayer->mlb_player_id) {
+					$activeLineupPlayer->target_percentage = $dkMlbPlayer->target_percentage;
+					$activeLineupPlayer->abbr_dk = $dkMlbPlayer->abbr_dk;
+					$activeLineupPlayer->mlb_team_id = $dkMlbPlayer->mlb_team_id;
+					$activeLineupPlayer->salary = $dkMlbPlayer->salary;
+
+					break;
+				}
+			}
+		}
+
+		# prf($dkMlbPlayers);
 		# ddAll($activeLineupPlayers);
 
 		$activeLineupHashes = $this->getActiveLineupHashes($timePeriod, $date);
