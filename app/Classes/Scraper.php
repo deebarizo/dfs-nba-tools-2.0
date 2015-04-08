@@ -141,24 +141,53 @@ class Scraper {
 				    								 $player[$row]['name'],
 				    								 $player[$row]['position']);
 
+				    if (!is_int($teamId) || is_null($teamId)) {
+				    	prf('The following player\'s team id is null');
+					    
+					    prf($player[$row]);		
+
+					    $teamId = 30;	    	
+				    }
+
 				    if (!is_int($oppTeamId) || is_null($oppTeamId)) {
-					    prf('Opp Team Id: '.$oppTeamId);
+				    	prf('The following player\'s opp team id is null');
+					    
 					    prf($player[$row]);		
 
 					    $oppTeamId = 30;	    	
 				    }
-	
-				    $dkMlbPlayer = new DkMlbPlayer;
 
-				    $dkMlbPlayer->player_pool_id = $playerPoolId;
-				    $dkMlbPlayer->mlb_player_id = $playerId;
-				    $dkMlbPlayer->target_percentage = 0;
-				    $dkMlbPlayer->mlb_team_id = $teamId;
-				    $dkMlbPlayer->mlb_opp_team_id = $oppTeamId;
-				    $dkMlbPlayer->position = $player[$row]['position'];
-				    $dkMlbPlayer->salary = $player[$row]['salary'];
+				    $numOfTimesToSave = 1;
 
-				    $dkMlbPlayer->save();
+				    if (strpos($player[$row]['position'], '/')) {
+				    	$numOfTimesToSave = 2;
+				    }
+
+				    for ($i = 1; $i <= $numOfTimesToSave; $i++) { 
+				    	if ($numOfTimesToSave == 1) {
+				    		$positionToSave = $player[$row]['position'];
+				    	}
+
+				    	if ($numOfTimesToSave == 2 && $i == 1) {
+				    		$positionToSave = preg_replace('/(\w+)(\/)(\w+)/', '$1', $player[$row]['position']);
+				    	}
+
+				    	if ($numOfTimesToSave == 2 && $i == 2) {
+				    		$positionToSave = preg_replace('/(\w+)(\/)(\w+)/', '$3', $player[$row]['position']);
+				    	}
+
+				    	$dkMlbPlayer = new DkMlbPlayer;
+
+					    $dkMlbPlayer->player_pool_id = $playerPoolId;
+					    $dkMlbPlayer->mlb_player_id = $playerId;
+					    $dkMlbPlayer->target_percentage = 0;
+					    $dkMlbPlayer->mlb_team_id = $teamId;
+					    $dkMlbPlayer->mlb_opp_team_id = $oppTeamId;
+					    $dkMlbPlayer->position = $positionToSave;
+					    $dkMlbPlayer->salary = $player[$row]['salary'];
+
+					    $dkMlbPlayer->save();
+				    }
 				}
 
 				$row++;
