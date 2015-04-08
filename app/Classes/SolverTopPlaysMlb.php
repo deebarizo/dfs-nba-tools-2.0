@@ -168,8 +168,12 @@ class SolverTopPlaysMlb {
 
 		$players = $this->getPlayers($timePeriod, $date);
 
-		foreach ($players as $player) {
+		foreach ($players as $key => $player) {
 			$player->unspent_target_percentage = $this->addUnspentTargetPercentage($player, $activeLineupPlayers);
+
+			if ($player->unspent_target_percentage <= 0) {
+				unset($players[$key]);
+			}
 		}
 
 		# ddAll($players);
@@ -206,6 +210,8 @@ class SolverTopPlaysMlb {
 		foreach ($activeLineups as $activeLineup) {
 			$lineups[] = $activeLineup;
 		}
+
+		ddAll($lineups);
 
 		return array($lineups, $players);
 	}	
