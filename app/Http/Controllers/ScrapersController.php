@@ -28,8 +28,14 @@ use Illuminate\Support\Facades\Session;
 
 class ScrapersController {
 
-	public function dk_mlb_salaries(Request $request) {
+	public function fg_mlb_box_score_lines(Request $request) {
+		$scraper = new Scraper;
+		$date = $request->input('date');
 
+		$scraper->insertGames($date, 'DK', 'MLB');
+	}
+
+	public function dk_mlb_salaries(Request $request) {
 		$scraper = new Scraper;
 
 		$csvFile = $scraper->getCsvFile($request, 'DK', 'MLB');

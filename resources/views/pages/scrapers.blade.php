@@ -16,6 +16,7 @@
 			<h3>MLB</h3>
 
 			<ul>
+				<li><a target="_blank" href="/scrapers/fg_mlb_box_score_lines">FG Box Score Lines</a></li>
 				<li><a target="_blank" href="/scrapers/dk_mlb_salaries">DK Salaries</a></li>
 			</ul>			
 		</div>

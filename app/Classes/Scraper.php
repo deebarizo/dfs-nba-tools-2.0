@@ -27,6 +27,33 @@ use Illuminate\Support\Facades\Session;
 
 class Scraper {
 
+	/****************************************************************************************
+	MLB
+	****************************************************************************************/
+
+	public function insertGames($date, $site, $sport) {
+		$client = new Client();
+
+		$crawler = $client->getClient()->setDefaultOption('config/curl/'.CURLOPT_TIMEOUT, 100000);
+		$crawler = $client->request('GET', 'http://www.fangraphs.com/scoreboard.aspx?date='.$date);
+
+		$numOfLinks = $crawler->filter('td > a')->count();
+
+		$urls = [];
+
+		for ($i = 0; $i < $numOfLinks; $i++) { 
+			$link = $crawler->filter('td > a')->eq($i);
+
+			$anchorText = $link->text();
+
+			if ($anchorText == 'Box Score') {
+				$urls[] = $link->link()->getUri();
+			}
+		}
+
+		ddAll($urls);
+	}
+
 	public function getCsvFile($request, $site, $sport) {
 		$timePeriodInUrl = strtolower($request->input('time_period'));
 		$timePeriodInUrl = preg_replace('/\s/', '-', $timePeriodInUrl);
