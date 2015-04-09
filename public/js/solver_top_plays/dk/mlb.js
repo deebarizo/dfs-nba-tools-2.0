@@ -668,14 +668,14 @@ $(document).ready(function() {
 	    return a;
 	}		
 
-	function getActiveLineupsInfo($this, activeLineups, lineupBuyIn) {
-		$this.children("tbody").children("tr.roster-spot").find("td.roster-spot-name").each(function() {
-			var id = $(this).parent('tr.roster-spot').data('player-id');
-			var name = $(this).text();
-			var position = $(this).siblings('td.position').text();
-			var salary = $(this).next('td').text();
-			var teamAbbrBr = $(this).parent('tr.roster-spot').data('team-abbr-br');
-			var targetPercentage = $(this).parent('tr.roster-spot').data('target-percentage');
+	function getActiveLineupsInfo(activeLineup, activeLineups, lineupBuyIn) {
+		activeLineup.find('tr.roster-spot').each(function() {
+			var id = $(this).data('id');
+			var name = $(this).data('name');
+			var position = $(this).data('position');
+			var salary = $(this).data('salary');
+			var teamAbbrBr = $(this).data('team-abbr');
+			var targetPercentage = $(this).data('target-percentage');
 
 			var rosterSpot = { 
 				id: id,
@@ -686,6 +686,8 @@ $(document).ready(function() {
 				targetPercentage: targetPercentage,
 				lineupBuyIn: lineupBuyIn 
 			};
+
+			console.log(rosterSpot);
 
 			activeLineups.rosterSpots.push(rosterSpot);
 
@@ -791,12 +793,14 @@ $(document).ready(function() {
 		activeLineups.names = [];
 
 		$(".active-lineup").each(function() {
-			var lineupBuyIn = $(this).find("span.lineup-buy-in-amount").text();
+			var activeLineup = $(this);
 
-			var $this = $(this);
+			var lineupBuyIn = activeLineup.find('span.lineup-buy-in-amount').text();
 
-			getActiveLineupsInfo($this, activeLineups, lineupBuyIn);
+			getActiveLineupsInfo(activeLineup, activeLineups, lineupBuyIn);
 		});
+
+		// console.log(activeLineups);
 
 		activeLineups.names = arrayUnique(activeLineups.names);
 
@@ -844,6 +848,8 @@ $(document).ready(function() {
 		for (var i = 0; i < players.length; i++) {
 			players[i]['contents'] = players[i]['name']+'<br>('+players[i]['position']+') ('+players[i]['teamAbbrBr']+') ('+players[i]['salary']+')';
 		};
+
+		console.log(players);
 
 		return players;
 	}
