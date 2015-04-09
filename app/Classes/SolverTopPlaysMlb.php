@@ -178,7 +178,10 @@ class SolverTopPlaysMlb {
 
 		# ddAll($players);
 
-		$buyIn = $players[0]->buy_in;
+		foreach ($players as $player) {
+			$buyIn = $player->buy_in;
+			break;
+		}
 
 		$positions = $this->getPositions($players);
 
@@ -194,7 +197,8 @@ class SolverTopPlaysMlb {
 			} while ($lineup['salary'] > $this->maximumTotalSalary || 
 				$lineup['salary'] < $this->minimumTotalSalary || 
 				$this->getNumberOfDuplicatePlayers($lineup['players']) > 0 || 
-				$this->isActiveLineup($lineup['hash'], $activeLineupHashes));
+				$this->isActiveLineup($lineup['hash'], $activeLineupHashes) || 
+				$lineup['biggest_stack'] > 6);
 
 			# ddAll($lineup);
 
@@ -287,12 +291,12 @@ class SolverTopPlaysMlb {
 
 	private function sortLineups($lineups) {
 		foreach ($lineups as $key => $lineup) {
-			$unspentTargetPercentages[$key] = $lineup['unspent_target_percentage'];
 			$biggestStacks[$key] = $lineup['biggest_stack'];
+			$unspentTargetPercentages[$key] = $lineup['unspent_target_percentage'];
 			$salaries[$key] = $lineup['salary'];
 		}
 
-		array_multisort($unspentTargetPercentages, SORT_DESC, $biggestStacks, SORT_DESC, $salaries, SORT_DESC, $lineups);
+		array_multisort($biggestStacks, SORT_DESC, $unspentTargetPercentages, SORT_DESC, $salaries, SORT_DESC, $lineups);
 
 		return $lineups;
 	}
@@ -495,6 +499,8 @@ class SolverTopPlaysMlb {
 
 	private function sortLineup($lineupPlayers) { // http://stackoverflow.com/questions/11145393/sorting-a-php-array-of-arrays-by-custom-order
 		$positionOrder = ['SP', 'C', '1B', '2B', '3B', 'SS', 'OF'];
+
+		# ddAll($lineupPlayers);
 
 		usort($lineupPlayers, function ($a, $b) use($positionOrder) {
 			$posA = array_search($a->position, $positionOrder);
