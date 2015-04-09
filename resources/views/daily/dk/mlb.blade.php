@@ -24,6 +24,7 @@
 				<label>Positions</label>
 				<select class="form-control position-filter" style="width: 10%; margin-right: 20px">
 				  	<option value="All">All</option>
+				  	<option value="Hitters">Hitters</option>
 				  	<option value="SP">SP</option>
 				  	<option value="C">C</option>
 				  	<option value="1B">1B</option>

@@ -397,6 +397,12 @@ $(document).ready(function() {
 			return;
 		}
 
+		if (position == 'Hitters') {
+			if (playerRowPosition != 'SP' && playerRowPosition != 'RP') {
+				return;
+			}
+		}
+
 		playerRowPosition2 = playerRowPosition.replace(/\w+\//, '');
 
 		if (playerRowPosition2 == position) {
