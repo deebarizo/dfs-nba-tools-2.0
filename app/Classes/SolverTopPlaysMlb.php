@@ -33,10 +33,11 @@ class SolverTopPlaysMlb {
 	GLOBAL VARIABLES
 	****************************************************************************************/
 
-	private $lineupBuilderIterations = 50;
+	private $lineupBuilderIterations = 250;
 	private $targetPercentageModifier = 0;
 	private $minimumTotalSalary = 49500; 
 	private $maximumTotalSalary = 50000;
+	private $minimumStack = 4;
 
 
 	/****************************************************************************************
@@ -198,7 +199,8 @@ class SolverTopPlaysMlb {
 				$lineup['salary'] < $this->minimumTotalSalary || 
 				$this->getNumberOfDuplicatePlayers($lineup['players']) > 0 || 
 				$this->isActiveLineup($lineup['hash'], $activeLineupHashes) || 
-				$lineup['biggest_stack'] > 6);
+				$lineup['biggest_stack'] > 6 || 
+				$lineup['biggest_stack'] < $this->minimumStack);
 
 			# ddAll($lineup);
 

@@ -28,11 +28,15 @@ use Illuminate\Support\Facades\Session;
 
 class ScrapersController {
 
-	public function fg_mlb_box_score_lines(Request $request) {
+	public function bat_mlb_projections(Request $request) {
 		$scraper = new Scraper;
-		$date = $request->input('date');
 
-		$scraper->insertGames($date, 'DK', 'MLB');
+		$scraper->getBatCsvFile($request, 'DK', 'MLB');
+
+		$message = 'Success!';
+		Session::flash('alert', 'info');
+
+		return redirect('scrapers/bat_mlb_projections')->with('message', $message);	 
 	}
 
 	public function dk_mlb_salaries(Request $request) {
@@ -55,6 +59,13 @@ class ScrapersController {
 		Session::flash('alert', 'info');
 
 		return redirect('scrapers/dk_mlb_salaries')->with('message', $message);	 
+	}
+
+	public function fg_mlb_box_score_lines(Request $request) {
+		$scraper = new Scraper;
+		$date = $request->input('date');
+
+		$scraper->insertGames($date, 'DK', 'MLB');
 	}
 
 	public function br_nba_box_score_lines(Request $request) {

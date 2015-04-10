@@ -31,6 +31,18 @@ class Scraper {
 	MLB
 	****************************************************************************************/
 
+	public function getBatCsvFile($request, $site, $sport) {
+		$playerTypes = ['hitters', 'pitchers'];
+
+		foreach ($playerTypes as $playerType) {
+			$csvDirectory = 'files/'.strtolower($site).'/'.strtolower($sport).'/bat/'.$playerType;
+			$csvName = $request->input('date').'.csv';
+			$csvFile = $csvDirectory . $csvName;
+
+			Input::file('csv_'.$playerType)->move($csvDirectory, $csvName);			
+		}
+	}
+
 	public function insertGames($date, $site, $sport) {
 		$client = new Client();
 
@@ -60,8 +72,8 @@ class Scraper {
 
 		$csvDirectory = 'files/'.strtolower($site).'/'.strtolower($sport).'/'.$timePeriodInUrl.'/';
 		$csvName = $request->input('date').'.csv';
-		$csvFile = $csvDirectory.$csvName;
-
+		$csvFile = $csvDirectory . $csvName;
+ 
 		Input::file('csv')->move($csvDirectory, $csvName);
 
 		return $csvFile;
