@@ -14,12 +14,13 @@ $(document).ready(function() {
 	$('#daily').dataTable({
 		"scrollY": "600px",
 		"paging": false,
-		"order": [[5, "desc"]],
+		"order": [[7, "desc"]],
 		"columns": [
-		    { "width": "40%" },
+		    { "width": "30%" },
 		    { "width": "10%" },
 		    { "width": "10%", "orderDataType": "dom-text-numeric" },
 		    { "width": "10%" },
+		   	{ "width": "10%" },
 		   	{ "width": "10%" },
 		   	{ "width": "10%" },
 		   	{ "width": "10%" }

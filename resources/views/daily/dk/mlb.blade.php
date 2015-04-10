@@ -81,6 +81,7 @@
 						<th>Target %</th>
 						<th>Team</th>
 						<th>Pos</th>
+						<th>Bat FPTS</th>
 						<th>Sal</th>
 						<th>Bat VR</th>
 					</tr>
@@ -114,6 +115,7 @@
 			    			<td class="target-percentage-amount"><span class="target-percentage-amount">{{ $player->target_percentage }}</span></td>
 					    	<td>{{ $player->abbr_dk }}</td>
 					    	<td>{{ $player->position }}</td>
+					    	<td>{{ $player->bat_fpts }}</td>
 					    	<td>{{ $player->salary }}</td>
 					    	<td>{{ $player->bat_vr }}</td>
 					    </tr>

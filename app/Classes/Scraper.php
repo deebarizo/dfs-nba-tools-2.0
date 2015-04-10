@@ -205,6 +205,10 @@ class Scraper {
 				    for ($i = 1; $i <= $numOfTimesToSave; $i++) { 
 				    	if ($numOfTimesToSave == 1) {
 				    		$positionToSave = $player[$row]['position'];
+
+				    		if ($positionToSave == 'RP') {
+				    			$positionToSave = 'SP';
+				    		}
 				    	}
 
 				    	if ($numOfTimesToSave == 2 && $i == 1) {

@@ -58,7 +58,7 @@ class StatBuilder {
         # ddAll($batProjections);
 
         foreach ($players as &$player) {
-            $player->bat_vr = $this->getBatVr($batProjections, $player, $date);
+            list($player->bat_vr, $player->bat_fpts) = $this->getBatProjections($batProjections, $player, $date);
         } unset($player);
 
         # ddAll($players);
@@ -66,28 +66,42 @@ class StatBuilder {
         return $players;
     }
 
-    private function getBatVr($batProjections, $player, $date) {
+    private function getBatProjections($batProjections, $player, $date) {
+        $name = $this->changeDkNameToBatName($player->name);
+
         // Hitters
 
         if ($player->position != 'SP' && $player->position != 'RP') {
             foreach ($batProjections['hitters'] as $batProjection) {
-                if ($batProjection['name'] == $player->name) {
-                    return numFormat($batProjection['dk_pts'] / ($player->salary / 1000), 2);
+                if ($batProjection['name'] == $name) {
+                    $batVr = numFormat($batProjection['dk_pts'] / ($player->salary / 1000), 2);
+
+                    return array($batVr, numFormat($batProjection['dk_pts'], 2));
                 }
             }  
 
-            return 0;
+            return array(0, 0);
         }
 
         // Pitchers
 
         foreach ($batProjections['pitchers'] as $batProjection) {
-            if ($batProjection['name'] == $player->name) {
-                return numFormat($batProjection['dk_pts'] / ($player->salary / 1000), 2);
+            if ($batProjection['name'] == $name) {
+                $batVr = numFormat($batProjection['dk_pts'] / ($player->salary / 1000), 2);
+
+                return array($batVr, numFormat($batProjection['dk_pts'], 2));
             }
         }  
 
-        return 0;
+        return array(0, 0);
+    }
+
+    private function changeDkNameToBatName($dkName) {
+        if ($dkName == 'Jonathon Niese') {
+            return 'Jon Niese';
+        }
+
+        return $dkName;
     }
 
     private function parseCsvFile($playerType, $date) {
