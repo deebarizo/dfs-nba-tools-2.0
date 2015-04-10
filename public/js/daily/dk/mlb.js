@@ -17,11 +17,12 @@ $(document).ready(function() {
 		"order": [[5, "desc"]],
 		"columns": [
 		    { "width": "40%" },
-		    { "width": "12%" },
-		    { "width": "12%", "orderDataType": "dom-text-numeric" },
-		    { "width": "12%" },
-		   	{ "width": "12%" },
-		   	{ "width": "12%" }
+		    { "width": "10%" },
+		    { "width": "10%", "orderDataType": "dom-text-numeric" },
+		    { "width": "10%" },
+		   	{ "width": "10%" },
+		   	{ "width": "10%" },
+		   	{ "width": "10%" }
 		]
 	});
 

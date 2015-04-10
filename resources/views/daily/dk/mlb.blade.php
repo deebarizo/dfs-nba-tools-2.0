@@ -82,6 +82,7 @@
 						<th>Team</th>
 						<th>Pos</th>
 						<th>Sal</th>
+						<th>Bat VR</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -114,6 +115,7 @@
 					    	<td>{{ $player->abbr_dk }}</td>
 					    	<td>{{ $player->position }}</td>
 					    	<td>{{ $player->salary }}</td>
+					    	<td>{{ $player->bat_vr }}</td>
 					    </tr>
 					@endforeach
 				</tbody>

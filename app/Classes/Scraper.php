@@ -35,7 +35,7 @@ class Scraper {
 		$playerTypes = ['hitters', 'pitchers'];
 
 		foreach ($playerTypes as $playerType) {
-			$csvDirectory = 'files/'.strtolower($site).'/'.strtolower($sport).'/bat/'.$playerType;
+			$csvDirectory = 'files/'.strtolower($site).'/'.strtolower($sport).'/bat/'.$playerType.'/';
 			$csvName = $request->input('date').'.csv';
 			$csvFile = $csvDirectory . $csvName;
 

@@ -49,7 +49,74 @@ class StatBuilder {
             }
         } unset($player);
 
+        $playerTypes = ['hitters', 'pitchers'];
+
+        foreach ($playerTypes as $playerType) {
+            $batProjections[$playerType] = $this->parseCsvFile($playerType, $date);
+        }
+
+        # ddAll($batProjections);
+
+        foreach ($players as &$player) {
+            $player->bat_vr = $this->getBatVr($batProjections, $player, $date);
+        } unset($player);
+
+        # ddAll($players);
+
         return $players;
+    }
+
+    private function getBatVr($batProjections, $player, $date) {
+        // Hitters
+
+        if ($player->position != 'SP' && $player->position != 'RP') {
+            foreach ($batProjections['hitters'] as $batProjection) {
+                if ($batProjection['name'] == $player->name) {
+                    return numFormat($batProjection['dk_pts'] / ($player->salary / 1000), 2);
+                }
+            }  
+
+            return 0;
+        }
+
+        // Pitchers
+
+        foreach ($batProjections['pitchers'] as $batProjection) {
+            if ($batProjection['name'] == $player->name) {
+                return numFormat($batProjection['dk_pts'] / ($player->salary / 1000), 2);
+            }
+        }  
+
+        return 0;
+    }
+
+    private function parseCsvFile($playerType, $date) {
+        $csvFile = 'files/dk/mlb/bat/'.$playerType.'/'.$date.'.csv';
+
+        if ($playerType == 'hitters') {
+            $dkPtsIndex = 5;
+        }
+
+        if ($playerType == 'pitchers') {
+            $dkPtsIndex = 6;
+        }
+
+        if (($handle = fopen($csvFile, 'r')) !== false) {
+            $row = 0;
+
+            while (($csvData = fgetcsv($handle, 5000, ',')) !== false) {
+                if ($row != 0) {
+                    $players[$row] = array(
+                        'name' => $csvData[1],
+                        'dk_pts' => $csvData[$dkPtsIndex]
+                    );
+                }
+
+                $row++;
+            }
+        }
+
+        return $players;           
     }
 
     public function getTeamsForDkMlbDaily($timePeriod, $date) {
