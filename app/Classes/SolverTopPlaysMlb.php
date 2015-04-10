@@ -95,7 +95,7 @@ class SolverTopPlaysMlb {
 
 		foreach ($activeLineupPlayers as $activeLineupPlayer) {
 			foreach ($dkMlbPlayers as $dkMlbPlayer) {
-				if ($activeLineupPlayer->mlb_player_id == $dkMlbPlayer->mlb_player_id) {
+				if ($activeLineupPlayer->mlb_player_id == $dkMlbPlayer->mlb_player_id && $activeLineupPlayer->position == $dkMlbPlayer->position) {
 					$activeLineupPlayer->target_percentage = $dkMlbPlayer->target_percentage;
 					$activeLineupPlayer->abbr_dk = $dkMlbPlayer->abbr_dk;
 					$activeLineupPlayer->mlb_team_id = $dkMlbPlayer->mlb_team_id;
@@ -200,7 +200,8 @@ class SolverTopPlaysMlb {
 				$this->getNumberOfDuplicatePlayers($lineup['players']) > 0 || 
 				$this->isActiveLineup($lineup['hash'], $activeLineupHashes) || 
 				$lineup['biggest_stack'] > 6 || 
-				$lineup['biggest_stack'] < $this->minimumStack);
+				$lineup['biggest_stack'] < $this->minimumStack || 
+				$lineup['num_of_teams_among_hitters'] < 3);
 
 			# ddAll($lineup);
 
@@ -365,6 +366,7 @@ class SolverTopPlaysMlb {
 		}
 
 		$lineup['biggest_stack'] = $this->calculateBiggestStack($lineup);
+		$lineup['num_of_teams_among_hitters'] = $this->calculateNumOfTeamsAmongHitters($lineup);
 
 		$lineup['css_class_edit_info'] = 'edit-lineup-buy-in-hidden';
 		$lineup['css_class_active_lineup'] = '';
@@ -380,6 +382,20 @@ class SolverTopPlaysMlb {
 		# ddAll($lineup['players']);
 
 		return $lineup;
+	}
+
+	private function calculateNumOfTeamsAmongHitters($lineup) {
+		$teamIds = [];
+
+		foreach ($lineup['players'] as $player) {
+			if ($player->position != 'SP') {
+				$teamIds[] = $player->mlb_team_id;
+			}
+		}
+
+		$teamIds = array_unique($teamIds);
+
+		return count($teamIds);
 	}
 
 	private function calculateBiggestStack($lineup) {
