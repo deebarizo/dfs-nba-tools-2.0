@@ -676,6 +676,7 @@ $(document).ready(function() {
 			var salary = $(this).data('salary');
 			var teamAbbrBr = $(this).data('team-abbr');
 			var targetPercentage = $(this).data('target-percentage');
+			var idPosition = id+position;
 
 			var rosterSpot = { 
 				id: id,
@@ -684,14 +685,15 @@ $(document).ready(function() {
 				salary: salary,
 				teamAbbrBr: teamAbbrBr,
 				targetPercentage: targetPercentage,
-				lineupBuyIn: lineupBuyIn 
+				lineupBuyIn: lineupBuyIn,
+				idPosition: idPosition
 			};
 
-			console.log(rosterSpot);
+			// console.log(rosterSpot);
 
 			activeLineups.rosterSpots.push(rosterSpot);
 
-			activeLineups.names.push(name);
+			activeLineups.idPositions.push(idPosition);
 		});			
 	}
 
@@ -790,7 +792,7 @@ $(document).ready(function() {
 	function getPlayerPercentages() {
 		var activeLineups = {};
 		activeLineups.rosterSpots = [];
-		activeLineups.names = [];
+		activeLineups.idPositions = [];
 
 		$(".active-lineup").each(function() {
 			var activeLineup = $(this);
@@ -802,17 +804,18 @@ $(document).ready(function() {
 
 		// console.log(activeLineups);
 
-		activeLineups.names = arrayUnique(activeLineups.names);
+		activeLineups.idPositions = arrayUnique(activeLineups.idPositions);
 
 		var players = [];
 
-		for (var i = 0; i < activeLineups.names.length; i++) {
+		for (var i = 0; i < activeLineups.idPositions.length; i++) {
 			players[i] = {};
 
-			players[i]['name'] = activeLineups.names[i];
+			players[i]['idPosition'] = activeLineups.idPositions[i];
 
 			for (var n = 0; n < activeLineups.rosterSpots.length; n++) {
-				if (players[i]['name'] == activeLineups.rosterSpots[n]['name']) {
+				if (players[i]['idPosition'] == activeLineups.rosterSpots[n]['idPosition']) {
+					players[i]['name'] = activeLineups.rosterSpots[n]['name'];
 					players[i]['id'] = activeLineups.rosterSpots[n]['id'];
 					players[i]['position'] = activeLineups.rosterSpots[n]['position'];
 					players[i]['salary'] = activeLineups.rosterSpots[n]['salary'];
@@ -826,7 +829,7 @@ $(document).ready(function() {
 			var totalBuyInOfPlayer = 0;
 
 			for (var n = 0; n < activeLineups.rosterSpots.length; n++) {
-				if (players[i]['name'] == activeLineups.rosterSpots[n]['name']) {
+				if (players[i]['idPosition'] == activeLineups.rosterSpots[n]['idPosition']) {
 					totalBuyInOfPlayer += parseInt(activeLineups.rosterSpots[n]['lineupBuyIn']);
 				} 
 			};

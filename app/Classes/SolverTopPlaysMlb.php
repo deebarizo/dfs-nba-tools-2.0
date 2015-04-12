@@ -33,11 +33,11 @@ class SolverTopPlaysMlb {
 	GLOBAL VARIABLES
 	****************************************************************************************/
 
-	private $lineupBuilderIterations = 250;
+	private $lineupBuilderIterations = 10;
 	private $targetPercentageModifier = 0;
 	private $minimumTotalSalary = 49500; 
 	private $maximumTotalSalary = 50000;
-	private $minimumStack = 4;
+	private $minimumStack = 6;
 
 
 	/****************************************************************************************
@@ -172,7 +172,7 @@ class SolverTopPlaysMlb {
 		foreach ($players as $key => $player) {
 			$player->unspent_target_percentage = $this->addUnspentTargetPercentage($player, $activeLineupPlayers);
 
-			if ($player->unspent_target_percentage <= 1) {
+			if ($player->unspent_target_percentage <= $this->targetPercentageModifier) {
 				unset($players[$key]);
 			}
 		}
@@ -201,7 +201,8 @@ class SolverTopPlaysMlb {
 				$this->isActiveLineup($lineup['hash'], $activeLineupHashes) || 
 				$lineup['biggest_stack'] > 6 || 
 				$lineup['biggest_stack'] < $this->minimumStack || 
-				$lineup['num_of_teams_among_hitters'] < 3);
+				$lineup['num_of_teams_among_hitters'] < 3 || 
+				$this->invalidPitcher($lineup));
 
 			# ddAll($lineup);
 
@@ -222,6 +223,25 @@ class SolverTopPlaysMlb {
 
 		return array($lineups, $players);
 	}	
+
+	private function invalidPitcher($lineup) {
+		# ddAll($lineup);
+
+		$pitcherOppTeamIds = [
+			$lineup['players'][0]->mlb_opp_team_id,
+			$lineup['players'][1]->mlb_opp_team_id
+		];
+
+		foreach ($pitcherOppTeamIds as $pitcherOppTeamId) {
+			foreach ($lineup['players'] as $lineupPlayer) {
+				if ($lineupPlayer->mlb_team_id == $pitcherOppTeamId) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
 
 	private function addUnspentTargetPercentage($player, $activeLineupPlayers) {
 		foreach ($activeLineupPlayers as $activeLineupPlayer) {
@@ -415,25 +435,18 @@ class SolverTopPlaysMlb {
 	}
 
 	private function getNumberOfDuplicatePlayers($lineupPlayers) {
+		$mlbPlayerIds = [];
 
-		// check SP
-
-		if ($lineupPlayers[0]->mlb_player_id == $lineupPlayers[1]->mlb_player_id) {
-			return 1;
+		foreach ($lineupPlayers as $lineupPlayer) {
+			$mlbPlayerIds[] = $lineupPlayer->mlb_player_id;
 		}
 
-		// check OF
+		$countMlbPlayerIds = array_count_values($mlbPlayerIds);
 
-		if ($lineupPlayers[7]->mlb_player_id == $lineupPlayers[8]->mlb_player_id) {
-			return 1;
-		}
-
-		if ($lineupPlayers[7]->mlb_player_id == $lineupPlayers[9]->mlb_player_id) {
-			return 1;
-		}
-
-		if ($lineupPlayers[8]->mlb_player_id == $lineupPlayers[9]->mlb_player_id) {
-			return 1;
+		foreach ($countMlbPlayerIds as $countMlbPlayerId) {
+			if ($countMlbPlayerId > 1) {
+				return 1;
+			}
 		}
 
 		return 0;
@@ -613,7 +626,7 @@ class SolverTopPlaysMlb {
 
 	private function getPlayers($timePeriod, $date) {
 		$players = DB::table('player_pools')
-						->select('buy_in', 'mlb_player_id', 'target_percentage', 'mlb_team_id', 'position', 'salary', 'name', 'player_pool_id', 'abbr_dk')
+						->select('buy_in', 'mlb_player_id', 'target_percentage', 'mlb_team_id', 'mlb_opp_team_id', 'position', 'salary', 'name', 'player_pool_id', 'abbr_dk')
 						->join('dk_mlb_players', 'dk_mlb_players.player_pool_id', '=', 'player_pools.id')
 						->join('mlb_players', 'mlb_players.id', '=', 'dk_mlb_players.mlb_player_id')
 						->join('mlb_teams', 'mlb_teams.id', '=', 'dk_mlb_players.mlb_team_id')
