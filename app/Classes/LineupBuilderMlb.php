@@ -21,7 +21,38 @@ class LineupBuilderMlb {
 
     /****************************************************************************************
     CREATE LINEUPS
-    ****************************************************************************************/    
+    ****************************************************************************************/   
+
+    public function addHtmlToPlayersInPlayerPool($players, $lineup) {
+        # ddAll($lineup);
+
+        foreach ($players as &$player) {
+            $player = $this->checkLineupForPlayer($lineup, $player);
+
+            # ddAll($player);
+        }
+        unset($player);
+
+        # ddAll($players);
+
+        return $players;
+    } 
+
+    private function checkLineupForPlayer($lineup, $player) {
+        foreach ($lineup['players'] as $lineupPlayer) {
+            if ($lineupPlayer->mlb_player_id == $player->mlb_player_id) {
+                $player->strikethrough_css_class = 'available-player-row-strikethrough';
+                $player->update_icon = '<div class="circle-minus-icon"><span class="glyphicon glyphicon-minus"></span></div>';
+
+                return $player;
+            }
+        }
+
+        $player->strikethrough_css_class = '';
+        $player->update_icon = '<div class="circle-plus-icon"><span class="glyphicon glyphicon-plus"></span></div>';
+
+        return $player;  
+    }
 
     public function getLineup($siteInUrl, $timePeriodInUrl, $date, $hash) {
         $lineup = [];
@@ -41,10 +72,27 @@ class LineupBuilderMlb {
 
         $lineup['players'] = $this->getPlayersInLineup($lineup['metadata']->id, $lineup['metadata']->player_pool_id);
 
+        foreach ($lineup['players'] as $lineupPlayer) {
+            $lineupPlayer->remove_player_icon = '<div class="circle-minus-icon"><span class="glyphicon glyphicon-minus"></span></div>';
+        }
+
+        ddAll($lineup);
+
         return $lineup;
     }
 
-    
+    private function getPlayersInLineup($lineupId, $playerPoolId) {
+        return DB::table('lineups')
+            ->join('lineup_dk_mlb_players', 'lineup_dk_mlb_players.lineup_id', '=', 'lineups.id')
+            ->join('dk_mlb_players', 'dk_mlb_players.mlb_player_id', '=', 'lineup_dk_mlb_players.mlb_player_id')
+            ->join('mlb_players', 'mlb_players.id', '=', 'dk_mlb_players.mlb_player_id')
+            ->join('mlb_teams', 'mlb_teams.id', '=', 'dk_mlb_players.mlb_team_id')
+            ->select('*')
+            ->where('lineups.id', $lineupId)
+            ->where('dk_mlb_players.player_pool_id', $playerPoolId)
+            ->where('lineups.active', 1)
+            ->get();
+    }
 
     public function createEmptyLineup($siteInUrl, $timePeriodInUrl, $date) {
         $lineup = [];

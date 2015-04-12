@@ -50,9 +50,9 @@ class LineupBuilderController {
 
         if (!is_null($hash)) {
             $lineup = $lineupBuilderMlb->getLineup($siteInUrl, $timePeriodInUrl, $date, $hash);
-
-            $lineup = $lineupBuilderMlb->addHtmlToImportedLineup($lineup);
         }
+
+        $players = $lineupBuilderMlb->addHtmlToPlayersInPlayerPool($players, $lineup);
 
         ddAll($lineup);
     }
@@ -83,7 +83,7 @@ class LineupBuilderController {
 
         $players = $this->addHtmlToEachAvailablePlayer($players, $lineup);
 
-        # dd($lineup);
+        # ddAll($players);
 
         return view('lineup_builder/create_lineup', compact('date', 
                                                             'lineup', 
