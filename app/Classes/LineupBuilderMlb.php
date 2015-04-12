@@ -119,7 +119,7 @@ class LineupBuilderMlb {
                 $lineup['players'][$i] = new \stdClass();
                 $lineup['players'][$i]->position = $dkPositions[$i];
                 $lineup['players'][$i]->player_pool_id = '';
-                $lineup['players'][$i]->player_id = '';
+                $lineup['players'][$i]->mlb_player_id = '';
                 $lineup['players'][$i]->name = '';
                 $lineup['players'][$i]->salary = '';
                 $lineup['players'][$i]->remove_player_icon = '';

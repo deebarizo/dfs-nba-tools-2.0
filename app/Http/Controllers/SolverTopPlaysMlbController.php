@@ -47,6 +47,7 @@ class SolverTopPlaysMlbController {
         return view('solver_top_plays/dk/mlb', 
                      compact('date', 
                              'timePeriod', 
+                             'timePeriodInUrl',
                              'playerPoolId', 
                              'buyIn', 
                              'unspentBuyIn',
@@ -68,7 +69,7 @@ class SolverTopPlaysMlbController {
         $addOrRemove = $request->input('addOrRemove');
         $players = $request->input('players');
 
-        prf($players);
+        // prf($players);
 
         $solverTopPlaysMlb = new SolverTopPlaysMlb;
 

@@ -53,7 +53,10 @@
 				</thead>
 				<tbody>
 					@foreach ($lineup['players'] as $player)
-						<tr class="lineup-row lineup-player-row" data-player-pool-id="{{ $player->player_pool_id }}" data-player-id="{{ $player->mlb_player_id }}">
+						<tr class="lineup-row lineup-player-row" 
+							data-player-pool-id="{{ $player->player_pool_id }}" 
+							data-player-id="{{ $player->mlb_player_id }}" 
+							data-position="{{ $player->position }}">
 							<td style="width: 10%" class="lineup-player-position">{{ $player->position }}</td>
 							<td class="lineup-player-name">{{ $player->name }}</td>
 							<td style="width: 15%" class="lineup-player-salary">{{ $player->salary }}</td>
@@ -89,5 +92,5 @@
 
 	</script>
 
-	<script src="/js/lineup_builder.js"></script>
+	<script src="/js/lineup_builder/dk/mlb.js"></script>
 @stop
