@@ -9,7 +9,10 @@
 	
 	<div class="row">
 		<div class="col-lg-12">
-			<h3>{{ $date }} {{ $timePeriod }} | <a target="_blank" href="/solver_top_plays/dk/mlb/{{ $timePeriodInUrl }}/{{ $date }}">Solver</a></h3>
+			<h3>{{ $timePeriod }} {{ $date }} | 
+				<a target="_blank" href="/solver_top_plays/dk/mlb/{{ $timePeriodInUrl }}/{{ $date }}">Solver</a> | 
+				<a target="_blank" href="/lineup_builder/dk/mlb/{{ $timePeriodInUrl }}/{{ $date }}">Lineup Builder</a>
+			</h3>
 
 			<form class="form-inline" style="margin: 0 0 10px 0">
 

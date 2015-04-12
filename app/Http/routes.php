@@ -133,6 +133,9 @@ $router->get('lineup_builder/{date}', 'LineupBuilderController@showActiveLineups
 $router->get('lineup_builder/{date}/create', 'LineupBuilderController@createLineup');
 $router->get('lineup_builder/{date}/create/{hash}', 'LineupBuilderController@createLineup');
 
+$router->get('lineup_builder/{siteInUrl}/mlb/{timePeriodInUrl}/{date}', 'LineupBuilderController@createLineupMlb');
+$router->get('lineup_builder/{siteInUrl}/mlb/{timePeriodInUrl}/{date}/{hash}', 'LineupBuilderController@createLineupMlb');
+
 
 /****************************************************************************************
 MISC

@@ -9,12 +9,15 @@ use App\Models\PlayerPool;
 use App\Models\PlayerFd;
 use App\Models\DailyFdFilter;
 use App\Models\TeamFilter;
-use App\Classes\Solver;
-use App\Classes\SolverTopPlays;
+
 use App\Models\Lineup;
 use App\Models\LineupPlayer;
 use App\Models\DefaultLineupBuyIn;
+
+use App\Classes\Solver;
+use App\Classes\SolverTopPlays;
 use App\Classes\LineupBuilder;
+use App\Classes\LineupBuilderMlb;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\RunFDNBASalariesScraperRequest;
@@ -31,30 +34,32 @@ date_default_timezone_set('America/Chicago');
 class LineupBuilderController {
 
     /****************************************************************************************
-    SHOW ACTIVE LINEUPS
+    CREATE LINEUP MLB
     ****************************************************************************************/
 
-    public function showActiveLineups($date = 'default') {
-        if ($date == 'default') {
-            $date = getDefaultDate();
+    public function createLineupMlb($siteInUrl, $timePeriodInUrl, $date, $hash = null) {
+        $lineupBuilderMlb = new LineupBuilderMlb;
 
-            return redirect('lineup_builder/'.$date.'/');
+        $players = $lineupBuilderMlb->getPlayersInPlayerPool($siteInUrl, $timePeriodInUrl, $date);
+
+        # ddAll($players);
+
+        if (is_null($hash)) {
+            $lineup = $lineupBuilderMlb->createEmptyLineup($siteInUrl, $timePeriodInUrl, $date);
         }
 
-        $lineupBuilder = new LineupBuilder;
+        if (!is_null($hash)) {
+            $lineup = $lineupBuilderMlb->getLineup($siteInUrl, $timePeriodInUrl, $date, $hash);
 
-        $lineups = $lineupBuilder->getLineups($date);
+            $lineup = $lineupBuilderMlb->addHtmlToImportedLineup($lineup);
+        }
 
-        $name = 'Lineup Builder';
-
-        # ddAll($lineups);
-
-        return view('lineup_builder', compact('date', 'lineups', 'name'));
+        ddAll($lineup);
     }
 
 
     /****************************************************************************************
-    CREATE LINEUP
+    CREATE LINEUP NBA
     ****************************************************************************************/
 
     public function createLineup($date, $hash = null) {
@@ -141,6 +146,29 @@ class LineupBuilderController {
         $availablePlayer->update_icon = '<div class="circle-plus-icon"><span class="glyphicon glyphicon-plus"></span></div>';
 
         return $availablePlayer;  
+    }
+
+
+    /****************************************************************************************
+    SHOW ACTIVE LINEUPS
+    ****************************************************************************************/
+
+    public function showActiveLineups($date = 'default') {
+        if ($date == 'default') {
+            $date = getDefaultDate();
+
+            return redirect('lineup_builder/'.$date.'/');
+        }
+
+        $lineupBuilder = new LineupBuilder;
+
+        $lineups = $lineupBuilder->getLineups($date);
+
+        $name = 'Lineup Builder';
+
+        # ddAll($lineups);
+
+        return view('lineup_builder', compact('date', 'lineups', 'name'));
     }
 
 }
