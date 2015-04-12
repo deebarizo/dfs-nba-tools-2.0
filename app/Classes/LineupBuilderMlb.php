@@ -57,7 +57,8 @@ class LineupBuilderMlb {
     public function getLineup($siteInUrl, $timePeriodInUrl, $date, $hash) {
         $lineup = [];
 
-        $lineup['h2_tag'] = $this->createH2Tag($siteInUrl, $timePeriodInUrl, $date, $hash);
+        $lineup['h2_tag'] = $this->createH2Tag($siteInUrl, $hash);
+        $lineup['sub_heading'] = $this->createSubHeading($timePeriodInUrl, $date);
 
         $lineup['metadata'] = DB::table('lineups')
             ->join('player_pools', 'player_pools.id', '=', 'lineups.player_pool_id')
@@ -76,28 +77,36 @@ class LineupBuilderMlb {
             $lineupPlayer->remove_player_icon = '<div class="circle-minus-icon"><span class="glyphicon glyphicon-minus"></span></div>';
         }
 
-        ddAll($lineup);
+        # ddAll($lineup);
 
         return $lineup;
     }
 
     private function getPlayersInLineup($lineupId, $playerPoolId) {
-        return DB::table('lineups')
-            ->join('lineup_dk_mlb_players', 'lineup_dk_mlb_players.lineup_id', '=', 'lineups.id')
-            ->join('dk_mlb_players', 'dk_mlb_players.mlb_player_id', '=', 'lineup_dk_mlb_players.mlb_player_id')
-            ->join('mlb_players', 'mlb_players.id', '=', 'dk_mlb_players.mlb_player_id')
-            ->join('mlb_teams', 'mlb_teams.id', '=', 'dk_mlb_players.mlb_team_id')
-            ->select('*')
-            ->where('lineups.id', $lineupId)
-            ->where('dk_mlb_players.player_pool_id', $playerPoolId)
-            ->where('lineups.active', 1)
-            ->get();
+        if (!is_int($lineupId)) {
+            echo 'Lineup ID must be an integer.'; exit();
+        }
+
+        if (!is_int($playerPoolId)) {
+            echo 'Player Pool ID must be an integer.'; exit();
+        }
+
+        return DB::select(DB::raw('select * FROM lineups 
+            JOIN lineup_dk_mlb_players ON lineup_dk_mlb_players.lineup_id = lineups.id
+            JOIN dk_mlb_players ON dk_mlb_players.mlb_player_id = lineup_dk_mlb_players.mlb_player_id 
+                AND dk_mlb_players.position = lineup_dk_mlb_players.position
+            JOIN mlb_players ON mlb_players.id = dk_mlb_players.mlb_player_id
+            JOIN mlb_teams ON mlb_teams.id = dk_mlb_players.mlb_team_id
+            WHERE lineups.id = '.$lineupId.'
+            AND dk_mlb_players.player_pool_id = '.$playerPoolId.'
+            AND lineups.active = 1'));
     }
 
     public function createEmptyLineup($siteInUrl, $timePeriodInUrl, $date) {
         $lineup = [];
 
-        $lineup['h2_tag'] = $this->createH2Tag($siteInUrl, $timePeriodInUrl, $date, $hash = 'null');
+        $lineup['h2_tag'] = $this->createH2Tag($siteInUrl, $hash = 'null');
+        $lineup['sub_heading'] = $this->createSubHeading($timePeriodInUrl, $date);
 
         $lineup['metadata'] = new \stdClass();
         $lineup['metadata']->total_salary = 0;
@@ -120,7 +129,7 @@ class LineupBuilderMlb {
         }
     }
 
-    private function createH2Tag($siteInUrl, $timePeriodInUrl, $date, $hash) {
+    private function createH2Tag($siteInUrl, $hash) {
         if (is_null($hash)) {
             $phrase = ' ';
         }
@@ -129,7 +138,11 @@ class LineupBuilderMlb {
             $phrase = ' From Import ';
         }
 
-        return 'Create Lineup'.$phrase.'| '.strtoupper($siteInUrl).' MLB | '.ucfirst($timePeriodInUrl).' '.$date;
+        return 'Create Lineup'.$phrase.'| '.strtoupper($siteInUrl).' MLB';
+    }
+
+    private function createSubHeading($timePeriodInUrl, $date) {
+        return ucfirst($timePeriodInUrl).' '.$date;
     }
 
 
