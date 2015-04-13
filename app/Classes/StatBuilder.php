@@ -57,11 +57,17 @@ class StatBuilder {
 
         # ddAll($batProjections);
 
-        foreach ($players as &$player) {
-            list($player->bat_vr, $player->bat_fpts) = $this->getBatProjections($batProjections, $player, $date);
-        } unset($player);
-
-        # ddAll($players);
+        if ($batProjections['hitters'] == 'No csv files') {
+            foreach ($players as &$player) {
+                $player->bat_vr = 0;
+                $player->bat_fpts = 0;
+            } 
+        } else {
+            foreach ($players as &$player) {
+                list($player->bat_vr, $player->bat_fpts) = $this->getBatProjections($batProjections, $player, $date);
+            } 
+            unset($player);            
+        }
 
         return $players;
     }
@@ -101,6 +107,14 @@ class StatBuilder {
             return 'Jon Niese';
         }
 
+        if ($dkName == 'Nathan Karns') {
+            return 'Nate Karns';
+        }
+
+        if ($dkName == 'Sean O\'Sullivan') {
+            return 'Sean O`Sullivan';
+        }
+
         return $dkName;
     }
 
@@ -115,22 +129,26 @@ class StatBuilder {
             $dkPtsIndex = 6;
         }
 
-        if (($handle = fopen($csvFile, 'r')) !== false) {
-            $row = 0;
+        if (file_exists($csvFile)) {
+            if (($handle = fopen($csvFile, 'r')) !== false) {
+                $row = 0;
 
-            while (($csvData = fgetcsv($handle, 5000, ',')) !== false) {
-                if ($row != 0) {
-                    $players[$row] = array(
-                        'name' => $csvData[1],
-                        'dk_pts' => $csvData[$dkPtsIndex]
-                    );
+                while (($csvData = fgetcsv($handle, 5000, ',')) !== false) {
+                    if ($row != 0) {
+                        $players[$row] = array(
+                            'name' => $csvData[1],
+                            'dk_pts' => $csvData[$dkPtsIndex]
+                        );
+                    }
+
+                    $row++;
                 }
-
-                $row++;
-            }
+            }  
+            
+            return $players;           
         }
 
-        return $players;           
+        return 'No csv files';
     }
 
     public function getTeamsForDkMlbDaily($timePeriod, $date) {

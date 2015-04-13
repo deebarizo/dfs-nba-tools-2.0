@@ -33,11 +33,11 @@ class SolverTopPlaysMlb {
 	GLOBAL VARIABLES
 	****************************************************************************************/
 
-	private $lineupBuilderIterations = 10;
-	private $targetPercentageModifier = 0;
+	private $lineupBuilderIterations = 1;
+	private $targetPercentageModifier = -10;
 	private $minimumTotalSalary = 49500; 
 	private $maximumTotalSalary = 50000;
-	private $minimumStack = 6;
+	private $minimumStack = 1;
 
 
 	/****************************************************************************************
@@ -168,6 +168,8 @@ class SolverTopPlaysMlb {
 		# ddAll($activeLineupPlayers);
 
 		$players = $this->getPlayers($timePeriod, $date);
+
+		# ddAll($players);
 
 		foreach ($players as $key => $player) {
 			$player->unspent_target_percentage = $this->addUnspentTargetPercentage($player, $activeLineupPlayers);

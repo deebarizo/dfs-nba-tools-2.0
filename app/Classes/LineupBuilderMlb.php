@@ -64,7 +64,7 @@ class LineupBuilderMlb {
             ->join('player_pools', 'player_pools.id', '=', 'lineups.player_pool_id')
             ->select('lineups.id', 'hash', 'total_salary', 'lineups.buy_in as lineup_buy_in', 'active', 'money', 'player_pools.buy_in', 'player_pool_id')
             ->where('player_pools.site', strtoupper($siteInUrl))
-            ->where('player_pools.time_period', ucfirst($timePeriodInUrl))
+            ->where('player_pools.time_period', urlToUcWords($timePeriodInUrl))
             ->where('player_pools.date', $date)
             ->where('lineups.hash', $hash)
             ->first();
@@ -142,7 +142,7 @@ class LineupBuilderMlb {
     }
 
     private function createSubHeading($timePeriodInUrl, $date) {
-        return ucfirst($timePeriodInUrl).' '.$date;
+        return urlToUcWords($timePeriodInUrl).' '.$date;
     }
 
 
@@ -150,12 +150,12 @@ class LineupBuilderMlb {
     PLAYERS IN PLAYER POOL
     ****************************************************************************************/
 
-    public function getPlayersInPlayerPool($site, $timePeriod, $date) {
-    	return DB::table($site.'_mlb_players')
+    public function getPlayersInPlayerPool($siteInUrl, $timePeriodInUrl, $date) {
+    	return DB::table($siteInUrl.'_mlb_players')
             ->join('mlb_players', 'mlb_players.id', '=', 'dk_mlb_players.mlb_player_id')
             ->join('player_pools', 'player_pools.id', '=', 'dk_mlb_players.player_pool_id')
             ->select('*')
-            ->where('player_pools.time_period', $timePeriod)
+            ->where('player_pools.time_period', urlToUcWords($timePeriodInUrl))
             ->where('player_pools.date', $date)
             ->get();
     }

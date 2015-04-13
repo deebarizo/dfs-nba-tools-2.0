@@ -236,7 +236,7 @@ $(document).ready(function() {
 
 		var playerPoolId = lineupPlayerRow.first().data('player-pool-id');
 		var lineupBuyIn = $('input.lineup-buy-in-amount').val();
-		var totalSalary = $('span.lineup-salary-total-valid').text();
+		var totalSalary = $('span.lineup-salary-total').text();
 
 		var playerMetadataOfLineup = [];
 		var hash = '';

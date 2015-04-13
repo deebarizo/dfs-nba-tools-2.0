@@ -182,6 +182,8 @@ $(document).ready(function() {
 			};
 		}
 
+		// console.log(players);
+
 		return players[playerFilterType];
 	}
 
@@ -211,6 +213,8 @@ $(document).ready(function() {
 	});	
 
 	function runPlayerFilter(filter) {
+		// console.log(filter);
+
 		runShowPlayerFilter(filter);
 		runHidePlayerFilter(filter);
 	}
@@ -243,6 +247,8 @@ $(document).ready(function() {
 			lineups.push(lineup);
 		});		
 
+		// console.log(lineups);
+
 		return lineups;
 	}
 
@@ -250,6 +256,8 @@ $(document).ready(function() {
 	//// CHECK LINEUP FOR PLAYERS ////
 
 	function checkLineupForPlayers(lineup, players, playerFilterType) {
+		console.log(players);
+
 		for (var i = 0; i < players.length; i++) {
 			checkForPlayerInLineup(players[i], lineup, playerFilterType);
 		}
@@ -272,7 +280,7 @@ $(document).ready(function() {
 	}
 
 	function checkForPlayerInLineupToShow(lineup, playerId) {
-		var isPlayerInLineup = $(lineup).find('tr.roster-spot[data-player-id='+playerId+']').length;
+		var isPlayerInLineup = $(lineup).find('tr.roster-spot[data-id='+playerId+']').length;
 
 		if (isPlayerInLineup == 0) {
 			$(lineup).addClass('hide-lineup');
@@ -280,7 +288,7 @@ $(document).ready(function() {
 	}
 
 	function checkForPlayerInLineupToHide(lineup, playerId) {
-		var isPlayerInLineup = $(lineup).find('tr.roster-spot[data-player-id='+playerId+']').length;
+		var isPlayerInLineup = $(lineup).find('tr.roster-spot[data-id='+playerId+']').length;
 
 		if (isPlayerInLineup == 1) {
 			$(lineup).addClass('hide-lineup');
@@ -852,7 +860,7 @@ $(document).ready(function() {
 			players[i]['contents'] = players[i]['name']+'<br>('+players[i]['position']+') ('+players[i]['teamAbbrBr']+') ('+players[i]['salary']+')';
 		};
 
-		console.log(players);
+		// console.log(players);
 
 		return players;
 	}
