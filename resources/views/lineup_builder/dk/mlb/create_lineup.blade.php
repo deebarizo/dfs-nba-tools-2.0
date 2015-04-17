@@ -55,6 +55,8 @@
 					<tr>
 						<th>Pos</th>					
 						<th>Name</th>
+						<th>Team</th>
+						<th>Opp</th>
 						<th>Salary</th>
 						<th>Remove</th>
 					</tr>
@@ -64,9 +66,13 @@
 						<tr class="lineup-row lineup-player-row" 
 							data-player-pool-id="{{ $player->player_pool_id }}" 
 							data-player-id="{{ $player->mlb_player_id }}" 
-							data-position="{{ $player->position }}">
+							data-position="{{ $player->position }}"
+							data-team="{{ $player->abbr_dk }}" 
+							data-opp="{{ $player->opp_abbr_dk }}">
 							<td style="width: 10%" class="lineup-player-position">{{ $player->position }}</td>
 							<td class="lineup-player-name">{{ $player->name }}</td>
+							<td>{{ $player->abbr_dk }}</td>
+							<td>{{ $player->opp_abbr_dk }}</td>
 							<td style="width: 15%" class="lineup-player-salary">{{ $player->salary }}</td>
 							<td style="width: 10%"><a href="" class="remove-lineup-player-link">{!! $player->remove_player_icon !!}</a></td>
 						</tr>

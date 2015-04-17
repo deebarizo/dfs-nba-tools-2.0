@@ -91,7 +91,7 @@ class LineupBuilderMlb {
             echo 'Player Pool ID must be an integer.'; exit();
         }
 
-        return DB::select(DB::raw('select * FROM lineups 
+        $lineupPlayers = DB::select(DB::raw('select * FROM lineups 
             JOIN lineup_dk_mlb_players ON lineup_dk_mlb_players.lineup_id = lineups.id
             JOIN dk_mlb_players ON dk_mlb_players.mlb_player_id = lineup_dk_mlb_players.mlb_player_id 
                 AND dk_mlb_players.position = lineup_dk_mlb_players.position
@@ -100,6 +100,18 @@ class LineupBuilderMlb {
             WHERE lineups.id = '.$lineupId.'
             AND dk_mlb_players.player_pool_id = '.$playerPoolId.'
             AND lineups.active = 1'));
+
+        $teams = MlbTeam::all();
+
+        foreach ($lineupPlayers as $player) {
+            foreach ($teams as $team) {
+                if ($team->id == $player->mlb_opp_team_id) {
+                    $player->opp_abbr_dk = $team->abbr_dk;
+                }
+            }
+        }
+
+        return $lineupPlayers;
     }
 
     public function createEmptyLineup($siteInUrl, $timePeriodInUrl, $date) {
