@@ -22,15 +22,23 @@
 					<tr>
 						<th>Pos</th>					
 						<th>Name</th>
+						<th>Team</th>
+						<th>Opp</th>
 						<th>Salary</th>
 						<th>Update</th>
 					</tr>
 				</thead>
 				<tbody>
 					@foreach ($players as $player)
-						<tr class="available-player-row {{ $player->strikethrough_css_class }}" data-player-pool-id="{{ $player->player_pool_id }}" data-player-id="{{ $player->mlb_player_id }}">
+						<tr class="available-player-row {{ $player->strikethrough_css_class }}" 
+							data-player-pool-id="{{ $player->player_pool_id }}" 
+							data-player-id="{{ $player->mlb_player_id }}" 
+							data-team="{{ $player->abbr_dk }}" 
+							data-opp="{{ $player->opp_abbr_dk }}">
 							<td class="available-player-position">{{ $player->position }}</td>
 							<td class="available-player-name">{{ $player->name }}</td>
+							<td class="available-player-team">{{ $player->abbr_dk }}</td>
+							<td class="available-player-team">{{ $player->opp_abbr_dk }}</td>
 							<td class="available-player-salary">{{ $player->salary }}</td>
 							<td class="available-player-update" style="width: 10%"><a class="update-available-player-link" href="">{!! $player->update_icon !!}</a></td>
 						</tr>		

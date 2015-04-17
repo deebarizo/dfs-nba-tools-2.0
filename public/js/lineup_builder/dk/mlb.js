@@ -7,7 +7,7 @@ $(document).ready(function() {
 	$('#available-players').dataTable({
 		"scrollY": "600px",
 		"paging": false,
-		"order": [[2, "desc"]]
+		"order": [[4, "desc"]]
 	});
 
 	$('#available-players_filter').hide();

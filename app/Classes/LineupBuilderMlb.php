@@ -151,13 +151,27 @@ class LineupBuilderMlb {
     ****************************************************************************************/
 
     public function getPlayersInPlayerPool($siteInUrl, $timePeriodInUrl, $date) {
-    	return DB::table($siteInUrl.'_mlb_players')
-            ->join('mlb_players', 'mlb_players.id', '=', 'dk_mlb_players.mlb_player_id')
+    	$players = DB::table($siteInUrl.'_mlb_players')
+            ->leftJoin('mlb_players', 'mlb_players.id', '=', 'dk_mlb_players.mlb_player_id')
             ->join('player_pools', 'player_pools.id', '=', 'dk_mlb_players.player_pool_id')
+            ->leftJoin('mlb_players_teams', 'mlb_players_teams.mlb_player_id', '=', 'mlb_players.id')
+            ->leftJoin('mlb_teams', 'mlb_teams.id', '=', 'mlb_players_teams.mlb_team_id')
             ->select('*')
             ->where('player_pools.time_period', urlToUcWords($timePeriodInUrl))
             ->where('player_pools.date', $date)
             ->get();
+
+        $teams = MlbTeam::all();
+
+        foreach ($players as $player) {
+            foreach ($teams as $team) {
+                if ($team->id == $player->mlb_opp_team_id) {
+                    $player->opp_abbr_dk = $team->abbr_dk;
+                }
+            }
+        }
+
+        return $players;
     }
 
 }

@@ -54,7 +54,7 @@ class LineupBuilderController {
 
         $players = $lineupBuilderMlb->addHtmlToPlayersInPlayerPool($players, $lineup);
 
-        # ddAll($players);
+        # ddAll($lineup);
 
         return view('lineup_builder/dk/mlb/create_lineup', compact('date', 
                                                             'lineup', 
