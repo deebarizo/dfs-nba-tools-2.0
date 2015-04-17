@@ -38,7 +38,7 @@
 							<td class="available-player-position">{{ $player->position }}</td>
 							<td class="available-player-name">{{ $player->name }}</td>
 							<td class="available-player-team">{{ $player->abbr_dk }}</td>
-							<td class="available-player-team">{{ $player->opp_abbr_dk }}</td>
+							<td class="available-player-opp">{{ $player->opp_abbr_dk }}</td>
 							<td class="available-player-salary">{{ $player->salary }}</td>
 							<td class="available-player-update" style="width: 10%"><a class="update-available-player-link" href="">{!! $player->update_icon !!}</a></td>
 						</tr>		
@@ -71,8 +71,8 @@
 							data-opp="{{ $player->opp_abbr_dk }}">
 							<td style="width: 10%" class="lineup-player-position">{{ $player->position }}</td>
 							<td class="lineup-player-name">{{ $player->name }}</td>
-							<td>{{ $player->abbr_dk }}</td>
-							<td>{{ $player->opp_abbr_dk }}</td>
+							<td class="lineup-player-team">{{ $player->abbr_dk }}</td>
+							<td class="lineup-player-opp">{{ $player->opp_abbr_dk }}</td>
 							<td style="width: 15%" class="lineup-player-salary">{{ $player->salary }}</td>
 							<td style="width: 10%"><a href="" class="remove-lineup-player-link">{!! $player->remove_player_icon !!}</a></td>
 						</tr>
