@@ -104,6 +104,7 @@ class Scraper {
 		$playerPool->time_period = $timePeriod;
 		$playerPool->site = $site;
 		$playerPool->url = $url;
+		$playerPool->buy_in = 100;
 
 		$playerPool->save();
 

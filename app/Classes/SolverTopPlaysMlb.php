@@ -34,8 +34,8 @@ class SolverTopPlaysMlb {
 	****************************************************************************************/
 
 	private $lineupBuilderIterations = 1;
-	private $targetPercentageModifier = -10;
-	private $minimumTotalSalary = 49500; 
+	private $targetPercentageModifier = -100;
+	private $minimumTotalSalary = 49500; // change 
 	private $maximumTotalSalary = 50000;
 	private $minimumStack = 1;
 
@@ -152,6 +152,8 @@ class SolverTopPlaysMlb {
 		}
 		unset($lineup);
 
+		$activeLineups = array_reverse($activeLineups);
+
 		# ddAll($activeLineups);
 
 		return $activeLineups;
@@ -214,6 +216,8 @@ class SolverTopPlaysMlb {
 		$lineups = $this->removeDuplicateLineups($lineups);
 
 		$lineups = $this->sortLineups($lineups);
+
+		$lineups = []; // not using solver
 
 		$activeLineups = $this->getActiveLineups($timePeriod, $date);
 
@@ -316,12 +320,12 @@ class SolverTopPlaysMlb {
 
 	private function sortLineups($lineups) {
 		foreach ($lineups as $key => $lineup) {
-			$biggestStacks[$key] = $lineup['biggest_stack'];
-			$unspentTargetPercentages[$key] = $lineup['unspent_target_percentage'];
 			$salaries[$key] = $lineup['salary'];
+			$unspentTargetPercentages[$key] = $lineup['unspent_target_percentage'];
+			$biggestStacks[$key] = $lineup['biggest_stack'];
 		}
 
-		array_multisort($biggestStacks, SORT_DESC, $unspentTargetPercentages, SORT_DESC, $salaries, SORT_DESC, $lineups);
+		array_multisort($biggestStacks, SORT_DESC, $salaries, SORT_DESC, $unspentTargetPercentages, SORT_DESC, $lineups);
 
 		return $lineups;
 	}

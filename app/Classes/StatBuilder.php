@@ -115,6 +115,18 @@ class StatBuilder {
             return 'Sean O`Sullivan';
         }
 
+        if ($dkName == 'Travis d\'Arnaud') {
+            return 'Travis d`Arnaud';
+        }
+
+        if ($dkName == 'Eric Young Jr.') {
+            return 'Eric Young';
+        }
+
+        if ($dkName == 'Nori Aoki') {
+            return 'Norichika Aoki';
+        }
+
         return $dkName;
     }
 

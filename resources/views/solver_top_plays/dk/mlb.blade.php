@@ -112,17 +112,17 @@
 					<option value="Unspent Target Percentage (Desc)">Unspent Target Percentage (Desc)</option>
 					<option value="Unspent Target Percentage (Asc)">Unspent Target Percentage (Asc)</option>
 				  	<option value="Target Percentage">Target Percentage</option>
-				  	<option value="Actual Percentage">Actual Percentage</option>
+				  	<option value="Actual Percentage" selected>Actual Percentage</option>
 				  	<option value="First Name">First Name</option>
 				  	<option value="Position">Position</option>
 				  	<option value="Team">Team</option>
-				  	<option value="Salary" selected>Salary</option>
+				  	<option value="Salary">Salary</option>
 				</select>
 
 				<label>Show</label>
 				<select class="form-control player-percentages-show-filter">
 					<option value="All" selected>All</option>
-				  	<option value="Only Actual Percentage">Actual Percentage</option>
+				  	<option value="Only Actual Percentage" selected>Actual Percentage</option>
 				</select>
 			</form>
 
