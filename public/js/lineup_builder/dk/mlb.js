@@ -306,11 +306,67 @@ $(document).ready(function() {
 			return false;
 		}
 
-		var firstPitcherTeam = $('tr.lineup-player-row:first').attr('data-team');
-		var secondPitcherOpp = $('tr.lineup-player-row:first').next('tr.lineup-player-row').attr('data-opp');
-		
-		if (firstPitcherTeam == secondPitcherOpp) {
+		var pitchers = [];
+
+		for (var i = 1; i <= 2; i++) {
+			var eq = i - 1;
+
+			pitchers[i] = {
+				team: $('tr.lineup-player-row:eq('+eq+')').attr('data-team'),
+				opp: $('tr.lineup-player-row:eq('+eq+')').attr('data-opp')
+			};
+		};
+
+		if (pitchers[1].team == pitchers[2].opp) {
 			alert('This lineup has pitchers from the same game.');
+			return false;
+		}
+
+		var hitters = [];
+		var hitterTeams = [];
+
+		for (var i = 3; i <= 10; i++) { // hitters in lineup
+			var eq = i - 1;
+
+			var hitterTeam = $('tr.lineup-player-row:eq('+eq+')').attr('data-team');
+
+			hitters[i] = {
+				team: hitterTeam
+			};
+
+			hitterTeams.push(hitterTeam);
+
+			for (var n = 1; n <= 2; n++) {
+				if (pitchers[n].opp == hitters[i].team) {
+					alert('This lineup has a pitcher facing a hitter.');
+					return false;
+				}
+			};
+		};
+
+		var hitterTeamCounts = {};
+
+		for (var i = 0; i < hitterTeams.length; i++) {
+			var hitterTeam = hitterTeams[i];
+
+			hitterTeamCounts[hitterTeam] = (hitterTeamCounts[hitterTeam] || 0) + 1;
+		};
+
+		if (Object.keys(hitterTeamCounts).length < 3) { // http://stackoverflow.com/a/5527037
+			alert('Hitters must come from 3 different teams.');
+			return false;
+		}
+
+		var biggestStack = 1;
+		
+		jQuery.each(hitterTeamCounts, function(team, numOfStack) {
+			if (biggestStack < numOfStack) {
+				biggestStack = numOfStack;
+			} 
+		});
+
+		if (biggestStack != 6) {
+			alert('The stack must have six hitters.');
 			return false;
 		}
 
