@@ -196,6 +196,10 @@ class SolverTopPlaysMlb {
 
 		$lineups = [];
 
+		// not using solver
+
+		/*
+
 		for ($i = 0; $i < $this->lineupBuilderIterations; $i++) { 
 			do {
 				$lineup = $this->generateLineup($players, $positions);
@@ -215,9 +219,7 @@ class SolverTopPlaysMlb {
 
 		$lineups = $this->removeDuplicateLineups($lineups);
 
-		$lineups = $this->sortLineups($lineups);
-
-		$lineups = []; // not using solver
+		$lineups = $this->sortLineups($lineups); */
 
 		$activeLineups = $this->getActiveLineups($timePeriod, $date);
 

@@ -78,7 +78,7 @@
 						</tr>
 					@endforeach
 					<tr class="lineup-row">
-						<td colspan="2">
+						<td colspan="4">
 							<div class="input-group inline" style="margin: 0 auto">
 						  		<span class="input-group-addon">$</span>
 						  		<input style="width: 75px; margin-right: 30px" type="text" class="form-control lineup-buy-in-amount" value="{{ $lineup['metadata']->lineup_buy_in }}"> 

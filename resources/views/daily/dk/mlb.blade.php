@@ -55,7 +55,7 @@
 				</select>
 
 				<label>Default Target %</label>
-				<input class="default-target-percentage form-control" type="number" value="100" style="width: 10%">
+				<input class="default-target-percentage form-control" type="number" value="2" style="width: 10%">
 			</form>
 		</div>
 

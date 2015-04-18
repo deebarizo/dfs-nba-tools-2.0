@@ -156,6 +156,8 @@ $(document).ready(function() {
 			lineupPlayerRow.find('td.lineup-player-salary').text(salary);
 			lineupPlayerRow.find('td.lineup-player-team').text(team);
 			lineupPlayerRow.find('td.lineup-player-opp').text(opp);
+			lineupPlayerRow.attr('data-team', team);
+			lineupPlayerRow.attr('data-opp', opp);
 			lineupPlayerRow.find('a.remove-lineup-player-link').append('<div class="circle-minus-icon"><span class="glyphicon glyphicon-minus"></span></div>');
 		}
 
@@ -301,6 +303,14 @@ $(document).ready(function() {
 
 		if (!validRoster) {
 			alert('This lineup is missing roster spots.');
+			return false;
+		}
+
+		var firstPitcherTeam = $('tr.lineup-player-row:first').attr('data-team');
+		var secondPitcherOpp = $('tr.lineup-player-row:first').next('tr.lineup-player-row').attr('data-opp');
+		
+		if (firstPitcherTeam == secondPitcherOpp) {
+			alert('This lineup has pitchers from the same game.');
 			return false;
 		}
 
