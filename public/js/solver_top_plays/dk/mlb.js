@@ -617,7 +617,7 @@ $(document).ready(function() {
 		for (var i = 0; i < players.length; i++) {
 			if (players[i]['contents'] !== null) {
 				playerContents.push(players[i]['contents']);
-				percentages.push(players[i]['percentage']);
+				percentages.push(parseFloat(players[i]['percentage']));
 				targetPercentages.push(players[i]['targetPercentage']);			
 			}
 		};
@@ -635,8 +635,8 @@ $(document).ready(function() {
 			];			
 		}
 
-		console.log(playerContents);
-		// console.log(series);
+		// console.log(playerContents);
+		console.log(series);
 
 		var barChartContainerHeight = (playerContents.length * 45) + 50;
 		$('#player-percentages-container').css('height', barChartContainerHeight+'px');
@@ -856,7 +856,7 @@ $(document).ready(function() {
 			};
 
 			var percentage = totalBuyInOfPlayer / buyIn * 100;
-			percentage = parseInt(percentage);
+			percentage = parseFloat(Math.round(percentage * 100) / 100).toFixed(2);
 
 			players[i]['percentage'] = percentage;
 
