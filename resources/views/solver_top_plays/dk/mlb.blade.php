@@ -3,7 +3,7 @@
 @section('content')
 	<div class="row" style="font-size: 90%">
 		<div class="col-lg-12">
-			<h2 id="heading">DK MLB | Solver With Top Plays | {{ $date }} {{ $timePeriod }}</h2>
+			<h2 id="heading">DK MLB | Solver With Top Plays | {{ $date }} {{ $timePeriod }} | <a target="_blank" href="/lineup_builder/dk/mlb/{{ $timePeriodInUrl }}/{{ $date }}">Lineup Builder</a></h2>
 		</div>
 
 		<div class="col-lg-4">
