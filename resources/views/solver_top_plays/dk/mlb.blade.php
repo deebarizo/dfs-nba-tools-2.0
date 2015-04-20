@@ -118,15 +118,24 @@
 				  	<option value="Team">Team</option>
 				  	<option value="Salary">Salary</option>
 				</select>
+			</form>
 
-				<label>Show</label>
+			<form class="form-inline" style="font-size: 90%; margin: 15px 0 10px 0">
+				<label>Types</label>
+				<select class="form-control player-types-show-filter" style="margin-right: 20px">
+					<option value="All" selected>All</option>
+				  	<option value="Only Pitchers">Pitchers</option>
+				  	<option value="Only Hitters">Hitters</option>
+				</select>
+
+				<label>Percentages</label>
 				<select class="form-control player-percentages-show-filter">
 					<option value="All" selected>All</option>
 				  	<option value="Only Actual Percentage" selected>Actual Percentage</option>
 				</select>
 			</form>
 
-			<div id="player-percentages-container" style="width:100%; height: 4000px; padding-right:30px"></div>
+			<div id="player-percentages-container" style="width:100%; padding-right:30px"></div>
 		</div>
 
 		<div class="col-lg-5" style="overflow-y: scroll; height: 2000px">
