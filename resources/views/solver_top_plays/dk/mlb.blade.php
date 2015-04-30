@@ -109,10 +109,10 @@
 			<form class="form-inline" style="font-size: 90%; margin: 15px 0 10px 0">
 				<label>Sort</label>
 				<select class="form-control player-percentages-filter" style="margin-right: 20px">
-					<option value="Unspent Target Percentage (Desc)">Unspent Target Percentage (Desc)</option>
+					<option value="Unspent Target Percentage (Desc)" selected>Unspent Target Percentage (Desc)</option>
 					<option value="Unspent Target Percentage (Asc)">Unspent Target Percentage (Asc)</option>
 				  	<option value="Target Percentage">Target Percentage</option>
-				  	<option value="Actual Percentage" selected>Actual Percentage</option>
+				  	<option value="Actual Percentage">Actual Percentage</option>
 				  	<option value="First Name">First Name</option>
 				  	<option value="Position">Position</option>
 				  	<option value="Team">Team</option>
@@ -123,15 +123,15 @@
 			<form class="form-inline" style="font-size: 90%; margin: 15px 0 10px 0">
 				<label>Types</label>
 				<select class="form-control player-types-show-filter" style="margin-right: 20px">
-					<option value="All" selected>All</option>
-				  	<option value="Only Pitchers">Pitchers</option>
+					<option value="All">All</option>
+				  	<option value="Only Pitchers" selected>Pitchers</option>
 				  	<option value="Only Hitters">Hitters</option>
 				</select>
 
 				<label>Percentages</label>
 				<select class="form-control player-percentages-show-filter">
 					<option value="All" selected>All</option>
-				  	<option value="Only Actual Percentage" selected>Actual Percentage</option>
+				  	<option value="Only Actual Percentage">Actual Percentage</option>
 				</select>
 			</form>
 

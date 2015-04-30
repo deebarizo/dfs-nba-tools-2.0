@@ -365,10 +365,10 @@ $(document).ready(function() {
 			} 
 		});
 
-		if (biggestStack != 6) {
+/*		if (biggestStack != 6) {
 			alert('The stack must have six hitters.');
 			return false;
-		}
+		}	*/
 
 		return true;
 	}

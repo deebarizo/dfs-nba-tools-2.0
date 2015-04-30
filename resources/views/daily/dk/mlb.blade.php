@@ -16,7 +16,7 @@
 
 			<form class="form-inline" style="margin: 0 0 10px 0">
 
-				<label>Teams</label>
+				<label>Teams ({{ count($teams) }})</label>
 				<select class="form-control team-filter" style="width: 10%; margin-right: 20px">
 				  	<option value="All">All</option>
 				  	@foreach ($teams as $team)
@@ -55,7 +55,7 @@
 				</select>
 
 				<label>Default Target %</label>
-				<input class="default-target-percentage form-control" type="number" value="2" style="width: 10%">
+				<input class="default-target-percentage form-control" type="number" value="5" style="width: 10%">
 			</form>
 		</div>
 

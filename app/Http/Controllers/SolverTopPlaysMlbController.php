@@ -33,7 +33,7 @@ class SolverTopPlaysMlbController {
 			list($lineups, $players) = $solverTopPlaysMlb->generateLineups($timePeriod, $date, $activeLineups);
 		}
 
-        # ddAll($players);
+        # ddAll($activeLineups);
 
 		$playerPoolId = $lineups[0]['players'][0]->player_pool_id;
 		$buyIn = $players[0]->buy_in;
