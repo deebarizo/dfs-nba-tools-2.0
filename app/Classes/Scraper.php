@@ -63,7 +63,59 @@ class Scraper {
 			}
 		}
 
+		$seasonId = $this->getSeasonId($date, $sport);
+
+		$games = [];
+
+		foreach ($urls as $key => $url) {
+			$games[$key]['season_id'] = $seasonId;
+			$games[$key]['date'] = $date;
+			$games[$key]['link_fg'] = $url;
+
+			$games[$key]['game_lines'] = $this->scrapeGame($url);
+		}
+
 		ddAll($urls);
+	}
+
+	private function scrapeGame($url) {
+		$client = new Client;
+
+		$crawler = $client->getClient()->setDefaultOption('config/curl/'.CURLOPT_TIMEOUT, 100000);
+		$crawler = $client->request('GET', $url);
+
+		$locations = ['home', 'road'];
+
+		$gameLines = [];
+
+		foreach ($locations as $location) {
+			if ($location == 'home') {
+				$home = 1;
+				$road = 0;
+			} else {
+				$home = 0;
+				$road = 1;
+			}
+
+			$test = $crawler->filter('a[href="#'.$location.'_standard"]')->text();
+			dd($test);
+		}
+	}
+
+	private function getSeasonId($date, $sport) {
+		$seasons = Season::all();
+
+		$partsOfDate = explode('-', $date);
+
+		$year = $partsOfDate[0];
+
+		if ($sport == 'MLB') {
+			foreach ($seasons as $season) {
+				if ($year == $season->end_year) {
+					return $season->id; // MLB starts and ends in the same year
+				}
+			}
+		}
 	}
 
 	public function getCsvFile($request, $site, $sport) {
