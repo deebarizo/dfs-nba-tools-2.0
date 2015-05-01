@@ -67,6 +67,8 @@ class Scraper {
 
 		$games = [];
 
+		# ddAll($urls);
+
 		foreach ($urls as $key => $url) {
 			$games[$key]['season_id'] = $seasonId;
 			$games[$key]['date'] = $date;
@@ -74,8 +76,6 @@ class Scraper {
 
 			$games[$key]['game_lines'] = $this->scrapeGame($url, $sport);
 		}
-
-		ddAll($urls);
 	}
 
 	private function scrapeGame($url, $sport) {
@@ -112,31 +112,32 @@ class Scraper {
 			$oppTeamFg = $crawler->filter('a[href="#'.$otherLocation.'"]')->text();
 			$oppTeamId = $this->getTeamId($oppTeamFg, $sport);
 
-			$gameLines[$key]['score'] = $crawler->filter('tr#WinsBox1_dg'.$cssId.'b_ctl00__10 > td')->eq(5)->text();
-
 			$boxScoreLines = [];
 
 			$hitterCount = $crawler->filter('table#WinsBox1_dg2'.$cssId.'b_ctl00 > tbody > tr')->count() - 1; // minus to take out total row (last row)
+
+			$gameLines[$key]['score'] = $crawler->filter('tr#WinsBox1_dg'.$cssId.'b_ctl00__'.$hitterCount.' > td')->eq(5)->text();
 
 			for ($i = 0; $i < $hitterCount; $i++) { 
 				$boxScoreLines[$i]['mlb_team_id'] = $teamId;
 				$boxScoreLines[$i]['opp_mlb_team_id'] = $oppTeamId;
 
 				if ($i == 0) { // player name
-					$playerNameFg = $crawler->filter('table#WinsBox1_dg2'.$cssId.'b_ctl00 > tbody > tr')->eq($i)->filter('a')->text();
-				
+					$playerRow = $crawler->filter('table#WinsBox1_dg2'.$cssId.'b_ctl00 > tbody > tr')->eq($i);
+					$playerNameFg = $playerRow->filter('td')->eq(0)->filter('a')->text();
+
 					$boxScoreLines[$i]['mlb_player_id'] = $this->getPlayerId($playerNameFg, $sport);
 
-					$boxScoreLines[$i]['singles'] = 
-					$boxScoreLines[$i]['doubles'] = 
-					$boxScoreLines[$i]['triples'] = 
-					$boxScoreLines[$i]['hr'] = 
-					$boxScoreLines[$i]['rbi'] = 
-					$boxScoreLines[$i]['runs'] = 
-					$boxScoreLines[$i]['bb'] = 
-					$boxScoreLines[$i]['hbp'] = 
-					$boxScoreLines[$i]['sb'] = 
-					$boxScoreLines[$i]['cs'] = 
+					$boxScoreLines[$i]['singles'] = $playerRow->filter('td')->eq(1)->text();
+					$boxScoreLines[$i]['doubles'] = $playerRow->filter('td')->eq(1)->text();
+					$boxScoreLines[$i]['triples'] = $playerRow->filter('td')->eq(1)->text(); 
+					$boxScoreLines[$i]['hr'] = $playerRow->filter('td')->eq(1)->text();
+					$boxScoreLines[$i]['rbi'] = $playerRow->filter('td')->eq(1)->text();
+					$boxScoreLines[$i]['runs'] = $playerRow->filter('td')->eq(1)->text();
+					$boxScoreLines[$i]['bb'] = $playerRow->filter('td')->eq(1)->text();
+					$boxScoreLines[$i]['hbp'] = $playerRow->filter('td')->eq(1)->text();
+					$boxScoreLines[$i]['sb'] = $playerRow->filter('td')->eq(1)->text();
+					$boxScoreLines[$i]['cs'] = $playerRow->filter('td')->eq(1)->text();
 					$boxScoreLines[$i]['ip'] = 
 					$boxScoreLines[$i]['so'] = 
 					$boxScoreLines[$i]['win'] = 
