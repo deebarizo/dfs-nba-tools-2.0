@@ -72,33 +72,115 @@ class Scraper {
 			$games[$key]['date'] = $date;
 			$games[$key]['link_fg'] = $url;
 
-			$games[$key]['game_lines'] = $this->scrapeGame($url);
+			$games[$key]['game_lines'] = $this->scrapeGame($url, $sport);
 		}
 
 		ddAll($urls);
 	}
 
-	private function scrapeGame($url) {
+	private function scrapeGame($url, $sport) {
 		$client = new Client;
 
 		$crawler = $client->getClient()->setDefaultOption('config/curl/'.CURLOPT_TIMEOUT, 100000);
 		$crawler = $client->request('GET', $url);
 
-		$locations = ['home', 'road'];
+		$locations = ['home', 'away'];
 
 		$gameLines = [];
 
-		foreach ($locations as $location) {
+		foreach ($locations as $key => $location) {
 			if ($location == 'home') {
-				$home = 1;
-				$road = 0;
+				$gameLines[$key]['home'] = 1;
+				$gameLines[$key]['road'] = 0;
+
+				$cssId = 'h';
+
+				$otherLocation = 'away';
 			} else {
-				$home = 0;
-				$road = 1;
+				$gameLines[$key]['home'] = 0;
+				$gameLines[$key]['road'] = 1;
+
+				$cssId = 'a';
+
+				$otherLocation = 'home';
 			}
 
-			$test = $crawler->filter('a[href="#'.$location.'_standard"]')->text();
-			dd($test);
+			$teamFg = $crawler->filter('a[href="#'.$location.'"]')->text();
+			$teamId = $this->getTeamId($teamFg, $sport);
+			$gameLines[$key]['mlb_team_id'] = $teamId;
+
+			$oppTeamFg = $crawler->filter('a[href="#'.$otherLocation.'"]')->text();
+			$oppTeamId = $this->getTeamId($oppTeamFg, $sport);
+
+			$gameLines[$key]['score'] = $crawler->filter('tr#WinsBox1_dg'.$cssId.'b_ctl00__10 > td')->eq(5)->text();
+
+			$boxScoreLines = [];
+
+			$hitterCount = $crawler->filter('table#WinsBox1_dg2'.$cssId.'b_ctl00 > tbody > tr')->count() - 1; // minus to take out total row (last row)
+
+			for ($i = 0; $i < $hitterCount; $i++) { 
+				$boxScoreLines[$i]['mlb_team_id'] = $teamId;
+				$boxScoreLines[$i]['opp_mlb_team_id'] = $oppTeamId;
+
+				if ($i == 0) { // player name
+					$playerNameFg = $crawler->filter('table#WinsBox1_dg2'.$cssId.'b_ctl00 > tbody > tr')->eq($i)->filter('a')->text();
+				
+					$boxScoreLines[$i]['mlb_player_id'] = $this->getPlayerId($playerNameFg, $sport);
+
+					$boxScoreLines[$i]['singles'] = 
+					$boxScoreLines[$i]['doubles'] = 
+					$boxScoreLines[$i]['triples'] = 
+					$boxScoreLines[$i]['hr'] = 
+					$boxScoreLines[$i]['rbi'] = 
+					$boxScoreLines[$i]['runs'] = 
+					$boxScoreLines[$i]['bb'] = 
+					$boxScoreLines[$i]['hbp'] = 
+					$boxScoreLines[$i]['sb'] = 
+					$boxScoreLines[$i]['cs'] = 
+					$boxScoreLines[$i]['ip'] = 
+					$boxScoreLines[$i]['so'] = 
+					$boxScoreLines[$i]['win'] = 
+					$boxScoreLines[$i]['er'] = 
+					$boxScoreLines[$i]['hits_against'] = 
+					$boxScoreLines[$i]['bb_against'] = 
+					$boxScoreLines[$i]['hbp_against'] = 
+					$boxScoreLines[$i]['cg'] = 
+					$boxScoreLines[$i]['cg_shutout'] = 
+					$boxScoreLines[$i]['no_hitter'] = 
+					$boxScoreLines[$i]['fpts'] = 
+
+					dd($boxScoreLines);
+				}				
+			}
+		}
+	}
+
+	private function getPlayerId($playerNameFg, $sport) {
+		if ($sport == 'MLB') {
+			$mlbPlayers = MlbPlayer::all();
+
+			foreach ($mlbPlayers as $mlbPlayer) {
+				if ($mlbPlayer->name == $playerNameFg) {
+					return $mlbPlayer->id;
+				}
+			}
+
+			echo 'Error: could not match this player name from Fangraphs, '.$playerNameFg;
+		}
+	}
+
+	private function getTeamId($teamFg, $sport) {
+		if ($sport == 'MLB') {
+			$mlbTeams =  MlbTeam::all();
+
+			foreach ($mlbTeams as $mlbTeam) {
+				if ($mlbTeam->name_fg == $teamFg) {
+					return $mlbTeam->id;
+				}
+			}
+
+			echo 'error: could not find Mlb Team Id for this Team FG, '.$teamFg; 
+			exit();		
 		}
 	}
 
