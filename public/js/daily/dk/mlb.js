@@ -11,21 +11,45 @@ $(document).ready(function() {
 	    } );
 	}
 
-	$('#daily').dataTable({
-		"scrollY": "600px",
-		"paging": false,
-		"order": [[7, "desc"]],
-		"columns": [
-		    { "width": "30%" },
-		    { "width": "10%" },
-		    { "width": "10%", "orderDataType": "dom-text-numeric" },
-		    { "width": "10%" },
-		   	{ "width": "10%" },
-		   	{ "width": "10%" },
-		   	{ "width": "10%" },
-		   	{ "width": "10%" }
-		]
-	});
+	if (areThereBoxScoreLines == 0) {
+		$('#daily').dataTable({
+			"scrollY": "600px",
+			"paging": false,
+			"order": [[7, "desc"]],
+			"columns": [
+			    { "width": "30%" },
+			    { "width": "10%" },
+			    { "width": "10%", "orderDataType": "dom-text-numeric" },
+			    { "width": "10%" },
+			   	{ "width": "10%" },
+			   	{ "width": "10%" },
+			   	{ "width": "10%" },
+			   	{ "width": "10%" }
+			]
+		});	
+	}
+
+	if (areThereBoxScoreLines == 1) {
+		$('#daily').dataTable({
+			"scrollY": "600px",
+			"paging": false,
+			"order": [[7, "desc"]],
+			"columns": [
+			    { "width": "23%" },
+			    { "width": "7%" },
+			    { "width": "7%", "orderDataType": "dom-text-numeric" },
+			    { "width": "7%" },
+			   	{ "width": "7%" },
+			   	{ "width": "7%" },
+			   	{ "width": "7%" },
+			   	{ "width": "7%" },
+			   	{ "width": "7%" },
+			   	{ "width": "7%" },
+			   	{ "width": "7%" },
+			   	{ "width": "7%" }
+			]
+		});	
+	}
 
 	$('#daily_filter').hide();
 

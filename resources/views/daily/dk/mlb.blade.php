@@ -76,17 +76,23 @@
 		</div>
 
 		<div class="col-lg-12">
-			<table id="daily" class="table table-striped table-bordered table-hover table-condensed">
+			<table id="daily" style="font-size: {{ $tableSize }}" class="table table-striped table-bordered table-hover table-condensed">
 				<thead>
 					<tr>
 						<th>Name</th>
 						<th>Mods</th>
-						<th>Target %</th>
+						<th>T %</th>
 						<th>Team</th>
 						<th>Pos</th>
-						<th>Bat FPTS</th>
+						<th>bFPTS</th>
 						<th>Sal</th>
-						<th>Bat VR</th>
+						<th>bVR</th>
+						@if ($areThereBoxScoreLines) 
+							<th>PA/IP</th>
+							<th>aFPTS</th>
+							<th>aVR</th>
+							<th>Game</th>
+						@endif
 					</tr>
 				</thead>
 				<tbody>
@@ -121,6 +127,12 @@
 					    	<td>{{ $player->bat_fpts }}</td>
 					    	<td>{{ $player->salary }}</td>
 					    	<td>{{ $player->bat_vr }}</td>
+							@if ($areThereBoxScoreLines) 
+								<td>{{ $player->pa_or_ip }}</td>
+								<td>{{ $player->fpts }}</td>
+								<td>{{ $player->avr }}</td>
+								<td><a href="{{ $player->link_fg }}" target="_blank"><span class="glyphicon glyphicon-link" aria-hidden="true"></span></a></td>
+							@endif
 					    </tr>
 					@endforeach
 				</tbody>
@@ -135,6 +147,8 @@
 		****************************************************************************************/
 
 		var baseUrl = '<?php echo url(); ?>';
+
+		var areThereBoxScoreLines = '<?php echo $areThereBoxScoreLines; ?>';
 
 	</script>
 

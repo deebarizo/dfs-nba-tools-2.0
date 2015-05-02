@@ -41,7 +41,80 @@ class StatBuilder {
                      ->where('player_pools.date', $date)
                      ->get();
 
-        foreach ($players as &$player) {
+        $boxScoreLines = DB::table('mlb_games')
+                     ->select('*')
+                     ->join('mlb_box_score_lines', 'mlb_box_score_lines.mlb_game_id', '=', 'mlb_games.id')
+                     ->where('mlb_games.date', $date)
+                     ->get();
+
+        # dd($boxScoreLines);
+
+        if (!empty($boxScoreLines)) {
+            foreach ($players as $player) {
+                $player->are_there_box_score_lines = 1;
+
+                if ($player->position == 'SP' || $player->position == 'RP') {
+                    $player->pa_or_ip = 0.0;
+                } else {
+                    $player->pa_or_ip = 0;
+                }
+
+                $player->fpts = '0.00';
+                $player->avr = '0.00';
+                $player->link_fg = '#';
+
+                foreach ($boxScoreLines as $boxScoreLine) {
+                    if ($boxScoreLine->mlb_player_id == $player->mlb_player_id) {
+                        $player->link_fg = $boxScoreLine->link_fg;
+
+                        $player->pa = $boxScoreLine->pa;
+                        $player->singles = $boxScoreLine->singles;
+                        $player->doubles = $boxScoreLine->doubles;
+                        $player->triples = $boxScoreLine->triples;
+                        $player->hr = $boxScoreLine->hr;
+                        $player->rbi = $boxScoreLine->rbi;
+                        $player->runs = $boxScoreLine->runs;
+                        $player->bb = $boxScoreLine->bb;
+                        $player->ibb = $boxScoreLine->ibb;
+                        $player->hbp = $boxScoreLine->hbp;
+                        $player->sf = $boxScoreLine->sf;
+                        $player->sh = $boxScoreLine->sh;
+                        $player->gdp = $boxScoreLine->gdp;
+                        $player->sb = $boxScoreLine->sb;
+                        $player->cs = $boxScoreLine->cs;
+
+                        $player->ip = $boxScoreLine->ip;
+                        $player->so = $boxScoreLine->so;
+                        $player->win = $boxScoreLine->win;
+                        $player->er = $boxScoreLine->er;
+                        $player->runs_against = $boxScoreLine->runs_against;
+                        $player->hits_against = $boxScoreLine->hits_against;
+                        $player->bb_against = $boxScoreLine->bb_against;
+                        $player->ibb_against = $boxScoreLine->ibb_against;
+                        $player->hbp_against = $boxScoreLine->hbp_against;
+                        $player->cg = $boxScoreLine->cg;
+                        $player->cg_shutout = $boxScoreLine->cg_shutout;
+                        $player->no_hitter = $boxScoreLine->no_hitter;
+                        
+                        $player->fpts = $boxScoreLine->fpts;
+
+                        $player->avr = numFormat($player->fpts / ($player->salary / 1000));
+
+                        if ($player->position == 'SP' || $player->position == 'RP') {
+                            $player->pa_or_ip = $player->ip;
+                        } else {
+                            $player->pa_or_ip = $player->pa;
+                        }
+
+                        break;
+                    }
+                }
+            }
+        }
+
+        # dd($players);
+
+        foreach ($players as $player) {
             if ($player->target_percentage > 0) {
                 $player->css_lock_class = 'daily-lock-active';
             } else {

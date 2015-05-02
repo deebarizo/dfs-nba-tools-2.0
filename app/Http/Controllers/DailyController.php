@@ -40,9 +40,19 @@ class DailyController {
             $players = $statBuilder->getPlayersForDkMlbDaily($timePeriod, $date);
             $teams = $statBuilder->getTeamsForDkMlbDaily($timePeriod, $date);
 
+            if (isset($players[0]->are_there_box_score_lines)) {
+                $areThereBoxScoreLines = 1;
+
+                $tableSize = '90%';
+            } else {
+                $areThereBoxScoreLines = 0;
+
+                $tableSize = '100%';
+            }
+
             # ddAll($players);
 
-            return view('daily/dk/mlb', compact('date', 'timePeriodInUrl', 'timePeriod', 'players', 'teams'));
+            return view('daily/dk/mlb', compact('date', 'timePeriodInUrl', 'timePeriod', 'players', 'teams', 'areThereBoxScoreLines', 'tableSize'));
         }
 
         $seasonId = 11;
