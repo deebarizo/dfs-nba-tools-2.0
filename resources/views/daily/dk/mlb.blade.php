@@ -131,7 +131,12 @@
 								<td>{{ $player->pa_or_ip }}</td>
 								<td>{{ $player->fpts }}</td>
 								<td>{{ $player->avr }}</td>
-								<td><a href="{{ $player->link_fg }}" target="_blank"><span class="glyphicon glyphicon-link" aria-hidden="true"></span></a></td>
+								<td>
+									<a href="{{ $player->link_fg }}" target="_blank" class="box-score-line-tooltip"><span class="glyphicon glyphicon-link" aria-hidden="true"></span></a>
+									<div style="display: none" class="box-score-line-tooltip">
+										Complex <b>inline</b> <i>HTML</i> in your <u>config</u>
+									</div>
+								</td>
 							@endif
 					    </tr>
 					@endforeach

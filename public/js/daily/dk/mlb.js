@@ -55,6 +55,19 @@ $(document).ready(function() {
 
 
 	/********************************************
+	BOX SCORE LINES TOOLTIP (MLB)
+	********************************************/
+
+     $('a.box-score-line-tooltip').each(function() {
+         $(this).qtip({
+             content: {
+                 text: $(this).next('div.box-score-line-tooltip')
+             }
+         });
+     });
+
+
+	/********************************************
 	TARGET PERCENTAGE TOOLTIP
 	********************************************/
 
