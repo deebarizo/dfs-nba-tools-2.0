@@ -122,37 +122,58 @@ class Scraper {
 				$boxScoreLines[$i]['mlb_team_id'] = $teamId;
 				$boxScoreLines[$i]['opp_mlb_team_id'] = $oppTeamId;
 
-				if ($i == 0) { // player name
-					$playerRow = $crawler->filter('table#WinsBox1_dg2'.$cssId.'b_ctl00 > tbody > tr')->eq($i);
+				$playerRow = $crawler->filter('table#WinsBox1_dg2'.$cssId.'b_ctl00 > tbody > tr')->eq($i);
+
+				$playerAndPosition = $playerRow->filter('td')->eq(0)->text();
+				
+				if (substr($playerAndPosition, -1) != 'P') { // if player is not a pitcher
 					$playerNameFg = $playerRow->filter('td')->eq(0)->filter('a')->text();
 
 					$boxScoreLines[$i]['mlb_player_id'] = $this->getPlayerId($playerNameFg, $sport);
 
-					$boxScoreLines[$i]['singles'] = $playerRow->filter('td')->eq(1)->text();
-					$boxScoreLines[$i]['doubles'] = $playerRow->filter('td')->eq(1)->text();
-					$boxScoreLines[$i]['triples'] = $playerRow->filter('td')->eq(1)->text(); 
-					$boxScoreLines[$i]['hr'] = $playerRow->filter('td')->eq(1)->text();
-					$boxScoreLines[$i]['rbi'] = $playerRow->filter('td')->eq(1)->text();
-					$boxScoreLines[$i]['runs'] = $playerRow->filter('td')->eq(1)->text();
-					$boxScoreLines[$i]['bb'] = $playerRow->filter('td')->eq(1)->text();
-					$boxScoreLines[$i]['hbp'] = $playerRow->filter('td')->eq(1)->text();
-					$boxScoreLines[$i]['sb'] = $playerRow->filter('td')->eq(1)->text();
-					$boxScoreLines[$i]['cs'] = $playerRow->filter('td')->eq(1)->text();
-					$boxScoreLines[$i]['ip'] = 
-					$boxScoreLines[$i]['so'] = 
-					$boxScoreLines[$i]['win'] = 
-					$boxScoreLines[$i]['er'] = 
-					$boxScoreLines[$i]['hits_against'] = 
-					$boxScoreLines[$i]['bb_against'] = 
-					$boxScoreLines[$i]['hbp_against'] = 
-					$boxScoreLines[$i]['cg'] = 
-					$boxScoreLines[$i]['cg_shutout'] = 
-					$boxScoreLines[$i]['no_hitter'] = 
-					$boxScoreLines[$i]['fpts'] = 
+					$boxScoreLines[$i]['pa'] = $playerRow->filter('td')->eq(2)->text();
+					$boxScoreLines[$i]['singles'] = $playerRow->filter('td')->eq(4)->text();
+					$boxScoreLines[$i]['doubles'] = $playerRow->filter('td')->eq(5)->text();
+					$boxScoreLines[$i]['triples'] = $playerRow->filter('td')->eq(6)->text(); 
+					$boxScoreLines[$i]['hr'] = $playerRow->filter('td')->eq(7)->text();
+					$boxScoreLines[$i]['rbi'] = $playerRow->filter('td')->eq(9)->text();
+					$boxScoreLines[$i]['runs'] = $playerRow->filter('td')->eq(8)->text();
+					$boxScoreLines[$i]['bb'] = $playerRow->filter('td')->eq(10)->text();
+					$boxScoreLines[$i]['ibb'] = $playerRow->filter('td')->eq(11)->text();
+					$boxScoreLines[$i]['hbp'] = $playerRow->filter('td')->eq(13)->text();
+					$boxScoreLines[$i]['sf'] = $playerRow->filter('td')->eq(14)->text();
+					$boxScoreLines[$i]['sh'] = $playerRow->filter('td')->eq(15)->text();
+					$boxScoreLines[$i]['gdp'] = $playerRow->filter('td')->eq(16)->text();
+					$boxScoreLines[$i]['sb'] = $playerRow->filter('td')->eq(17)->text();
+					$boxScoreLines[$i]['cs'] = $playerRow->filter('td')->eq(18)->text();
 
-					dd($boxScoreLines);
-				}				
+					$boxScoreLines[$i]['ip'] = 0;
+					$boxScoreLines[$i]['so'] = 0;
+					$boxScoreLines[$i]['win'] = 0;
+					$boxScoreLines[$i]['er'] = 0;
+					$boxScoreLines[$i]['runs_against'] = 0;
+					$boxScoreLines[$i]['hits_against'] = 0;
+					$boxScoreLines[$i]['bb_against'] = 0;
+					$boxScoreLines[$i]['ibb_against'] = 0;
+					$boxScoreLines[$i]['hbp_against'] = 0;
+					$boxScoreLines[$i]['cg'] = 0;
+					$boxScoreLines[$i]['cg_shutout'] = 0;
+					$boxScoreLines[$i]['no_hitter'] = 0;
+
+					$boxScoreLines[$i]['fpts'] = ($boxScoreLines[$i]['singles'] * 3) + 
+												 ($boxScoreLines[$i]['doubles'] * 5) + 
+												 ($boxScoreLines[$i]['triples'] * 8) + 
+												 ($boxScoreLines[$i]['hr'] * 10) + 
+												 ($boxScoreLines[$i]['rbi'] * 2) + 
+												 ($boxScoreLines[$i]['runs'] * 2) + 
+												 ($boxScoreLines[$i]['bb'] * 2) + 
+												 ($boxScoreLines[$i]['hbp'] * 2) + 
+												 ($boxScoreLines[$i]['sb'] * 5) + 
+												 ($boxScoreLines[$i]['cs'] * -2);
+				}
 			}
+
+			$pitcherCount = $crawler->filter('table#WinsBox1_dg2'.$cssId.'b_ctl00 > tbody > tr')->count() - 1; // minus to take out total row (last row)
 		}
 	}
 
