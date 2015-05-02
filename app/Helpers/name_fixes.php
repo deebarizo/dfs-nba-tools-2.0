@@ -1,5 +1,30 @@
 <?php
 
+function fgNameFix($rawName) {
+	switch ($rawName) {
+		case 'T.J. House':
+			return 'TJ House';
+
+		case 'Daniel Dorn':
+			return 'Danny Dorn';
+
+		case 'Rubby de la Rosa':
+			return 'Rubby De La Rosa';
+
+		case 'Jorge de la Rosa':
+			return 'Jorge De La Rosa';
+
+		case 'Mitchell Harris':
+			return 'Mitch Harris';
+
+		case 'Steven Souza';
+			return 'Steven Souza Jr.';
+		
+		default:
+			return $rawName;
+	}
+}
+
 function fd_name_fix($rawName) {
 	switch ($rawName) {
 		case 'Brad Beal':

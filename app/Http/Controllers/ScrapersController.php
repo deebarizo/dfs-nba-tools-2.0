@@ -66,6 +66,11 @@ class ScrapersController {
 		$date = $request->input('date');
 
 		$scraper->insertGames($date, 'DK', 'MLB');
+
+		$message = 'Success!';
+		Session::flash('alert', 'info');
+
+		return redirect('scrapers/fg_mlb_box_score_lines')->with('message', $message);	 
 	}
 
 	public function br_nba_box_score_lines(Request $request) {

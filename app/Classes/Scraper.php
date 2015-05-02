@@ -13,6 +13,9 @@ use App\Models\MlbPlayer;
 use App\Models\MlbTeam;
 use App\Models\MlbPlayerTeam;
 use App\Models\DkMlbPlayer;
+use App\Models\MlbGame;
+use App\Models\MlbGameLine;
+use App\Models\MlbBoxScoreLine;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\RunFDNBASalariesScraperRequest;
@@ -74,7 +77,97 @@ class Scraper {
 			$games[$key]['date'] = $date;
 			$games[$key]['link_fg'] = $url;
 
-			$games[$key]['game_lines'] = $this->scrapeGame($url, $sport);
+			list($games[$key]['game_lines'], $games[$key]['box_score_lines']) = $this->scrapeGame($url, $sport);
+		}
+
+		# ddAll($games);
+
+		foreach ($games as $game) {
+			$this->saveGame($sport, $date, $game);
+		}
+	}
+
+	private function saveGame($sport, $date, $game) {
+		if ($sport == 'MLB') {
+			$gameExists = MlbGame::where('link_fg', $game['link_fg'])->count();
+
+			if (!$gameExists) {
+				$mlbGame = new MlbGame;
+
+				$mlbGame->season_id = $game['season_id'];
+				$mlbGame->date = $date;
+				$mlbGame->link_fg = $game['link_fg'];
+
+				$mlbGame->save();			
+			} else {
+				echo 'The game with this link '.$game['link_fg'].' is already in the database.';
+				exit();
+			}
+
+			foreach ($game['game_lines'] as $gameLine) {
+				$this->saveGameLine($sport, $gameLine, $mlbGame->id);
+			}
+
+			foreach ($game['box_score_lines'] as $boxScoreLine) {
+				$this->saveBoxScoreLine($sport, $boxScoreLine, $mlbGame->id);
+			}
+		}
+	}
+
+	private function saveBoxScoreLine($sport, $boxScoreLine, $gameId) {
+		if ($sport == 'MLB') {
+			$mlbBoxScoreLine = new MlbBoxScoreLine;
+
+			$mlbBoxScoreLine->mlb_game_id = $gameId;
+			$mlbBoxScoreLine->mlb_team_id = $boxScoreLine['mlb_team_id'];
+			$mlbBoxScoreLine->opp_mlb_team_id = $boxScoreLine['opp_mlb_team_id'];
+			$mlbBoxScoreLine->mlb_player_id = $boxScoreLine['mlb_player_id'];
+			
+			$mlbBoxScoreLine->pa = $boxScoreLine['pa'];
+			$mlbBoxScoreLine->singles = $boxScoreLine['singles'];
+			$mlbBoxScoreLine->doubles = $boxScoreLine['doubles'];
+			$mlbBoxScoreLine->triples = $boxScoreLine['triples'];
+			$mlbBoxScoreLine->hr = $boxScoreLine['hr'];
+			$mlbBoxScoreLine->rbi = $boxScoreLine['rbi'];
+			$mlbBoxScoreLine->runs = $boxScoreLine['runs'];
+			$mlbBoxScoreLine->bb = $boxScoreLine['bb'];
+			$mlbBoxScoreLine->ibb = $boxScoreLine['ibb'];
+			$mlbBoxScoreLine->hbp = $boxScoreLine['hbp'];
+			$mlbBoxScoreLine->sf = $boxScoreLine['sf'];
+			$mlbBoxScoreLine->sh = $boxScoreLine['sh'];
+			$mlbBoxScoreLine->gdp = $boxScoreLine['gdp'];
+			$mlbBoxScoreLine->sb = $boxScoreLine['sb'];
+			$mlbBoxScoreLine->cs = $boxScoreLine['cs'];
+
+			$mlbBoxScoreLine->ip = $boxScoreLine['ip'];
+			$mlbBoxScoreLine->so = $boxScoreLine['so'];
+			$mlbBoxScoreLine->win = $boxScoreLine['win'];
+			$mlbBoxScoreLine->er = $boxScoreLine['er'];
+			$mlbBoxScoreLine->runs_against = $boxScoreLine['runs_against'];
+			$mlbBoxScoreLine->hits_against = $boxScoreLine['hits_against'];
+			$mlbBoxScoreLine->bb_against = $boxScoreLine['bb_against'];
+			$mlbBoxScoreLine->ibb_against = $boxScoreLine['ibb_against'];
+			$mlbBoxScoreLine->hbp_against = $boxScoreLine['hbp_against'];
+			$mlbBoxScoreLine->cg = $boxScoreLine['cg'];
+			$mlbBoxScoreLine->cg_shutout = $boxScoreLine['cg_shutout'];
+			$mlbBoxScoreLine->no_hitter = $boxScoreLine['no_hitter'];
+			$mlbBoxScoreLine->fpts = $boxScoreLine['fpts'];
+
+			$mlbBoxScoreLine->save();
+		}
+	}
+
+	private function saveGameLine($sport, $gameLine, $gameId) {
+		if ($sport == 'MLB') {
+			$mlbGameLine = new MlbGameLine;
+
+			$mlbGameLine->mlb_game_id = $gameId;
+			$mlbGameLine->home = $gameLine['home'];
+			$mlbGameLine->road = $gameLine['road'];
+			$mlbGameLine->mlb_team_id = $gameLine['mlb_team_id'];
+			$mlbGameLine->score = $gameLine['score'];
+
+			$mlbGameLine->save();
 		}
 	}
 
@@ -87,6 +180,9 @@ class Scraper {
 		$locations = ['home', 'away'];
 
 		$gameLines = [];
+
+		$boxScoreLines = [];
+		$boxScoreLineCount = 0;
 
 		foreach ($locations as $key => $location) {
 			if ($location == 'home') {
@@ -112,82 +208,147 @@ class Scraper {
 			$oppTeamFg = $crawler->filter('a[href="#'.$otherLocation.'"]')->text();
 			$oppTeamId = $this->getTeamId($oppTeamFg, $sport);
 
-			$boxScoreLines = [];
-
 			$hitterCount = $crawler->filter('table#WinsBox1_dg2'.$cssId.'b_ctl00 > tbody > tr')->count() - 1; // minus to take out total row (last row)
 
 			$gameLines[$key]['score'] = $crawler->filter('tr#WinsBox1_dg'.$cssId.'b_ctl00__'.$hitterCount.' > td')->eq(5)->text();
 
 			for ($i = 0; $i < $hitterCount; $i++) { 
-				$boxScoreLines[$i]['mlb_team_id'] = $teamId;
-				$boxScoreLines[$i]['opp_mlb_team_id'] = $oppTeamId;
-
 				$playerRow = $crawler->filter('table#WinsBox1_dg2'.$cssId.'b_ctl00 > tbody > tr')->eq($i);
 
 				$playerAndPosition = $playerRow->filter('td')->eq(0)->text();
 				
 				if (substr($playerAndPosition, -1) != 'P') { // if player is not a pitcher
+					$boxScoreLineCount++;
+
+					$boxScoreLines[$boxScoreLineCount]['mlb_team_id'] = $teamId;
+					$boxScoreLines[$boxScoreLineCount]['opp_mlb_team_id'] = $oppTeamId;
+
 					$playerNameFg = $playerRow->filter('td')->eq(0)->filter('a')->text();
 
-					$boxScoreLines[$i]['mlb_player_id'] = $this->getPlayerId($playerNameFg, $sport);
+					$boxScoreLines[$boxScoreLineCount]['mlb_player_id'] = $this->getPlayerId($playerNameFg, $sport);
 
-					$boxScoreLines[$i]['pa'] = $playerRow->filter('td')->eq(2)->text();
-					$boxScoreLines[$i]['singles'] = $playerRow->filter('td')->eq(4)->text();
-					$boxScoreLines[$i]['doubles'] = $playerRow->filter('td')->eq(5)->text();
-					$boxScoreLines[$i]['triples'] = $playerRow->filter('td')->eq(6)->text(); 
-					$boxScoreLines[$i]['hr'] = $playerRow->filter('td')->eq(7)->text();
-					$boxScoreLines[$i]['rbi'] = $playerRow->filter('td')->eq(9)->text();
-					$boxScoreLines[$i]['runs'] = $playerRow->filter('td')->eq(8)->text();
-					$boxScoreLines[$i]['bb'] = $playerRow->filter('td')->eq(10)->text();
-					$boxScoreLines[$i]['ibb'] = $playerRow->filter('td')->eq(11)->text();
-					$boxScoreLines[$i]['hbp'] = $playerRow->filter('td')->eq(13)->text();
-					$boxScoreLines[$i]['sf'] = $playerRow->filter('td')->eq(14)->text();
-					$boxScoreLines[$i]['sh'] = $playerRow->filter('td')->eq(15)->text();
-					$boxScoreLines[$i]['gdp'] = $playerRow->filter('td')->eq(16)->text();
-					$boxScoreLines[$i]['sb'] = $playerRow->filter('td')->eq(17)->text();
-					$boxScoreLines[$i]['cs'] = $playerRow->filter('td')->eq(18)->text();
+					$boxScoreLines[$boxScoreLineCount]['pa'] = $playerRow->filter('td')->eq(2)->text();
+					$boxScoreLines[$boxScoreLineCount]['singles'] = $playerRow->filter('td')->eq(4)->text();
+					$boxScoreLines[$boxScoreLineCount]['doubles'] = $playerRow->filter('td')->eq(5)->text();
+					$boxScoreLines[$boxScoreLineCount]['triples'] = $playerRow->filter('td')->eq(6)->text(); 
+					$boxScoreLines[$boxScoreLineCount]['hr'] = $playerRow->filter('td')->eq(7)->text();
+					$boxScoreLines[$boxScoreLineCount]['rbi'] = $playerRow->filter('td')->eq(9)->text();
+					$boxScoreLines[$boxScoreLineCount]['runs'] = $playerRow->filter('td')->eq(8)->text();
+					$boxScoreLines[$boxScoreLineCount]['bb'] = $playerRow->filter('td')->eq(10)->text();
+					$boxScoreLines[$boxScoreLineCount]['ibb'] = $playerRow->filter('td')->eq(11)->text();
+					$boxScoreLines[$boxScoreLineCount]['hbp'] = $playerRow->filter('td')->eq(13)->text();
+					$boxScoreLines[$boxScoreLineCount]['sf'] = $playerRow->filter('td')->eq(14)->text();
+					$boxScoreLines[$boxScoreLineCount]['sh'] = $playerRow->filter('td')->eq(15)->text();
+					$boxScoreLines[$boxScoreLineCount]['gdp'] = $playerRow->filter('td')->eq(16)->text();
+					$boxScoreLines[$boxScoreLineCount]['sb'] = $playerRow->filter('td')->eq(17)->text();
+					$boxScoreLines[$boxScoreLineCount]['cs'] = $playerRow->filter('td')->eq(18)->text();
 
-					$boxScoreLines[$i]['ip'] = 0;
-					$boxScoreLines[$i]['so'] = 0;
-					$boxScoreLines[$i]['win'] = 0;
-					$boxScoreLines[$i]['er'] = 0;
-					$boxScoreLines[$i]['runs_against'] = 0;
-					$boxScoreLines[$i]['hits_against'] = 0;
-					$boxScoreLines[$i]['bb_against'] = 0;
-					$boxScoreLines[$i]['ibb_against'] = 0;
-					$boxScoreLines[$i]['hbp_against'] = 0;
-					$boxScoreLines[$i]['cg'] = 0;
-					$boxScoreLines[$i]['cg_shutout'] = 0;
-					$boxScoreLines[$i]['no_hitter'] = 0;
+					$boxScoreLines[$boxScoreLineCount]['ip'] = 0;
+					$boxScoreLines[$boxScoreLineCount]['so'] = 0;
+					$boxScoreLines[$boxScoreLineCount]['win'] = 0;
+					$boxScoreLines[$boxScoreLineCount]['er'] = 0;
+					$boxScoreLines[$boxScoreLineCount]['runs_against'] = 0;
+					$boxScoreLines[$boxScoreLineCount]['hits_against'] = 0;
+					$boxScoreLines[$boxScoreLineCount]['bb_against'] = 0;
+					$boxScoreLines[$boxScoreLineCount]['ibb_against'] = 0;
+					$boxScoreLines[$boxScoreLineCount]['hbp_against'] = 0;
+					$boxScoreLines[$boxScoreLineCount]['cg'] = 0;
+					$boxScoreLines[$boxScoreLineCount]['cg_shutout'] = 0;
+					$boxScoreLines[$boxScoreLineCount]['no_hitter'] = 0;
 
-					$boxScoreLines[$i]['fpts'] = ($boxScoreLines[$i]['singles'] * 3) + 
-												 ($boxScoreLines[$i]['doubles'] * 5) + 
-												 ($boxScoreLines[$i]['triples'] * 8) + 
-												 ($boxScoreLines[$i]['hr'] * 10) + 
-												 ($boxScoreLines[$i]['rbi'] * 2) + 
-												 ($boxScoreLines[$i]['runs'] * 2) + 
-												 ($boxScoreLines[$i]['bb'] * 2) + 
-												 ($boxScoreLines[$i]['hbp'] * 2) + 
-												 ($boxScoreLines[$i]['sb'] * 5) + 
-												 ($boxScoreLines[$i]['cs'] * -2);
+					$boxScoreLines[$boxScoreLineCount]['fpts'] = ($boxScoreLines[$boxScoreLineCount]['singles'] * 3) + 
+												 ($boxScoreLines[$boxScoreLineCount]['doubles'] * 5) + 
+												 ($boxScoreLines[$boxScoreLineCount]['triples'] * 8) + 
+												 ($boxScoreLines[$boxScoreLineCount]['hr'] * 10) + 
+												 ($boxScoreLines[$boxScoreLineCount]['rbi'] * 2) + 
+												 ($boxScoreLines[$boxScoreLineCount]['runs'] * 2) + 
+												 ($boxScoreLines[$boxScoreLineCount]['bb'] * 2) + 
+												 ($boxScoreLines[$boxScoreLineCount]['hbp'] * 2) + 
+												 ($boxScoreLines[$boxScoreLineCount]['sb'] * 5) + 
+												 ($boxScoreLines[$boxScoreLineCount]['cs'] * -2);
 				}
 			}
 
-			$pitcherCount = $crawler->filter('table#WinsBox1_dg2'.$cssId.'b_ctl00 > tbody > tr')->count() - 1; // minus to take out total row (last row)
+			$pitcherCount = $crawler->filter('table#WinsBox1_dg2'.$cssId.'p_ctl00 > tbody > tr')->count() - 1; // minus to take out total row (last row)
+
+			for ($i = 0; $i < $pitcherCount; $i++) { 
+				$playerRow = $crawler->filter('table#WinsBox1_dg2'.$cssId.'p_ctl00 > tbody > tr')->eq($i);
+
+				$boxScoreLineCount++;
+
+				$boxScoreLines[$boxScoreLineCount]['mlb_team_id'] = $teamId;
+				$boxScoreLines[$boxScoreLineCount]['opp_mlb_team_id'] = $oppTeamId;
+
+				$playerNameFg = $playerRow->filter('td')->eq(0)->filter('a')->text();
+
+				$boxScoreLines[$boxScoreLineCount]['mlb_player_id'] = $this->getPlayerId($playerNameFg, $sport);
+
+				$boxScoreLines[$boxScoreLineCount]['pa'] = 0;
+				$boxScoreLines[$boxScoreLineCount]['singles'] = 0;
+				$boxScoreLines[$boxScoreLineCount]['doubles'] = 0;
+				$boxScoreLines[$boxScoreLineCount]['triples'] = 0;
+				$boxScoreLines[$boxScoreLineCount]['hr'] = 0;
+				$boxScoreLines[$boxScoreLineCount]['rbi'] = 0;
+				$boxScoreLines[$boxScoreLineCount]['runs'] = 0;
+				$boxScoreLines[$boxScoreLineCount]['bb'] = 0;
+				$boxScoreLines[$boxScoreLineCount]['ibb'] = 0;
+				$boxScoreLines[$boxScoreLineCount]['hbp'] = 0;
+				$boxScoreLines[$boxScoreLineCount]['sf'] = 0;
+				$boxScoreLines[$boxScoreLineCount]['sh'] = 0;
+				$boxScoreLines[$boxScoreLineCount]['gdp'] = 0;
+				$boxScoreLines[$boxScoreLineCount]['sb'] = 0;
+				$boxScoreLines[$boxScoreLineCount]['cs'] = 0;
+
+				$boxScoreLines[$boxScoreLineCount]['ip'] = $playerRow->filter('td')->eq(11)->text();
+				$boxScoreLines[$boxScoreLineCount]['so'] = $playerRow->filter('td')->eq(22)->text();
+				$boxScoreLines[$boxScoreLineCount]['win'] = $playerRow->filter('td')->eq(1)->text();
+				$boxScoreLines[$boxScoreLineCount]['er'] = $playerRow->filter('td')->eq(15)->text();
+				$boxScoreLines[$boxScoreLineCount]['runs_against'] = $playerRow->filter('td')->eq(14)->text();
+				$boxScoreLines[$boxScoreLineCount]['hits_against'] = $playerRow->filter('td')->eq(13)->text();
+				$boxScoreLines[$boxScoreLineCount]['bb_against'] = $playerRow->filter('td')->eq(17)->text();
+				$boxScoreLines[$boxScoreLineCount]['ibb_against'] = $playerRow->filter('td')->eq(18)->text();
+				$boxScoreLines[$boxScoreLineCount]['hbp_against'] = $playerRow->filter('td')->eq(19)->text();
+				$boxScoreLines[$boxScoreLineCount]['cg'] = $playerRow->filter('td')->eq(6)->text();
+				$boxScoreLines[$boxScoreLineCount]['cg_shutout'] = $playerRow->filter('td')->eq(7)->text();
+
+				if ($boxScoreLines[$boxScoreLineCount]['cg'] == 1 && $boxScoreLines[$boxScoreLineCount]['hits_against'] == 0) {
+					$boxScoreLines[$boxScoreLineCount]['no_hitter'] = 1;
+				} else {
+					$boxScoreLines[$boxScoreLineCount]['no_hitter'] = 0;
+				}
+
+				$ipWithCorrectDecimals = (intval($boxScoreLines[$boxScoreLineCount]['ip'])) + (substr($boxScoreLines[$boxScoreLineCount]['ip'], -1) / 3);
+
+				$boxScoreLines[$boxScoreLineCount]['fpts'] = ($ipWithCorrectDecimals * 2.25) + 
+															 ($boxScoreLines[$boxScoreLineCount]['so'] * 2) + 
+															 ($boxScoreLines[$boxScoreLineCount]['win'] * 4) + 
+															 ($boxScoreLines[$boxScoreLineCount]['er'] * -2) + 
+															 ($boxScoreLines[$boxScoreLineCount]['hits_against'] * -0.6) + 
+															 ($boxScoreLines[$boxScoreLineCount]['bb_against'] * -0.6) + 
+															 ($boxScoreLines[$boxScoreLineCount]['hbp_against'] * -0.6) + 
+															 ($boxScoreLines[$boxScoreLineCount]['cg'] * 2.5) + 
+															 ($boxScoreLines[$boxScoreLineCount]['cg_shutout'] * 2.5) + 
+															 ($boxScoreLines[$boxScoreLineCount]['no_hitter'] * 5); 
+			}
 		}
+
+		return array($gameLines, $boxScoreLines);
 	}
 
 	private function getPlayerId($playerNameFg, $sport) {
 		if ($sport == 'MLB') {
 			$mlbPlayers = MlbPlayer::all();
 
+			$playerName = fgNameFix($playerNameFg);
+
 			foreach ($mlbPlayers as $mlbPlayer) {
-				if ($mlbPlayer->name == $playerNameFg) {
+				if ($mlbPlayer->name == $playerName) {
 					return $mlbPlayer->id;
 				}
 			}
 
 			echo 'Error: could not match this player name from Fangraphs, '.$playerNameFg;
+			exit();
 		}
 	}
 
