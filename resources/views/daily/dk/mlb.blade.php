@@ -133,8 +133,88 @@
 								<td>{{ $player->avr }}</td>
 								<td>
 									<a href="{{ $player->link_fg }}" target="_blank" class="box-score-line-tooltip"><span class="glyphicon glyphicon-link" aria-hidden="true"></span></a>
-									<div style="display: none" class="box-score-line-tooltip">
-										Complex <b>inline</b> <i>HTML</i> in your <u>config</u>
+									<div class="box-score-line-tooltip">
+										@if (isset($player->ip))
+											@if ($player->position == 'SP' || $player->position == 'RP')
+												<table>
+													<thead>
+														<tr>
+															<th>IP</th>
+															<th>K</th>
+															<th>W</th>
+															<th>R</th>
+															<th>ER</th>
+															<th>H</th>
+															<th>BB</th>
+															<th>HBP</th>
+															<th>CG</th>
+															<th>SO</th>
+															<th>NO</th>
+															<th>FPTS</th>
+														</tr>
+													</thead>
+													<tbody>
+														<tr>
+															<td>{{ $player->ip }}</td>
+															<td>{{ $player->so }}</td>
+															<td>{{ $player->win }}</td>
+															<td>{{ $player->runs_against }}</td>
+															<td>{{ $player->er }}</td>
+															<td>{{ $player->hits_against }}</td>
+															<td>{{ $player->bb_against }}</td>
+															<td>{{ $player->hbp_against }}</td>
+															<td>{{ $player->cg }}</td>
+															<td>{{ $player->cg_shutout }}</td>
+															<td>{{ $player->no_hitter }}</td>
+															<td>{{ $player->fpts }}</td>
+														</tr>
+													</tbody>											
+												</table>
+											@else
+												<table>
+													<thead>
+														<tr>
+															<th>PA</th>
+															<th>1B</th>
+															<th>2B</th>
+															<th>3B</th>
+															<th>HR</th>
+															<th>RBI</th>
+															<th>R</th>
+															<th>BB</th>
+															<th>IBB</th>
+															<th>HBP</th>
+															<th>SF</th>
+															<th>SH</th>
+															<th>GDP</th>
+															<th>SB</th>
+															<th>CS</th>
+															<th>FPTS</th>
+														</tr>
+													</thead>
+													<tbody>
+														<tr>
+															<td>{{ $player->pa }}</td>
+															<td>{{ $player->singles }}</td>
+															<td>{{ $player->doubles }}</td>
+															<td>{{ $player->triples }}</td>
+															<td>{{ $player->hr }}</td>
+															<td>{{ $player->rbi }}</td>
+															<td>{{ $player->runs }}</td>
+															<td>{{ $player->bb }}</td>
+															<td>{{ $player->ibb }}</td>
+															<td>{{ $player->hbp }}</td>
+															<td>{{ $player->sf }}</td>
+															<td>{{ $player->sh }}</td>
+															<td>{{ $player->gdp }}</td>
+															<td>{{ $player->sb }}</td>
+															<td>{{ $player->cs }}</td>
+															<td>{{ $player->fpts }}</td>
+														</tr>
+													</tbody>											
+												</table>
+											@endif
+										@endif
 									</div>
 								</td>
 							@endif

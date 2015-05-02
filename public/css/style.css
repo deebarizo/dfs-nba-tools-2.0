@@ -160,3 +160,24 @@ tr.lineup-row {
 .lineup-salary-total-invalid {
 	color: red;
 }
+
+/* BOX SCORE LINE TOOLTIP (MLB) */
+
+div.box-score-line-tooltip {
+	display: none;
+}
+
+div.box-score-line-tooltip th 
+{
+	background-color: #FFEBCC;
+	border: 1px solid #DDDDDD;
+	padding: 4px;
+	text-align: left;
+}
+
+div.box-score-line-tooltip td
+{
+	padding: 4px;
+	text-align: left;
+	border: 1px solid #DDDDDD;
+}
