@@ -58,13 +58,16 @@ $(document).ready(function() {
 	BOX SCORE LINES TOOLTIP (MLB)
 	********************************************/
 
-     $('a.box-score-line-tooltip').each(function() {
-         $(this).qtip({
-             content: {
-                 text: $(this).next('div.box-score-line-tooltip')
-             }
-         });
-     });
+    $('a.box-score-line-tooltip').each(function() {
+        $(this).qtip({
+            content: {
+                text: $(this).next('div.box-score-line-tooltip')
+            },
+		    position: {
+		        my: 'right top'
+		    }
+        });
+    });
 
 
 	/********************************************
