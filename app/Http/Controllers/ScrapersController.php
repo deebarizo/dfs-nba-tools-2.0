@@ -14,6 +14,7 @@ use App\Models\MlbTeam;
 use App\Models\MlbPlayerTeam;
 
 use App\Classes\Scraper;
+use App\Classes\Validator;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\RunFDNBASalariesScraperRequest;
@@ -27,6 +28,21 @@ use Goutte\Client;
 use Illuminate\Support\Facades\Session;
 
 class ScrapersController {
+
+	public function dkMlbOwnership(Request $request) {
+		$contest = $request->input('contest');
+		$entryFee = $request->input('entry_fee');
+		$timePeriod = $request->input('time_period');
+
+		$validator = new Validator;
+		$message = $validator->validateDkMlbOwnership($contest, $entryFee, $timePeriod);
+
+		if ($message != 'Valid') {
+			Session::flash('alert', 'warning');
+
+			return redirect('scrapers/dk_mlb_ownership')->with('message', $message);	 
+		}
+	}
 
 	public function bat_mlb_projections(Request $request) {
 		$scraper = new Scraper;
