@@ -34,7 +34,7 @@ class ScrapersController {
 		$contest = $request->input('contest');
 		$entryFee = $request->input('entry_fee');
 		$timePeriod = $request->input('time_period');
-
+		
 		$validator = new Validator;
 		$message = $validator->validateDkMlbOwnership($contest, $entryFee, $timePeriod);
 
@@ -43,17 +43,17 @@ class ScrapersController {
 
 			return redirect('scrapers/dk_mlb_ownership')->with('message', $message);	 
 		}
-	}
 
-	public function bat_mlb_projections(Request $request) {
 		$scraper = new Scraper;
 
-		$scraper->getBatCsvFile($request, 'DK', 'MLB');
+		$csvFile = $scraper->uploadContestCsvFile($request, $date, $timePeriod, 'DK', 'MLB');
+
+		$scraper->insertContests($date, $contest, $entryFee, $timePeriod, $csvFile, 'DK', 'MLB');
 
 		$message = 'Success!';
 		Session::flash('alert', 'info');
 
-		return redirect('scrapers/bat_mlb_projections')->with('message', $message);	 
+		return redirect('scrapers/fg_mlb_box_score_lines')->with('message', $message);	 
 	}
 
 	public function dk_mlb_salaries(Request $request) {
@@ -76,6 +76,17 @@ class ScrapersController {
 		Session::flash('alert', 'info');
 
 		return redirect('scrapers/dk_mlb_salaries')->with('message', $message);	 
+	}
+
+	public function bat_mlb_projections(Request $request) {
+		$scraper = new Scraper;
+
+		$scraper->getBatCsvFile($request, 'DK', 'MLB');
+
+		$message = 'Success!';
+		Session::flash('alert', 'info');
+
+		return redirect('scrapers/bat_mlb_projections')->with('message', $message);	 
 	}
 
 	public function fg_mlb_box_score_lines(Request $request) {
