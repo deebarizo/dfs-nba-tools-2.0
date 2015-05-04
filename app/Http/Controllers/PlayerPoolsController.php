@@ -23,27 +23,35 @@ use Illuminate\Support\Facades\Session;
 class PlayerPoolsController {
 
 	public function home() {
-		$playerPools = PlayerPool::orderBy('date', 'desc')->take(50)->get()->toArray();
+		// $playerPools = PlayerPool::orderBy('date', 'desc')->take(50)->get()->toArray();
 
-		foreach ($playerPools as &$playerPool) {
-			$playerPool['site_in_url'] = strtolower($playerPool['site']);
+		$playerPools = DB::table('player_pools')
+						->select('*')
+						->leftJoin
+						->orderBy('date', 'desc')
+						->take(50)
+						->get();
 
-			$playerPool['sport_in_url'] = strtolower($playerPool['sport']);
+		# dd($playerPools);
 
-			$timePeriodInUrl = strtolower($playerPool['time_period']);
-			$playerPool['time_period_in_url'] = preg_replace('/\s/', '-', $timePeriodInUrl);
+		foreach ($playerPools as $playerPool) {
+			$playerPool->site_in_url = strtolower($playerPool->site);
 
-			if ($playerPool['buy_in'] == '') {
-				$playerPool['buy_in'] = 'N/A';
+			$playerPool->sport_in_url = strtolower($playerPool->sport);
+
+			$timePeriodInUrl = strtolower($playerPool->time_period);
+			$playerPool->time_period_in_url = preg_replace('/\s/', '-', $timePeriodInUrl);
+
+			if ($playerPool->buy_in == '') {
+				$playerPool->buy_in = 'N/A';
 
 				continue;
 			}
 
-			$playerPool['buy_in'] = '$'.$playerPool['buy_in'];
-			
-		} unset($playerPool);
+			$playerPool->buy_in = '$'.$playerPool->buy_in;
+		}
 
-		# ddAll($playerPools);
+		ddAll($playerPools);
 
 		return view('pages/home', compact('playerPools'));
 	}

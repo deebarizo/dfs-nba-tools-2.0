@@ -13,6 +13,9 @@ use App\Models\MlbPlayer;
 use App\Models\MlbTeam;
 use App\Models\MlbPlayerTeam;
 use App\Models\DkMlbPlayer;
+use App\Models\DkMlbContest;
+use App\Models\DkMlbContestLineup;
+use App\Models\DkMlbContestLineupPlayer;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\RunFDNBASalariesScraperRequest;
@@ -39,6 +42,8 @@ class StatBuilder {
                      ->join('mlb_teams', 'mlb_teams.id', '=', 'dk_mlb_players.mlb_team_id')
                      ->where('player_pools.time_period', $timePeriod)
                      ->where('player_pools.date', $date)
+                     ->where('player_pools.sport', 'MLB')
+                     ->where('player_pools.site', 'DK')
                      ->get();
 
         $boxScoreLines = DB::table('mlb_games')
@@ -47,7 +52,15 @@ class StatBuilder {
                      ->where('mlb_games.date', $date)
                      ->get();
 
-        # dd($boxScoreLines);
+        $numOfContestLineups = DB::table('dk_mlb_contests')
+                                  ->select('*')
+                                  ->join('dk_mlb_contest_lineups', 'dk_mlb_contest_lineups.dk_mlb_contest_id', '=', 'dk_mlb_contests.id')
+                                  ->join('dk_mlb_contest_lineup_players', 'dk_mlb_contest_lineup_players.dk_mlb_contest_lineup_id', '=', 'dk_mlb_contest_lineups.id')
+                                  ->where('dk_mlb_contests.time_period', $timePeriod)
+                                  ->where('dk_mlb_contests.date', $date)
+                                  ->count();
+
+        dd($numOfContestLineups);
 
         if (!empty($boxScoreLines)) {
             foreach ($players as $player) {
@@ -249,6 +262,8 @@ class StatBuilder {
                      ->distinct()
                      ->where('player_pools.time_period', $timePeriod)
                      ->where('player_pools.date', $date)
+                     ->where('player_pools.sport', 'MLB')
+                     ->where('player_pools.site', 'DK')
                      ->orderBy('abbr_dk')
                      ->get();
 

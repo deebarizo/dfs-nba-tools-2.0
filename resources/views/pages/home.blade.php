@@ -19,12 +19,12 @@
 				<tbody>
 					@foreach ($playerPools as $playerPool)
 						<tr>
-							<td>{{ $playerPool['date'] }}</td>
-							<td>{{ $playerPool['site'] }}</td>
-							<td>{{ $playerPool['sport'] }}</td>
-							<td>{{ $playerPool['time_period'] }}</td>
-							<td>{{ $playerPool['buy_in'] }}</td>
-							<td><a href="/daily/{{ $playerPool['site_in_url'] }}/{{ $playerPool['sport_in_url'] }}/{{ $playerPool['time_period_in_url'] }}/{{ $playerPool['date'] }}">Link</a></td>
+							<td>{{ $playerPool->date }}</td>
+							<td>{{ $playerPool->site }}</td>
+							<td>{{ $playerPool->sport }}</td>
+							<td>{{ $playerPool->time_period }}</td>
+							<td>{{ $playerPool->buy_in }}</td>
+							<td><a href="/daily/{{ $playerPool->site_in_url }}/{{ $playerPool->sport_in_url }}/{{ $playerPool->time_period_in_url }}/{{ $playerPool->date }}">Link</a></td>
 						</tr>
 					@endforeach
 				</tbody>
