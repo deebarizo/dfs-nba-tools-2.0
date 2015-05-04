@@ -30,8 +30,8 @@ use Illuminate\Support\Facades\Session;
 
 class Validator {
 
-	public function validateDkMlbOwnership($contest, $entryFee, $timePeriod) {
-		if ($contest == '') {
+	public function validateDkMlbOwnership($contestName, $entryFee, $timePeriod) {
+		if ($contestName == '') {
 			return 'Please enter the contest name.';
 		}
 

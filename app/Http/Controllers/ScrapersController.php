@@ -31,12 +31,12 @@ class ScrapersController {
 
 	public function dkMlbOwnership(Request $request) {
 		$date = $request->input('date');
-		$contest = $request->input('contest');
+		$contestName = $request->input('contest');
 		$entryFee = $request->input('entry_fee');
 		$timePeriod = $request->input('time_period');
 		
 		$validator = new Validator;
-		$message = $validator->validateDkMlbOwnership($contest, $entryFee, $timePeriod);
+		$message = $validator->validateDkMlbOwnership($contestName, $entryFee, $timePeriod);
 
 		if ($message != 'Valid') {
 			Session::flash('alert', 'warning');
@@ -48,7 +48,9 @@ class ScrapersController {
 
 		$csvFile = $scraper->uploadContestCsvFile($request, $date, $timePeriod, 'DK', 'MLB');
 
-		$scraper->insertContests($date, $contest, $entryFee, $timePeriod, $csvFile, 'DK', 'MLB');
+		$scraper->insertContest($date, $contestName, $entryFee, $timePeriod, $csvFile, 'DK', 'MLB');
+
+		// check if contest already exists
 
 		$message = 'Success!';
 		Session::flash('alert', 'info');

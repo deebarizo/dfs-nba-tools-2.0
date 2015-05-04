@@ -34,6 +34,79 @@ class Scraper {
 	MLB
 	****************************************************************************************/
 
+	public function insertContest($date, $contestName, $entryFee, $timePeriod, $csvFile, $site, $sport) {
+		$contest = [];
+
+		$contest['date'] = $date;
+		$contest['name'] = $contestName;
+		$contest['entry_fee'] = $entryFee;
+		$contest['time_period'] = $timePeriod;
+		$contest['lineups'] = [];
+
+		$dkMlbPlayers = DB::table('player_pools')
+							->select('dk_mlb_players.id as dk_mlb_player_id',
+									 'mlb_players.id as mlb_player_id', 
+									 'mlb_players.name',  
+									 'dk_mlb_players.position')
+							->join('dk_mlb_players', 'dk_mlb_players.player_pool_id', '=', 'player_pools.id')
+							->join('mlb_players', 'mlb_players.id', '=', 'dk_mlb_players.mlb_player_id')
+							->where('player_pools.date', $date)
+							->where('player_pools.time_period', $timePeriod)
+							->where('player_pools.site', $site)
+							->where('player_pools.sport', $sport)
+							->get();
+
+		foreach ($dkMlbPlayers as $dkMlbPlayer) {
+			if ($dkMlbPlayer->position == 'SP' || $dkMlbPlayer->position == 'RP') {
+				$dkMlbPlayer->position = 'P';
+			}
+		}
+
+		# dd($dkMlbPlayers);
+
+		if ($site == 'DK' && $sport == 'MLB') {
+			if (($handle = fopen($csvFile, 'r')) !== false) {
+				$row = 0;
+
+				while (($csvData = fgetcsv($handle, 10000000, ',')) !== false) {
+					if ($row != 0) {
+					    $lineup = explode(',', $csvData[5]);
+
+					    foreach ($lineup as $key => $rosterSpot) {
+					    	$position = preg_replace('/(\()(\w+)(\).*)/', '$2', $rosterSpot);
+					    	$playerName = trim(preg_replace('/(\(\w+\)\s)(.*)/', '$2', $rosterSpot));
+					    	list($dkMlbPlayerId, $mlbPlayerId) = $this->getDkMlbPlayer($dkMlbPlayers, $position, $playerName);
+
+					    	$contest['lineups'][$row][$key] = array(
+					    		'dk_mlb_player_id' => $dkMlbPlayerId,
+					    		'mlb_player_id' => $mlbPlayerId, 
+					    		'player_name' => $playerName,
+					    		'position' => $position
+					    	);
+					    }
+					}
+
+					$row++;
+				}
+			}
+		}
+
+		$numOfLineups = count($contest['lineups']);
+
+		ddAll($contest);
+	}
+
+	private function getDkMlbPlayer($dkMlbPlayers, $position, $playerName) {
+		foreach ($dkMlbPlayers as $dkMlbPlayer) {
+			if ($position == $dkMlbPlayer->position && $playerName == $dkMlbPlayer->name) {
+				return array($dkMlbPlayer->dk_mlb_player_id, $dkMlbPlayer->mlb_player_id);
+			}
+		}
+
+		echo 'There was no match for '.$playerName.' in the player pool.';
+		exit();
+	}
+
 	public function uploadContestCsvFile($request, $date, $timePeriod, $site, $sport) {
 		$csvName = $request->file('csv')->getClientOriginalName();
 		$contestId = preg_replace('/(\D*)(\d+)(.csv)/', '$2', $csvName);
