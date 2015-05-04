@@ -30,6 +30,7 @@ use Illuminate\Support\Facades\Session;
 class ScrapersController {
 
 	public function dkMlbOwnership(Request $request) {
+		$date = $request->input('date');
 		$contest = $request->input('contest');
 		$entryFee = $request->input('entry_fee');
 		$timePeriod = $request->input('time_period');
