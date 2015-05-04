@@ -3,7 +3,7 @@
 @section('content')
 	<div class="row">
 		<div class="col-lg-12">
-			<h2>Daily - DK MLB</h2>
+			<h2>Daily - DK MLB - {{ $contestName }}</h2>
 		</div>
 	</div>
 	

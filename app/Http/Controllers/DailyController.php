@@ -13,6 +13,7 @@ use App\Models\MlbPlayer;
 use App\Models\MlbTeam;
 use App\Models\MlbPlayerTeam;
 use App\Models\DkMlbPlayer;
+use App\Models\DKMlbContest;
 
 use App\Classes\StatBuilder;
 
@@ -50,9 +51,22 @@ class DailyController {
                 $tableSize = '100%';
             }
 
+            if ($contestId != 'nc') {
+                $contestName = DkMlbContest::where('id', $contestId)->pluck('name');
+            } else {
+                $contestName = 'None';
+            }
+
             # ddAll($players);
 
-            return view('daily/dk/mlb', compact('date', 'timePeriodInUrl', 'timePeriod', 'players', 'teams', 'areThereBoxScoreLines', 'tableSize'));
+            return view('daily/dk/mlb', compact('date', 
+                                                'timePeriodInUrl', 
+                                                'timePeriod', 
+                                                'players', 
+                                                'teams', 
+                                                'areThereBoxScoreLines', 
+                                                'tableSize',
+                                                'contestName'));
         }
 
         $seasonId = 11;
