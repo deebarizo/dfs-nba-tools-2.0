@@ -3,7 +3,7 @@
 @section('content')
 	<div class="row">
 		<div class="col-lg-12">
-			<h2>Scrapers - DK MLB Ownership</h2>
+			<h2>Scrapers - DK MLB Contest</h2>
 		</div>
 	</div>
 	<div class="row">
@@ -20,7 +20,7 @@
 		    </div>
 		@endif
 
-		{!!	Form::open(['url' => 'scrapers/dk_mlb_ownership', 'files'=>true]) !!}
+		{!!	Form::open(['url' => 'scrapers/dk_mlb_contest', 'files'=>true]) !!}
 			<div class="col-lg-2"> 
 				<div class="form-group {{ $errors->has('date') ? 'has-error' : '' }}">
 					{!! Form::label('date', 'Date:') !!}

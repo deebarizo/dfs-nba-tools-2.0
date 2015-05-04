@@ -15,6 +15,8 @@ class CreateDkMlbContestLineupPlayersTable extends Migration {
 		Schema::create('dk_mlb_contest_lineup_players', function($table)
 		{
 		    $table->increments('id');
+		    $table->integer('dk_mlb_contest_lineup_id')->unsigned();
+		    $table->foreign('dk_mlb_contest_lineup_id')->references('id')->on('dk_mlb_contest_lineups');
 		    $table->integer('dk_mlb_player_id')->unsigned();
 		    $table->foreign('dk_mlb_player_id')->references('id')->on('dk_mlb_players');
 		    $table->integer('mlb_player_id')->unsigned();

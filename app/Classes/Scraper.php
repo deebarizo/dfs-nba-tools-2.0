@@ -16,6 +16,9 @@ use App\Models\DkMlbPlayer;
 use App\Models\MlbGame;
 use App\Models\MlbGameLine;
 use App\Models\MlbBoxScoreLine;
+use App\Models\DkMlbContest;
+use App\Models\DkMlbContestLineup;
+use App\Models\DkMlbContestLineupPlayer;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\RunFDNBASalariesScraperRequest;
@@ -35,14 +38,15 @@ class Scraper {
 	****************************************************************************************/
 
 	public function insertContest($date, $contestName, $entryFee, $timePeriod, $csvFile, $site, $sport) {
+		// Contest Metadata
+
 		$contest = [];
 
 		$contest['date'] = $date;
 		$contest['name'] = $contestName;
 		$contest['entry_fee'] = $entryFee;
 		$contest['time_period'] = $timePeriod;
-		$contest['lineups'] = [];
-
+		
 		$dkMlbPlayers = DB::table('player_pools')
 							->select('dk_mlb_players.id as dk_mlb_player_id',
 									 'mlb_players.id as mlb_player_id', 
@@ -62,22 +66,28 @@ class Scraper {
 			}
 		}
 
-		# dd($dkMlbPlayers);
+		// Contest Lineups
+
+		$contest['lineups'] = [];
 
 		if ($site == 'DK' && $sport == 'MLB') {
 			if (($handle = fopen($csvFile, 'r')) !== false) {
 				$row = 0;
 
-				while (($csvData = fgetcsv($handle, 10000000, ',')) !== false) {
+				while (($csvColumns = fgetcsv($handle, 10000000, ',')) !== false) {
 					if ($row != 0) {
-					    $lineup = explode(',', $csvData[5]);
+						$contest['lineups'][$row]['rank'] = $csvColumns[0];
+						$contest['lineups'][$row]['username'] = preg_replace('/(\S+)(\s\(.*\))/', '$1', $csvColumns[2]);
+						$contest['lineups'][$row]['fpts'] = $csvColumns[4];
+
+					    $lineup = explode(',', $csvColumns[5]);
 
 					    foreach ($lineup as $key => $rosterSpot) {
 					    	$position = preg_replace('/(\()(\w+)(\).*)/', '$2', $rosterSpot);
 					    	$playerName = trim(preg_replace('/(\(\w+\)\s)(.*)/', '$2', $rosterSpot));
 					    	list($dkMlbPlayerId, $mlbPlayerId) = $this->getDkMlbPlayer($dkMlbPlayers, $position, $playerName);
 
-					    	$contest['lineups'][$row][$key] = array(
+					    	$contest['lineups'][$row]['roster_spots'][$key] = array(
 					    		'dk_mlb_player_id' => $dkMlbPlayerId,
 					    		'mlb_player_id' => $mlbPlayerId, 
 					    		'player_name' => $playerName,
@@ -91,9 +101,39 @@ class Scraper {
 			}
 		}
 
-		$numOfLineups = count($contest['lineups']);
+		// Insert
 
-		ddAll($contest);
+		$dkMlbContest = new DkMlbContest;
+
+		$dkMlbContest->date = $contest['date'];
+		$dkMlbContest->name = $contest['name'];
+		$dkMlbContest->entry_fee = $contest['entry_fee'];
+		$dkMlbContest->time_period = $contest['time_period'];
+
+		$dkMlbContest->save();
+
+		foreach ($contest['lineups'] as $lineup) {
+			$dkMlbContestLineup = new DkMlbContestLineup;
+
+			$dkMlbContestLineup->dk_mlb_contest_id = $dkMlbContest->id;
+			$dkMlbContestLineup->rank = $lineup['rank'];
+			$dkMlbContestLineup->username = $lineup['username'];
+			$dkMlbContestLineup->fpts = $lineup['fpts'];
+
+			$dkMlbContestLineup->save();
+
+			foreach ($lineup['roster_spots'] as $rosterSpot) {
+				$dkMlbContestLineupPlayer = new DkMlbContestLineupPlayer;
+
+				$dkMlbContestLineupPlayer->dk_mlb_contest_lineup_id = $dkMlbContestLineup->id;
+				$dkMlbContestLineupPlayer->dk_mlb_player_id = $rosterSpot['dk_mlb_player_id'];
+				$dkMlbContestLineupPlayer->mlb_player_id = $rosterSpot['mlb_player_id'];
+
+				$dkMlbContestLineupPlayer->save();
+			}
+		}
+
+		# ddAll($contest);
 	}
 
 	private function getDkMlbPlayer($dkMlbPlayers, $position, $playerName) {

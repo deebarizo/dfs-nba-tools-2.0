@@ -16,7 +16,7 @@
 			<h3>MLB</h3>
 
 			<ul>
-				<li><a target="_blank" href="/scrapers/dk_mlb_ownership">DK Ownership</a></li>
+				<li><a target="_blank" href="/scrapers/dk_mlb_contest">DK Contest</a></li>
 				<li><a target="_blank" href="/scrapers/fg_mlb_box_score_lines">FG Box Score Lines</a></li>
 				<li><a target="_blank" href="/scrapers/dk_mlb_salaries">DK Salaries</a></li>
 				<li><a target="_blank" href="/scrapers/bat_mlb_projections">BAT Projections</a></li>

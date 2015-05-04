@@ -29,19 +29,19 @@ use Illuminate\Support\Facades\Session;
 
 class ScrapersController {
 
-	public function dkMlbOwnership(Request $request) {
+	public function dkMlbContest(Request $request) {
 		$date = $request->input('date');
 		$contestName = $request->input('contest');
 		$entryFee = $request->input('entry_fee');
 		$timePeriod = $request->input('time_period');
 		
 		$validator = new Validator;
-		$message = $validator->validateDkMlbOwnership($contestName, $entryFee, $timePeriod);
+		$message = $validator->validateDkMlbContest($date, $contestName, $entryFee, $timePeriod);
 
 		if ($message != 'Valid') {
 			Session::flash('alert', 'warning');
 
-			return redirect('scrapers/dk_mlb_ownership')->with('message', $message);	 
+			return redirect('scrapers/dk_mlb_contest')->with('message', $message);	 
 		}
 
 		$scraper = new Scraper;
@@ -50,12 +50,10 @@ class ScrapersController {
 
 		$scraper->insertContest($date, $contestName, $entryFee, $timePeriod, $csvFile, 'DK', 'MLB');
 
-		// check if contest already exists
-
 		$message = 'Success!';
 		Session::flash('alert', 'info');
 
-		return redirect('scrapers/fg_mlb_box_score_lines')->with('message', $message);	 
+		return redirect('scrapers/dk_mlb_contest')->with('message', $message);	 
 	}
 
 	public function dk_mlb_salaries(Request $request) {

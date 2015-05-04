@@ -2,6 +2,6 @@
 
 use Illuminate\Database\Eloquent\Model as Eloquent;
 
-class DkMlbContestPlayer extends Eloquent {
+class DkMlbContestLineupPlayer extends Eloquent {
 
 }

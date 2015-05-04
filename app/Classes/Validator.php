@@ -16,6 +16,9 @@ use App\Models\DkMlbPlayer;
 use App\Models\MlbGame;
 use App\Models\MlbGameLine;
 use App\Models\MlbBoxScoreLine;
+use App\Models\DkMlbContest;
+use App\Models\DkMlbContestLineup;
+use App\Models\DkMlbContestLineupPlayer;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\RunFDNBASalariesScraperRequest;
@@ -30,7 +33,7 @@ use Illuminate\Support\Facades\Session;
 
 class Validator {
 
-	public function validateDkMlbOwnership($contestName, $entryFee, $timePeriod) {
+	public function validateDkMlbContest($date, $contestName, $entryFee, $timePeriod) {
 		if ($contestName == '') {
 			return 'Please enter the contest name.';
 		}
@@ -45,6 +48,16 @@ class Validator {
 
 		if ($timePeriod == '-') {
 			return 'Please select a valid time period.';
+		}
+
+		$contestExists = DkMlbContest::where('name', $contestName)
+									 ->where('entry_fee', $entryFee)
+									 ->where('time_period', $timePeriod)
+									 ->where('date', $date)
+									 ->count();
+
+		if ($contestExists > 0) {
+			return 'This contest is already in the database.';
 		}
 
 		return 'Valid';
