@@ -56,8 +56,18 @@ class Validator {
 									 ->where('date', $date)
 									 ->count();
 
-		if ($contestExists > 0) {
+		if ($contestExists) {
 			return 'This contest is already in the database.';
+		}
+
+		$playerPoolExists = PlayerPool::where('sport', 'MLB')
+									->where('site', 'DK')
+									->where('time_period', $timePeriod)
+									->where('date', $date)
+									->count();
+
+		if (!$playerPoolExists) {
+			return 'This contest does not match a player pool in the database.';
 		}
 
 		return 'Valid';

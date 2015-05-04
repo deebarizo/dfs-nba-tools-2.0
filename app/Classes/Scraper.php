@@ -43,6 +43,11 @@ class Scraper {
 		$contest = [];
 
 		$contest['date'] = $date;
+		$contest['player_pool_id'] = PlayerPool::where('sport', $sport)
+										->where('site', $site)
+										->where('time_period', $timePeriod)
+										->where('date', $date)
+										->pluck('id');
 		$contest['name'] = $contestName;
 		$contest['entry_fee'] = $entryFee;
 		$contest['time_period'] = $timePeriod;
@@ -65,6 +70,8 @@ class Scraper {
 				$dkMlbPlayer->position = 'P';
 			}
 		}
+
+		# dd($contest);
 
 		// Contest Lineups
 
@@ -106,6 +113,7 @@ class Scraper {
 		$dkMlbContest = new DkMlbContest;
 
 		$dkMlbContest->date = $contest['date'];
+		$dkMlbContest->player_pool_id = $contest['player_pool_id'];
 		$dkMlbContest->name = $contest['name'];
 		$dkMlbContest->entry_fee = $contest['entry_fee'];
 		$dkMlbContest->time_period = $contest['time_period'];

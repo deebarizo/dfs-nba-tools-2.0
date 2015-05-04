@@ -27,7 +27,6 @@ class PlayerPoolsController {
 
 		$playerPools = DB::table('player_pools')
 						->select('*')
-						->leftJoin
 						->orderBy('date', 'desc')
 						->take(50)
 						->get();
@@ -51,7 +50,7 @@ class PlayerPoolsController {
 			$playerPool->buy_in = '$'.$playerPool->buy_in;
 		}
 
-		ddAll($playerPools);
+		# ddAll($playerPools);
 
 		return view('pages/home', compact('playerPools'));
 	}
