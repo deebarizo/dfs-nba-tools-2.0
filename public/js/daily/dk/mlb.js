@@ -35,18 +35,21 @@ $(document).ready(function() {
 			"paging": false,
 			"order": [[7, "desc"]],
 			"columns": [
-			    { "width": "23%" },
+			    { "width": "19%" },
 			    { "width": "7%" },
-			    { "width": "7%", "orderDataType": "dom-text-numeric" },
+			    { "width": "6%", "orderDataType": "dom-text-numeric" },
 			    { "width": "7%" },
+			   	{ "width": "5%" },
+			   	{ "width": "7%" },
+			   	{ "width": "6%" },
 			   	{ "width": "7%" },
 			   	{ "width": "7%" },
 			   	{ "width": "7%" },
 			   	{ "width": "7%" },
-			   	{ "width": "7%" },
-			   	{ "width": "7%" },
-			   	{ "width": "7%" },
-			   	{ "width": "7%" }
+			   	{ "width": "4%" },
+			   	{ "width": "4%" },
+			   	{ "width": "4%" },
+			   	{ "width": "4%" }
 			]
 		});	
 	}
@@ -94,7 +97,7 @@ $(document).ready(function() {
 
 			var playerRow = $('a[data-hasqtip='+dataHasQtip+']').closest('tr');
 
-			var dkMlbPlayersId = playerRow.data('dk-mlb-players-id');
+			var dkMlbPlayersId = playerRow.data('dk-mlb-player-id');
 
 			var targetPercentage = $(this).val();
 
@@ -129,7 +132,7 @@ $(document).ready(function() {
 			return;
 		}
 
-		var dkMlbPlayersId = $(this).closest('tr').data('dk-mlb-players-id');
+		var dkMlbPlayersId = $(this).closest('tr').data('dk-mlb-player-id');
 
 		$(this).hide();
 		$(this).after('<img src="/files/spiffygif_16x16.gif" alt="Please wait..." />');

@@ -34,9 +34,9 @@ class StatBuilder {
     DAILY DK MLB
     ****************************************************************************************/
 
-    public function getPlayersForDkMlbDaily($timePeriod, $date) {
+    public function getPlayersForDkMlbDaily($timePeriod, $date, $contestId) {
         $players = DB::table('player_pools')
-                     ->select('dk_mlb_players.id as dk_mlb_players_id', 'date', 'buy_in', 'player_pool_id', 'mlb_player_id', 'target_percentage', 'mlb_team_id', 'position', 'salary', 'name', 'abbr_dk')
+                     ->select('dk_mlb_players.id as dk_mlb_player_id', 'date', 'buy_in', 'player_pool_id', 'mlb_player_id', 'target_percentage', 'mlb_team_id', 'position', 'salary', 'name', 'abbr_dk')
                      ->join('dk_mlb_players', 'dk_mlb_players.player_pool_id', '=', 'player_pools.id')
                      ->join('mlb_players', 'dk_mlb_players.mlb_player_id', '=', 'mlb_players.id')
                      ->join('mlb_teams', 'mlb_teams.id', '=', 'dk_mlb_players.mlb_team_id')
@@ -51,16 +51,6 @@ class StatBuilder {
                      ->join('mlb_box_score_lines', 'mlb_box_score_lines.mlb_game_id', '=', 'mlb_games.id')
                      ->where('mlb_games.date', $date)
                      ->get();
-
-        $numOfContestLineups = DB::table('dk_mlb_contests')
-                                  ->select('*')
-                                  ->join('dk_mlb_contest_lineups', 'dk_mlb_contest_lineups.dk_mlb_contest_id', '=', 'dk_mlb_contests.id')
-                                  ->join('dk_mlb_contest_lineup_players', 'dk_mlb_contest_lineup_players.dk_mlb_contest_lineup_id', '=', 'dk_mlb_contest_lineups.id')
-                                  ->where('dk_mlb_contests.time_period', $timePeriod)
-                                  ->where('dk_mlb_contests.date', $date)
-                                  ->count();
-
-        dd($numOfContestLineups);
 
         if (!empty($boxScoreLines)) {
             foreach ($players as $player) {
@@ -126,6 +116,69 @@ class StatBuilder {
         }
 
         # dd($players);
+
+        if (is_numeric($contestId)) {
+            $numOfContestLineups = DB::table('dk_mlb_contests')
+                                      ->select('*')
+                                      ->join('dk_mlb_contest_lineups', 'dk_mlb_contest_lineups.dk_mlb_contest_id', '=', 'dk_mlb_contests.id')
+                                      ->where('dk_mlb_contests.id', $contestId)
+                                      ->count();
+
+            if ($numOfContestLineups == 0) {
+                echo 'Error: 0 contest lineups were found.';
+                exit();
+            }
+
+            $contestDkMlbPlayers = DB::table('dk_mlb_contests')
+                                      ->select(DB::raw('dk_mlb_player_id, format(count(dk_mlb_player_id) / '.$numOfContestLineups.' * 100, 1) as ownership'))
+                                      ->join('dk_mlb_contest_lineups', 'dk_mlb_contest_lineups.dk_mlb_contest_id', '=', 'dk_mlb_contests.id')
+                                      ->join('dk_mlb_contest_lineup_players', 'dk_mlb_contest_lineup_players.dk_mlb_contest_lineup_id', '=', 'dk_mlb_contest_lineups.id')
+                                      ->where('dk_mlb_contests.id', $contestId)
+                                      ->groupBy('dk_mlb_player_id')
+                                      ->get();
+
+            foreach ($players as $player) {
+                foreach ($contestDkMlbPlayers as $contestDkMlbPlayer) {
+                    if ($contestDkMlbPlayer->dk_mlb_player_id == $player->dk_mlb_player_id) {
+                        $player->ownership = $contestDkMlbPlayer->ownership;
+
+                        break;
+                    }
+                }
+
+                if (!isset($player->ownership)) {
+                    $player->ownership = '0.0';
+                }
+            }
+
+            $contestMlbPlayers = DB::table('dk_mlb_contests')
+                                      ->select(DB::raw('mlb_player_id, format(count(mlb_player_id) / '.$numOfContestLineups.' * 100, 1) as total_ownership'))
+                                      ->join('dk_mlb_contest_lineups', 'dk_mlb_contest_lineups.dk_mlb_contest_id', '=', 'dk_mlb_contests.id')
+                                      ->join('dk_mlb_contest_lineup_players', 'dk_mlb_contest_lineup_players.dk_mlb_contest_lineup_id', '=', 'dk_mlb_contest_lineups.id')
+                                      ->where('dk_mlb_contests.id', $contestId)
+                                      ->groupBy('mlb_player_id')
+                                      ->get();
+
+            foreach ($players as $player) {
+                foreach ($contestMlbPlayers as $contestMlbPlayer) {
+                    if ($contestMlbPlayer->mlb_player_id == $player->mlb_player_id) {
+                        $player->total_ownership = $contestMlbPlayer->total_ownership;
+
+                        break;
+                    }
+                }
+
+                if (!isset($player->total_ownership)) {
+                    $player->total_ownership = '0.0';
+                }
+            }
+
+            foreach ($players as $player) {
+                $player->other_ownership = numFormat($player->total_ownership - $player->ownership, 1);
+            }
+        }
+
+        # ddAll($players);
 
         foreach ($players as $player) {
             if ($player->target_percentage > 0) {

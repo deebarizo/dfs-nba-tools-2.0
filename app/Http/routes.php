@@ -40,7 +40,7 @@ $router->get('players/{player_id}', 'PlayersController@getPlayerStats');
 DAILY
 ****************************************************************************************/
 
-$router->get('daily/{site}/{sport}/{timePeriod}/{date}', 'DailyController@daily');
+$router->get('daily/{site}/{sport}/{timePeriod}/{date}/{contestId}', 'DailyController@daily');
 
 $router->post('daily_fd_nba/update_top_plays/{playerFdIndex}/{isPlayerActive}', 'DailyController@update_top_plays');
 $router->post('daily_fd_nba/update_target_percentage/{playerFdIndex}/{newTargetPercentage}', 'DailyController@updateTargetPercentage');

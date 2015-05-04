@@ -80,7 +80,7 @@
 				<thead>
 					<tr>
 						<th>Name</th>
-						<th>Mods</th>
+						<th>Mod</th>
 						<th>T %</th>
 						<th>Team</th>
 						<th>Pos</th>
@@ -91,13 +91,16 @@
 							<th>PA/IP</th>
 							<th>aFPTS</th>
 							<th>aVR</th>
-							<th>Game</th>
+							<th>GL</th>
+							<th>O</th>
+							<th>oO</th>
+							<th>tO</th>
 						@endif
 					</tr>
 				</thead>
 				<tbody>
 					@foreach ($players as $player)
-					    <tr data-dk-mlb-players-id="{{ $player->dk_mlb_players_id }}" 
+					    <tr data-dk-mlb-player-id="{{ $player->dk_mlb_player_id }}" 
 					    	data-date="{{ $player->date }}"
 					    	data-buy-in="{{ $player->buy_in }}"
 					    	data-player-pool-id="{{ $player->player_pool_id }}"
@@ -217,6 +220,9 @@
 										@endif
 									</div>
 								</td>
+								<td>{{ $player->ownership }}</td>
+								<td>{{ $player->other_ownership }}</td>
+								<td>{{ $player->total_ownership }}</td>
 							@endif
 					    </tr>
 					@endforeach

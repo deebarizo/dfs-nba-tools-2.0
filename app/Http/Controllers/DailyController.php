@@ -30,20 +30,20 @@ date_default_timezone_set('America/Chicago');
 
 class DailyController {
 
-	public function daily($site, $sport, $timePeriod, $date) {
+	public function daily($site, $sport, $timePeriod, $date, $contestId) {
         if ($site == 'dk' && $sport == 'mlb') {
             $statBuilder = new StatBuilder;
 
             $timePeriodInUrl = $timePeriod;
             $timePeriod = urlToUcWords($timePeriod);
 
-            $players = $statBuilder->getPlayersForDkMlbDaily($timePeriod, $date);
+            $players = $statBuilder->getPlayersForDkMlbDaily($timePeriod, $date, $contestId);
             $teams = $statBuilder->getTeamsForDkMlbDaily($timePeriod, $date);
 
             if (isset($players[0]->are_there_box_score_lines)) {
                 $areThereBoxScoreLines = 1;
 
-                $tableSize = '90%';
+                $tableSize = '85%';
             } else {
                 $areThereBoxScoreLines = 0;
 
