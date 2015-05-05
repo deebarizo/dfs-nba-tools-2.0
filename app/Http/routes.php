@@ -15,7 +15,7 @@ $router->post('scrapers/fd_nba_salaries', 'ScrapersController@fd_nba_salaries');
 $router->post('scrapers/dk_mlb_salaries', 'ScrapersController@dk_mlb_salaries');
 $router->post('scrapers/bat_mlb_projections', 'ScrapersController@bat_mlb_projections');
 $router->post('scrapers/fg_mlb_box_score_lines', 'ScrapersController@fg_mlb_box_score_lines');
-$router->post('scrapers/dk_mlb_contest', 'ScrapersController@dkMlbContest');
+$router->post('scrapers/dk_mlb_contests', 'ScrapersController@dkMlbContests');
 
 
 /****************************************************************************************
@@ -71,8 +71,8 @@ $router->get('scrapers/bat_mlb_projections', function() {
 $router->get('scrapers/fg_mlb_box_score_lines', function() {
 	return View::make('scrapers/fg_mlb_box_score_lines');
 });
-$router->get('scrapers/dk_mlb_contest', function() {
-	return View::make('scrapers/dk_mlb_contest');
+$router->get('scrapers/dk_mlb_contests', function() {
+	return View::make('scrapers/dk_mlb_contests');
 });
 
 $router->get('scrapers', function() {

@@ -29,7 +29,7 @@ use Illuminate\Support\Facades\Session;
 
 class ScrapersController {
 
-	public function dkMlbContest(Request $request) {
+	public function dkMlbContests(Request $request) {
 		$date = $request->input('date');
 		$contestName = $request->input('contest');
 		$entryFee = $request->input('entry_fee');
@@ -41,7 +41,7 @@ class ScrapersController {
 		if ($message != 'Valid') {
 			Session::flash('alert', 'warning');
 
-			return redirect('scrapers/dk_mlb_contest')->with('message', $message);	 
+			return redirect('scrapers/dk_mlb_contests')->with('message', $message);	 
 		}
 
 		$scraper = new Scraper;
@@ -53,7 +53,7 @@ class ScrapersController {
 		$message = 'Success!';
 		Session::flash('alert', 'info');
 
-		return redirect('scrapers/dk_mlb_contest')->with('message', $message);	 
+		return redirect('scrapers/dk_mlb_contests')->with('message', $message);	 
 	}
 
 	public function dk_mlb_salaries(Request $request) {

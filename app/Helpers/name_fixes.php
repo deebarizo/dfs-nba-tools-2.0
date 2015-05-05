@@ -58,6 +58,9 @@ function fgNameFix($rawName) {
 
 		case 'Kenneth Roberts':
 			return 'Ken Roberts';
+
+		case 'Shin-Soo Choo':
+			return 'Shin-soo Choo';
 		
 		default:
 			return $rawName;
