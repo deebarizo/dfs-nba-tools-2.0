@@ -123,15 +123,15 @@
 			<form class="form-inline" style="font-size: 90%; margin: 15px 0 10px 0">
 				<label>Types</label>
 				<select class="form-control player-types-show-filter" style="margin-right: 20px">
-					<option value="All">All</option>
-				  	<option value="Only Pitchers" selected>Pitchers</option>
+					<option value="All" selected>All</option>
+				  	<option value="Only Pitchers">Pitchers</option>
 				  	<option value="Only Hitters">Hitters</option>
 				</select>
 
 				<label>Percentages</label>
 				<select class="form-control player-percentages-show-filter">
-					<option value="All" selected>All</option>
-				  	<option value="Only Actual Percentage">Actual Percentage</option>
+					<option value="All">All</option>
+				  	<option value="Only Actual Percentage" selected>Actual Percentage</option>
 				</select>
 			</form>
 

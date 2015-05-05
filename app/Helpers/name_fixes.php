@@ -17,8 +17,47 @@ function fgNameFix($rawName) {
 		case 'Mitchell Harris':
 			return 'Mitch Harris';
 
-		case 'Steven Souza';
+		case 'Steven Souza':
 			return 'Steven Souza Jr.';
+
+		case 'Tom Layne':
+			return 'Tommy Layne';
+
+		case 'Nate Karns':
+			return 'Nathan Karns';
+
+		case 'Delino Deshields Jr.':
+			return 'Delino DeShields';
+
+		case 'Robbie Ross':
+			return 'Robbie Ross Jr.';
+
+		case 'JR Murphy':
+			return 'John Ryan Murphy';
+
+		case 'Jon Niese':
+			return 'Jonathon Niese';
+
+		case 'Matthew Tracy':
+			return 'Matt Tracy';
+
+		case 'Andrew Schugel':
+			return 'A.J. Schugel';
+
+		case 'Sugar Marimon':
+			return 'Sugar Ray Marimon';
+
+		case 'Daniel Muno':
+			return 'Danny Muno';
+
+		case 'Nicholas Tropeano':
+			return 'Nick Tropeano';
+
+		case 'Enrique Hernandez':
+			return 'Kike Hernandez';
+
+		case 'Kenneth Roberts':
+			return 'Ken Roberts';
 		
 		default:
 			return $rawName;
