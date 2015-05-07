@@ -545,7 +545,7 @@ $(document).ready(function() {
 			return;
 		}
 
-		if (salary >= salaryInput['salary'] && salaryInput['salaryToggle'] == 'less-than') {
+		if (salary > salaryInput['salary'] && salaryInput['salaryToggle'] == 'less-than') {
 			$(playerRow).addClass('hide-player-row');
 		}
 	}
@@ -554,8 +554,8 @@ $(document).ready(function() {
 	//// Salary reset button ////
 
 	$('.salary-reset').on('click', function(event) { 
-		$('.salary-input').val(0);
-		$('#greater-than').prop('checked', true);
+		$('.salary-input').val(100000);
+		$('#less-than').prop('checked', true);
 
 		runFilter();
 	});

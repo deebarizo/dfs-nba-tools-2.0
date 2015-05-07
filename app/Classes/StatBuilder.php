@@ -262,10 +262,6 @@ class StatBuilder {
             return 'Eric Young';
         }
 
-        if ($dkName == 'Nori Aoki') {
-            return 'Norichika Aoki';
-        }
-
         if ($dkName == 'Michael A. Taylor') {
             return 'Michael Taylor';
         }
@@ -277,8 +273,14 @@ class StatBuilder {
         $csvFile = 'files/dk/mlb/bat/'.$playerType.'/'.$date.'.csv';
 
         if ($playerType == 'hitters') {
-            $dkPtsIndex = 5;
+            if (strtotime(($date)) >= strtotime(('2015-05-06'))) {
+                $dkPtsIndex = 6;
+            } else {
+                $dkPtsIndex = 5;
+            }
         }
+
+        # dd($dkPtsIndex);
 
         if ($playerType == 'pitchers') {
             $dkPtsIndex = 6;
