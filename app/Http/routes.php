@@ -8,6 +8,13 @@ $router->get('/', 'PlayerPoolsController@home');
 SCRAPERS
 ****************************************************************************************/
 
+$router->get('contests/{siteInUrl}/{sportInUrl}/{contestTypeInUrl}', 'ContestsController@getContests');
+
+
+/****************************************************************************************
+SCRAPERS
+****************************************************************************************/
+
 $router->post('scrapers/br_nba_box_score_lines', 'ScrapersController@br_nba_box_score_lines');
 $router->post('scrapers/br_nba_games', 'ScrapersController@br_nba_games');
 $router->post('scrapers/fd_nba_salaries', 'ScrapersController@fd_nba_salaries');

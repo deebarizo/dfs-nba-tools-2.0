@@ -16,6 +16,8 @@ use App\Models\DkMlbContest;
 use App\Models\DkMlbContestLineup;
 use App\Models\DkMlbContestLineupPlayer;
 
+use App\Classes\ContestBuilder;
+
 use Illuminate\Http\Request;
 use App\Http\Requests\RunFDNBASalariesScraperRequest;
 
@@ -27,10 +29,21 @@ use Goutte\Client;
 
 use Illuminate\Support\Facades\Session;
 
-class OneOfController {
+class ContestsController {
 
-	public function run() {
- 	
+	public function getContests($siteInUrl, $sportInUrl, $contestTypeInUrl) {
+		$site = strtoupper($siteInUrl);
+		$sport = strtoupper($sportInUrl);
+		$numOfContests = 10;
+
+		$contestBuilder = new ContestBuilder;
+
+		$contests = $contestBuilder->getOwnerships($site, $sport, $contestTypeInUrl, $numOfContests);
+
+		# ddAll($contests);
+
+        return view('contests/'.$siteInUrl.'/'.$sportInUrl, compact('contests', 
+        															'numOfContests')); 
 	}
 
 }
