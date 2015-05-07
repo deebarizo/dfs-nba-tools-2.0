@@ -24,14 +24,14 @@
 		</div>
 	</div>
 
-	@foreach ($contests as $contest) 
+	@foreach ($contests as $key => $contest) 
 		<div class="row">
 			<div class="col-lg-12">
 				<h3>{{ $contest->date }} | {{ $contest->name }}</h3>
 			</div>
 
-			<div class="col-lg-12">
-				<table id="daily" class="table table-striped table-bordered table-hover table-condensed">
+			<div class="col-lg-12" style="margin-bottom: 20px">
+				<table id="contest{{ $key }}" class="table table-striped table-bordered table-hover table-condensed">
 					<thead>
 						<tr>
 							<th>Name</th>
@@ -69,9 +69,6 @@
 		</div>
 	@endforeach
 
-	
-	
-
 	<script type="text/javascript">
 
 		/****************************************************************************************
@@ -79,8 +76,9 @@
 		****************************************************************************************/
 
 		var baseUrl = '<?php echo url(); ?>';
+		var numOfContests = '<?php echo $numOfContests; ?>';
 
 	</script>
 
-	<script src="/js/daily/dk/mlb.js"></script>
+	<script src="/js/contests/dk/mlb.js"></script>
 @stop

@@ -59,22 +59,6 @@
 			</form>
 		</div>
 
-		<div class="col-lg-12" style="margin: 2px 0 3px 0">
-			<p>
-				<span style="margin-right: 20px"><strong>SP: </strong> <span class="total-target-percentage-with-percentage-sign-SP"><span class="total-target-percentage-SP"></span>%</span></span>
-				<span style="margin-right: 20px"><strong>C: </strong> <span class="total-target-percentage-with-percentage-sign-C"><span class="total-target-percentage-C"></span>%</span></span>
-				<span style="margin-right: 20px"><strong>1B: </strong> <span class="total-target-percentage-with-percentage-sign-1B"><span class="total-target-percentage-1B"></span>%</span></span>
-				<span style="margin-right: 20px"><strong>2B: </strong> <span class="total-target-percentage-with-percentage-sign-2B"><span class="total-target-percentage-2B"></span>%</span></span>
-				<span style="margin-right: 20px"><strong>3B: </strong> <span class="total-target-percentage-with-percentage-sign-3B"><span class="total-target-percentage-3B"></span>%</span></span>
-				<span style="margin-right: 20px"><strong>SS: </strong> <span class="total-target-percentage-with-percentage-sign-SS"><span class="total-target-percentage-SS"></span>%</span></span>
-				<span style="margin-right: 40px"><strong>OF: </strong> <span class="total-target-percentage-with-percentage-sign-OF"><span class="total-target-percentage-OF"></span>%</span></span>
-				
-				<span style="margin-right: 60px"><strong>Total: </strong> <span class="total-target-percentage-with-percentage-sign"><span class="total-target-percentage"></span>%</span></span>
-
-				<span><strong>Weighted Salary: </strong> <span class="total-weighted-salary-with-percentage-sign"><span class="total-weighted-salary"></span></span>
-			</p>
-		</div>
-
 		<div class="col-lg-12">
 			<table id="daily" style="font-size: {{ $tableSize }}" class="table table-striped table-bordered table-hover table-condensed">
 				<thead>
