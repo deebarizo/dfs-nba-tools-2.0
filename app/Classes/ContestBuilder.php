@@ -38,6 +38,10 @@ class ContestBuilder {
 			case '5du':
 				$contestType = '%$5 DOUBLE UP%';
 				break;
+
+			case '3moonshot':
+				$contestType = '%MOONSHOT%';
+				break;
 			
 			default:
 				echo 'Error: invalid contest type'; exit();

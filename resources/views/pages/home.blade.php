@@ -3,7 +3,7 @@
 @section('content')
 	<div class="row">
 		<div class="col-lg-12">
-			<h2>Player Pools</h2>
+			<h2>Daily</h2>
 
 			<table class="table table-striped table-bordered table-hover table-condensed">
 				<thead>
