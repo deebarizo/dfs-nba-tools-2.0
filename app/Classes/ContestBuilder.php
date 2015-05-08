@@ -117,12 +117,8 @@ class ContestBuilder {
 			foreach ($contest->players as $key => $player) {
 				foreach ($dkMlbPlayers as $dkMlbPlayer) {
 					if ($dkMlbPlayer->dk_mlb_player_id == $player->dk_mlb_player_id) {
-						if ($dkMlbPlayer->position != 'SP' && $dkMlbPlayer->position != 'RP') {
-							$player->position = $dkMlbPlayer->position;
-							$player->salary = $dkMlbPlayer->salary;
-						} else {
-							unset($contest->players[$key]);
-						}
+						$player->position = $dkMlbPlayer->position;
+						$player->salary = $dkMlbPlayer->salary;
 
 						break;
 					}
