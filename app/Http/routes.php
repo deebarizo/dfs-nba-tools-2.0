@@ -40,7 +40,7 @@ $router->get('studies/general/classifying_projected_fpts/', 'StudiesController@c
 PLAYERS
 ****************************************************************************************/
 
-$router->get('players/{player_id}', 'PlayersController@getPlayerStats');
+$router->get('players/{sportInUrl}/{playerId}', 'PlayersController@getPlayerStats');
 
 
 /****************************************************************************************
@@ -91,8 +91,8 @@ $router->get('scrapers', function() {
 $router->get('studies', function() {
 	return View::make('pages/studies');
 });
-$router->get('player_search', function() {
-	return View::make('player_search');
+$router->get('players', function() {
+	return View::make('players');
 });
 
 
@@ -152,10 +152,15 @@ $router->get('lineup_builder/{siteInUrl}/mlb/{timePeriodInUrl}/{date}/{hash}', '
 
 
 /****************************************************************************************
-MISC
+AUTOCOMPLETE
 ****************************************************************************************/
 
-$router->get('get_player_name_autocomplete', 'PlayersController@getPlayerNameAutocomplete');
+$router->get('get_player_name_autocomplete/{sportInUrl}', 'PlayersController@getNbaPlayerNameAutocomplete');
+
+
+/****************************************************************************************
+MISC
+****************************************************************************************/
 
 $router->get('teams/{abbr_br}', 'TeamsController@getTeamStats');
 
