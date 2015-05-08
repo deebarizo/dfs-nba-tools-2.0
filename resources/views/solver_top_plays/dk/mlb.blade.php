@@ -123,9 +123,9 @@
 			<form class="form-inline" style="font-size: 90%; margin: 15px 0 10px 0">
 				<label>Types</label>
 				<select class="form-control player-types-show-filter" style="margin-right: 20px">
-					<option value="All" selected>All</option>
+					<option value="All">All</option>
 				  	<option value="Only Pitchers">Pitchers</option>
-				  	<option value="Only Hitters">Hitters</option>
+				  	<option value="Only Hitters" selected>Hitters</option>
 				</select>
 
 				<label>Percentages</label>

@@ -4,14 +4,14 @@ $(document).ready(function() {
 	CREATE TABLE
 	****************************************************************************************/
 
-	for (var i = 0; i < numOfContests.length; i++) {
-		$('#contest'+numOfContests[i]).dataTable({
+	for (var i = 0; i <= numOfContests.length; i++) {
+		$('#contest'+i).dataTable({
 			"scrollY": "600px",
 			"paging": false,
 			"order": [[5, "desc"]]
 		});	
 
-		$('#contest'+numOfContests[i]+'_filter').hide();
+		$('#contest'+i+'_filter').hide();
 	};
 
 

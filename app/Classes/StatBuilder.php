@@ -266,6 +266,10 @@ class StatBuilder {
             return 'Michael Taylor';
         }
 
+        if ($dkName == 'Rubby De La Rosa') {
+            return 'Rubby de la Rosa';
+        }
+
         return $dkName;
     }
 

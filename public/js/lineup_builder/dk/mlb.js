@@ -357,20 +357,27 @@ $(document).ready(function() {
 			return false;
 		}
 
-		var biggestStack = 1;
-		
-		jQuery.each(hitterTeamCounts, function(team, numOfStack) {
-			if (biggestStack < numOfStack) {
-				biggestStack = numOfStack;
-			} 
+		var mlbPlayerIds = [];
+
+		$('tr.lineup-player-row').each(function() {
+			var playerId = $(this).data('player-id');
+
+			mlbPlayerIds.push(playerId);
 		});
 
-/*		if (biggestStack != 6) {
-			alert('The stack must have six hitters.');
-			return false;
-		}	*/
+		var uniqueMlbPlayerIds = mlbPlayerIds.filter(arrayUnique);
+
+		if (uniqueMlbPlayerIds.length < 10) {
+			alert('You have one or more duplicate players.');
+			return false;			
+		}
 
 		return true;
 	}
+
+	function arrayUnique(value, index, self) { 
+	    return self.indexOf(value) === index;
+	}
+
 
 });
