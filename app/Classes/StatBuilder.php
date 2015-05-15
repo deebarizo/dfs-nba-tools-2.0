@@ -427,7 +427,7 @@ class StatBuilder {
     }
 
     private function getBatProjections($batProjections, $player, $date) {
-        $name = $this->changeDkNameToBatName($player->name);
+        $name = changeDkNameToBatName($player->name);
 
         // Hitters
 
@@ -454,38 +454,6 @@ class StatBuilder {
         }  
 
         return array(0, 0);
-    }
-
-    private function changeDkNameToBatName($dkName) {
-        if ($dkName == 'Jonathon Niese') {
-            return 'Jon Niese';
-        }
-
-        if ($dkName == 'Nathan Karns') {
-            return 'Nate Karns';
-        }
-
-        if ($dkName == 'Sean O\'Sullivan') {
-            return 'Sean O`Sullivan';
-        }
-
-        if ($dkName == 'Travis d\'Arnaud') {
-            return 'Travis d`Arnaud';
-        }
-
-        if ($dkName == 'Eric Young Jr.') {
-            return 'Eric Young';
-        }
-
-        if ($dkName == 'Michael A. Taylor') {
-            return 'Michael Taylor';
-        }
-
-        if ($dkName == 'Rubby De La Rosa') {
-            return 'Rubby de la Rosa';
-        }
-
-        return $dkName;
     }
 
     private function parseCsvFile($playerType, $date) {

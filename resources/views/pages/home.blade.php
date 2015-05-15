@@ -14,7 +14,7 @@
 						<th>Time Period</th>
 						<th>Buy In</th>
 						<th>Contest</th>
-						<th>Link</th>
+						<th>Links</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -26,7 +26,7 @@
 							<td>{{ $playerPool->time_period }}</td>
 							<td>{{ $playerPool->buy_in }}</td>
 							<td>{{ $playerPool->contest_name }}</td>
-							<td><a href="/daily/{{ $playerPool->site_in_url }}/{{ $playerPool->sport_in_url }}/{{ $playerPool->time_period_in_url }}/{{ $playerPool->date }}/{{ $playerPool->contest_in_url }}">Link</a></td>
+							<td><a href="/daily/{{ $playerPool->site_in_url }}/{{ $playerPool->sport_in_url }}/{{ $playerPool->time_period_in_url }}/{{ $playerPool->date }}/{{ $playerPool->contest_in_url }}">Daily</a> | <a href="/solver_top_plays/{{ $playerPool->site_in_url }}/{{ $playerPool->sport_in_url }}/{{ $playerPool->time_period_in_url }}/{{ $playerPool->date }}/">Solver</a></td>
 						</tr>
 					@endforeach
 				</tbody>

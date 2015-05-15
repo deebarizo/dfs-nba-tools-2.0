@@ -2,6 +2,9 @@
 
 function fgNameFix($rawName) {
 	switch ($rawName) {
+		case 'Dennis Tepera':
+			return 'Ryan Tepera';
+
 		case 'T.J. House':
 			return 'TJ House';
 
@@ -65,6 +68,54 @@ function fgNameFix($rawName) {
 		default:
 			return $rawName;
 	}
+}
+
+function changeDkNameToBatName($dkName) {
+    if ($dkName == 'Thomas Field') {
+        return 'Tommy Field';
+    }
+
+    if ($dkName == 'Jonathon Niese') {
+        return 'Jon Niese';
+    }
+
+    if ($dkName == 'Jung Ho Kang') {
+        return 'Jung-ho Kang';
+    }      
+
+    if ($dkName == 'Nathan Karns') {
+        return 'Nate Karns';
+    }
+
+    if ($dkName == 'Sean O\'Sullivan') {
+        return 'Sean O`Sullivan';
+    }
+
+    if ($dkName == 'Travis d\'Arnaud') {
+        return 'Travis d`Arnaud';
+    }
+
+    if ($dkName == 'Eric Young Jr.') {
+        return 'Eric Young';
+    }
+
+    if ($dkName == 'Michael A. Taylor') {
+        return 'Michael Taylor';
+    }
+
+    if ($dkName == 'Rubby De La Rosa') {
+        return 'Rubby de la Rosa';
+    }
+
+    if ($dkName == 'Shin-soo Choo') {
+        return 'Shin-Soo Choo';
+    }
+
+    if ($dkName == 'Delino DeShields') {
+        return 'Delino Deshields Jr.';
+    }
+
+    return $dkName;
 }
 
 function fd_name_fix($rawName) {
