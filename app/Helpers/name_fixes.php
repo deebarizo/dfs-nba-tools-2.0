@@ -71,6 +71,10 @@ function fgNameFix($rawName) {
 }
 
 function changeDkNameToBatName($dkName) {
+    if ($dkName == 'Jorge De La Rosa') {
+        return 'Jorge de la Rosa';
+    }
+
     if ($dkName == 'Thomas Field') {
         return 'Tommy Field';
     }

@@ -1,6 +1,12 @@
 @extends('master')
 
 @section('content')
+	<?php 
+		$playerTypeFilter['all'] = '';
+		$playerTypeFilter['pitchers'] = '';
+		$playerTypeFilter['hitters'] = 'selected';
+	?>
+
 	<div class="row" style="font-size: 90%">
 		<div class="col-lg-12">
 			<h2 id="heading">DK MLB | Solver | {{ $date }} {{ $timePeriod }} | <a target="_blank" href="/daily/dk/mlb/{{ $timePeriodInUrl }}/{{ $date }}/nc">Daily</a> | <a target="_blank" href="/lineup_builder/dk/mlb/{{ $timePeriodInUrl }}/{{ $date }}">Lineup Builder</a></h2>
@@ -123,9 +129,9 @@
 			<form class="form-inline" style="font-size: 90%; margin: 15px 0 10px 0">
 				<label>Types</label>
 				<select class="form-control player-types-show-filter" style="margin-right: 20px">
-					<option value="All" selected>All</option>
-				  	<option value="Only Pitchers">Pitchers</option>
-				  	<option value="Only Hitters">Hitters</option>
+					<option value="All" {{ $playerTypeFilter['all'] }}>All</option>
+				  	<option value="Only Pitchers" {{ $playerTypeFilter['pitchers'] }}>Pitchers</option>
+				  	<option value="Only Hitters" {{ $playerTypeFilter['hitters'] }}>Hitters</option>
 				</select>
 
 				<label>Percentages</label>
