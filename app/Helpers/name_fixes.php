@@ -2,6 +2,12 @@
 
 function fgNameFix($rawName) {
 	switch ($rawName) {
+		case 'Zachary Heathcott':
+			return 'Slade Heathcott';
+
+		case 'Jung-ho Kang':
+			return 'Jung Ho Kang';
+
 		case 'Dennis Tepera':
 			return 'Ryan Tepera';
 
@@ -71,6 +77,10 @@ function fgNameFix($rawName) {
 }
 
 function changeDkNameToBatName($dkName) {
+    if ($dkName == 'Lance McCullers') {
+        return 'Lance McCullers Jr.';
+    }
+
     if ($dkName == 'Jorge De La Rosa') {
         return 'Jorge de la Rosa';
     }
