@@ -217,7 +217,7 @@ class SolverTopPlaysMlb {
 			$lineups[] = $lineup;
 		}
 
-		$lineups = $this->removeDuplicateLineups($lineups);
+		$lineups = $this->removeDuplicateLineups($lineups); 
 
 		$lineups = $this->sortLineups($lineups); */
 

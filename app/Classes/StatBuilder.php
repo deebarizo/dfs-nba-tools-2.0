@@ -465,13 +465,22 @@ class StatBuilder {
             } else {
                 $dkPtsIndex = 5;
             }
+
+            $lineupIndex = 9;
+            $platoonIndex = 10;
+            $oppIndex = 11;
         }
 
         # dd($dkPtsIndex);
 
         if ($playerType == 'pitchers') {
             $dkPtsIndex = 6;
+            $lineupIndex = 3;
+            $platoonIndex = 10;
+            $oppIndex = 2;
         }
+
+        $nameIndex = 1;
 
         if (file_exists($csvFile)) {
             if (($handle = fopen($csvFile, 'r')) !== false) {
@@ -480,14 +489,19 @@ class StatBuilder {
                 while (($csvData = fgetcsv($handle, 5000, ',')) !== false) {
                     if ($row != 0) {
                         $players[$row] = array(
-                            'name' => $csvData[1],
-                            'dk_pts' => $csvData[$dkPtsIndex]
+                            'name' => $csvData[$nameIndex],
+                            'dk_pts' => $csvData[$dkPtsIndex],
+                            'lineup' => $csvData[$lineupIndex],
+                            'platoon' => $csvData[$platoonIndex],
+                            'opp' => $csvData[$oppIndex]
                         );
                     }
 
                     $row++;
                 }
             }  
+
+            # ddAll($players);
             
             return $players;           
         }
