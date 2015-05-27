@@ -44,11 +44,11 @@ class DailyController {
             if (isset($players[0]->are_there_box_score_lines)) {
                 $areThereBoxScoreLines = 1;
 
-                $tableSize = '85%';
+                $tableSize = '75%';
             } else {
                 $areThereBoxScoreLines = 0;
 
-                $tableSize = '100%';
+                $tableSize = '85%';
             }
 
             if ($contestId != 'nc') {

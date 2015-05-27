@@ -68,6 +68,9 @@
 						<th>T %</th>
 						<th>Team</th>
 						<th>Pos</th>
+						<th>Lu</th>
+						<th>Plat</th>
+						<th>Opp</th>
 						<th>bFPTS</th>
 						<th>Sal</th>
 						<th>bVR</th>
@@ -111,6 +114,9 @@
 			    			<td class="target-percentage-amount"><span class="target-percentage-amount">{{ $player->target_percentage }}</span></td>
 					    	<td>{{ $player->abbr_dk }}</td>
 					    	<td>{{ $player->position }}</td>
+					    	<td>{{ $player->lineup }}</td>
+					    	<td>{{ $player->platoon }}</td>
+					    	<td>{{ $player->opp }}</td>
 					    	<td>{{ $player->bat_fpts }}</td>
 					    	<td>{{ $player->salary }}</td>
 					    	<td>{{ $player->bat_vr }}</td>

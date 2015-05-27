@@ -418,10 +418,12 @@ class StatBuilder {
             } 
         } else {
             foreach ($players as &$player) {
-                list($player->bat_vr, $player->bat_fpts) = $this->getBatProjections($batProjections, $player, $date);
+                list($player->bat_vr, $player->bat_fpts, $player->lineup, $player->platoon, $player->opp) = $this->getBatProjections($batProjections, $player, $date);
             } 
             unset($player);            
         }
+
+        # ddAll($players);
 
         return $players;
     }
@@ -434,26 +436,29 @@ class StatBuilder {
         if ($player->position != 'SP' && $player->position != 'RP') {
             foreach ($batProjections['hitters'] as $batProjection) {
                 if ($batProjection['name'] == $name) {
-                    $batVr = numFormat($batProjection['dk_pts'] / ($player->salary / 1000), 2);
-
-                    return array($batVr, numFormat($batProjection['dk_pts'], 2));
+                    return $this->getBatProjection($batProjection, $player);
                 }
             }  
 
-            return array(0, 0);
+            return array(0, 0, 0, 0, 0);
         }
 
         // Pitchers
 
         foreach ($batProjections['pitchers'] as $batProjection) {
             if ($batProjection['name'] == $name) {
-                $batVr = numFormat($batProjection['dk_pts'] / ($player->salary / 1000), 2);
-
-                return array($batVr, numFormat($batProjection['dk_pts'], 2));
+                return $this->getBatProjection($batProjection, $player);
             }
         }  
 
-        return array(0, 0);
+        return array(0, 0, 0, 0, 0);
+    }
+
+    private function getBatProjection($batProjection, $player) {
+        $batVr = numFormat($batProjection['dk_pts'] / ($player->salary / 1000), 2);
+        $batFpts = numFormat($batProjection['dk_pts'], 2);
+
+        return array($batVr, $batFpts, $batProjection['lineup'], $batProjection['platoon'], $batProjection['opp']);
     }
 
     private function parseCsvFile($playerType, $date) {

@@ -15,16 +15,19 @@ $(document).ready(function() {
 		$('#daily').dataTable({
 			"scrollY": "600px",
 			"paging": false,
-			"order": [[7, "desc"]],
+			"order": [[10, "desc"]],
 			"columns": [
-			    { "width": "30%" },
-			    { "width": "10%" },
-			    { "width": "10%", "orderDataType": "dom-text-numeric" },
-			    { "width": "10%" },
-			   	{ "width": "10%" },
-			   	{ "width": "10%" },
-			   	{ "width": "10%" },
-			   	{ "width": "10%" }
+			    { "width": "20%" },
+			    { "width": "6%" },
+			    { "width": "7%", "orderDataType": "dom-text-numeric" },
+			    { "width": "7%" },
+			   	{ "width": "7%" },
+			   	{ "width": "7%" },
+			   	{ "width": "7%" },
+			   	{ "width": "20%" },
+			   	{ "width": "7%" },
+			   	{ "width": "6%" },
+			   	{ "width": "6%" }
 			]
 		});	
 	}
@@ -36,20 +39,23 @@ $(document).ready(function() {
 			"order": [[7, "desc"]],
 			"columns": [
 			    { "width": "19%" },
-			    { "width": "7%" },
-			    { "width": "6%", "orderDataType": "dom-text-numeric" },
-			    { "width": "7%" },
-			   	{ "width": "5%" },
-			   	{ "width": "7%" },
-			   	{ "width": "6%" },
-			   	{ "width": "7%" },
-			   	{ "width": "7%" },
-			   	{ "width": "7%" },
-			   	{ "width": "7%" },
+			    { "width": "6%" },
+			    { "width": "8%", "orderDataType": "dom-text-numeric" },
+			    { "width": "4%" },
 			   	{ "width": "4%" },
 			   	{ "width": "4%" },
 			   	{ "width": "4%" },
-			   	{ "width": "4%" }
+			   	{ "width": "19%" },			   	
+			   	{ "width": "4%" },
+			   	{ "width": "4%" },
+			   	{ "width": "4%" },
+			   	{ "width": "4%" },
+			   	{ "width": "4%" },
+			   	{ "width": "4%" },
+			   	{ "width": "2%" },
+			   	{ "width": "2%" },
+			   	{ "width": "2%" },
+			   	{ "width": "2%" }
 			]
 		});	
 	}
