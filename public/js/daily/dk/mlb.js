@@ -36,7 +36,7 @@ $(document).ready(function() {
 		$('#daily').dataTable({
 			"scrollY": "600px",
 			"paging": false,
-			"order": [[7, "desc"]],
+			"order": [[10, "desc"]],
 			"columns": [
 			    { "width": "19%" },
 			    { "width": "6%" },

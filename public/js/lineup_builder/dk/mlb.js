@@ -319,7 +319,7 @@ $(document).ready(function() {
 
 		if (pitchers[1].team == pitchers[2].opp) {
 			alert('This lineup has pitchers from the same game.');
-			return false;
+			// return false;
 		}
 
 		var hitters = [];
