@@ -152,9 +152,20 @@ class SolverTopPlaysMlb {
 		}
 		unset($lineup);
 
-		$activeLineups = array_reverse($activeLineups);
+		$activeLineups = $this->sortActiveLineups($activeLineups);
 
 		# ddAll($activeLineups);
+
+		return $activeLineups;
+	}
+
+	private function sortActiveLineups($activeLineups) {
+		foreach ($activeLineups as $key => $activeLineup) {
+			$moneyLineup[$key] = $activeLineup['css_class_money_lineup'];
+			$buyIn[$key] = $activeLineup['buy_in'];
+		}		
+
+		array_multisort($moneyLineup, SORT_ASC, $buyIn, SORT_DESC, $activeLineups);
 
 		return $activeLineups;
 	}
@@ -641,6 +652,7 @@ class SolverTopPlaysMlb {
 						->where('time_period', $timePeriod)
 						->where('date', $date)
 						->where('target_percentage', '>', 0)
+						->orderBy('name', 'asc')
 						->get();
 
 		foreach ($players as $key => $player) {

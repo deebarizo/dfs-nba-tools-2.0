@@ -1,0 +1,635 @@
+"Position","Name","Salary","GameInfo","AvgPointsPerGame"
+"SP","Felix Hernandez",11600,"NYY@Sea 10:10PM ET",27.280
+"SP","Max Scherzer",11500,"Tor@Was 07:05PM ET",29.225
+"SP","Clayton Kershaw",10700,"LAD@Col 08:40PM ET",22.220
+"SP","Matt Harvey",9900,"NYM@SD 10:10PM ET",22.520
+"SP","Gerrit Cole",9900,"Pit@SF 10:15PM ET",21.655
+"SP","Madison Bumgarner",9800,"Pit@SF 10:15PM ET",18.727
+"SP","Jacob deGrom",9700,"NYM@SD 10:10PM ET",20.775
+"SP","Jon Lester",9500,"ChC@Mia 07:10PM ET",18.320
+"SP","Garrett Richards",9500,"TB@LAA 10:05PM ET",18.075
+"SP","Zack Greinke",9400,"LAD@Col 08:40PM ET",22.875
+"SP","Jake Arrieta",9000,"ChC@Mia 07:10PM ET",20.765
+"SP","James Shields",8900,"NYM@SD 10:10PM ET",18.888
+"SP","Julio Teheran",8800,"Atl@Ari 09:40PM ET",11.495
+"SP","Michael Pineda",8800,"NYY@Sea 10:10PM ET",21.035
+"SP","Gio Gonzalez",8700,"Tor@Was 07:05PM ET",14.355
+"SP","Jordan Zimmermann",8600,"Tor@Was 07:05PM ET",14.310
+"SP","Tyson Ross",8600,"NYM@SD 10:10PM ET",16.500
+"SP","Lance Lynn",8500,"Mil@StL 08:10PM ET",18.670
+"SP","Mike Fiers",8500,"Mil@StL 08:10PM ET",14.445
+"SP","CC Sabathia",8300,"NYY@Sea 10:10PM ET",12.005
+"SP","Francisco Liriano",8300,"Pit@SF 10:15PM ET",20.605
+"SP","Alex Wood",8200,"Atl@Ari 09:40PM ET",13.211
+"SP","Phil Hughes",8100,"Postponed",13.080
+"SP","Ian Kennedy",8000,"NYM@SD 10:10PM ET",8.894
+"SP","Andrew Cashner",8000,"NYM@SD 10:10PM ET",16.232
+"SP","A.J. Burnett",7800,"Pit@SF 10:15PM ET",21.130
+"SP","Jason Hammel",7800,"ChC@Mia 07:10PM ET",20.994
+"SP","Michael Wacha",7800,"Mil@StL 08:10PM ET",18.110
+"SP","John Lackey",7700,"Mil@StL 08:10PM ET",16.675
+"RP","Yusmeiro Petit",7600,"Pit@SF 10:15PM ET",4.300
+"SP","Chris Archer",7600,"TB@LAA 10:05PM ET",23.964
+"SP","Matt Shoemaker",7600,"TB@LAA 10:05PM ET",13.950
+"SP","Matt Cain",7500,"Pit@SF 10:15PM ET",0
+"SP","Jered Weaver",7500,"TB@LAA 10:05PM ET",12.818
+"SP","Collin McHugh",7400,"Bal@Hou 08:10PM ET",15.685
+"SP","R.A. Dickey",7200,"Tor@Was 07:05PM ET",8.970
+"SP","C.J. Wilson",7200,"TB@LAA 10:05PM ET",16.225
+"SP","Jake Odorizzi",7200,"TB@LAA 10:05PM ET",19.068
+"SP","Drew Hutchison",7200,"Tor@Was 07:05PM ET",13.209
+"SP","Kyle Lohse",7100,"Mil@StL 08:10PM ET",7.961
+"SP","Chris Tillman",7100,"Bal@Hou 08:10PM ET",8.585
+"SP","Clay Buchholz",7000,"Postponed",16.115
+"SP","Jonathon Niese",7000,"NYM@SD 10:10PM ET",10.245
+"SP","Wei-Yin Chen",7000,"Bal@Hou 08:10PM ET",14.975
+"SP","Shelby Miller",7000,"Atl@Ari 09:40PM ET",21.955
+"SP","Taijuan Walker",7000,"NYY@Sea 10:10PM ET",9.695
+"RP","Rafael Montero",7000,"NYM@SD 10:10PM ET",6.020
+"SP","Jorge De La Rosa",6900,"LAD@Col 08:40PM ET",10.208
+"SP","Tim Lincecum",6900,"Pit@SF 10:15PM ET",14.005
+"SP","Dallas Keuchel",6900,"Bal@Hou 08:10PM ET",23.895
+"SP","Noah Syndergaard",6900,"NYM@SD 10:10PM ET",19.175
+"SP","Kyle Hendricks",6900,"ChC@Mia 07:10PM ET",14.122
+"SP","Bartolo Colon",6800,"NYM@SD 10:10PM ET",15.864
+"SP","Jaime Garcia",6800,"Mil@StL 08:10PM ET",14.225
+"SP","Andrew Heaney",6800,"TB@LAA 10:05PM ET",0
+"SP","Carlos Martinez",6800,"Mil@StL 08:10PM ET",17.723
+"SP","Henry Owens",6800,"Postponed",0
+"SP","Roenis Elias",6800,"NYY@Sea 10:10PM ET",15.571
+"SP","Rick Porcello",6700,"Postponed",12.930
+"RP","Liam Hendriks",6700,"Tor@Was 07:05PM ET",3.725
+"SP","Wade Miley",6600,"Postponed",9.805
+"SP","Tsuyoshi Wada",6600,"ChC@Mia 07:10PM ET",18.550
+"SP","Dan Haren",6500,"ChC@Mia 07:10PM ET",14.968
+"SP","J.A. Happ",6500,"NYY@Sea 10:10PM ET",13.625
+"SP","Matt Garza",6500,"Mil@StL 08:10PM ET",9.991
+"RP","Tanner Roark",6500,"Tor@Was 07:05PM ET",3.673
+"SP","Jimmy Nelson",6500,"Mil@StL 08:10PM ET",15.745
+"SP","Tim Hudson",6400,"Pit@SF 10:15PM ET",9.725
+"SP","Ubaldo Jimenez",6400,"Bal@Hou 08:10PM ET",16.561
+"SP","Brett Anderson",6300,"LAD@Col 08:40PM ET",12.540
+"SP","Mark Buehrle",6200,"Tor@Was 07:05PM ET",10.810
+"SP","Charlie Morton",6200,"Pit@SF 10:15PM ET",18.150
+"SP","Miguel Gonzalez",6200,"Bal@Hou 08:10PM ET",16.590
+"SP","Nathan Eovaldi",6200,"NYY@Sea 10:10PM ET",11.780
+"SP","Henderson Alvarez",6200,"ChC@Mia 07:10PM ET",3.813
+"SP","Ryan Vogelsong",6100,"Pit@SF 10:15PM ET",11.675
+"SP","Travis Wood",6100,"ChC@Mia 07:10PM ET",6.400
+"SP","Vance Worley",6100,"Pit@SF 10:15PM ET",8.159
+"SP","Mike Bolsinger",6100,"LAD@Col 08:40PM ET",21.180
+"SP","Rubby De La Rosa",6100,"Atl@Ari 09:40PM ET",16.960
+"SP","Marco Gonzales",6100,"Mil@StL 08:10PM ET",0
+"SP","Hector Santiago",6000,"TB@LAA 10:05PM ET",19.450
+"SP","Alex Meyer",6000,"Postponed",0
+"SP","Odrisamer Despaigne",6000,"NYM@SD 10:10PM ET",7.582
+"SP","Ricky Nolasco",5900,"Postponed",10.929
+"SP","Jeremy Hellickson",5900,"Atl@Ari 09:40PM ET",10.490
+"SP","Josh Collmenter",5900,"Atl@Ari 09:40PM ET",9.185
+"SP","Tom Koehler",5900,"ChC@Mia 07:10PM ET",11.077
+"RP","Mike Foltynewicz",5900,"Atl@Ari 09:40PM ET",17.958
+"RP","Marco Estrada",5800,"Tor@Was 07:05PM ET",8.591
+"SP","Jeff Locke",5800,"Pit@SF 10:15PM ET",10.905
+"SP","Trevor May",5800,"Postponed",11.972
+"SP","Alex Colome",5800,"TB@LAA 10:05PM ET",11.558
+"SP","Vidal Nuno",5800,"Atl@Ari 09:40PM ET",18.417
+"SP","Joe Wieland",5700,"LAD@Col 08:40PM ET",-3.500
+"SP","Daniel Hudson",5700,"Atl@Ari 09:40PM ET",3.471
+"SP","Nathan Karns",5600,"TB@LAA 10:05PM ET",16.465
+"SP","Jordan Lyles",5500,"LAD@Col 08:40PM ET",6.968
+"SP","Aaron Sanchez",5500,"Tor@Was 07:05PM ET",11.990
+"SP","Edwin Jackson",5400,"ChC@Mia 07:10PM ET",2.955
+"SP","Brett Oberholtzer",5400,"Bal@Hou 08:10PM ET",6.550
+"SP","Kyle Gibson",5400,"Postponed",12.910
+"OF","Mike Trout",5400,"TB@LAA 10:05PM ET",9.647
+"SP","Chase Anderson",5400,"Atl@Ari 09:40PM ET",13.290
+"RP","Matt Barnes",5400,"Postponed",4.020
+"RP","Taylor Hill",5400,"Tor@Was 07:05PM ET",5.150
+"SP","Eduardo Rodriguez",5400,"Postponed",32.250
+"1B","Paul Goldschmidt",5300,"Atl@Ari 09:40PM ET",12.204
+"SP","Tyler Lyons",5300,"Mil@StL 08:10PM ET",11.150
+"SP","Jon Gray",5300,"LAD@Col 08:40PM ET",0
+"SP","Trevor Cahill",5200,"Atl@Ari 09:40PM ET",0.804
+"1B","Anthony Rizzo",5200,"ChC@Mia 07:10PM ET",10.229
+"SP","Joe Kelly",5200,"Postponed",9.950
+"SP","Justin Nicolino",5200,"ChC@Mia 07:10PM ET",0
+"OF","Yasiel Puig",5200,"LAD@Col 08:40PM ET",7.455
+"OF","Andrew McCutchen",5100,"Pit@SF 10:15PM ET",8.367
+"SP","Erasmo Ramirez",5100,"TB@LAA 10:05PM ET",7.204
+"SP","Archie Bradley",5100,"Atl@Ari 09:40PM ET",8.029
+"1B","Adrian Gonzalez",5000,"LAD@Col 08:40PM ET",9.479
+"OF/SS","Hanley Ramirez",5000,"Postponed",8.021
+"2B","Howie Kendrick",5000,"LAD@Col 08:40PM ET",7.271
+"OF","Giancarlo Stanton",5000,"ChC@Mia 07:10PM ET",9.280
+"SP","Chris Heston",5000,"Pit@SF 10:15PM ET",15.850
+"3B","Kris Bryant",5000,"ChC@Mia 07:10PM ET",9.700
+"SP","Blake Treinen",5000,"Tor@Was 07:05PM ET",4.008
+"SP","Lance McCullers",5000,"Bal@Hou 08:10PM ET",17.517
+"OF","Joc Pederson",4900,"LAD@Col 08:40PM ET",8.347
+"C/OF","Evan Gattis",4900,"Bal@Hou 08:10PM ET",7.333
+"OF","Nelson Cruz",4800,"NYY@Sea 10:10PM ET",10.380
+"2B","Jose Altuve",4800,"Bal@Hou 08:10PM ET",8.660
+"SP","Oliver Drake",4800,"Bal@Hou 08:10PM ET",4.588
+"OF","Bryce Harper",4800,"Tor@Was 07:05PM ET",11.440
+"OF","Carl Crawford",4700,"LAD@Col 08:40PM ET",4.667
+"OF","Carlos Gomez",4700,"Mil@StL 08:10PM ET",8.545
+"OF","Ryan Braun",4700,"Mil@StL 08:10PM ET",8.980
+"OF","Scott Van Slyke",4700,"LAD@Col 08:40PM ET",4.257
+"SP","Christian Bergman",4700,"LAD@Col 08:40PM ET",4.845
+"1B","David Ortiz",4600,"Postponed",6.311
+"1B","Albert Pujols",4600,"TB@LAA 10:05PM ET",7.354
+"1B","Mike Napoli",4600,"Postponed",6.804
+"1B","Edwin Encarnacion",4600,"Tor@Was 07:05PM ET",7.577
+"OF","Jose Bautista",4600,"Tor@Was 07:05PM ET",8.467
+"SP","Roberto Hernandez",4600,"Bal@Hou 08:10PM ET",8.735
+"OF","Matt Holliday",4600,"Mil@StL 08:10PM ET",7.689
+"SP","Mike Pelfrey",4600,"Postponed",12.200
+"1B/3B","Chris Davis",4600,"Bal@Hou 08:10PM ET",7.833
+"3B","Josh Donaldson",4600,"Tor@Was 07:05PM ET",10.346
+"2B","Dee Gordon",4600,"ChC@Mia 07:10PM ET",9.542
+"2B","Brian Dozier",4600,"Postponed",9.333
+"OF","George Springer",4600,"Bal@Hou 08:10PM ET",8.311
+"OF","Mookie Betts",4600,"Postponed",7.620
+"SP","Tyler Wagner",4600,"Mil@StL 08:10PM ET",-3.750
+"RP","Carlos Frias",4500,"LAD@Col 08:40PM ET",9.306
+"SP","Steve Geltz",4500,"TB@LAA 10:05PM ET",3.305
+"3B","Kyle Seager",4500,"NYY@Sea 10:10PM ET",7.320
+"SP","Adam Warren",4500,"NYY@Sea 10:10PM ET",12.315
+"OF","Starling Marte",4500,"Pit@SF 10:15PM ET",8.633
+"SP","Robbie Ray",4500,"Atl@Ari 09:40PM ET",22.500
+"SP","Mike Wright",4500,"Bal@Hou 08:10PM ET",19.767
+"OF","Jorge Soler",4500,"ChC@Mia 07:10PM ET",6.563
+"2B","Dustin Pedroia",4400,"Postponed",7.320
+"OF","Dexter Fowler",4400,"ChC@Mia 07:10PM ET",8.319
+"1B/OF","Chris Carter",4400,"Bal@Hou 08:10PM ET",6.163
+"OF","Corey Dickerson",4400,"LAD@Col 08:40PM ET",6.939
+"SP","Tim Cooney",4400,"Mil@StL 08:10PM ET",0.450
+"OF","Rusney Castillo",4400,"Postponed",4.000
+"OF","Torii Hunter",4300,"Postponed",8.091
+"SS","Jimmy Rollins",4300,"LAD@Col 08:40PM ET",6.125
+"2B","Robinson Cano",4300,"NYY@Sea 10:10PM ET",5.837
+"SP","Kyle Kendrick",4300,"LAD@Col 08:40PM ET",6.650
+"OF","Adam Jones",4300,"Bal@Hou 08:10PM ET",7.745
+"3B","Pablo Sandoval",4300,"Postponed",5.935
+"SS","Troy Tulowitzki",4300,"LAD@Col 08:40PM ET",6.533
+"OF","Justin Upton",4300,"NYM@SD 10:10PM ET",9.902
+"2B/3B","Justin Turner",4300,"LAD@Col 08:40PM ET",5.756
+"1B","Lucas Duda",4300,"NYM@SD 10:10PM ET",8.480
+"1B","Freddie Freeman",4300,"Atl@Ari 09:40PM ET",7.980
+"SP","Taylor Jordan",4300,"Tor@Was 07:05PM ET",1.700
+"SP","David Phelps",4300,"ChC@Mia 07:10PM ET",10.682
+"2B/3B","Anthony Rendon",4300,"Tor@Was 07:05PM ET",0
+"3B","Matt Carpenter",4300,"Mil@StL 08:10PM ET",9.800
+"SP","Eddie Butler",4300,"LAD@Col 08:40PM ET",7.675
+"SP","Jake Buchanan",4300,"Bal@Hou 08:10PM ET",4.783
+"OF","Kole Calhoun",4300,"TB@LAA 10:05PM ET",7.104
+"1B","Joe Mauer",4200,"Postponed",6.979
+"SS","Jhonny Peralta",4200,"Mil@StL 08:10PM ET",8.300
+"3B","Trevor Plouffe",4200,"Postponed",7.809
+"OF","Hunter Pence",4200,"Pit@SF 10:15PM ET",8.250
+"1B","Brandon Belt",4200,"Pit@SF 10:15PM ET",7.848
+"C","Yasmani Grandal",4200,"LAD@Col 08:40PM ET",7.429
+"OF","A.J. Pollock",4200,"Atl@Ari 09:40PM ET",8.896
+"3B","Nolan Arenado",4200,"LAD@Col 08:40PM ET",8.532
+"OF","Oswaldo Arcia",4200,"Postponed",5.368
+"OF","Jayson Werth",4100,"Tor@Was 07:05PM ET",6.185
+"OF","Denard Span",4100,"Tor@Was 07:05PM ET",9.000
+"SS","Ian Desmond",4100,"Tor@Was 07:05PM ET",6.340
+"1B/3B","Ryan Zimmerman",4100,"Tor@Was 07:05PM ET",6.840
+"1B/3B","Pedro Alvarez",4100,"Pit@SF 10:15PM ET",7.021
+"1B/C","Buster Posey",4100,"Pit@SF 10:15PM ET",7.583
+"SP","Brad Hand",4100,"ChC@Mia 07:10PM ET",3.600
+"3B/OF","Josh Harrison",4100,"Pit@SF 10:15PM ET",7.067
+"RP","Jason Grilli",4000,"Atl@Ari 09:40PM ET",3.144
+"RP","Randy Choate",4000,"Mil@StL 08:10PM ET",1.052
+"RP","Joe Beimel",4000,"NYY@Sea 10:10PM ET",2.192
+"RP","Joaquin Benoit",4000,"NYM@SD 10:10PM ET",3.693
+"RP","Rafael Betancourt",4000,"LAD@Col 08:40PM ET",3.175
+"RP","Jeremy Affeldt",4000,"Pit@SF 10:15PM ET",0.330
+"RP","Fernando Rodney",4000,"NYY@Sea 10:10PM ET",1.755
+"RP","Oliver Perez",4000,"Atl@Ari 09:40PM ET",1.219
+"RP","Francisco Rodriguez",4000,"Mil@StL 08:10PM ET",3.639
+"1B","Justin Morneau",4000,"LAD@Col 08:40PM ET",6.222
+"SS","Jose Reyes",4000,"Tor@Was 07:05PM ET",6.864
+"RP","Javier Lopez",4000,"Pit@SF 10:15PM ET",1.627
+"SP","Chris Capuano",4000,"NYY@Sea 10:10PM ET",7.100
+"RP","Blaine Boyer",4000,"Postponed",2.150
+"RP","Chad Qualls",4000,"Bal@Hou 08:10PM ET",3.119
+"RP","Neal Cotts",4000,"Mil@StL 08:10PM ET",2.569
+"RP","Santiago Casilla",4000,"Pit@SF 10:15PM ET",3.010
+"RP","Nick Masset",4000,"Atl@Ari 09:40PM ET",2.446
+"RP","Jim Johnson",4000,"Atl@Ari 09:40PM ET",2.690
+"RP","Craig Breslow",4000,"Postponed",2.565
+"RP","Kevin Jepsen",4000,"TB@LAA 10:05PM ET",2.542
+"RP","Jonathan Broxton",4000,"Mil@StL 08:10PM ET",2.071
+"RP","Jean Machi",4000,"Pit@SF 10:15PM ET",1.670
+"RP","Pat Neshek",4000,"Bal@Hou 08:10PM ET",3.309
+"RP","Carlos Villanueva",4000,"Mil@StL 08:10PM ET",6.938
+"RP","Dale Thayer",4000,"NYM@SD 10:10PM ET",2.477
+"RP","Tom Wilhelmsen",4000,"NYY@Sea 10:10PM ET",4.540
+"RP","Matt Belisle",4000,"Mil@StL 08:10PM ET",2.740
+"RP","Jason Motte",4000,"ChC@Mia 07:10PM ET",1.760
+"RP","Brad Ziegler",4000,"Atl@Ari 09:40PM ET",2.440
+"RP","Matt Thornton",4000,"Tor@Was 07:05PM ET",1.708
+"RP","Tim Stauffer",4000,"Postponed",-0.305
+"OF","Matt Kemp",4000,"NYM@SD 10:10PM ET",6.635
+"OF","Carlos Gonzalez",4000,"LAD@Col 08:40PM ET",5.478
+"RP","Pedro Strop",4000,"ChC@Mia 07:10PM ET",2.898
+"RP","Boone Logan",4000,"LAD@Col 08:40PM ET",2.208
+"RP","Alexi Ogando",4000,"Postponed",2.553
+"RP","Jake McGee",4000,"TB@LAA 10:05PM ET",3.142
+"RP","Carlos Torres",4000,"NYM@SD 10:10PM ET",2.354
+"1B","Adam Lind",4000,"Mil@StL 08:10PM ET",7.042
+"RP","Casey Janssen",4000,"Tor@Was 07:05PM ET",-0.338
+"RP","Mark Lowe",4000,"NYY@Sea 10:10PM ET",3.521
+"RP","Glen Perkins",4000,"Postponed",2.816
+"RP","J.P. Howell",4000,"LAD@Col 08:40PM ET",2.165
+"RP","Huston Street",4000,"TB@LAA 10:05PM ET",3.732
+"RP","Tony Sipp",4000,"Bal@Hou 08:10PM ET",3.560
+"RP","Steve Delabar",4000,"Tor@Was 07:05PM ET",4.367
+"RP","Xavier Cedeno",4000,"TB@LAA 10:05PM ET",1.550
+"RP","Mike Dunn",4000,"ChC@Mia 07:10PM ET",1.827
+"RP","Cesar Ramos",4000,"TB@LAA 10:05PM ET",1.831
+"RP","Aaron Thompson",4000,"Postponed",1.882
+"OF","Brett Gardner",4000,"NYY@Sea 10:10PM ET",8.457
+"RP","Sergio Romo",4000,"Pit@SF 10:15PM ET",2.650
+"RP","Brian Duensing",4000,"Postponed",0.568
+"RP","Chaz Roe",4000,"Bal@Hou 08:10PM ET",5.660
+"RP","Donnie Veal",4000,"Atl@Ari 09:40PM ET",-0.970
+"OF","Jacoby Ellsbury",4000,"NYY@Sea 10:10PM ET",9.000
+"RP","Ernesto Frieri",4000,"TB@LAA 10:05PM ET",2.393
+"RP","Kenley Jansen",4000,"LAD@Col 08:40PM ET",5.850
+"RP","Joe Thatcher",4000,"Bal@Hou 08:10PM ET",2.041
+"RP","James Russell",4000,"ChC@Mia 07:10PM ET",1.688
+"RP","Vin Mazzaro",4000,"ChC@Mia 07:10PM ET",4.900
+"RP","Andrew Miller",4000,"NYY@Sea 10:10PM ET",4.848
+"RP","Jeremy Jeffress",4000,"Mil@StL 08:10PM ET",2.735
+"RP","Darren O'Day",4000,"Bal@Hou 08:10PM ET",3.658
+"RP","Bryan Morris",4000,"ChC@Mia 07:10PM ET",2.206
+"RP","Brooks Brown",4000,"LAD@Col 08:40PM ET",2.103
+"SP","Steven Wright",4000,"Postponed",11.050
+"RP","Zach Britton",4000,"Bal@Hou 08:10PM ET",3.475
+"RP","Joe Smith",4000,"TB@LAA 10:05PM ET",2.950
+"RP","Jared Hughes",4000,"Pit@SF 10:15PM ET",2.202
+"RP","Chris Hatcher",4000,"LAD@Col 08:40PM ET",1.411
+"RP","George Kontos",4000,"Pit@SF 10:15PM ET",2.876
+"RP","Dellin Betances",4000,"NYY@Sea 10:10PM ET",6.371
+"RP","Will Harris",4000,"Bal@Hou 08:10PM ET",5.589
+"RP","Mark Melancon",4000,"Pit@SF 10:15PM ET",1.980
+"RP","David Carpenter",4000,"NYY@Sea 10:10PM ET",1.288
+"RP","Tony Watson",4000,"Pit@SF 10:15PM ET",3.885
+"RP","Casey Fien",4000,"Postponed",2.468
+"RP","Sam Dyson",4000,"ChC@Mia 07:10PM ET",3.242
+"RP","Brad Boxberger",4000,"TB@LAA 10:05PM ET",3.836
+"RP","Luke Gregerson",4000,"Bal@Hou 08:10PM ET",3.134
+"RP","Hector Rondon",4000,"ChC@Mia 07:10PM ET",3.275
+"RP","Alex Torres",4000,"NYM@SD 10:10PM ET",2.986
+"RP","Antonio Bastardo",4000,"Pit@SF 10:15PM ET",1.562
+"RP","Esmil Rogers",4000,"NYY@Sea 10:10PM ET",4.347
+"RP","Fernando Salas",4000,"TB@LAA 10:05PM ET",2.250
+"RP","John Axford",4000,"LAD@Col 08:40PM ET",2.700
+"3B/OF","Jimmy Paredes",4000,"Bal@Hou 08:10PM ET",9.000
+"C","Matt Wieters",4000,"Bal@Hou 08:10PM ET",0
+"RP","Brett Cecil",4000,"Tor@Was 07:05PM ET",2.797
+"RP","Brandon Gomes",4000,"TB@LAA 10:05PM ET",3.088
+"RP","Shawn Kelley",4000,"NYM@SD 10:10PM ET",2.627
+"RP","Tommy Hunter",4000,"Bal@Hou 08:10PM ET",2.253
+"RP","Steve Cishek",4000,"ChC@Mia 07:10PM ET",1.574
+"RP","Josh Fields",4000,"Bal@Hou 08:10PM ET",4.904
+"RP","Ryan Pressly",4000,"Postponed",3.935
+"RP","Matt West",4000,"LAD@Col 08:40PM ET",0
+"RP","Charlie Furbush",4000,"NYY@Sea 10:10PM ET",1.614
+"RP","Michael Blazek",4000,"Mil@StL 08:10PM ET",5.150
+"RP","Chad Bettis",4000,"LAD@Col 08:40PM ET",19.525
+"RP","Justin Grimm",4000,"ChC@Mia 07:10PM ET",4.568
+"RP","Hunter Strickland",4000,"Pit@SF 10:15PM ET",6.380
+"RP","Mitch Harris",4000,"Mil@StL 08:10PM ET",1.638
+"RP","Tommy Layne",4000,"Postponed",2.214
+"RP","J.C. Ramirez",4000,"Atl@Ari 09:40PM ET",3.581
+"SP","Juan Nicasio",4000,"LAD@Col 08:40PM ET",5.428
+"SP","Jose Alvarez",4000,"TB@LAA 10:05PM ET",3.516
+"RP","Brian Matusz",4000,"Bal@Hou 08:10PM ET",2.426
+"SP","Christian Friedrich",4000,"LAD@Col 08:40PM ET",2.552
+"OF","Charlie Blackmon",4000,"LAD@Col 08:40PM ET",8.170
+"RP","Craig Kimbrel",4000,"NYM@SD 10:10PM ET",3.226
+"RP","Justin Wilson",4000,"NYY@Sea 10:10PM ET",1.444
+"RP","Chris Rusin",4000,"LAD@Col 08:40PM ET",17.225
+"RP","Will Smith",4000,"Mil@StL 08:10PM ET",3.500
+"RP","Brad Brach",4000,"Bal@Hou 08:10PM ET",5.217
+"RP","Aaron Barrett",4000,"Tor@Was 07:05PM ET",2.608
+"RP","Brandon Maurer",4000,"NYM@SD 10:10PM ET",3.091
+"RP","Cory Mazzoni",4000,"NYM@SD 10:10PM ET",0.740
+"RP","Randall Delgado",4000,"Atl@Ari 09:40PM ET",3.300
+"SS","Starlin Castro",4000,"ChC@Mia 07:10PM ET",6.271
+"RP","Jeurys Familia",4000,"NYM@SD 10:10PM ET",4.177
+"RP","Luis Avilan",4000,"Atl@Ari 09:40PM ET",2.123
+"RP","Arquimedes Caminero",4000,"Pit@SF 10:15PM ET",2.976
+"RP","Kevin Siegrist",4000,"Mil@StL 08:10PM ET",3.640
+"RP","Bo Schultz",4000,"Tor@Was 07:05PM ET",0
+"RP","Koji Uehara",4000,"Postponed",3.678
+"RP","Junichi Tazawa",4000,"Postponed",2.896
+"RP","Drew Storen",4000,"Tor@Was 07:05PM ET",4.118
+"OF","Wil Myers",4000,"NYM@SD 10:10PM ET",9.152
+"RP","Rob Scahill",4000,"Pit@SF 10:15PM ET",3.382
+"RP","Aaron Loup",4000,"Tor@Was 07:05PM ET",2.057
+"RP","Ryan Tepera",4000,"Tor@Was 07:05PM ET",2.617
+"RP","A.J. Ramos",4000,"ChC@Mia 07:10PM ET",4.292
+"RP","Trevor Rosenthal",4000,"Mil@StL 08:10PM ET",3.989
+"RP","Zac Rosscup",4000,"ChC@Mia 07:10PM ET",2.765
+"SP","Andre Rienzo",4000,"ChC@Mia 07:10PM ET",7.000
+"RP","Williams Perez",4000,"Atl@Ari 09:40PM ET",11.430
+"RP","Jose Urena",4000,"ChC@Mia 07:10PM ET",-0.583
+"RP","Hansel Robles",4000,"NYM@SD 10:10PM ET",2.121
+"RP","Yimi Garcia",4000,"LAD@Col 08:40PM ET",4.415
+"OF","Gregory Polanco",4000,"Pit@SF 10:15PM ET",7.271
+"RP","Frank Garces",4000,"NYM@SD 10:10PM ET",1.706
+"RP","Seth Maness",4000,"Mil@StL 08:10PM ET",1.643
+"RP","Scott Oberg",4000,"LAD@Col 08:40PM ET",2.179
+"RP","Erik Goeddel",4000,"NYM@SD 10:10PM ET",3.316
+"RP","David Goforth",4000,"Mil@StL 08:10PM ET",1.513
+"RP","Matt Grace",4000,"Tor@Was 07:05PM ET",1.424
+"3B","Manny Machado",4000,"Bal@Hou 08:10PM ET",8.245
+"RP","Cam Bedrosian",4000,"TB@LAA 10:05PM ET",1.667
+"RP","Addison Reed",4000,"Atl@Ari 09:40PM ET",2.387
+"RP","Chasen Shreve",4000,"NYY@Sea 10:10PM ET",4.781
+"SP","Chase Whitley",4000,"NYY@Sea 10:10PM ET",11.325
+"RP","Adam Liberatore",4000,"LAD@Col 08:40PM ET",3.567
+"RP","Brandon Cunniff",4000,"Atl@Ari 09:40PM ET",2.555
+"RP","Michael Feliz",4000,"Bal@Hou 08:10PM ET",3.650
+"RP","Jack Leathersich",4000,"NYM@SD 10:10PM ET",2.688
+"RP","J.R. Graham",4000,"Postponed",3.496
+"RP","Roberto Osuna",4000,"Tor@Was 07:05PM ET",3.998
+"RP","Andrew Chafin",4000,"Atl@Ari 09:40PM ET",3.218
+"RP","Sean Gilmartin",4000,"NYM@SD 10:10PM ET",1.806
+"RP","Carter Capps",4000,"ChC@Mia 07:10PM ET",7.057
+"RP","Carson Smith",4000,"NYY@Sea 10:10PM ET",3.830
+"RP","Kevin Quackenbush",4000,"NYM@SD 10:10PM ET",3.060
+"RP","Jacob Lindgren",4000,"NYY@Sea 10:10PM ET",1.967
+"RP","Dominic Leone",4000,"NYY@Sea 10:10PM ET",0.400
+"RP","Corey Knebel",4000,"Mil@StL 08:10PM ET",3.733
+"OF","Shane Victorino",3900,"Postponed",4.909
+"2B","Neil Walker",3900,"Pit@SF 10:15PM ET",6.604
+"1B/OF","Mark Trumbo",3900,"Atl@Ari 09:40PM ET",7.841
+"1B/3B","Chris Johnson",3900,"Atl@Ari 09:40PM ET",4.250
+"OF","Khris Davis",3900,"Mil@StL 08:10PM ET",6.087
+"C","Jonathan Lucroy",3900,"Mil@StL 08:10PM ET",3.417
+"2B","Kolten Wong",3900,"Mil@StL 08:10PM ET",7.840
+"OF","Marcell Ozuna",3900,"ChC@Mia 07:10PM ET",5.980
+"3B/SS","Miguel Sano",3900,"Postponed",0
+"OF","Christian Yelich",3900,"ChC@Mia 07:10PM ET",5.324
+"SS","Andrelton Simmons",3900,"Atl@Ari 09:40PM ET",6.860
+"SS","Carlos Correa",3900,"Bal@Hou 08:10PM ET",0
+"OF","Byron Buxton",3900,"Postponed",0
+"2B/SS","Addison Russell",3900,"ChC@Mia 07:10PM ET",6.676
+"3B/OF","Yasmany Tomas",3900,"Atl@Ari 09:40PM ET",6.429
+"1B","Mark Teixeira",3800,"NYY@Sea 10:10PM ET",8.750
+"C","Yadier Molina",3800,"Mil@StL 08:10PM ET",5.333
+"SS","Erick Aybar",3800,"TB@LAA 10:05PM ET",5.816
+"C","Russell Martin",3800,"Tor@Was 07:05PM ET",7.913
+"OF","Andre Ethier",3800,"LAD@Col 08:40PM ET",6.565
+"OF","Seth Smith",3800,"NYY@Sea 10:10PM ET",6.116
+"1B/OF","Steve Pearce",3800,"Bal@Hou 08:10PM ET",5.472
+"3B/SS","Eduardo Nunez",3800,"Postponed",5.357
+"SS","Jed Lowrie",3800,"Bal@Hou 08:10PM ET",9.167
+"OF","Steven Souza Jr.",3800,"TB@LAA 10:05PM ET",7.978
+"3B/SS","Xander Bogaerts",3800,"Postponed",5.833
+"OF","Preston Tucker",3800,"Bal@Hou 08:10PM ET",7.105
+"1B/OF","Michael Morse",3700,"ChC@Mia 07:10PM ET",4.081
+"3B","David Wright",3700,"NYM@SD 10:10PM ET",8.500
+"2B/3B","Martin Prado",3700,"ChC@Mia 07:10PM ET",6.160
+"OF","Colby Rasmus",3700,"Bal@Hou 08:10PM ET",6.386
+"OF","Austin Jackson",3700,"NYY@Sea 10:10PM ET",5.645
+"3B","Evan Longoria",3700,"TB@LAA 10:05PM ET",7.118
+"OF","Chris Coghlan",3700,"ChC@Mia 07:10PM ET",5.479
+"OF","Jon Jay",3700,"Mil@StL 08:10PM ET",4.394
+"OF","David Peralta",3700,"Atl@Ari 09:40PM ET",6.022
+"OF","Jason Heyward",3700,"Mil@StL 08:10PM ET",6.617
+"SS","Jean Segura",3700,"Mil@StL 08:10PM ET",7.216
+"3B","Jake Lamb",3700,"Atl@Ari 09:40PM ET",9.500
+"SS","Corey Seager",3700,"LAD@Col 08:40PM ET",0
+"3B/OF","Alex Guerrero",3700,"LAD@Col 08:40PM ET",6.514
+"1B/OF","Michael Cuddyer",3600,"NYM@SD 10:10PM ET",6.617
+"OF","Chris Denorfia",3600,"ChC@Mia 07:10PM ET",2.917
+"C","Brian McCann",3600,"NYY@Sea 10:10PM ET",7.929
+"C","John Jaso",3600,"TB@LAA 10:05PM ET",2.000
+"OF","Michael Saunders",3600,"Tor@Was 07:05PM ET",4.222
+"OF","Matt Joyce",3600,"TB@LAA 10:05PM ET",4.356
+"OF","Travis Snider",3600,"Bal@Hou 08:10PM ET",4.579
+"SS","Brandon Crawford",3600,"Pit@SF 10:15PM ET",8.000
+"OF/SS","Danny Santana",3600,"Postponed",5.091
+"2B/3B","Jonathan Schoop",3600,"Bal@Hou 08:10PM ET",6.800
+"SS","Jose Peraza",3600,"Atl@Ari 09:40PM ET",0
+"SS","Jung Ho Kang",3600,"Pit@SF 10:15PM ET",6.472
+"3B","Alex Rodriguez",3500,"NYY@Sea 10:10PM ET",8.354
+"3B","Aramis Ramirez",3500,"Mil@StL 08:10PM ET",5.405
+"OF","Carlos Beltran",3500,"NYY@Sea 10:10PM ET",6.047
+"3B","Juan Uribe",3500,"Atl@Ari 09:40PM ET",4.882
+"OF","Angel Pagan",3500,"Pit@SF 10:15PM ET",5.860
+"OF","Jonny Gomes",3500,"Atl@Ari 09:40PM ET",4.394
+"C","Dioner Navarro",3500,"Tor@Was 07:05PM ET",6.000
+"C","Miguel Montero",3500,"ChC@Mia 07:10PM ET",5.561
+"OF","Nick Markakis",3500,"Atl@Ari 09:40PM ET",6.347
+"C","A.J. Ellis",3500,"LAD@Col 08:40PM ET",2.833
+"C","Jarrod Saltalamacchia",3500,"Atl@Ari 09:40PM ET",3.636
+"OF","Jordan Schafer",3500,"Postponed",2.821
+"3B","Chase Headley",3500,"NYY@Sea 10:10PM ET",6.360
+"OF","Nori Aoki",3500,"Pit@SF 10:15PM ET",7.700
+"3B","David Freese",3500,"TB@LAA 10:05PM ET",6.667
+"2B","Daniel Murphy",3500,"NYM@SD 10:10PM ET",6.000
+"C","Wilson Ramos",3500,"Tor@Was 07:05PM ET",6.000
+"C","Travis d'Arnaud",3500,"NYM@SD 10:10PM ET",8.727
+"OF","Jake Marisnick",3500,"Bal@Hou 08:10PM ET",6.213
+"2B","Tommy La Stella",3500,"ChC@Mia 07:10PM ET",4.000
+"OF","Curtis Granderson",3400,"NYM@SD 10:10PM ET",6.725
+"OF","Melvin Upton Jr.",3400,"NYM@SD 10:10PM ET",0
+"2B/3B","Aaron Hill",3400,"Atl@Ari 09:40PM ET",4.875
+"OF","Delmon Young",3400,"Bal@Hou 08:10PM ET",5.714
+"C","Chris Iannetta",3400,"TB@LAA 10:05PM ET",4.853
+"2B/3B","Luis Valbuena",3400,"Bal@Hou 08:10PM ET",6.756
+"1B/OF","Logan Morrison",3400,"NYY@Sea 10:10PM ET",6.122
+"1B","Yonder Alonso",3400,"NYM@SD 10:10PM ET",7.192
+"C","Jason Castro",3400,"Bal@Hou 08:10PM ET",5.711
+"C","Christian Vazquez",3400,"Postponed",0
+"2B/SS","Nick Franklin",3400,"TB@LAA 10:05PM ET",2.000
+"2B/3B","DJ LeMahieu",3400,"LAD@Col 08:40PM ET",7.152
+"1B","Matt Adams",3400,"Mil@StL 08:10PM ET",5.395
+"OF","Ender Inciarte",3400,"Atl@Ari 09:40PM ET",7.122
+"C","J.T. Realmuto",3400,"ChC@Mia 07:10PM ET",5.316
+"SS","Brad Miller",3400,"NYY@Sea 10:10PM ET",5.830
+"C","Blake Swihart",3400,"Postponed",4.619
+"2B/3B","Jace Peterson",3400,"Atl@Ari 09:40PM ET",6.191
+"3B/OF","Kelly Johnson",3300,"Atl@Ari 09:40PM ET",6.464
+"1B","James Loney",3300,"TB@LAA 10:05PM ET",5.710
+"3B/SS","Yunel Escobar",3300,"Tor@Was 07:05PM ET",6.870
+"OF","Will Venable",3300,"NYM@SD 10:10PM ET",4.821
+"OF","Cameron Maybin",3300,"Atl@Ari 09:40PM ET",6.791
+"OF","Desmond Jennings",3300,"TB@LAA 10:05PM ET",5.211
+"C","Derek Norris",3300,"NYM@SD 10:10PM ET",7.240
+"OF","Aaron Hicks",3300,"Postponed",5.471
+"2B/SS","Wilmer Flores",3300,"NYM@SD 10:10PM ET",6.217
+"OF","Dustin Ackley",3300,"NYY@Sea 10:10PM ET",3.622
+"OF","Randal Grichuk",3300,"Mil@StL 08:10PM ET",6.333
+"3B/OF","Brock Holt",3300,"Postponed",5.686
+"C","Mike Zunino",3300,"NYY@Sea 10:10PM ET",4.841
+"3B/SS","Jonathan Villar",3300,"Bal@Hou 08:10PM ET",4.323
+"2B/3B","Jedd Gyorko",3300,"NYM@SD 10:10PM ET",3.951
+"3B/SS","Adeiny Hechavarria",3300,"ChC@Mia 07:10PM ET",6.327
+"OF","Dalton Pompey",3300,"Tor@Was 07:05PM ET",5.739
+"2B","Joe Panik",3300,"Pit@SF 10:15PM ET",7.469
+"2B/SS","Dilson Herrera",3300,"NYM@SD 10:10PM ET",4.900
+"1B/2B","Jeff Baker",3200,"ChC@Mia 07:10PM ET",3.286
+"SS","J.J. Hardy",3200,"Bal@Hou 08:10PM ET",4.087
+"2B/3B","Alberto Callaspo",3200,"LAD@Col 08:40PM ET",3.619
+"2B/SS","Asdrubal Cabrera",3200,"TB@LAA 10:05PM ET",4.938
+"C","Francisco Cervelli",3200,"Pit@SF 10:15PM ET",6.000
+"C","Nick Hundley",3200,"LAD@Col 08:40PM ET",6.649
+"OF","Daniel Nava",3200,"Postponed",2.741
+"2B","Chris Owings",3200,"Atl@Ari 09:40PM ET",6.143
+"C","Christian Bethancourt",3200,"Atl@Ari 09:40PM ET",3.958
+"OF","Kevin Kiermaier",3200,"TB@LAA 10:05PM ET",5.167
+"2B","Devon Travis",3200,"Tor@Was 07:05PM ET",8.694
+"OF","Kevin Pillar",3200,"Tor@Was 07:05PM ET",6.096
+"OF","Nate McLouth",3100,"Tor@Was 07:05PM ET",0
+"C","Ryan Hanigan",3100,"Postponed",5.316
+"2B/OF","Rickie Weeks",3100,"NYY@Sea 10:10PM ET",3.567
+"C","Kurt Suzuki",3100,"Postponed",5.205
+"OF","Brandon Barnes",3100,"LAD@Col 08:40PM ET",5.250
+"1B/OF","Chris Colabello",3100,"Tor@Was 07:05PM ET",9.040
+"OF","Gerardo Parra",3100,"Mil@StL 08:10PM ET",4.813
+"SS","Everth Cabrera",3100,"Bal@Hou 08:10PM ET",3.815
+"OF","Juan Lagares",3100,"NYM@SD 10:10PM ET",5.660
+"OF","David Lough",3100,"Bal@Hou 08:10PM ET",1.719
+"OF","Brandon Guyer",3100,"TB@LAA 10:05PM ET",5.690
+"3B","Will Middlebrooks",3100,"NYM@SD 10:10PM ET",5.796
+"OF","Ezequiel Carrera",3100,"Tor@Was 07:05PM ET",4.538
+"1B/C","Wilin Rosario",3100,"LAD@Col 08:40PM ET",4.889
+"2B/3B","Ryan Flaherty",3100,"Bal@Hou 08:10PM ET",5.316
+"OF","Junior Lake",3100,"ChC@Mia 07:10PM ET",3.583
+"2B/OF","Kike Hernandez",3100,"LAD@Col 08:40PM ET",3.556
+"3B","Mike Olt",3100,"ChC@Mia 07:10PM ET",2.714
+"1B/OF","Garrett Jones",3000,"NYY@Sea 10:10PM ET",3.000
+"OF","Gregor Blanco",3000,"Pit@SF 10:15PM ET",4.953
+"OF","David DeJesus",3000,"TB@LAA 10:05PM ET",6.262
+"OF","Justin Ruggiano",3000,"NYY@Sea 10:10PM ET",3.424
+"C","Anthony Recker",3000,"NYM@SD 10:10PM ET",4.643
+"OF","Peter Bourjos",3000,"Mil@StL 08:10PM ET",4.325
+"C","Michael McKenry",3000,"LAD@Col 08:40PM ET",5.273
+"OF","Grant Green",3000,"TB@LAA 10:05PM ET",3.000
+"OF","Carlos Peguero",3000,"Postponed",4.636
+"SS","Jordy Mercer",3000,"Pit@SF 10:15PM ET",3.725
+"C","Caleb Joseph",3000,"Bal@Hou 08:10PM ET",6.025
+"OF/SS","Eduardo Escobar",3000,"Postponed",4.800
+"SS","Didi Gregorius",3000,"NYY@Sea 10:10PM ET",4.600
+"1B","Ben Paulsen",3000,"LAD@Col 08:40PM ET",8.077
+"OF","James Jones",3000,"NYY@Sea 10:10PM ET",0
+"OF","Michael A. Taylor",3000,"Tor@Was 07:05PM ET",5.500
+"OF","Eddie Rosario",3000,"Postponed",6.333
+"2B/SS","Matt Duffy",3000,"Pit@SF 10:15PM ET",5.846
+"SS","Chris Taylor",3000,"NYY@Sea 10:10PM ET",3.095
+"C","A.J. Pierzynski",2900,"Atl@Ari 09:40PM ET",6.586
+"OF","Ichiro Suzuki",2900,"ChC@Mia 07:10PM ET",3.792
+"2B","Dan Uggla",2900,"Tor@Was 07:05PM ET",4.296
+"OF","Chris Young",2900,"NYY@Sea 10:10PM ET",4.511
+"2B/3B","Maicer Izturis",2900,"Tor@Was 07:05PM ET",0
+"OF","Eric Young Jr.",2900,"Atl@Ari 09:40PM ET",3.375
+"3B/SS","Marwin Gonzalez",2900,"Bal@Hou 08:10PM ET",4.848
+"2B/3B","Yangervis Solarte",2900,"NYM@SD 10:10PM ET",5.520
+"1B","Justin Smoak",2900,"Tor@Was 07:05PM ET",3.436
+"2B/SS","Danny Espinosa",2900,"Tor@Was 07:05PM ET",6.756
+"OF","Kirk Nieuwenhuis",2900,"TB@LAA 10:05PM ET",1.613
+"C","Carlos Perez",2900,"TB@LAA 10:05PM ET",5.867
+"SS","Nick Ahmed",2900,"Atl@Ari 09:40PM ET",4.477
+"1B/OF","Corey Hart",2800,"Pit@SF 10:15PM ET",1.893
+"C","Jose Lobaton",2800,"Tor@Was 07:05PM ET",6.727
+"1B/3B","Mark Reynolds",2800,"Mil@StL 08:10PM ET",4.302
+"2B/3B","Danny Valencia",2800,"Tor@Was 07:05PM ET",5.308
+"1B","Justin Bour",2800,"ChC@Mia 07:10PM ET",5.483
+"2B/3B","Phil Gosselin",2800,"Atl@Ari 09:40PM ET",3.450
+"OF","Todd Cunningham",2800,"Atl@Ari 09:40PM ET",4.214
+"1B","Jason Rogers",2800,"Mil@StL 08:10PM ET",2.800
+"C","Rene Rivera",2700,"TB@LAA 10:05PM ET",3.047
+"OF","Jose Tabata",2700,"Pit@SF 10:15PM ET",1.900
+"OF","Justin Maxwell",2700,"Pit@SF 10:15PM ET",4.762
+"C","Hank Conger",2700,"Bal@Hou 08:10PM ET",4.188
+"C","Welington Castillo",2700,"NYY@Sea 10:10PM ET",2.862
+"1B/OF","Efren Navarro",2700,"TB@LAA 10:05PM ET",1.929
+"2B/3B","Logan Forsythe",2700,"TB@LAA 10:05PM ET",7.100
+"2B","Johnny Giavotella",2700,"TB@LAA 10:05PM ET",5.140
+"3B/SS","Alexi Amarista",2700,"NYM@SD 10:10PM ET",3.902
+"C","Andrew Susac",2700,"Pit@SF 10:15PM ET",3.944
+"C","David Ross",2600,"ChC@Mia 07:10PM ET",2.208
+"OF","Reed Johnson",2600,"Tor@Was 07:05PM ET",1.667
+"C","Gerald Laird",2600,"Atl@Ari 09:40PM ET",0.000
+"3B/OF","Don Kelly",2600,"ChC@Mia 07:10PM ET",0.000
+"2B/OF","Sean Rodriguez",2600,"Pit@SF 10:15PM ET",2.214
+"3B/SS","Jonathan Herrera",2600,"ChC@Mia 07:10PM ET",3.083
+"2B/SS","Stephen Drew",2600,"NYY@Sea 10:10PM ET",4.326
+"2B/SS","Jeff Bianchi",2600,"Postponed",0.000
+"2B/SS","Munenori Kawasaki",2600,"Tor@Was 07:05PM ET",0.750
+"SS","Hector Gomez",2600,"Mil@StL 08:10PM ET",3.425
+"2B/SS","Tim Beckham",2600,"TB@LAA 10:05PM ET",5.243
+"2B/SS","Jose Pirela",2600,"NYY@Sea 10:10PM ET",2.000
+"2B/SS","Rafael Furcal",2500,"ChC@Mia 07:10PM ET",0
+"1B","Travis Ishikawa",2500,"Pit@SF 10:15PM ET",0
+"OF","Andrew Lambo",2500,"Pit@SF 10:15PM ET",0.550
+"1B","Clint Robinson",2500,"Tor@Was 07:05PM ET",2.313
+"2B/SS","Charlie Culberson",2500,"LAD@Col 08:40PM ET",0
+"2B/SS","Daniel Descalso",2500,"LAD@Col 08:40PM ET",3.235
+"C","Sandy Leon",2500,"Postponed",2.471
+"C/OF","Chris Herrmann",2500,"Postponed",4.467
+"1B/OF","Tyler Moore",2500,"Tor@Was 07:05PM ET",2.781
+"OF","Joey Terdoslavich",2500,"Atl@Ari 09:40PM ET",0
+"2B/SS","Luis Sardinas",2500,"Mil@StL 08:10PM ET",4.357
+"2B/SS","Taylor Featherston",2500,"TB@LAA 10:05PM ET",1.115
+"2B/3B","Cory Spangenberg",2500,"NYM@SD 10:10PM ET",3.886
+"SS","Clint Barmes",2400,"NYM@SD 10:10PM ET",2.967
+"C","Jeff Mathis",2400,"ChC@Mia 07:10PM ET",0.667
+"C","Martin Maldonado",2400,"Mil@StL 08:10PM ET",4.077
+"OF","Shane Robinson",2400,"Postponed",4.433
+"OF/SS","Elian Herrera",2400,"Mil@StL 08:10PM ET",4.351
+"OF","Collin Cowgill",2400,"TB@LAA 10:05PM ET",2.111
+"OF","Abraham Almonte",2400,"NYM@SD 10:10PM ET",3.000
+"C","Austin Barnes",2400,"LAD@Col 08:40PM ET",0.750
+"C","Kevin Plawecki",2400,"NYM@SD 10:10PM ET",4.429
+"3B/SS","Willie Bloomquist",2300,"NYY@Sea 10:10PM ET",1.870
+"C","Chris Stewart",2300,"Pit@SF 10:15PM ET",3.706
+"2B/SS","Cliff Pennington",2300,"Atl@Ari 09:40PM ET",2.484
+"2B","Donovan Solano",2300,"ChC@Mia 07:10PM ET",2.077
+"1B/OF","John Mayberry",2300,"NYM@SD 10:10PM ET",2.462
+"C","Tuffy Gosewisch",2300,"Atl@Ari 09:40PM ET",4.474
+"2B/3B","Steve Tolleson",2300,"Tor@Was 07:05PM ET",4.737
+"C","Steve Clevenger",2300,"Bal@Hou 08:10PM ET",8.000
+"C","Jhonatan Solano",2300,"ChC@Mia 07:10PM ET",1.857
+"1B/C","Jordan Pacheco",2300,"Atl@Ari 09:40PM ET",4.077
+"SS","Ruben Tejada",2300,"NYM@SD 10:10PM ET",4.773
+"1B/3B","Eric Campbell",2300,"NYM@SD 10:10PM ET",5.259
+"C","John Ryan Murphy",2300,"NYY@Sea 10:10PM ET",3.105
+"C","Josh Thole",2200,"Tor@Was 07:05PM ET",4.625
+"3B","Josh Vitters",2200,"ChC@Mia 07:10PM ET",0
+"OF","Slade Heathcott",2200,"NYY@Sea 10:10PM ET",5.571
+"2B/3B","Joaquin Arias",2100,"Pit@SF 10:15PM ET",1.708
+"2B/SS","Brendan Ryan",2100,"NYY@Sea 10:10PM ET",0
+"2B/3B","Pedro Ciriaco",2100,"Atl@Ari 09:40PM ET",3.000
+"OF","Joey Butler",2100,"TB@LAA 10:05PM ET",6.435
+"3B/SS","Rafael Ynoa",2100,"LAD@Col 08:40PM ET",2.485
+"OF","Cesar Puello",2100,"NYM@SD 10:10PM ET",0
+"C","Bobby Wilson",2000,"TB@LAA 10:05PM ET",2.190
+"2B/SS","Gregorio Petit",2000,"NYY@Sea 10:10PM ET",3.235
+"2B/SS","Justin Sellers",2000,"Pit@SF 10:15PM ET",0
+"OF","Mike Baxter",2000,"ChC@Mia 07:10PM ET",0.222
+"OF","Tommy Pham",2000,"Mil@StL 08:10PM ET",0
+"C","Juan Centeno",2000,"Mil@StL 08:10PM ET",0.900
+"C","Tony Cruz",2000,"Mil@StL 08:10PM ET",1.667
+"2B/SS","Pete Kozma",2000,"Mil@StL 08:10PM ET",1.727
+"C","Ed Easley",2000,"Mil@StL 08:10PM ET",0.000
+"OF","Alfredo Marte",2000,"TB@LAA 10:05PM ET",1.500
+"2B/SS","Jake Elmore",2000,"TB@LAA 10:05PM ET",4.923
+"2B/SS","Ryan Goins",2000,"Tor@Was 07:05PM ET",4.308
+"OF","Darrell Ceciliani",2000,"NYM@SD 10:10PM ET",0.800
+"OF","Brian Goodwin",2000,"Tor@Was 07:05PM ET",0
+"OF","Ramon Flores",2000,"NYY@Sea 10:10PM ET",1.500
+"2B","Danny Muno",2000,"NYM@SD 10:10PM ET",2.000
+"C","Oscar Hernandez",2000,"Atl@Ari 09:40PM ET",0
+"2B","Taylor Lindsey",2000,"NYM@SD 10:10PM ET",0
+"SS","Wilmer Difo",2000,"Tor@Was 07:05PM ET",1.000
+"C","Austin Hedges",2000,"NYM@SD 10:10PM ET",1.333
