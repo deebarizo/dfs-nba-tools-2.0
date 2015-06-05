@@ -1,7 +1,13 @@
 <?php
 
-function fgNameFix($rawName) {
-	switch ($rawName) {
+function fgNameFix($fgName) {
+	switch ($fgName) {
+		case 'Michael Montgomery':
+			return 'Mike Montgomery';
+
+		case 'Joshua Ravin':
+			return 'Josh Ravin';
+
 		case 'Zachary Heathcott':
 			return 'Slade Heathcott';
 
@@ -75,11 +81,15 @@ function fgNameFix($rawName) {
 			return 'Shin-soo Choo';
 		
 		default:
-			return $rawName;
+			return $fgName;
 	}
 }
 
 function changeDkNameToBatName($dkName) {
+    if ($dkName == 'Kike Hernandez') {
+        return 'Enrique Hernandez';
+    }
+
     if ($dkName == 'Lance McCullers') {
         return 'Lance McCullers';
     }

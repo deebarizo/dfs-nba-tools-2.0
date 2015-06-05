@@ -50,12 +50,10 @@ class PlayersController {
         return Response::json($result);
     }
 
-	public function getPlayerStats($sportInUrl, $playerId) {
+	public function getPlayerStats($playerId) {
         $statBuilder = new StatBuilder;
 
-        if ($sportInUrl == 'nba') {
-            list($boxScoreLines, $overviews, $playerInfo, $player, $name, $previousFdFilters, $fptsProfile, $endYears) = $statBuilder->getNbaPlayerStats($playerId);
-        }
+        list($boxScoreLines, $overviews, $playerInfo, $player, $name, $previousFdFilters, $fptsProfile, $endYears) = $statBuilder->getNbaPlayerStats($playerId);
 
         return view('players/nba', compact('boxScoreLines', 'overviews', 'playerInfo', 'player', 'name', 'previousFdFilters', 'fptsProfile', 'endYears'));
 	}

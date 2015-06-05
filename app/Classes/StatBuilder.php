@@ -34,6 +34,142 @@ class StatBuilder {
     PLAYERS (NBA)
     ****************************************************************************************/
 
+    public function getMlbPlayerStats($playerId) {
+        $position = $this->getMlbPosition($playerId);
+
+        $seasons = [
+            [
+                'id' => 11,
+                'year' => 2015
+            ]
+        ];
+
+        $teams = MlbTeam::all();
+
+        foreach ($seasons as &$season) {
+            $boxScoreLines = $this->getMlbBoxScoreLines($playerId, $position, $season['id']);
+
+            $gameLines = $this->getMlbGameLines($playerId, $season['id']);
+
+            $boxScoreLines = $this->addMlbGameLines($boxScoreLines, $gameLines);
+            $boxScoreLines = $this->addMlbTeams($boxScoreLines, $teams);
+        }
+        unset($season);
+
+        ddAll($boxScoreLines);        
+    }
+
+    private function addMlbTeams($boxScoreLines, $teams) {
+        foreach ($boxScoreLines as $key => $boxScoreLine) {
+            $boxScoreLine = $this->addMlbTeam($boxScoreLine, $teams);
+        }
+
+        return $boxScoreLines;
+    }
+
+    private function addMlbTeam($boxScoreLine, $teams) {
+        foreach ($teams as $team) {
+            if ($team->id == $boxScoreLine->mlb_team_id) {
+                $boxScoreLine->abbr_dk = $team->abbr_dk;
+            }
+
+            if ($team->id == $boxScoreLine->opp_mlb_team_id) {
+                $boxScoreLine->opp_abbr_dk = $team->abbr_dk;
+            }
+
+            if (isset($boxScoreLine->abbr_dk) && isset($boxScoreLine->opp_abbr_dk)) {
+                return $boxScoreLine;
+            }
+        }
+    }
+
+    private function addMlbGameLines($boxScoreLines, $gameLines) {
+        foreach ($boxScoreLines as $boxScoreLine) {
+            $boxScoreLine = $this->addMlbGameLine($boxScoreLine, $gameLines);
+        }
+        
+        return $boxScoreLines;
+    }
+
+    private function addMlbGameLine($boxScoreLine, $gameLines) {
+        foreach ($gameLines as $gameLine) {
+            if ($boxScoreLine->mlb_game_id == $gameLine->mlb_game_id && $boxScoreLine->mlb_team_id == $gameLine->mlb_team_id) {
+                $boxScoreLine->location = ($gameLine->home == 1 ? 'home' : 'road');
+                $boxScoreLine->score = $gameLine->score;
+            }
+
+            if ($boxScoreLine->mlb_game_id == $gameLine->mlb_game_id && $boxScoreLine->mlb_team_id != $gameLine->mlb_team_id) {
+                $boxScoreLine->opp_score = $gameLine->score;
+            }
+
+            if (isset($boxScoreLine->location) && isset($boxScoreLine->score) && isset($boxScoreLine->opp_score)) {
+                return $boxScoreLine;
+            }
+        } 
+    }
+
+    private function getMlbGameLines($playerId, $seasonId) {
+        return DB::table('mlb_players')
+                    ->select(DB::raw('mlb_game_lines.mlb_game_id,
+                            home, 
+                            road,
+                            mlb_game_lines.mlb_team_id,
+                            score'))
+                    ->join('mlb_box_score_lines', 'mlb_box_score_lines.mlb_player_id', '=', 'mlb_players.id')
+                    ->join('mlb_games', 'mlb_games.id', '=', 'mlb_box_score_lines.mlb_game_id')
+                    ->join('mlb_game_lines', 'mlb_game_lines.mlb_game_id', '=', 'mlb_games.id')
+                    ->where('mlb_players.id', $playerId)
+                    ->where('season_id', $seasonId)
+                    ->orderBy('mlb_games.date', 'desc')
+                    ->get();
+    }
+
+    private function getMlbBoxScoreLines($playerId, $position, $seasonId) {
+        if ($position == 'SP' || $position == 'RP') {
+            return DB::table('mlb_players')
+                        ->select(DB::raw('mlb_games.date,
+                                mlb_box_score_lines.mlb_game_id,
+                                mlb_box_score_lines.mlb_team_id,
+                                mlb_box_score_lines.opp_mlb_team_id,
+                                ip, so, win, er, runs_against, hits_against, bb_against,
+                                ibb_against, hbp_against, cg, cg_shutout, no_hitter, fpts, 
+                                link_fg'))
+                        ->join('mlb_box_score_lines', 'mlb_box_score_lines.mlb_player_id', '=', 'mlb_players.id')
+                        ->join('mlb_games', 'mlb_games.id', '=', 'mlb_box_score_lines.mlb_game_id')
+                        ->where('mlb_players.id', $playerId)
+                        ->where('season_id', $seasonId)
+                        ->orderBy('mlb_games.date', 'desc')
+                        ->get();
+        }
+
+        return DB::table('mlb_players')
+                    ->select(DB::raw('mlb_games.date,
+                            mlb_box_score_lines.mlb_game_id,
+                            mlb_box_score_lines.mlb_team_id,
+                            mlb_box_score_lines.opp_mlb_team_id,
+                            pa, singles, doubles, triples, hr, rbi, runs, bb, ibb, hbp, sf, sh, gdp, sb, cs, 
+                            link_fg'))
+                    ->join('mlb_box_score_lines', 'mlb_box_score_lines.mlb_player_id', '=', 'mlb_players.id')
+                    ->join('mlb_games', 'mlb_games.id', '=', 'mlb_box_score_lines.mlb_game_id')
+                    ->where('mlb_players.id', $playerId)
+                    ->where('season_id', $seasonId)
+                    ->orderBy('mlb_games.date', 'desc')
+                    ->get();
+    }
+
+    private function getMlbPosition($playerId) {
+        return DB::table('mlb_players')
+                    ->join('dk_mlb_players', 'dk_mlb_players.mlb_player_id', '=', 'mlb_players.id')
+                    ->where('mlb_players.id', $playerId)
+                    ->orderBy('dk_mlb_players.id', 'desc')
+                    ->pluck('position');
+    }
+
+
+    /****************************************************************************************
+    PLAYERS (NBA)
+    ****************************************************************************************/
+
     public function getNbaPlayerStats($playerId) {
         $endYears = [2015, 2014];
 

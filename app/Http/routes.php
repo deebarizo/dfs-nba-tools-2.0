@@ -40,7 +40,9 @@ $router->get('studies/general/classifying_projected_fpts/', 'StudiesController@c
 PLAYERS
 ****************************************************************************************/
 
-$router->get('players/{sportInUrl}/{playerId}', 'PlayersController@getPlayerStats');
+$router->get('players/nba/{playerId}', 'PlayersController@getPlayerStats');
+
+$router->get('players/mlb/{playerId}', 'PlayersMlbController@getPlayerStats');
 
 
 /****************************************************************************************
