@@ -98,7 +98,7 @@
 					    	data-name="{{ $player->name }}"
 					    	data-abbr-dk="{{ $player->abbr_dk }}"
 					    	class="player-row">
-					    	<td>{{ $player->name }}</td>
+					    	<td><a target="_blank" href="http://dfstools.dev:8000/players/mlb/{{ $player->mlb_player_id }}">{{ $player->name }}</a></td>
 			    			<td class="mods">
 				    			<a href="#"><span class="glyphicon glyphicon-lock daily-lock {{ $player->css_lock_class }}" aria-hidden="true"></span></a>
 				    			<span class="target-percentage-group">

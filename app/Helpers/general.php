@@ -32,6 +32,14 @@ function urlToUcWords($string) {
 	return $string;
 }
 
+function ucWordsToUrl($string) {
+	$string = strtolower($string);
+
+	$string = preg_replace('/\s/', '-', $string);
+
+	return $string;
+}
+
 
 
 

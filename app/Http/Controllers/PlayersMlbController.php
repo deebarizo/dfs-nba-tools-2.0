@@ -30,9 +30,13 @@ class PlayersMlbController {
 	public function getPlayerStats($playerId) {
         $statBuilder = new StatBuilder;
 
-        list($boxScoreLines, $player) = $statBuilder->getMlbPlayerStats($playerId);
+        $seasons = $statBuilder->getMlbPlayerStats($playerId);
 
-        return view('players/mlb', compact('boxScoreLines', 'player'));
+        $name = MlbPlayer::where('id', $playerId)->pluck('name');
+
+        # ddAll($seasons);
+
+        return view('players/mlb', compact('seasons', 'name'));
 	}
 
 }
