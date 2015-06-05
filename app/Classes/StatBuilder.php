@@ -31,7 +31,7 @@ use Illuminate\Support\Facades\Session;
 class StatBuilder {
 
     /****************************************************************************************
-    PLAYERS (NBA)
+    PLAYERS (MLB)
     ****************************************************************************************/
 
     public function getMlbPlayerStats($playerId) {
@@ -50,14 +50,108 @@ class StatBuilder {
             $boxScoreLines = $this->getMlbBoxScoreLines($playerId, $position, $season['id']);
 
             $gameLines = $this->getMlbGameLines($playerId, $season['id']);
-
             $boxScoreLines = $this->addMlbGameLines($boxScoreLines, $gameLines);
+
             $boxScoreLines = $this->addMlbTeams($boxScoreLines, $teams);
+
             $boxScoreLines = $this->addMlbScoreColumns($boxScoreLines);
+            
+            $salaries = $this->getMlbSalaries($playerId, $season['year']);
+            $boxScoreLines = $this->addMlbSalaries($boxScoreLines, $salaries);
+
+            $boxScoreLines = $this->addMlbOwnerships($playerId, $season['year'], $boxScoreLines);
         }
         unset($season);
 
         ddAll($boxScoreLines);        
+    }
+
+    private function addMlbOwnerships($playerId, $seasonYear, $boxScoreLines) {
+        $lineupCounts['all'] = DB::table('dk_mlb_contest_lineups')
+                                    ->select(DB::raw('dk_mlb_contest_id, date, name, entry_fee, count(*) as num_of_lineups'))
+                                    ->join('dk_mlb_contests', 'dk_mlb_contests.id', '=', 'dk_mlb_contest_lineups.dk_mlb_contest_id')
+                                    ->groupBy('dk_mlb_contest_id')
+                                    ->orderBy('date', 'desc')
+                                    ->get();
+
+        $lineupCounts['with_player'] = DB::table('dk_mlb_contest_lineups')
+                                        ->select(DB::raw('dk_mlb_contest_id, date, name, entry_fee, count(*) as num_of_lineups'))
+                                        ->join('dk_mlb_contests', 'dk_mlb_contests.id', '=', 'dk_mlb_contest_lineups.dk_mlb_contest_id')
+                                        ->join('dk_mlb_contest_lineup_players', 'dk_mlb_contest_lineup_players.dk_mlb_contest_lineup_id', '=', 'dk_mlb_contest_lineups.id')
+                                        ->where('mlb_player_id', $playerId)
+                                        ->where('date', 'LIKE', '%'.$seasonYear.'%')
+                                        ->groupBy('dk_mlb_contest_id')
+                                        ->orderBy('date', 'desc')
+                                        ->get();
+
+        # ddAll($lineupCounts);
+
+        foreach ($boxScoreLines as $boxScoreLine) {
+            list($boxScoreLine->ownership_5du, $boxScoreLine->ownership_3gpp) = $this->addMlbOwnership($boxScoreLine, $lineupCounts);
+        }
+
+        return $boxScoreLines;
+    }
+
+    private function addMlbOwnership($boxScoreLine, $lineupsCounts) {
+        $types = ['all', 'with_player'];
+
+        foreach ($types as $type) {
+            foreach ($lineupsCounts[$type] as $lineupCount) {
+                if ($boxScoreLine->date == $lineupCount->date && $lineupCount->entry_fee == '5.00') {
+                    $numOfLineups['5du'][$type] = $lineupCount->num_of_lineups;
+                }
+
+                if ($boxScoreLine->date == $lineupCount->date && $lineupCount->entry_fee == '3.00') {
+                    $numOfLineups['3gpp'][$type] = $lineupCount->num_of_lineups;
+                }
+
+                if (isset($numOfLineups['5du'][$type]) && isset($numOfLineups['3gpp'][$type])) {
+                    break;
+                } 
+            }
+        }
+
+        $types = ['5du', '3gpp'];
+
+        foreach ($types as $type) {
+            if (!isset($numOfLineups[$type])) {
+                $ownership[$type] = "Didn't Play";
+            } else {
+                $ownership[$type] = numFormat($numOfLineups[$type]['with_player'] / $numOfLineups[$type]['all'] * 100, 1);
+            }
+        }
+
+        return array($ownership['5du'], $ownership['3gpp']);
+    }
+
+    private function addMlbSalaries($boxScoreLines, $salaries) {
+        foreach ($boxScoreLines as $key => $boxScoreLine) {
+            list($boxScoreLine->salary, $boxScoreLine->avr) = $this->addMlbSalary($boxScoreLine, $salaries);
+        }
+
+        return $boxScoreLines;
+    }
+
+    private function addMlbSalary($boxScoreLine, $salaries) {
+        foreach ($salaries as $salary) {
+            if ($salary->date == $boxScoreLine->date) {
+                $avr = numFormat($boxScoreLine->fpts / ($salary->salary / 1000), 2);
+
+                return array($salary->salary, $avr);
+            }
+        }
+
+        return array("Didn't Play", 'N/A');
+    }
+
+    private function getMlbSalaries($playerId, $seasonYear) {
+        return DB::table('dk_mlb_players')
+                    ->select('date', 'salary')
+                    ->join('player_pools', 'player_pools.id', '=', 'dk_mlb_players.player_pool_id')
+                    ->where('mlb_player_id', $playerId)
+                    ->where('date', 'LIKE', '%'.$seasonYear.'%')
+                    ->get();
     }
 
     private function addMlbScoreColumns($boxScoreLines) {
@@ -423,10 +517,14 @@ class StatBuilder {
                      ->get();
 
         $boxScoreLines = DB::table('mlb_games')
-                     ->select('*')
-                     ->join('mlb_box_score_lines', 'mlb_box_score_lines.mlb_game_id', '=', 'mlb_games.id')
-                     ->where('mlb_games.date', $date)
-                     ->get();
+                            ->select('*')
+                            ->join('mlb_box_score_lines', 'mlb_box_score_lines.mlb_game_id', '=', 'mlb_games.id')
+                            ->where('mlb_games.date', $date)
+                            ->where(function($query) {
+                                $query->where('link_fg', 'LIKE', '%dh=0%')
+                                      ->orWhere('link_fg', 'LIKE', '%dh=2%');
+                            })
+                            ->get();
 
         if (!empty($boxScoreLines)) {
             foreach ($players as $player) {
