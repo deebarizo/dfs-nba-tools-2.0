@@ -53,10 +53,31 @@ class StatBuilder {
 
             $boxScoreLines = $this->addMlbGameLines($boxScoreLines, $gameLines);
             $boxScoreLines = $this->addMlbTeams($boxScoreLines, $teams);
+            $boxScoreLines = $this->addMlbScoreColumns($boxScoreLines);
         }
         unset($season);
 
         ddAll($boxScoreLines);        
+    }
+
+    private function addMlbScoreColumns($boxScoreLines) {
+        foreach ($boxScoreLines as $key => $boxScoreLine) {
+            $boxScoreLine->score_column = $this->addMlbScoreColumn($boxScoreLine);
+        }
+
+        return $boxScoreLines;
+    }
+
+    private function addMlbScoreColumn($boxScoreLine) {
+        if ($boxScoreLine->score > $boxScoreLine->opp_score) {
+            return '<span style="color: green">W</span> '.$boxScoreLine->score.'-'.$boxScoreLine->opp_score;
+        }
+
+        if ($boxScoreLine->score < $boxScoreLine->opp_score) {
+            return '<span style="color: red">L</span> '.$boxScoreLine->score.'-'.$boxScoreLine->opp_score;
+        }
+
+        return $boxScoreLine->score.'-'.$boxScoreLine->opp_score;
     }
 
     private function addMlbTeams($boxScoreLines, $teams) {
@@ -75,6 +96,10 @@ class StatBuilder {
 
             if ($team->id == $boxScoreLine->opp_mlb_team_id) {
                 $boxScoreLine->opp_abbr_dk = $team->abbr_dk;
+
+                if ($boxScoreLine->location == 'road') {
+                    $boxScoreLine->opp_abbr_dk = '@'.$boxScoreLine->opp_abbr_dk;
+                }
             }
 
             if (isset($boxScoreLine->abbr_dk) && isset($boxScoreLine->opp_abbr_dk)) {
