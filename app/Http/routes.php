@@ -26,7 +26,7 @@ $router->post('scrapers/dk_mlb_contests', 'ScrapersController@dkMlbContests');
 
 
 /****************************************************************************************
-STUDIES
+STUDIES (NBA)
 ****************************************************************************************/
 
 $router->get('studies/correlations/scores_and_vegas_scores', 'StudiesController@correlationScoresAndVegasScores');
@@ -34,6 +34,13 @@ $router->get('studies/histograms/scores', 'StudiesController@histogramScores');
 $router->get('studies/correlations/scores_and_fd_scores', 'StudiesController@correlationScoresAndFDScores');
 $router->get('studies/correlations/spreads_and_player_fpts_error/{mpgMax}/{fppgMax}/{fppgMin}/{absoluteSpread}', 'StudiesController@correlationSpreadsAndPlayerFptsError');
 $router->get('studies/general/classifying_projected_fpts/', 'StudiesController@classifyingProjectedFpts');
+
+
+/****************************************************************************************
+STUDIES (MLB)
+****************************************************************************************/
+
+$router->get('studies/general/ownership_over/{ownershipPercentage}', 'StudiesController@ownershipOver');
 
 
 /****************************************************************************************

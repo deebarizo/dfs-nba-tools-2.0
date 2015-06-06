@@ -8,6 +8,7 @@ use App\Models\Game;
 use App\Models\BoxScoreLine;
 
 use App\Classes\StatBuilder;
+use App\Classes\ContestBuilder;
 
 use Illuminate\Support\Facades\DB;
 
@@ -19,6 +20,21 @@ class StudiesController {
 		'earliest' => 2012,
 		'latest' => 2015
 	];
+
+	/****************************************************************************************
+	OWNERSHIP OVER
+	****************************************************************************************/	
+
+	public function ownershipOver($ownershipPercentage) {
+		$contestBuilder = new contestBuilder;
+
+		$contests = $contestBuilder->getOwnershipsOver($ownershipPercentage);
+
+		$numOfContests = count($contests);
+
+		return view('studies/general_ownership_over', compact('contests', 'ownershipPercentage', 'numOfContests'));
+	}
+
 
 	/****************************************************************************************
 	CATEGORIZING PROJECTED FPTS
