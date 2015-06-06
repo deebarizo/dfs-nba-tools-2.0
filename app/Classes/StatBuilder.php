@@ -17,6 +17,8 @@ use App\Models\DkMlbContest;
 use App\Models\DkMlbContestLineup;
 use App\Models\DkMlbContestLineupPlayer;
 
+use App\Classes\Scraper;
+
 use Illuminate\Http\Request;
 use App\Http\Requests\RunFDNBASalariesScraperRequest;
 
@@ -36,6 +38,13 @@ class StatBuilder {
 
     public function getMlbPlayerStats($playerId) {
         $position = $this->getMlbPosition($playerId);
+
+        if ($position == 'hitter') {
+            $scraper = new Scraper;
+
+            $dkName = MlbPlayer::where('id', $playerId)->pluck('name');
+            $batName = changeDkNameToBatName($dkName);
+        }
 
         $seasons = [
             [
@@ -61,6 +70,10 @@ class StatBuilder {
 
             $boxScoreLines = $this->addMlbContests($playerId, $season['year'], $boxScoreLines);
 
+            if ($position == 'hitter') {
+                $boxScoreLines = $this->addBatDetails($batName, $boxScoreLines, $scraper);
+            }
+
             $season['box_score_lines'] = $boxScoreLines;
         }
         unset($season);
@@ -68,6 +81,14 @@ class StatBuilder {
         # ddAll($seasons);        
 
         return $seasons;
+    }
+
+    private function addBatDetails($batName, $boxScoreLines, $scraper) {
+        foreach ($boxScoreLines as $boxScoreLine) {
+            $boxScoreLine = $scraper->addBatDetail($batName, $boxScoreLine);
+        }
+
+        return $boxScoreLines;
     }
 
     private function addMlbContests($playerId, $seasonYear, $boxScoreLines) {
@@ -308,7 +329,7 @@ class StatBuilder {
         if ($position == 'SP' || $position == 'RP') {
             return 'pitcher';
         } else {
-            return 'non-pitcher';
+            return 'hitter';
         }
     }
 
@@ -692,8 +713,10 @@ class StatBuilder {
 
         $playerTypes = ['hitters', 'pitchers'];
 
+        $scraper = new Scraper;
+
         foreach ($playerTypes as $playerType) {
-            $batProjections[$playerType] = $this->parseCsvFile($playerType, $date);
+            $batProjections[$playerType] = $scraper->parseBatCsvFile($playerType, $date);
         }
 
         # ddAll($batProjections);
@@ -746,59 +769,6 @@ class StatBuilder {
         $batFpts = numFormat($batProjection['dk_pts'], 2);
 
         return array($batVr, $batFpts, $batProjection['lineup'], $batProjection['platoon'], $batProjection['opp']);
-    }
-
-    private function parseCsvFile($playerType, $date) {
-        $csvFile = 'files/dk/mlb/bat/'.$playerType.'/'.$date.'.csv';
-
-        if ($playerType == 'hitters') {
-            if (strtotime(($date)) >= strtotime(('2015-05-06'))) {
-                $dkPtsIndex = 6;
-            } else {
-                $dkPtsIndex = 5;
-            }
-
-            $lineupIndex = 9;
-            $platoonIndex = 10;
-            $oppIndex = 11;
-        }
-
-        # dd($dkPtsIndex);
-
-        if ($playerType == 'pitchers') {
-            $dkPtsIndex = 6;
-            $lineupIndex = 3;
-            $platoonIndex = 10;
-            $oppIndex = 2;
-        }
-
-        $nameIndex = 1;
-
-        if (file_exists($csvFile)) {
-            if (($handle = fopen($csvFile, 'r')) !== false) {
-                $row = 0;
-
-                while (($csvData = fgetcsv($handle, 5000, ',')) !== false) {
-                    if ($row != 0) {
-                        $players[$row] = array(
-                            'name' => $csvData[$nameIndex],
-                            'dk_pts' => $csvData[$dkPtsIndex],
-                            'lineup' => $csvData[$lineupIndex],
-                            'platoon' => $csvData[$platoonIndex],
-                            'opp' => $csvData[$oppIndex]
-                        );
-                    }
-
-                    $row++;
-                }
-            }  
-
-            # ddAll($players);
-            
-            return $players;           
-        }
-
-        return 'No csv files';
     }
 
     public function getTeamsForDkMlbDaily($timePeriod, $date) {

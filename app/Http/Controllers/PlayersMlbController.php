@@ -34,9 +34,15 @@ class PlayersMlbController {
 
         $name = MlbPlayer::where('id', $playerId)->pluck('name');
 
+        if (isset($seasons[0]['box_score_lines'][0]->pa)) {
+        	$fontSize = '85%'; // for hitters
+        } else {
+        	$fontSize = '100%'; // for pitchers
+        }
+
         # ddAll($seasons);
 
-        return view('players/mlb', compact('seasons', 'name'));
+        return view('players/mlb', compact('seasons', 'name', 'fontSize'));
 	}
 
 }

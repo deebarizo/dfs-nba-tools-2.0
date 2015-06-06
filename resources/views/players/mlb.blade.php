@@ -15,7 +15,7 @@
 
 				<h4>Game Log</h4>
 
-				<table style="font-size: 100%" id="game-log-{{ $season['year'] }}" class="table table-striped table-bordered table-hover table-condensed">
+				<table style="font-size: {{ $fontSize }}" id="game-log-{{ $season['year'] }}" class="table table-striped table-bordered table-hover table-condensed">
 					<thead>
 						<tr>
 							<th>Date</th>
@@ -35,6 +35,9 @@
 								<th>SO</th>
 								<th>NO</th>
 							@else
+								<th>LU</th>
+								<th>Plat</th>
+								<th>Opp SP</th>
 								<th>PA</th>
 								<th>1B</th>
 								<th>2B</th>
@@ -78,6 +81,9 @@
 									<td>{{ $boxScoreLine->cg_shutout }}</td>
 									<td>{{ $boxScoreLine->no_hitter }}</td>
 								@else
+									<td>{{ $boxScoreLine->lineup }}</td>
+									<td>{{ $boxScoreLine->platoon }}</td>
+									<td>{{ $boxScoreLine->opp_sp }}</td>
 									<td>{{ $boxScoreLine->pa }}</td>
 									<td>{{ $boxScoreLine->singles }}</td>
 									<td>{{ $boxScoreLine->doubles }}</td>

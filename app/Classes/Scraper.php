@@ -34,7 +34,111 @@ use Illuminate\Support\Facades\Session;
 class Scraper {
 
 	/****************************************************************************************
-	MLB
+	MLB (BAT CSV FILES)
+	****************************************************************************************/
+
+	public function addBatDetail($batName, $boxScoreLine) {
+		$csvFile = 'files/dk/mlb/bat/hitters/'.$boxScoreLine->date.'.csv';
+
+		if (file_exists($csvFile)) {
+			$players = $this->parseBatCsvFile('hitters', $boxScoreLine->date);
+		} else {
+			$boxScoreLine->lineup = '-';
+			$boxScoreLine->platoon = '-';
+			$boxScoreLine->opp_sp = '-';
+			
+			return $boxScoreLine;
+		}
+
+		foreach ($players as $player) {
+			if ($player['name'] == $batName) {
+				$boxScoreLine->lineup = $player['lineup'];
+				$boxScoreLine->platoon = $player['platoon'];
+				$boxScoreLine->opp_sp = $player['opp'];
+
+				return $boxScoreLine;
+			}
+		}
+
+		$boxScoreLine->lineup = '-';
+		$boxScoreLine->platoon = '-';
+		$boxScoreLine->opp_sp = '-';
+		
+		return $boxScoreLine;	
+	}
+
+	public function getBatCsvFile($request, $site, $sport) {
+		$playerTypes = ['hitters', 'pitchers'];
+
+		foreach ($playerTypes as $playerType) {
+			$csvDirectory = 'files/'.strtolower($site).'/'.strtolower($sport).'/bat/'.$playerType.'/';
+			$csvName = $request->input('date').'.csv';
+			$csvFile = $csvDirectory . $csvName;
+
+			Input::file('csv_'.$playerType)->move($csvDirectory, $csvName);			
+		}
+	}
+
+    public function parseBatCsvFile($playerType, $date) {
+        $csvFile = 'files/dk/mlb/bat/'.$playerType.'/'.$date.'.csv';
+
+        if ($playerType == 'hitters') {
+            if (strtotime(($date)) >= strtotime(('2015-05-06'))) {
+                $dkPtsIndex = 6;
+
+	            $lineupIndex = 9;
+	            $platoonIndex = 10;
+	            $oppIndex = 11;
+            } else {
+                $dkPtsIndex = 5;
+
+	            $lineupIndex = 8;
+	            $platoonIndex = 9;
+	            $oppIndex = 10;
+            }
+        }
+
+        # dd($dkPtsIndex);
+
+        if ($playerType == 'pitchers') {
+            $dkPtsIndex = 6;
+            $lineupIndex = 3;
+            $platoonIndex = 10;
+            $oppIndex = 2;
+        }
+
+        $nameIndex = 1;
+
+        if (file_exists($csvFile)) {
+            if (($handle = fopen($csvFile, 'r')) !== false) {
+                $row = 0;
+
+                while (($csvData = fgetcsv($handle, 5000, ',')) !== false) {
+                    if ($row != 0) {
+                        $players[$row] = array(
+                            'name' => $csvData[$nameIndex],
+                            'dk_pts' => $csvData[$dkPtsIndex],
+                            'lineup' => $csvData[$lineupIndex],
+                            'platoon' => $csvData[$platoonIndex],
+                            'opp' => $csvData[$oppIndex]
+                        );
+                    }
+
+                    $row++;
+                }
+            }  
+
+            # ddAll($players);
+            
+            return $players;           
+        }
+
+        return 'No csv files';
+    }
+
+
+	/****************************************************************************************
+	MLB (CONTEST)
 	****************************************************************************************/
 
 	public function insertContest($date, $contestName, $entryFee, $timePeriod, $csvFile, $site, $sport) {
@@ -171,17 +275,10 @@ class Scraper {
 		return $csvFile;
 	}
 
-	public function getBatCsvFile($request, $site, $sport) {
-		$playerTypes = ['hitters', 'pitchers'];
 
-		foreach ($playerTypes as $playerType) {
-			$csvDirectory = 'files/'.strtolower($site).'/'.strtolower($sport).'/bat/'.$playerType.'/';
-			$csvName = $request->input('date').'.csv';
-			$csvFile = $csvDirectory . $csvName;
-
-			Input::file('csv_'.$playerType)->move($csvDirectory, $csvName);			
-		}
-	}
+	/****************************************************************************************
+	MLB (GAMES)
+	****************************************************************************************/
 
 	public function insertGames($date, $site, $sport) {
 		$client = new Client();
@@ -519,6 +616,11 @@ class Scraper {
 			}
 		}
 	}
+
+
+	/****************************************************************************************
+	MLB (DK CSV FILES)
+	****************************************************************************************/
 
 	public function getCsvFile($request, $site, $sport) {
 		$timePeriodInUrl = strtolower($request->input('time_period'));
