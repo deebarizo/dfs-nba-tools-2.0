@@ -30,19 +30,19 @@ class PlayersMlbController {
 	public function getPlayerStats($playerId) {
         $statBuilder = new StatBuilder;
 
-        $seasons = $statBuilder->getMlbPlayerStats($playerId);
+        list($seasons, $playerType) = $statBuilder->getMlbPlayerStats($playerId);
 
         $name = MlbPlayer::where('id', $playerId)->pluck('name');
 
-        if (isset($seasons[0]['box_score_lines'][0]->pa)) {
-        	$fontSize = '85%'; // for hitters
+        if ($playerType == 'hitter') {
+            $fontSize = '85%';
         } else {
-        	$fontSize = '100%'; // for pitchers
+        	$fontSize = '100%';
         }
 
         # ddAll($seasons);
 
-        return view('players/mlb', compact('seasons', 'name', 'fontSize'));
+        return view('players/mlb', compact('seasons', 'name', 'fontSize', 'playerType'));
 	}
 
 }

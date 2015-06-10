@@ -22,7 +22,7 @@
 							<th>Team</th>
 							<th>Opp</th>
 							<th>Score</th>
-							@if (isset($season['box_score_lines'][0]->ip))
+							@if ($playerType == 'pitcher')
 								<th>IP</th>
 								<th>K</th>
 								<th>W</th>
@@ -68,7 +68,7 @@
 						    	<td>{{ $boxScoreLine->abbr_dk }}</td>
 						    	<td>{{ $boxScoreLine->opp_abbr_dk }}</td>
 						    	<td>{!! $boxScoreLine->score_column !!}</td>
-								@if (isset($season['box_score_lines'][0]->ip))
+								@if ($playerType == 'pitcher')
 									<td>{{ $boxScoreLine->ip }}</td>
 									<td>{{ $boxScoreLine->so }}</td>
 									<td>{{ $boxScoreLine->win }}</td>

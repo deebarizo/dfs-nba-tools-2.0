@@ -37,9 +37,9 @@ class StatBuilder {
     ****************************************************************************************/
 
     public function getMlbPlayerStats($playerId) {
-        $position = $this->getMlbPosition($playerId);
+        $playerType = $this->getMlbPlayerType($playerId);
 
-        if ($position == 'hitter') {
+        if ($playerType == 'hitter') {
             $scraper = new Scraper;
 
             $dkName = MlbPlayer::where('id', $playerId)->pluck('name');
@@ -56,7 +56,7 @@ class StatBuilder {
         $teams = MlbTeam::all();
 
         foreach ($seasons as &$season) {
-            $boxScoreLines = $this->getMlbBoxScoreLines($playerId, $position, $season['id']);
+            $boxScoreLines = $this->getMlbBoxScoreLines($playerId, $playerType, $season['id']);
 
             $gameLines = $this->getMlbGameLines($playerId, $season['id']);
             $boxScoreLines = $this->addMlbGameLines($boxScoreLines, $gameLines);
@@ -70,8 +70,20 @@ class StatBuilder {
 
             $boxScoreLines = $this->addMlbContests($playerId, $season['year'], $boxScoreLines);
 
-            if ($position == 'hitter') {
+            if ($playerType == 'hitter') {
                 $boxScoreLines = $this->addBatDetails($batName, $boxScoreLines, $scraper);
+            }
+
+            foreach ($boxScoreLines as $key => $boxScoreLine) {
+                if (isset($boxScoreLine->pa) && $boxScoreLine->pa == 0) {
+                    unset($boxScoreLines[$key]);
+
+                    continue;
+                }
+
+                if (isset($boxScoreLine->ip) && $boxScoreLine->ip == 0) {
+                    unset($boxScoreLines[$key]);
+                }
             }
 
             $season['box_score_lines'] = $boxScoreLines;
@@ -80,7 +92,7 @@ class StatBuilder {
 
         # ddAll($seasons);        
 
-        return $seasons;
+        return array($seasons, $playerType);
     }
 
     private function addBatDetails($batName, $boxScoreLines, $scraper) {
@@ -128,13 +140,13 @@ class StatBuilder {
 
         foreach ($types as $type) {
             foreach ($lineupsCounts[$type] as $lineupCount) {
-                if ($boxScoreLine->date == $lineupCount->date && $lineupCount->entry_fee == '5.00') {
+                if ($boxScoreLine->date == $lineupCount->date && stristr($lineupCount->name, 'double up') !== FALSE) {
                     $contestId['5du'][$type] = $lineupCount->dk_mlb_contest_id;
                     $contestTimePeriodUrl['5du'][$type] = ucWordsToUrl($lineupCount->time_period);
                     $numOfLineups['5du'][$type] = $lineupCount->num_of_lineups;
                 }
 
-                if ($boxScoreLine->date == $lineupCount->date && $lineupCount->entry_fee == '3.00') {
+                if ($boxScoreLine->date == $lineupCount->date && stristr($lineupCount->name, 'double up') === FALSE) {
                     $contestId['3gpp'][$type] = $lineupCount->dk_mlb_contest_id;
                     $contestTimePeriodUrl['3gpp'][$type] = ucWordsToUrl($lineupCount->time_period);
                     $numOfLineups['3gpp'][$type] = $lineupCount->num_of_lineups;
@@ -286,8 +298,8 @@ class StatBuilder {
                     ->get();
     }
 
-    private function getMlbBoxScoreLines($playerId, $position, $seasonId) {
-        if ($position == 'pitcher') {
+    private function getMlbBoxScoreLines($playerId, $playerType, $seasonId) {
+        if ($playerType == 'pitcher') {
             return DB::table('mlb_players')
                         ->select(DB::raw('mlb_games.date,
                                 mlb_box_score_lines.mlb_game_id,
@@ -319,7 +331,7 @@ class StatBuilder {
                     ->get();
     }
 
-    private function getMlbPosition($playerId) {
+    private function getMlbPlayerType($playerId) {
         $position = DB::table('mlb_players')
                         ->join('dk_mlb_players', 'dk_mlb_players.mlb_player_id', '=', 'mlb_players.id')
                         ->where('mlb_players.id', $playerId)

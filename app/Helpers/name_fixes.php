@@ -2,6 +2,12 @@
 
 function fgNameFix($fgName) {
 	switch ($fgName) {
+		case 'Ivan De Jesus':
+			return 'Ivan De Jesus Jr.';
+
+		case 'Melvin Upton':
+			return 'Melvin Upton Jr.';
+
 		case 'Michael Montgomery':
 			return 'Mike Montgomery';
 
