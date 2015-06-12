@@ -7,11 +7,12 @@ use App\Models\Team;
 use App\Models\Game;
 use App\Models\Player;
 use App\Models\BoxScoreLine;
-use App\Models\PlayerPool;
 use App\Models\PlayerFd;
 use App\Models\MlbPlayer;
 use App\Models\MlbTeam;
 use App\Models\MlbPlayerTeam;
+use App\Models\DkMlbPlayer;
+use App\Models\PlayerPool;
 
 use App\Classes\Scraper;
 use App\Classes\Validator;
@@ -82,6 +83,16 @@ class ScrapersController {
 		$scraper = new Scraper;
 
 		$scraper->getBatCsvFile($request, 'DK', 'MLB');
+
+		$playerTypes = ['hitters', 'pitchers'];
+
+		foreach ($playerTypes as $playerType) {
+			$batPlayers = $scraper->parseBatCsvFile($playerType, $request->input('date'));
+			
+			$scraper->addBatFptsToDkMlbPlayers($batPlayers, $request->input('date'));
+		}
+
+		# ddAll($batPlayers);
 
 		$message = 'Success!';
 		Session::flash('alert', 'info');

@@ -37,6 +37,45 @@ class Scraper {
 	MLB (BAT CSV FILES)
 	****************************************************************************************/
 
+	public function addBatFptsToDkMlbPlayers($batPlayers, $date) {
+		$dkMlbPlayers = DB::table('dk_mlb_players')
+							->select('dk_mlb_players.id', 'bat_fpts', 'name')
+							->join('player_pools', 'player_pools.id', '=', 'dk_mlb_players.player_pool_id')
+							->join('mlb_players', 'mlb_players.id', '=', 'dk_mlb_players.mlb_player_id')
+							->where('player_pools.date', $date)
+							->where('player_pools.sport', 'MLB')
+							->where('player_pools.site', 'DK')
+							->get();
+
+		# ddAll($dkMlbPlayers);
+
+		foreach ($dkMlbPlayers as $dkMlbPlayer) {
+			$this->addBatFptsToDkMlbPlayer($dkMlbPlayer, $batPlayers);
+		}
+
+		# ddAll($dkMlbPlayers);
+	}
+
+	private function addBatFptsToDkMlbPlayer($dkMlbPlayer, $batPlayers) {
+		$batName = changeDkNameToBatName($dkMlbPlayer->name);
+
+		foreach ($batPlayers as $batPlayer) {
+			# dd($batPlayer['dk_pts']);
+
+			if ($batPlayer['name'] == $batName && $batPlayer['dk_pts'] != $dkMlbPlayer->bat_fpts) {
+				DB::table('dk_mlb_players')
+					->where('id', $dkMlbPlayer->id)
+					->update(array('bat_fpts' => $batPlayer['dk_pts']));
+
+				break;
+			}
+
+			if ($batPlayer['name'] == $batName) {
+				break;
+			}
+		}
+	}
+
 	public function addBatDetail($batName, $boxScoreLine) {
 		$csvFile = 'files/dk/mlb/bat/hitters/'.$boxScoreLine->date.'.csv';
 
