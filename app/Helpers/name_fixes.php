@@ -92,6 +92,10 @@ function fgNameFix($fgName) {
 }
 
 function changeDkNameToBatName($dkName) {
+    if ($dkName == 'Steven Souza Jr.') {
+        return 'Steven Souza';
+    }
+
     if ($dkName == 'Kike Hernandez') {
         return 'Enrique Hernandez';
     }
@@ -125,7 +129,7 @@ function changeDkNameToBatName($dkName) {
     }
 
     if ($dkName == 'Travis d\'Arnaud') {
-        return 'Travis d`Arnaud';
+        // return 'Travis d`Arnaud';
     }
 
     if ($dkName == 'Eric Young Jr.') {

@@ -45,7 +45,7 @@ class ContestBuilder {
                                     ->join('dk_mlb_contest_lineups', 'dk_mlb_contest_lineups.dk_mlb_contest_id', '=', 'dk_mlb_contests.id')
 									->groupBy('date')
 									->orderBy('date', 'desc')
-									->where('dk_mlb_contests.entry_fee', '3.00')
+									->where('dk_mlb_contests.name', 'NOT LIKE', '%DOUBLE UP%')
                                     ->get();	
 
         foreach ($contests as $contest) {
