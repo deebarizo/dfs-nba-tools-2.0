@@ -181,7 +181,10 @@ class LineupBuilderMlb {
             ->select('*')
             ->where('player_pools.time_period', urlToUcWords($timePeriodInUrl))
             ->where('player_pools.date', $date)
+            ->where('mlb_players_teams.end_date', '>', $date)
             ->get();
+
+        # ddAll($players);
 
         $teams = MlbTeam::all();
 
