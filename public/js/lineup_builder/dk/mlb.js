@@ -297,7 +297,8 @@ $(document).ready(function() {
             success: function() {
             	emptyLineupPlayerRow(lineupPlayerRow);
 
-            	updateTotalSalary();
+				updateLineupTotal('salary');
+				updateLineupTotal('bat-fpts');
 
             	availablePlayerRowWithStrikethrough = $('tr.available-player-row-strikethrough');
             	
