@@ -41,6 +41,8 @@ class DailyController {
             $players = $statBuilder->getPlayersForDkMlbDaily($timePeriod, $date, $contestId);
             $teams = $statBuilder->getTeamsForDkMlbDaily($timePeriod, $date);
 
+            # ddAll($players);
+
             if (isset($players[0]->are_there_box_score_lines)) {
                 $areThereBoxScoreLines = 1;
 

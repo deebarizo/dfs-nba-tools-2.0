@@ -567,7 +567,7 @@ class StatBuilder {
 
     public function getPlayersForDkMlbDaily($timePeriod, $date, $contestId) {
         $players = DB::table('player_pools')
-                     ->select('dk_mlb_players.id as dk_mlb_player_id', 'date', 'buy_in', 'player_pool_id', 'mlb_player_id', 'target_percentage', 'mlb_team_id', 'position', 'salary', 'name', 'abbr_dk')
+                     ->select('dk_mlb_players.id as dk_mlb_player_id', 'bat_fpts', 'date', 'buy_in', 'player_pool_id', 'mlb_player_id', 'target_percentage', 'mlb_team_id', 'position', 'salary', 'name', 'abbr_dk')
                      ->join('dk_mlb_players', 'dk_mlb_players.player_pool_id', '=', 'player_pools.id')
                      ->join('mlb_players', 'dk_mlb_players.mlb_player_id', '=', 'mlb_players.id')
                      ->join('mlb_teams', 'mlb_teams.id', '=', 'dk_mlb_players.mlb_team_id')
@@ -777,8 +777,12 @@ class StatBuilder {
     }
 
     private function getBatProjection($batProjection, $player) {
-        $batVr = numFormat($batProjection['dk_pts'] / ($player->salary / 1000), 2);
-        $batFpts = numFormat($batProjection['dk_pts'], 2);
+        $batFpts = $player->bat_fpts;
+        $batVr = numFormat($player->bat_fpts / ($player->salary / 1000), 2);
+
+        if ($batFpts == 0) {
+            return array(0, 0, 0, 0, 0);
+        }
 
         return array($batVr, $batFpts, $batProjection['lineup'], $batProjection['platoon'], $batProjection['opp']);
     }
