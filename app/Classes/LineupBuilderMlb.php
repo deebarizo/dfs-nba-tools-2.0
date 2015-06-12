@@ -73,8 +73,12 @@ class LineupBuilderMlb {
 
         $lineup['players'] = $this->getPlayersInLineup($lineup['metadata']->id, $lineup['metadata']->player_pool_id);
 
+        $lineup['metadata']->total_bat_fpts = 0;
+
         foreach ($lineup['players'] as $lineupPlayer) {
             $lineupPlayer->remove_player_icon = '<div class="circle-minus-icon"><span class="glyphicon glyphicon-minus"></span></div>';
+
+            $lineup['metadata']->total_bat_fpts += $lineupPlayer->bat_fpts;
         }
 
         # ddAll($lineup);
@@ -100,6 +104,8 @@ class LineupBuilderMlb {
             WHERE lineups.id = '.$lineupId.'
             AND dk_mlb_players.player_pool_id = '.$playerPoolId.'
             AND lineups.active = 1'));
+
+        # ddAll($lineupPlayers);
 
         $teams = MlbTeam::all();
 

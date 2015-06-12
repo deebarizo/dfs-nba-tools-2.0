@@ -148,7 +148,8 @@
 			<h4>Lineups</h4>
 
 			@foreach ($lineups as $lineup)
-				<table data-player-pool-id="{{ $playerPoolId }}" 
+				<table style="font-size: 85%"
+					   data-player-pool-id="{{ $playerPoolId }}" 
 					   data-hash="{{ $lineup['hash'] }}" 
 					   data-salary="{{ $lineup['salary'] }}" 
 					   class="table 
@@ -163,8 +164,9 @@
 						<tr>
 							<th style="width: 10%">Pos</th>
 							<th style="width: 15%">Team</th>
-							<th style="width: 60%">Name</th>
+							<th style="width: 45%">Name</th>
 							<th style="width: 15%">Sal</th>
+							<th style="width: 15%">bFPTS</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -175,11 +177,13 @@
 								data-team-abbr="{{ $player->abbr_dk }}"
 								data-position="{{ $player->position }}"
 								data-name="{{ $player->name }}"
-								data-salary="{{ $player->salary }}">
+								data-salary="{{ $player->salary }}"
+								data-bat-fpts="{{ $player->bat_fpts }}">
 								<td>{{ $player->position }}</td>	
 								<td>{{ $player->abbr_dk }}</td>
 								<td>{{ $player->name }}</td>
 								<td>{{ $player->salary }}</td>
+								<td>{{ $player->bat_fpts }}</td>
 							</tr>
 						@endforeach
 						<tr class="update-lineup-row">
@@ -196,6 +200,7 @@
 								</span>
 							</td>
 							<td style="color: green"><strong>{{ $lineup['salary'] }}</strong></td>
+							<td><strong>{{ $lineup['total_bat_fpts'] }}</strong></td>
 						</tr>
 					</tbody>
 				</table>

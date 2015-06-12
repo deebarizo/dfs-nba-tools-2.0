@@ -100,6 +100,7 @@ class SolverTopPlaysMlb {
 					$activeLineupPlayer->abbr_dk = $dkMlbPlayer->abbr_dk;
 					$activeLineupPlayer->mlb_team_id = $dkMlbPlayer->mlb_team_id;
 					$activeLineupPlayer->salary = $dkMlbPlayer->salary;
+					$activeLineupPlayer->bat_fpts = $dkMlbPlayer->bat_fpts;
 
 					break;
 				}
@@ -152,11 +153,28 @@ class SolverTopPlaysMlb {
 		}
 		unset($lineup);
 
+		foreach ($activeLineups as &$lineup) {
+			$lineup = $this->addTotalBatFpts($lineup);
+		}
+		unset($lineup);
+
 		$activeLineups = $this->sortActiveLineups($activeLineups);
 
 		# ddAll($activeLineups);
 
 		return $activeLineups;
+	}
+
+	private function addTotalBatFpts($lineup) {
+		$totalBatFpts = 0;
+
+		foreach ($lineup['players'] as $lineupPlayer) {
+			$totalBatFpts += $lineupPlayer->bat_fpts;
+		}
+
+		$lineup['total_bat_fpts'] = numFormat($totalBatFpts, 2);
+
+		return $lineup;
 	}
 
 	private function sortActiveLineups($activeLineups) {

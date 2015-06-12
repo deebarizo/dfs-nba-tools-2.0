@@ -190,7 +190,7 @@ $(document).ready(function() {
 
 		$('span.lineup-'+field+'-total').text(total);
 
-		if (field = 'salary') {
+		if (field == 'salary') {
 			addColorForTotalSalary(total);
 		}
 	}
