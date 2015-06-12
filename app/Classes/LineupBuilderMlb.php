@@ -122,6 +122,7 @@ class LineupBuilderMlb {
 
         $lineup['metadata'] = new \stdClass();
         $lineup['metadata']->total_salary = 0;
+        $lineup['metadata']->total_bat_fpts = '0.00';
         $lineup['metadata']->lineup_buy_in = getDefaultLineupBuyIn();
 
         if ($siteInUrl == 'dk') {
@@ -136,6 +137,7 @@ class LineupBuilderMlb {
                 $lineup['players'][$i]->abbr_dk = '';
                 $lineup['players'][$i]->opp_abbr_dk = '';
                 $lineup['players'][$i]->salary = '';
+                $lineup['players'][$i]->bat_fpts = '';
                 $lineup['players'][$i]->remove_player_icon = '';
             }
 

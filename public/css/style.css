@@ -122,7 +122,7 @@ tr.available-player-row-strikethrough {
     width:25px;
     height:25px;
     background: green;
-    padding: 3px 1px 3px 3px;
+    padding: 5px 1px 3px 3px;
     border-radius: 100%;
     color: white;
     text-align:center;
@@ -133,7 +133,7 @@ tr.available-player-row-strikethrough {
     width:25px;
     height:25px;
     background: red;
-    padding: 3px;
+    padding: 4px;
     border-radius: 100%;
     color: white;
     text-align:center;

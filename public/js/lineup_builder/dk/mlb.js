@@ -61,6 +61,7 @@ $(document).ready(function() {
 		var salary = availablePlayerRow.children('td.available-player-salary').text();
 		var team = availablePlayerRow.data('team');
 		var opp = availablePlayerRow.data('opp');
+		var batFpts = availablePlayerRow.data('bat-fpts');
 
 		if (!isPositionFull(position) && status) {
 			alert('The '+position+' position is full.');
@@ -68,7 +69,7 @@ $(document).ready(function() {
 		}
 
 		updateAvailablePlayerRow(availablePlayerRow, iconDiv, status);
-		updateLineupPlayerRow(status, playerPoolId, playerId, position, name, salary, team, opp);
+		updateLineupPlayerRow(status, playerPoolId, playerId, position, name, salary, team, opp, batFpts);
 
 		calculateAvgSalaryPerPlayerLeft();
 	});
@@ -94,7 +95,7 @@ $(document).ready(function() {
 		var status = getStatus(iconDiv);
 
 		updateAvailablePlayerRow(availablePlayerRow, iconDiv, status);
-		updateLineupPlayerRow(status, null, playerId, null, null, null);
+		updateLineupPlayerRow(status, null, playerId, null, null, null, null, null, null);
 
 		calculateAvgSalaryPerPlayerLeft();
 	});
@@ -147,17 +148,19 @@ $(document).ready(function() {
 	UPDATE LINEUP PLAYER ROW
 	****************************************************************************************/
 
-	function updateLineupPlayerRow(status, playerPoolId, playerId, position, name, salary, team, opp) {
+	function updateLineupPlayerRow(status, playerPoolId, playerId, position, name, salary, team, opp, batFpts) {
 		if (status) {
 			var lineupPlayerRow = $('td.lineup-player-position:contains("'+position+'")').next('td.lineup-player-name:empty').first().closest('tr.lineup-player-row');
 			lineupPlayerRow.attr('data-player-pool-id', playerPoolId);
 			lineupPlayerRow.attr('data-player-id', playerId);
 			lineupPlayerRow.find('td.lineup-player-name').text(name);
 			lineupPlayerRow.find('td.lineup-player-salary').text(salary);
+			lineupPlayerRow.find('td.lineup-player-bat-fpts').text(batFpts);
 			lineupPlayerRow.find('td.lineup-player-team').text(team);
 			lineupPlayerRow.find('td.lineup-player-opp').text(opp);
 			lineupPlayerRow.attr('data-team', team);
 			lineupPlayerRow.attr('data-opp', opp);
+			lineupPlayerRow.attr('data-batFpts', batFpts);
 			lineupPlayerRow.find('a.remove-lineup-player-link').append('<div class="circle-minus-icon"><span class="glyphicon glyphicon-minus"></span></div>');
 		}
 
@@ -167,39 +170,57 @@ $(document).ready(function() {
 			emptyLineupPlayerRow(lineupPlayerRow);
 		}
 
-		updateTotalSalary();		
+		updateLineupTotal('salary');
+		updateLineupTotal('bat-fpts');
 	}
 
-	function updateTotalSalary() {
-		var totalSalary = 0;
+	function updateLineupTotal(field) {
+		var total = 0;
 
-		$('td.lineup-player-salary').each(function() {
-			var salaryText = $(this).text();
-			var salary = checkSalaryForBlank(salaryText);
+		$('td.lineup-player-'+field).each(function() {
+			var text = $(this).text();
+			var number = checkTextForBlank(text, field);
 
-			totalSalary += salary;
+			total += number;
 		});
 
-		$('span.lineup-salary-total').text(totalSalary);
+		if (field == 'bat-fpts') {
+			total = total.toFixed(2);
+		}
 
-		addColorForTotalSalary(totalSalary);
+		$('span.lineup-'+field+'-total').text(total);
+
+		if (field = 'salary') {
+			addColorForTotalSalary(total);
+		}
 	}
 
-	function checkSalaryForBlank(salaryText) {
-		if (salaryText == '') {
-			return parseInt(0);
-		} 
+	function checkTextForBlank(text, field) {
+		if (field == 'salary') {
+			if (text == '') {
+				return parseInt(0);
+			} 
 
-		return parseInt(salaryText);
+			return parseInt(text);			
+		}
+
+		if (field == 'bat-fpts') {
+			if (text == '') {
+				return 0;
+			} 
+
+			return parseFloat(text);	
+		}
 	}
 
 	function emptyLineupPlayerRow(lineupPlayerRow) {
 		lineupPlayerRow.removeData('player-pool-id');
 		lineupPlayerRow.removeData('player-id');
 		lineupPlayerRow.find('td.lineup-player-name').empty();
-		lineupPlayerRow.find('td.lineup-player-salary').empty();
 		lineupPlayerRow.find('td.lineup-player-team').empty();
 		lineupPlayerRow.find('td.lineup-player-opp').empty();
+		lineupPlayerRow.find('td.lineup-player-salary').empty();
+		lineupPlayerRow.find('td.lineup-player-bat-fpts').empty();
 		lineupPlayerRow.find('a.remove-lineup-player-link').empty();	
 	}
 
