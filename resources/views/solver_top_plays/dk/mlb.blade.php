@@ -2,9 +2,9 @@
 
 @section('content')
 	<?php 
-		$playerTypeFilter['all'] = '';
+		$playerTypeFilter['all'] = 'selected';
 		$playerTypeFilter['pitchers'] = '';
-		$playerTypeFilter['hitters'] = 'selected';
+		$playerTypeFilter['hitters'] = '';
 	?>
 
 	<div class="row" style="font-size: 90%">
@@ -145,7 +145,7 @@
 		</div>
 
 		<div class="col-lg-5" style="overflow-y: scroll; height: 2000px">
-			<h4>Lineups</h4>
+			<h4>Lineups {{ $sorter }}</h4>
 
 			@foreach ($lineups as $lineup)
 				<table style="font-size: 85%"

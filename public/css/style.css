@@ -161,6 +161,10 @@ tr.lineup-row {
 	color: red;
 }
 
+.lineup-bat-fpts-total {
+	font-weight: bold;
+}
+
 /* BOX SCORE LINE TOOLTIP (MLB) */
 
 div.box-score-line-tooltip {

@@ -22,12 +22,14 @@ date_default_timezone_set('America/Chicago');
 
 class SolverTopPlaysMlbController {
 
-	public function solverTopPlaysMlb($siteInUrl, $timePeriodInUrl, $date) {
+	public function solverTopPlaysMlb($siteInUrl, $timePeriodInUrl, $date, $sorter = '') {
 		$solverTopPlaysMlb = new SolverTopPlaysMlb;
+
+        # dd($sorter);
 
 		$timePeriod = urlToUcWords($timePeriodInUrl);
 
-        $activeLineups = $solverTopPlaysMlb->getActiveLineups($timePeriod, $date);
+        $activeLineups = $solverTopPlaysMlb->getActiveLineups($timePeriod, $date, $sorter);
 
 		if ($siteInUrl == 'dk') {
 			list($lineups, $players) = $solverTopPlaysMlb->generateLineups($timePeriod, $date, $activeLineups);
@@ -38,11 +40,15 @@ class SolverTopPlaysMlbController {
 		$playerPoolId = $lineups[0]['players'][0]->player_pool_id;
 		$buyIn = $players[0]->buy_in;
 
-		$unspentBuyIn = $solverTopPlaysMlb->calculateUnspentBuyIn($timePeriod, $date, $buyIn);
+		$unspentBuyIn = $solverTopPlaysMlb->calculateUnspentBuyIn($timePeriod, $date, $buyIn, $activeLineups);
 
         $defaultLineupBuyIn = getDefaultLineupBuyIn();
 
 		# ddAll($lineups);
+
+        if ($sorter == 'b') {
+            $sorter = '(bFPTS)';
+        }
 
         return view('solver_top_plays/dk/mlb', 
                      compact('date', 
@@ -53,7 +59,8 @@ class SolverTopPlaysMlbController {
                              'unspentBuyIn',
                              'defaultLineupBuyIn',
                              'lineups', 
-                             'players')); 
+                             'players',
+                             'sorter')); 
 	}
 
 

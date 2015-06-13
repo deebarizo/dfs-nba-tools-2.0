@@ -133,6 +133,7 @@ SOLVER TOP PLAYS (MLB)
 ****************************************************************************************/
 
 $router->get('solver_top_plays/{siteInUrl}/mlb/{timePeriodInUrl}/{date}', 'SolverTopPlaysMlbController@solverTopPlaysMlb');
+$router->get('solver_top_plays/{siteInUrl}/mlb/{timePeriodInUrl}/{date}/{sorter}', 'SolverTopPlaysMlbController@solverTopPlaysMlb');
 
 $router->post('solver_top_plays/dk/mlb/add_or_remove_lineup/', 'SolverTopPlaysMlbController@addOrRemoveLineup'); 
 

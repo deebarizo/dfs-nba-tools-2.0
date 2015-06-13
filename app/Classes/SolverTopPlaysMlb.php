@@ -57,9 +57,7 @@ class SolverTopPlaysMlb {
 	CALCULATE SPENT BUY IN
 	****************************************************************************************/
 
-	public function calculateUnspentBuyIn($timePeriod, $date, $buyIn) {
-		$activeLineups = $this->getActiveLineups($timePeriod, $date);
-
+	public function calculateUnspentBuyIn($timePeriod, $date, $buyIn, $activeLineups) {
 		$spentBuyIn = 0;
 
 		foreach ($activeLineups as $activeLineup) {
@@ -74,7 +72,7 @@ class SolverTopPlaysMlb {
 	GET ACTIVE LINEUPS
 	****************************************************************************************/
 
-	public function getActiveLineups($timePeriod, $date) {
+	public function getActiveLineups($timePeriod, $date, $sorter) {
 		$activeLineupPlayers = DB::table('player_pools')
 							->select(DB::raw('player_pools.buy_in as daily_buy_in, lineup_dk_mlb_players.mlb_player_id, lineup_dk_mlb_players.position, name, lineups.player_pool_id, total_salary, hash, money, lineups.buy_in as lineup_buy_in, CONCAT_WS("", lineup_dk_mlb_players.mlb_player_id, lineup_dk_mlb_players.position) as id_position'))
 							->join('lineups', 'player_pools.id', '=', 'lineups.player_pool_id')
@@ -158,7 +156,7 @@ class SolverTopPlaysMlb {
 		}
 		unset($lineup);
 
-		$activeLineups = $this->sortActiveLineups($activeLineups);
+		$activeLineups = $this->sortActiveLineups($activeLineups, $sorter);
 
 		# ddAll($activeLineups);
 
@@ -177,7 +175,17 @@ class SolverTopPlaysMlb {
 		return $lineup;
 	}
 
-	private function sortActiveLineups($activeLineups) {
+	private function sortActiveLineups($activeLineups, $sorter) {
+		if ($sorter == 'b') {
+			foreach ($activeLineups as $key => $activeLineup) {
+				$totalBatFts[$key] = $activeLineup['total_bat_fpts'];
+			}		
+
+			array_multisort($totalBatFts, SORT_ASC, $activeLineups);
+
+			return $activeLineups;			
+		}
+
 		foreach ($activeLineups as $key => $activeLineup) {
 			$moneyLineup[$key] = $activeLineup['css_class_money_lineup'];
 			$buyIn[$key] = $activeLineup['buy_in'];
@@ -250,7 +258,7 @@ class SolverTopPlaysMlb {
 
 		$lineups = $this->sortLineups($lineups); */
 
-		$activeLineups = $this->getActiveLineups($timePeriod, $date);
+		// $activeLineups = $this->getActiveLineups($timePeriod, $date);
 
 		foreach ($activeLineups as $activeLineup) {
 			$lineups[] = $activeLineup;
