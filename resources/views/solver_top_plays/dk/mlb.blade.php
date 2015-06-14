@@ -2,9 +2,9 @@
 
 @section('content')
 	<?php 
-		$playerTypeFilter['all'] = 'selected';
+		$playerTypeFilter['all'] = '';
 		$playerTypeFilter['pitchers'] = '';
-		$playerTypeFilter['hitters'] = '';
+		$playerTypeFilter['hitters'] = 'selected';
 	?>
 
 	<div class="row" style="font-size: 90%">

@@ -125,7 +125,7 @@ function changeDkNameToBatName($dkName) {
     }
 
     if ($dkName == 'Sean O\'Sullivan') {
-        return 'Sean O`Sullivan';
+        // return 'Sean O`Sullivan';
     }
 
     if ($dkName == 'Travis d\'Arnaud') {
