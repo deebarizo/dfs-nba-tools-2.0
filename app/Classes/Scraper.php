@@ -37,7 +37,7 @@ class Scraper {
 	MLB (BAT CSV FILES)
 	****************************************************************************************/
 
-	public function addBatFptsToDkMlbPlayers($batPlayers, $date) {
+	public function addBatFptsToDkMlbPlayers($batPlayers, $date, $playerType) {
 		$dkMlbPlayers = DB::table('dk_mlb_players')
 							->select('dk_mlb_players.id', 'bat_fpts', 'name')
 							->join('player_pools', 'player_pools.id', '=', 'dk_mlb_players.player_pool_id')
@@ -50,14 +50,14 @@ class Scraper {
 		# ddAll($dkMlbPlayers);
 
 		foreach ($dkMlbPlayers as $dkMlbPlayer) {
-			$this->addBatFptsToDkMlbPlayer($dkMlbPlayer, $batPlayers);
+			$this->addBatFptsToDkMlbPlayer($dkMlbPlayer, $batPlayers, $playerType);
 		}
 
 		# ddAll($dkMlbPlayers);
 	}
 
-	private function addBatFptsToDkMlbPlayer($dkMlbPlayer, $batPlayers) {
-		$batName = changeDkNameToBatName($dkMlbPlayer->name);
+	private function addBatFptsToDkMlbPlayer($dkMlbPlayer, $batPlayers, $playerType) {
+		$batName = changeDkNameToBatName($dkMlbPlayer->name, $playerType);
 
 		foreach ($batPlayers as $batPlayer) {
 			# dd($batPlayer['dk_pts']);

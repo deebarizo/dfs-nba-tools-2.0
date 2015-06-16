@@ -91,7 +91,11 @@ function fgNameFix($fgName) {
 	}
 }
 
-function changeDkNameToBatName($dkName) {
+function changeDkNameToBatName($dkName, $playerType) {
+    if ($dkName == 'John Mayberry Jr.') {
+        return 'John Mayberry';
+    }
+
     if ($dkName == 'Steven Souza Jr.') {
         return 'Steven Souza';
     }
@@ -150,6 +154,18 @@ function changeDkNameToBatName($dkName) {
 
     if ($dkName == 'Delino DeShields') {
         return 'Delino Deshields Jr.';
+    }
+
+    if ($dkName == 'Chris Young (OF)') {
+    	if ($playerType == 'hitters') {
+    		return 'Chris Young';
+    	}
+    }
+
+    if ($dkName == 'Chris Young (SP)') {
+		if ($playerType == 'pitchers') {
+    		return 'Chris Young';
+    	}
     }
 
     return $dkName;

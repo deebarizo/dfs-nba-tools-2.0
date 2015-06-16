@@ -43,7 +43,7 @@ class StatBuilder {
             $scraper = new Scraper;
 
             $dkName = MlbPlayer::where('id', $playerId)->pluck('name');
-            $batName = changeDkNameToBatName($dkName);
+            $batName = changeDkNameToBatName($dkName, $playerType);
         }
 
         $seasons = [
@@ -751,7 +751,13 @@ class StatBuilder {
     }
 
     private function getBatProjections($batProjections, $player, $date) {
-        $name = changeDkNameToBatName($player->name);
+        if ($player->position != 'SP' && $player->position != 'RP') {
+            $playerType = 'hitters';
+        } else {
+            $playerType = 'pitchers';
+        }
+
+        $name = changeDkNameToBatName($player->name, $playerType);
 
         // Hitters
 

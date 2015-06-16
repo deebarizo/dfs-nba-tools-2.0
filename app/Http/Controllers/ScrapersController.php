@@ -89,7 +89,7 @@ class ScrapersController {
 		foreach ($playerTypes as $playerType) {
 			$batPlayers = $scraper->parseBatCsvFile($playerType, $request->input('date'));
 			
-			$scraper->addBatFptsToDkMlbPlayers($batPlayers, $request->input('date'));
+			$scraper->addBatFptsToDkMlbPlayers($batPlayers, $request->input('date'), $playerType);
 		}
 
 		# ddAll($batPlayers);
