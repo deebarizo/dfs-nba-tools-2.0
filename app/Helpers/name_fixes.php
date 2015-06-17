@@ -1,6 +1,6 @@
 <?php
 
-function fgNameFix($fgName) {
+function fgNameFix($fgName, $positionType) {
 	switch ($fgName) {
 		case 'Ivan De Jesus':
 			return 'Ivan De Jesus Jr.';
@@ -85,6 +85,15 @@ function fgNameFix($fgName) {
 
 		case 'Shin-Soo Choo':
 			return 'Shin-soo Choo';
+
+		case 'Chris Young':
+			if ($positionType == 'hitter') {
+				return 'Chris Young (OF)';
+			}
+
+			if ($positionType == 'pitcher') {
+				return 'Chris Young (SP)';
+			}
 		
 		default:
 			return $fgName;
@@ -92,6 +101,10 @@ function fgNameFix($fgName) {
 }
 
 function changeDkNameToBatName($dkName, $playerType) {
+    if ($dkName == 'Ivan De Jesus Jr.') {
+        return 'Ivan De Jesus';
+    }
+
     if ($dkName == 'John Mayberry Jr.') {
         return 'John Mayberry';
     }

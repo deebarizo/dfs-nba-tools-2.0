@@ -288,6 +288,14 @@ class Scraper {
 	}
 
 	private function getDkMlbPlayer($dkMlbPlayers, $position, $playerName) {
+		if ($position == 'P' && $playerName == 'Chris Young') {
+			$playerName = 'Chris Young (SP)';
+		}
+
+		if ($position == 'OF' && $playerName == 'Chris Young') {
+			$playerName = 'Chris Young (OF)';
+		}
+
 		foreach ($dkMlbPlayers as $dkMlbPlayer) {
 			if ($position == $dkMlbPlayer->position && $playerName == $dkMlbPlayer->name) {
 				return array($dkMlbPlayer->dk_mlb_player_id, $dkMlbPlayer->mlb_player_id);
@@ -498,7 +506,7 @@ class Scraper {
 
 					$playerNameFg = $playerRow->filter('td')->eq(0)->filter('a')->text();
 
-					$boxScoreLines[$boxScoreLineCount]['mlb_player_id'] = $this->getPlayerId($playerNameFg, $sport);
+					$boxScoreLines[$boxScoreLineCount]['mlb_player_id'] = $this->getPlayerId($playerNameFg, $sport, 'hitter');
 
 					$boxScoreLines[$boxScoreLineCount]['pa'] = $playerRow->filter('td')->eq(2)->text();
 					$boxScoreLines[$boxScoreLineCount]['singles'] = $playerRow->filter('td')->eq(4)->text();
@@ -554,7 +562,7 @@ class Scraper {
 
 				$playerNameFg = $playerRow->filter('td')->eq(0)->filter('a')->text();
 
-				$boxScoreLines[$boxScoreLineCount]['mlb_player_id'] = $this->getPlayerId($playerNameFg, $sport);
+				$boxScoreLines[$boxScoreLineCount]['mlb_player_id'] = $this->getPlayerId($playerNameFg, $sport, 'pitcher');
 
 				$boxScoreLines[$boxScoreLineCount]['pa'] = 0;
 				$boxScoreLines[$boxScoreLineCount]['singles'] = 0;
@@ -608,11 +616,11 @@ class Scraper {
 		return array($gameLines, $boxScoreLines);
 	}
 
-	private function getPlayerId($playerNameFg, $sport) {
+	private function getPlayerId($playerNameFg, $sport, $positionType) {
 		if ($sport == 'MLB') {
 			$mlbPlayers = MlbPlayer::all();
 
-			$playerName = fgNameFix($playerNameFg);
+			$playerName = fgNameFix($playerNameFg, $positionType);
 
 			foreach ($mlbPlayers as $mlbPlayer) {
 				if ($mlbPlayer->name == $playerName) {
