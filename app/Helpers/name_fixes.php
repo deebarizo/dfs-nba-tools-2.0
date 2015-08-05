@@ -101,6 +101,10 @@ function fgNameFix($fgName, $positionType) {
 }
 
 function changeDkNameToBatName($dkName, $playerType) {
+    if ($dkName == 'Joe Ross') {
+        return 'Joseph Ross';
+    }
+
     if ($dkName == 'Ivan De Jesus Jr.') {
         return 'Ivan De Jesus';
     }
@@ -182,6 +186,18 @@ function changeDkNameToBatName($dkName, $playerType) {
     }
 
     return $dkName;
+}
+
+function fixMlbPlayersWithSameName($name, $position) {
+	if ($name == 'Chris Young' && $position == 'OF') {
+		return 'Chris Young (OF)';
+	}
+
+	if ($name == 'Chris Young' && $position == 'SP') {
+		return 'Chris Young (SP)';
+	}
+
+	return $name;
 }
 
 function fd_name_fix($rawName) {

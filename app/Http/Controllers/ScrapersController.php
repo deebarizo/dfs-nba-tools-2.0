@@ -328,20 +328,21 @@ class ScrapersController {
 		$endYear = $request->input('season');
 		$gameType = $request->input('game_type');
 
+		$season = Season::where('end_year', $endYear)->first();
+
 		switch ($gameType) {
 			case 'regular':
 				$tableIDinBR = 'games';
+				$gamesCount = Game::where('season_id', $season->id)->where('type', 'regular')->count();
 				break;
 			
 			case 'playoffs':
 				$tableIDinBR = 'games_playoffs';
+				$gamesCount = Game::where('season_id', $season->id)->where('type', 'playoffs')->count();
 				break;
 		}
 
 		$teams = Team::all();
-
-		$season = Season::where('end_year', $endYear)->first();
-		$gamesCount = Game::where('season_id', '=', $season->id)->count();
 
 		$client = new Client();
 		$crawler = $client->getClient()->setDefaultOption('config/curl/'.CURLOPT_TIMEOUT, 50000);
@@ -360,6 +361,8 @@ class ScrapersController {
 
 			if ($scrapeGamesToggle === true) {
 				$rowContents = scrapeForGamesTable($client, $crawler, $tableIDinBR, $teams, $season->id, $gamesCount, $rowCount);
+
+				# ddAll($rowContents);
 
 				foreach ($rowContents as $row) {
 					$doesThisGameExist = Game::where('link_br', '=', $row['link_br'])->count();

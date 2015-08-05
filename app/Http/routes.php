@@ -91,9 +91,6 @@ $router->get('scrapers/dk_mlb_contests', function() {
 	return View::make('scrapers/dk_mlb_contests');
 });
 
-$router->get('contests', function() {
-	return View::make('pages/contests');
-});
 $router->get('scrapers', function() {
 	return View::make('pages/scrapers');
 });

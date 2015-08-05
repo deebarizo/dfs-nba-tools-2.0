@@ -743,6 +743,8 @@ class Scraper {
 				       	'time' => $time
 				    );
 
+				    $player[$row]['name'] = fixMlbPlayersWithSameName($player[$row]['name'], $player[$row]['position']);
+
 				    $playerExists = MlbPlayer::where('name', $player[$row]['name'])->count();
 
 				    if (!$playerExists) {

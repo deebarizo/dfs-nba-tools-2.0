@@ -33,7 +33,7 @@ class PlayerPoolsController {
 								 'dk_mlb_contests.name as dk_mlb_contest_name')
 						->leftJoin('dk_mlb_contests', 'dk_mlb_contests.player_pool_id', '=', 'player_pools.id')
 						->orderBy('player_pools.date', 'desc')
-						->take(50)
+						->take(100)
 						->get();
 
 		# dd($playerPools);

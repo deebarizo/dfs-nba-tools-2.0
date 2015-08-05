@@ -32,6 +32,68 @@ date_default_timezone_set('America/Chicago');
 class DailyController {
 
 	public function daily($site, $sport, $timePeriod, $date, $contestId) {
+        if ($site == 'fd' && $sport == 'nba') {
+            $seasonId = 11;
+
+            $teams = Team::all();
+
+            $statBuilder = new StatBuilder;
+
+            $players = $statBuilder->getPlayersInPlayerPool($site, $sport, $timePeriod, $date);
+
+            # ddAll($players);
+
+            $timePeriod = $statBuilder->getTimePeriodOfPlayerPool($players);
+
+            $players = $statBuilder->matchPlayersToTeams($players, $teams);
+
+            $teamsToday = $statBuilder->getTeamsToday($players, $teams);
+
+            $players = $statBuilder->matchPlayersToFilters($players);
+
+            $client = new Client;
+            $vegasScores = scrapeForOdds($client, $date);
+
+            if ($vegasScores != 'No lines yet.') {
+                $players = $statBuilder->addVegasInfoToPlayers($players, $vegasScores);
+
+                $teamFilters = $statBuilder->getTeamFilters($teamsToday, $date, $seasonId);
+
+                $players = $statBuilder->addVegasFilterToPlayers($players, $teamFilters);
+
+                $areThereVegasScores = true;       
+            }
+
+            if ($vegasScores == 'No lines yet.') {
+                foreach ($players as &$player) {   
+                    $player->vegas_filter = 0;
+                }
+
+                $areThereVegasScores = false;
+            } unset($player);
+
+            $playerStats = $statBuilder->getBoxScoreLinesOfPlayers($players, $date);
+
+            $players = $statBuilder->generateProjections($players, $playerStats);
+
+            $players = $statBuilder->removeInactivePlayers($players);
+
+            $gameTimes = [];
+
+            if ($vegasScores == 'No lines yet.') {
+                $gameTimes[] = 'No lines yet.';
+            } else {
+                foreach ($vegasScores as $vegasScore) {
+                    $gameTimes[] = $vegasScore['time'];
+                }
+                $gameTimes = array_unique($gameTimes);
+            }
+        
+            # ddAll($players);
+
+    		return view('daily_fd_nba', compact('date', 'timePeriod', 'players', 'teamsToday', 'gameTimes'));
+        }
+
         if ($site == 'dk' && $sport == 'mlb') {
             $statBuilder = new StatBuilder;
 
@@ -40,8 +102,6 @@ class DailyController {
 
             $players = $statBuilder->getPlayersForDkMlbDaily($timePeriod, $date, $contestId);
             $teams = $statBuilder->getTeamsForDkMlbDaily($timePeriod, $date);
-
-            # ddAll($players);
 
             if (isset($players[0]->are_there_box_score_lines)) {
                 $areThereBoxScoreLines = 1;
@@ -59,8 +119,6 @@ class DailyController {
                 $contestName = 'None';
             }
 
-            # ddAll($players);
-
             return view('daily/dk/mlb', compact('date', 
                                                 'timePeriodInUrl', 
                                                 'timePeriod', 
@@ -70,66 +128,6 @@ class DailyController {
                                                 'tableSize',
                                                 'contestName'));
         }
-
-        $seasonId = 11;
-
-        $teams = Team::all();
-
-        $statBuilder = new StatBuilder;
-
-        $players = $statBuilder->getPlayersInPlayerPool($site, $sport, $timePeriod, $date);
-
-        # ddAll($players);
-
-        $timePeriod = $statBuilder->getTimePeriodOfPlayerPool($players);
-
-        $players = $statBuilder->matchPlayersToTeams($players, $teams);
-
-        $teamsToday = $statBuilder->getTeamsToday($players, $teams);
-
-        $players = $statBuilder->matchPlayersToFilters($players);
-
-        $client = new Client;
-        $vegasScores = scrapeForOdds($client, $date);
-
-        if ($vegasScores != 'No lines yet.') {
-            $players = $statBuilder->addVegasInfoToPlayers($players, $vegasScores);
-
-            $teamFilters = $statBuilder->getTeamFilters($teamsToday, $date, $seasonId);
-
-            $players = $statBuilder->addVegasFilterToPlayers($players, $teamFilters);
-
-            $areThereVegasScores = true;       
-        }
-
-        if ($vegasScores == 'No lines yet.') {
-            foreach ($players as &$player) {   
-                $player->vegas_filter = 0;
-            }
-
-            $areThereVegasScores = false;
-        } unset($player);
-
-        $playerStats = $statBuilder->getBoxScoreLinesOfPlayers($players, $date);
-
-        $players = $statBuilder->generateProjections($players, $playerStats);
-
-        $players = $statBuilder->removeInactivePlayers($players);
-
-        $gameTimes = [];
-
-        if ($vegasScores == 'No lines yet.') {
-            $gameTimes[] = 'No lines yet.';
-        } else {
-            foreach ($vegasScores as $vegasScore) {
-                $gameTimes[] = $vegasScore['time'];
-            }
-            $gameTimes = array_unique($gameTimes);
-        }
-    
-        # ddAll($players);
-
-		return view('daily_fd_nba', compact('date', 'timePeriod', 'players', 'teamsToday', 'gameTimes'));
 	}
 
     public function updateTargetPercentageForDkMlb(Request $request) {
