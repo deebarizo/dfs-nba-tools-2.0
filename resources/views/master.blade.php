@@ -37,6 +37,7 @@
 					<li class="{!! setActive('scrapers*') !!}"><a href="/scrapers">Scrapers</a></li>
 					<li class="{!! setActive('players*') !!}"><a href="/players">Players</a></li>
 					<li class="{!! setActive('teams*') !!}"><a href="/teams/ATL">Teams</a></li>
+					<li class="{!! setActive('admin*') !!}"><a href="/admin">Admin</a></li>
 					<li class="{!! setActive('nbawowy*') !!}"><a href="/nbawowy">nbawowy!</a></li>
 					<li class="{!! setActive('studies*') !!}"><a href="/studies">Studies</a></li>
 				</ul>

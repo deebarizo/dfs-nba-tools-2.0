@@ -97,6 +97,9 @@ $router->get('scrapers', function() {
 $router->get('studies', function() {
 	return View::make('pages/studies');
 });
+$router->get('admin', function() {
+	return View::make('pages/admin');
+});
 $router->get('players', function() {
 	return View::make('players');
 });
@@ -175,3 +178,11 @@ $router->get('nbawowy/', 'NbawowyController@nbawowy_form');
 $router->get('nbawowy/{name}/{startDate}/{endDate}/on/{playerOn}/off/{playerOff}/{team}', 'NbawowyController@nbawowy');
 
 $router->get('one-of', 'OneOfController@run');
+
+
+/****************************************************************************************
+ADMIN
+****************************************************************************************/
+
+$router->get('admin/{sport}/add_player', 'AdminController@addPlayerForm');
+$router->post('admin/{sport}/add_player', 'AdminController@addPlayer');
