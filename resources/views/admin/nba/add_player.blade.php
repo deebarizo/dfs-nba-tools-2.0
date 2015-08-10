@@ -8,6 +8,15 @@
 	</div>
 
 	<div class="row">
+		@if(Session::has('message'))
+		    <div class="col-lg-12">
+				<div class="alert alert-{{ Session::get('alert') }} fade in" role="alert" style="width: 50%">
+					<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+					{{ Session::get('message') }}
+				</div>
+		    </div>
+		@endif
+
 		<div class="col-lg-12">
 			{!!	Form::open(['url' => 'admin/nba/add_player']) !!}
 
@@ -22,7 +31,13 @@
 				</select>
 
 				<label>Start Date for Team</label>
-				<input class="form-control" id="start_date" name="start_date" type="date" style="width: 15%; margin-bottom: 30px" value="{{ $startDate }}">	
+				<input class="form-control" id="start_date" name="start_date" type="date" style="width: 15%; margin-bottom: 10px" value="{{ $startDate }}">	
+
+				<label>Rookie?</label>
+				<select class="form-control" id="is_rookie" name="is_rookie" style="width: 15%; margin-bottom: 30px">
+				  	<option value="0">No</option>
+				  	<option value="1">Yes</option>
+				</select>
 
 				<input style="width: 10%; outline: none" type="submit" class="btn btn-primary submit-info" value="Submit">
 			

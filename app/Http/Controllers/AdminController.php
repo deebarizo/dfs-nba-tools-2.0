@@ -4,6 +4,7 @@ use App\Models\Season;
 use App\Models\Team;
 use App\Models\Game;
 use App\Models\Player;
+use App\Models\PlayerTeam;
 use App\Models\BoxScoreLine;
 use App\Models\PlayerPool;
 use App\Models\PlayerFd;
@@ -42,10 +43,44 @@ class AdminController {
     }
 
     public function addPlayer(Request $request) {
-    	$player['name'] = $request->get('name');
-    	$player['team_id'] = $request->get('team_id');
-    	$player['start_date'] = $request->get('start_date');
+    	$input['name'] = $request->get('name');
+    	$input['team_id'] = $request->get('team_id');
+    	$input['start_date'] = $request->get('start_date');
+        $input['is_rookie'] = $request->get('is_rookie');
 
-    	ddAll($player);
+        if (!$input['is_rookie']) {
+            $playerId = Player::where('name', $input['name'])->pluck('id');
+
+            if (is_null($playerId)) {
+                $message = 'Player ID not found.';
+                Session::flash('alert', 'warning');
+
+                return redirect('admin/nba/add_player')->with('message', $message);  
+            }
+        }
+
+        if ($input['is_rookie']) {
+            $player = new Player;
+
+            $player->name = $input['name'];
+
+            $player->save();
+
+            $playerId = $player->id;
+        }
+
+        $playerTeam = new PlayerTeam;
+
+        $playerTeam->player_id = $playerId;
+        $playerTeam->team_id = $input['team_id'];
+        $playerTeam->start_date = $input['start_date'];
+        $playerTeam->end_date = '3000-01-01';
+
+        $playerTeam->save();
+
+        $message = 'Success!';
+        Session::flash('alert', 'info');
+
+        return redirect('admin/nba/add_player')->with('message', $message);      
     }
 }
