@@ -43,7 +43,7 @@ class AdminController {
     }
 
     public function addPlayer(Request $request) {
-    	$input['name'] = $request->get('name');
+    	$input['name'] = trim($request->get('name'));
     	$input['team_id'] = $request->get('team_id');
     	$input['start_date'] = $request->get('start_date');
         $input['is_rookie'] = $request->get('is_rookie');

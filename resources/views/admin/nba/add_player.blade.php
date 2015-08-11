@@ -24,9 +24,16 @@
 				<input class="form-control" name="name" id="name" type="text" style="width: 30%; margin-bottom: 10px">		
 
 				<label>Team</label>
-				<select class="form-control" id="team_id" name="team_id" style="width: 15%; margin-bottom: 10px">
+				<select class="form-control" id="team_id" name="team_id" style="width: 22%; margin-bottom: 10px">
 				  	@foreach ($teams as $team)
-					  	<option value="{{ $team->id }}">{{ $team->name_br }}</option>
+				  		<?php 
+				  			if ($team->id == 18) {
+								$isSelected = 'selected';
+				  			} else {
+				  				$isSelected = '';
+				  			}
+				  		?>
+					  	<option value="{{ $team->id }}" {{ $isSelected }}>{{ $team->name_br }}</option>
 				  	@endforeach
 				</select>
 
