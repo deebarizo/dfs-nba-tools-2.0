@@ -39,6 +39,16 @@ class ScrapersController {
 
 		$csvFile = $scraper->getCsvFile($request, 'FD', 'NBA');
 
+		$validator = new Validator;
+
+		$validationMessage = $validator->validateCsvFile($request, $csvFile, 'FD', 'NBA');
+
+		if ($validationMessage != 'Valid') {
+			Session::flash('alert', 'warning');
+
+			return redirect('scrapers/fd_nba_salaries')->with('message', $validationMessage);				
+		}
+
 		list($playerPoolExists, $playerPoolId) = $scraper->insertDataToPlayerPoolsTable($request, 'FD', 'NBA', 'csv file');
 
 		if ($playerPoolExists) {

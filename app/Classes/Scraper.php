@@ -127,16 +127,6 @@ class Scraper {
 				    	$player[$row]['home_game'] = 0;	
 				    }
 
-				    $player[$row]['name'] = fixMlbPlayersWithSameName($player[$row]['name'], $player[$row]['position']);
-
-				    $playerExists = Player::where('name', $player[$row]['name'])->count();
-
-				    if (!$playerExists) {
-						echo 'The player, '.$player[$row]['name'].' does not exist in the database. You can add him <a target="_blank" href="http://dfstools.dev:8000/admin/nba/add_player">here</a>.'; 
-
-						exit();
-				    } 
-
 				    $playerId = Player::where('name', $player[$row]['name'])->pluck('id');
 				}
 

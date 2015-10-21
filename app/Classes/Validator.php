@@ -33,6 +33,53 @@ use Illuminate\Support\Facades\Session;
 
 class Validator {
 
+	/****************************************************************************************
+	VALIDATE CSV FILE
+	****************************************************************************************/	
+
+	public function validateCsvFile($request, $csvFile, $site, $sport) {
+		if ($site == 'FD' && $sport == 'NBA') {
+
+			$message = $this->validateCsvFileFdNba($request, $csvFile);
+
+			return $message;
+		}
+	}
+
+
+	/****************************************************************************************
+	VALIDATE CSV FILE (FD NBA)
+	****************************************************************************************/	
+
+	private function validateCsvFileFdNba($request, $csvFile) {
+		if (($handle = fopen($csvFile, 'r')) !== false) {
+			$row = 0;
+
+			while (($csvData = fgetcsv($handle, 5000, ',')) !== false) {
+				if ($row != 0) {
+				    $player[$row]['name'] = $csvData[2].' '.$csvData[3];
+
+				    $player[$row]['name'] = fd_name_fix($player[$row]['name']);
+
+				    $playerExists = Player::where('name', $player[$row]['name'])->count();
+
+				    if (!$playerExists) {
+						return 'The player name, <strong>'.$player[$row]['name'].', </strong> does not exist in the database. You can add him <a target="_blank" href="http://dfstools.dev:8000/admin/nba/add_player">here</a>.'; 
+				    } 
+				}
+
+				$row++;
+			}
+		}
+
+		return 'Valid';
+	}
+
+
+	/****************************************************************************************
+	VALIDATE DK MLB CONTEST
+	****************************************************************************************/	
+
 	public function validateDkMlbContest($date, $contestName, $entryFee, $timePeriod) {
 		if ($contestName == '') {
 			return 'Please enter the contest name.';

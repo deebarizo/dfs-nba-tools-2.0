@@ -13,9 +13,9 @@
 
 		@if(Session::has('message'))
 		    <div class="col-lg-12">
-				<div class="alert alert-{{ Session::get('alert') }} fade in" role="alert" style="width: 50%">
+				<div class="alert alert-{{ Session::get('alert') }} fade in" role="alert" style="width: 100%">
 					<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
-					{{ Session::get('message') }}
+					{!! Session::get('message') !!}
 				</div>
 		    </div>
 		@endif
