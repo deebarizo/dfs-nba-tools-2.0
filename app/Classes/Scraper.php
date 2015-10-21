@@ -113,15 +113,15 @@ class Scraper {
 				       	'position' => $csvData[1],
 				       	'name' => $csvData[2].' '.$csvData[3],
 				       	'salary' => $csvData[6],
-				       	'team_abbr_fd' => $csvData[8],
-				       	'opp_team_abbr_fd' => $csvData[9]
+				       	'abbr_fd' => $csvData[8],
+				       	'opp_abbr_fd' => $csvData[9]
 				    );
 
 				    $player[$row]['name'] = fd_name_fix($player[$row]['name']);
 
 				    $homeTeamAbbrFd = preg_replace("/(\S+)(@)(\S+)/", "$3", $csvData[7]);
 
-				    if ($player[$row]['team_abbr_fd'] == $homeTeamAbbrFd) {
+				    if ($player[$row]['abbr_fd'] == $homeTeamAbbrFd) {
 				    	$player[$row]['home_game'] = 1;				    	
 				    } else {
 				    	$player[$row]['home_game'] = 0;	

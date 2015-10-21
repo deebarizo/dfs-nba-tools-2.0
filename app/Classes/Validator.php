@@ -57,15 +57,25 @@ class Validator {
 
 			while (($csvData = fgetcsv($handle, 5000, ',')) !== false) {
 				if ($row != 0) {
-				    $player[$row]['name'] = $csvData[2].' '.$csvData[3];
+				    $player[$row] = array(
+				       	'name' => $csvData[2].' '.$csvData[3],
+				       	'abbr_fd' => $csvData[8],
+				       	'opp_abbr_fd' => $csvData[9]
+				    );
 
 				    $player[$row]['name'] = fd_name_fix($player[$row]['name']);
 
 				    $playerExists = Player::where('name', $player[$row]['name'])->count();
 
 				    if (!$playerExists) {
-						return 'The player name, <strong>'.$player[$row]['name'].', </strong> does not exist in the database. You can add him <a target="_blank" href="http://dfstools.dev:8000/admin/nba/add_player">here</a>.'; 
+						return 'The player name, <strong>'.$player[$row]['name'].'</strong>, does not exist in the database. You can add him <a target="_blank" href="http://dfstools.dev:8000/admin/nba/add_player">here</a>.'; 
 				    } 
+
+				    $teamExists = Team::where('abbr_fd', $player[$row]['abbr_fd'])->count();
+
+				    if (!$teamExists) {
+						return 'The team FD abbreviation, <strong>'.$player[$row]['abbr_fd'].'</strong>, does not exist in the database.'; 
+				    }				    
 				}
 
 				$row++;
