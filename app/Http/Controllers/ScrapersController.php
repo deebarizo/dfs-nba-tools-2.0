@@ -402,6 +402,7 @@ class ScrapersController {
 		}
 	}
 
+
 	/****************************************************************************************
 	DK MLB SALARIES
 	****************************************************************************************/
@@ -469,6 +470,39 @@ class ScrapersController {
 		Session::flash('alert', 'info');
 
 		return redirect('scrapers/fg_mlb_box_score_lines')->with('message', $message);	 
+	}
+
+
+	/****************************************************************************************
+	DK MLB CONTESTS
+	****************************************************************************************/
+
+	public function dkMlbContests(Request $request) {
+		$date = $request->input('date');
+
+		$contestName = $request->input('contest');
+		$entryFee = $request->input('entry_fee');
+		$timePeriod = $request->input('time_period');
+		
+		$validator = new Validator;
+		$message = $validator->validateDkMlbContest($date, $contestName, $entryFee, $timePeriod);
+
+		if ($message != 'Valid') {
+			Session::flash('alert', 'warning');
+
+			return redirect('scrapers/dk_mlb_contests')->with('message', $message);	 
+		}
+
+		$scraper = new Scraper;
+
+		$csvFile = $scraper->uploadContestCsvFile($request, $date, $timePeriod, 'DK', 'MLB');
+
+		$scraper->insertContest($date, $contestName, $entryFee, $timePeriod, $csvFile, 'DK', 'MLB');
+
+		$message = 'Success!';
+		Session::flash('alert', 'info');
+
+		return redirect('scrapers/dk_mlb_contests')->with('message', $message);	 
 	}
 
 }

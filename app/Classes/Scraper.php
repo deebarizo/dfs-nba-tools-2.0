@@ -180,6 +180,22 @@ class Scraper {
 	MLB (CONTEST)
 	****************************************************************************************/
 
+	public function uploadContestCsvFile($request, $date, $timePeriod, $site, $sport) {
+		$csvName = $request->file('csv')->getClientOriginalName();
+		$contestId = preg_replace('/(\D*)(\d+)(.csv)/', '$2', $csvName);
+
+		$timePeriodInUrl = strtolower($timePeriod);
+		$timePeriodInUrl = preg_replace('/\s/', '-', $timePeriodInUrl);
+
+		$csvDirectory = 'files/'.strtolower($site).'/'.strtolower($sport).'/'.$timePeriodInUrl.'/';
+		$csvName = $date.'-'.$contestId.'.csv';
+		$csvFile = $csvDirectory . $csvName;
+ 
+		Input::file('csv')->move($csvDirectory, $csvName);
+
+		return $csvFile;
+	}
+
 	public function insertContest($date, $contestName, $entryFee, $timePeriod, $csvFile, $site, $sport) {
 		// Contest Metadata
 
@@ -304,22 +320,6 @@ class Scraper {
 
 		echo 'There was no match for '.$playerName.' in the player pool.';
 		exit();
-	}
-
-	public function uploadContestCsvFile($request, $date, $timePeriod, $site, $sport) {
-		$csvName = $request->file('csv')->getClientOriginalName();
-		$contestId = preg_replace('/(\D*)(\d+)(.csv)/', '$2', $csvName);
-
-		$timePeriodInUrl = strtolower($timePeriod);
-		$timePeriodInUrl = preg_replace('/\s/', '-', $timePeriodInUrl);
-
-		$csvDirectory = 'files/'.strtolower($site).'/'.strtolower($sport).'/'.$timePeriodInUrl.'/';
-		$csvName = $date.'-'.$contestId.'.csv';
-		$csvFile = $csvDirectory . $csvName;
- 
-		Input::file('csv')->move($csvDirectory, $csvName);
-
-		return $csvFile;
 	}
 
 
