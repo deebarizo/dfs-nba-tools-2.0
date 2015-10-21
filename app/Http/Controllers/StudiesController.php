@@ -7,8 +7,7 @@ use App\Models\Team;
 use App\Models\Game;
 use App\Models\BoxScoreLine;
 
-use App\Classes\StatBuilder;
-use App\Classes\ContestBuilder;
+use App\Classes\StudiesBuilder;
 
 use Illuminate\Support\Facades\DB;
 
@@ -34,9 +33,9 @@ class StudiesController {
 		$fppgMax = 200;
 		$absoluteSpread = '';
 
-		$statBuilder = new StatBuilder;
+		$studiesBuilder = new studiesBuilder;
 
-		$seasons = $statBuilder->getSpreadsAndPlayerFptsErrorBySeason($this->seasonStartYear['earliest'], $this->seasonStartYear['latest'], $mpgMin, $fppgMax, $fppgMin, $absoluteSpread);
+		$seasons = $studiesBuilder->getSpreadsAndPlayerFptsErrorBySeason($this->seasonStartYear['earliest'], $this->seasonStartYear['latest'], $mpgMin, $fppgMax, $fppgMin, $absoluteSpread);
 
 		$numOfBoxScoreLines = 0;
 		$count = 0;
@@ -95,15 +94,15 @@ class StudiesController {
 	****************************************************************************************/	
 
 	public function correlationSpreadsAndPlayerFptsError($mpgMin, $fppgMin, $fppgMax, $absoluteSpread) {
-		$statBuilder = new StatBuilder;
+		$studiesBuilder = new studiesBuilder;
 
-		$xMin = $statBuilder->getXMinBasedOnAbsoluteSpread($absoluteSpread);
+		$xMin = $studiesBuilder->getXMinBasedOnAbsoluteSpread($absoluteSpread);
 		
 		if ($absoluteSpread == 'NOABS') {
             $absoluteSpread = '';
         }
 
-        $seasons = $statBuilder->getSpreadsAndPlayerFptsErrorBySeason($this->seasonStartYear['earliest'], $this->seasonStartYear['latest'], $mpgMin, $fppgMax, $fppgMin, $absoluteSpread);
+        $seasons = $studiesBuilder->getSpreadsAndPlayerFptsErrorBySeason($this->seasonStartYear['earliest'], $this->seasonStartYear['latest'], $mpgMin, $fppgMax, $fppgMin, $absoluteSpread);
 
 		# ddAll($seasons[0]['box_score_lines']);
 
