@@ -42,15 +42,13 @@ class DailyController {
         ****************************************************************************************/
 
         if ($site == 'fd' && $sport == 'nba') {
-            $seasonId = 11;
-
             $teams = Team::all();
 
             $statBuilder = new StatBuilder;
 
             $players = $statBuilder->getPlayersInPlayerPool($site, $sport, $timePeriod, $date);
 
-            # ddAll($players);
+            ddAll($players);
 
             $timePeriod = $statBuilder->getTimePeriodOfPlayerPool($players);
 
@@ -62,6 +60,8 @@ class DailyController {
 
             $client = new Client;
             $vegasScores = scrapeForOdds($client, $date);
+
+            $seasonId = 11;
 
             if ($vegasScores != 'No lines yet.') {
                 $players = $statBuilder->addVegasInfoToPlayers($players, $vegasScores);

@@ -33,320 +33,6 @@ use Illuminate\Support\Facades\Session;
 class StatBuilder {
 
     /****************************************************************************************
-    PLAYERS (MLB)
-    ****************************************************************************************/
-
-    public function getMlbPlayerStats($playerId) {
-        $playerType = $this->getMlbPlayerType($playerId);
-
-        if ($playerType == 'hitter') {
-            $scraper = new Scraper;
-
-            $dkName = MlbPlayer::where('id', $playerId)->pluck('name');
-            $batName = changeDkNameToBatName($dkName, $playerType);
-        }
-
-        $seasons = [
-            [
-                'id' => 11,
-                'year' => 2015
-            ]
-        ];
-
-        $teams = MlbTeam::all();
-
-        foreach ($seasons as &$season) {
-            $boxScoreLines = $this->getMlbBoxScoreLines($playerId, $playerType, $season['id']);
-
-            $gameLines = $this->getMlbGameLines($playerId, $season['id']);
-            $boxScoreLines = $this->addMlbGameLines($boxScoreLines, $gameLines);
-
-            $boxScoreLines = $this->addMlbTeams($boxScoreLines, $teams);
-
-            $boxScoreLines = $this->addMlbScoreColumns($boxScoreLines);
-            
-            $salaries = $this->getMlbSalaries($playerId, $season['year']);
-            $boxScoreLines = $this->addMlbSalaries($boxScoreLines, $salaries);
-
-            $boxScoreLines = $this->addMlbContests($playerId, $season['year'], $boxScoreLines);
-
-            if ($playerType == 'hitter') {
-                $boxScoreLines = $this->addBatDetails($batName, $boxScoreLines, $scraper);
-            }
-
-            foreach ($boxScoreLines as $key => $boxScoreLine) {
-                if (isset($boxScoreLine->pa) && $boxScoreLine->pa == 0) {
-                    unset($boxScoreLines[$key]);
-
-                    continue;
-                }
-
-                if (isset($boxScoreLine->ip) && $boxScoreLine->ip == 0) {
-                    unset($boxScoreLines[$key]);
-                }
-            }
-
-            $season['box_score_lines'] = $boxScoreLines;
-        }
-        unset($season);
-
-        # ddAll($seasons);        
-
-        return array($seasons, $playerType);
-    }
-
-    private function addBatDetails($batName, $boxScoreLines, $scraper) {
-        foreach ($boxScoreLines as $boxScoreLine) {
-            $boxScoreLine = $scraper->addBatDetail($batName, $boxScoreLine);
-        }
-
-        return $boxScoreLines;
-    }
-
-    private function addMlbContests($playerId, $seasonYear, $boxScoreLines) {
-        $lineupCounts['all'] = DB::table('dk_mlb_contest_lineups')
-                                    ->select(DB::raw('dk_mlb_contest_id, date, name, entry_fee, time_period, count(*) as num_of_lineups'))
-                                    ->join('dk_mlb_contests', 'dk_mlb_contests.id', '=', 'dk_mlb_contest_lineups.dk_mlb_contest_id')
-                                    ->groupBy('dk_mlb_contest_id')
-                                    ->orderBy('date', 'desc')
-                                    ->get();
-
-        $lineupCounts['with_player'] = DB::table('dk_mlb_contest_lineups')
-                                        ->select(DB::raw('dk_mlb_contest_id, date, name, entry_fee, time_period, count(*) as num_of_lineups'))
-                                        ->join('dk_mlb_contests', 'dk_mlb_contests.id', '=', 'dk_mlb_contest_lineups.dk_mlb_contest_id')
-                                        ->join('dk_mlb_contest_lineup_players', 'dk_mlb_contest_lineup_players.dk_mlb_contest_lineup_id', '=', 'dk_mlb_contest_lineups.id')
-                                        ->where('mlb_player_id', $playerId)
-                                        ->where('date', 'LIKE', '%'.$seasonYear.'%')
-                                        ->groupBy('dk_mlb_contest_id')
-                                        ->orderBy('date', 'desc')
-                                        ->get();
-
-        # ddAll($lineupCounts);
-
-        foreach ($boxScoreLines as $boxScoreLine) {
-            list($boxScoreLine->ownership_column_5du, 
-                 $boxScoreLine->ownership_column_3gpp) = $this->addMlbContest($boxScoreLine, $lineupCounts);
-        }
-
-        return $boxScoreLines;
-    }
-
-    private function addMlbContest($boxScoreLine, $lineupsCounts) {
-        if ($boxScoreLine->salary == '-') {
-            return array('-', '-');
-        }
-
-        $types = ['all', 'with_player'];
-
-        foreach ($types as $type) {
-            foreach ($lineupsCounts[$type] as $lineupCount) {
-                if ($boxScoreLine->date == $lineupCount->date && stristr($lineupCount->name, 'double up') !== FALSE) {
-                    $contestId['5du'][$type] = $lineupCount->dk_mlb_contest_id;
-                    $contestTimePeriodUrl['5du'][$type] = ucWordsToUrl($lineupCount->time_period);
-                    $numOfLineups['5du'][$type] = $lineupCount->num_of_lineups;
-                }
-
-                if ($boxScoreLine->date == $lineupCount->date && stristr($lineupCount->name, 'double up') === FALSE) {
-                    $contestId['3gpp'][$type] = $lineupCount->dk_mlb_contest_id;
-                    $contestTimePeriodUrl['3gpp'][$type] = ucWordsToUrl($lineupCount->time_period);
-                    $numOfLineups['3gpp'][$type] = $lineupCount->num_of_lineups;
-                }
-
-                if (isset($numOfLineups['5du'][$type]) && isset($numOfLineups['3gpp'][$type])) {
-                    break;
-                } 
-            }
-        }
-
-        $types = ['5du', '3gpp'];
-
-        foreach ($types as $type) {
-            if (!isset($numOfLineups[$type])) {
-                $ownershipColumn[$type] = '-';
-            } else {
-                if (!isset($numOfLineups[$type]['with_player'])) {
-                    $numOfLineups[$type]['with_player'] = 0;
-                }
-
-                $dailyLink = 'http://dfstools.dev:8000/daily/dk/mlb/'.$contestTimePeriodUrl[$type]['all'].'/'.$boxScoreLine->date.'/'.$contestId[$type]['all'];
-                $ownership = numFormat($numOfLineups[$type]['with_player'] / $numOfLineups[$type]['all'] * 100, 1);
-
-                $ownershipColumn[$type] = '<a target="_blank" href="'.$dailyLink.'">'.$ownership.'</a>';
-            }
-        }
-
-        return array($ownershipColumn['5du'], $ownershipColumn['3gpp']);
-    }
-
-    private function addMlbSalaries($boxScoreLines, $salaries) {
-        foreach ($boxScoreLines as $key => $boxScoreLine) {
-            list($boxScoreLine->salary, $boxScoreLine->avr) = $this->addMlbSalary($boxScoreLine, $salaries);
-        }
-
-        return $boxScoreLines;
-    }
-
-    private function addMlbSalary($boxScoreLine, $salaries) {
-        foreach ($salaries as $salary) {
-            if ($salary->date == $boxScoreLine->date) {
-                $avr = numFormat($boxScoreLine->fpts / ($salary->salary / 1000), 2);
-
-                return array($salary->salary, $avr);
-            }
-        }
-
-        return array('-', '-');
-    }
-
-    private function getMlbSalaries($playerId, $seasonYear) {
-        return DB::table('dk_mlb_players')
-                    ->select('date', 'salary')
-                    ->join('player_pools', 'player_pools.id', '=', 'dk_mlb_players.player_pool_id')
-                    ->where('mlb_player_id', $playerId)
-                    ->where('date', 'LIKE', '%'.$seasonYear.'%')
-                    ->get();
-    }
-
-    private function addMlbScoreColumns($boxScoreLines) {
-        foreach ($boxScoreLines as $key => $boxScoreLine) {
-            $boxScoreLine->score_column = $this->addMlbScoreColumn($boxScoreLine);
-        }
-
-        return $boxScoreLines;
-    }
-
-    private function addMlbScoreColumn($boxScoreLine) {
-        $gameLink = '<a target="_blank" href="'.$boxScoreLine->link_fg.'">'.$boxScoreLine->score.'-'.$boxScoreLine->opp_score.'</a>';
-
-        if ($boxScoreLine->score > $boxScoreLine->opp_score) {
-            return '<span style="color: green">W</span> '.$gameLink;
-        }
-
-        if ($boxScoreLine->score < $boxScoreLine->opp_score) {
-            return '<span style="color: red">L</span> '.$gameLink;
-        }
-
-        return $gameLink;
-    }
-
-    private function addMlbTeams($boxScoreLines, $teams) {
-        foreach ($boxScoreLines as $key => $boxScoreLine) {
-            $boxScoreLine = $this->addMlbTeam($boxScoreLine, $teams);
-        }
-
-        return $boxScoreLines;
-    }
-
-    private function addMlbTeam($boxScoreLine, $teams) {
-        foreach ($teams as $team) {
-            if ($team->id == $boxScoreLine->mlb_team_id) {
-                $boxScoreLine->abbr_dk = $team->abbr_dk;
-            }
-
-            if ($team->id == $boxScoreLine->opp_mlb_team_id) {
-                $boxScoreLine->opp_abbr_dk = $team->abbr_dk;
-
-                if ($boxScoreLine->location == 'road') {
-                    $boxScoreLine->opp_abbr_dk = '@'.$boxScoreLine->opp_abbr_dk;
-                }
-            }
-
-            if (isset($boxScoreLine->abbr_dk) && isset($boxScoreLine->opp_abbr_dk)) {
-                return $boxScoreLine;
-            }
-        }
-    }
-
-    private function addMlbGameLines($boxScoreLines, $gameLines) {
-        foreach ($boxScoreLines as $boxScoreLine) {
-            $boxScoreLine = $this->addMlbGameLine($boxScoreLine, $gameLines);
-        }
-        
-        return $boxScoreLines;
-    }
-
-    private function addMlbGameLine($boxScoreLine, $gameLines) {
-        foreach ($gameLines as $gameLine) {
-            if ($boxScoreLine->mlb_game_id == $gameLine->mlb_game_id && $boxScoreLine->mlb_team_id == $gameLine->mlb_team_id) {
-                $boxScoreLine->location = ($gameLine->home == 1 ? 'home' : 'road');
-                $boxScoreLine->score = $gameLine->score;
-            }
-
-            if ($boxScoreLine->mlb_game_id == $gameLine->mlb_game_id && $boxScoreLine->mlb_team_id != $gameLine->mlb_team_id) {
-                $boxScoreLine->opp_score = $gameLine->score;
-            }
-
-            if (isset($boxScoreLine->location) && isset($boxScoreLine->score) && isset($boxScoreLine->opp_score)) {
-                return $boxScoreLine;
-            }
-        } 
-    }
-
-    private function getMlbGameLines($playerId, $seasonId) {
-        return DB::table('mlb_players')
-                    ->select(DB::raw('mlb_game_lines.mlb_game_id,
-                            home, 
-                            road,
-                            mlb_game_lines.mlb_team_id,
-                            score'))
-                    ->join('mlb_box_score_lines', 'mlb_box_score_lines.mlb_player_id', '=', 'mlb_players.id')
-                    ->join('mlb_games', 'mlb_games.id', '=', 'mlb_box_score_lines.mlb_game_id')
-                    ->join('mlb_game_lines', 'mlb_game_lines.mlb_game_id', '=', 'mlb_games.id')
-                    ->where('mlb_players.id', $playerId)
-                    ->where('season_id', $seasonId)
-                    ->orderBy('mlb_games.date', 'desc')
-                    ->get();
-    }
-
-    private function getMlbBoxScoreLines($playerId, $playerType, $seasonId) {
-        if ($playerType == 'pitcher') {
-            return DB::table('mlb_players')
-                        ->select(DB::raw('mlb_games.date,
-                                mlb_box_score_lines.mlb_game_id,
-                                mlb_box_score_lines.mlb_team_id,
-                                mlb_box_score_lines.opp_mlb_team_id,
-                                ip, so, win, er, runs_against, hits_against, bb_against,
-                                ibb_against, hbp_against, cg, cg_shutout, no_hitter, fpts, 
-                                link_fg'))
-                        ->join('mlb_box_score_lines', 'mlb_box_score_lines.mlb_player_id', '=', 'mlb_players.id')
-                        ->join('mlb_games', 'mlb_games.id', '=', 'mlb_box_score_lines.mlb_game_id')
-                        ->where('mlb_players.id', $playerId)
-                        ->where('season_id', $seasonId)
-                        ->orderBy('mlb_games.date', 'desc')
-                        ->get();
-        }
-
-        return DB::table('mlb_players')
-                    ->select(DB::raw('mlb_games.date,
-                            mlb_box_score_lines.mlb_game_id,
-                            mlb_box_score_lines.mlb_team_id,
-                            mlb_box_score_lines.opp_mlb_team_id,
-                            pa, singles, doubles, triples, hr, rbi, runs, bb, ibb, hbp, sf, sh, gdp, sb, cs, fpts, 
-                            link_fg'))
-                    ->join('mlb_box_score_lines', 'mlb_box_score_lines.mlb_player_id', '=', 'mlb_players.id')
-                    ->join('mlb_games', 'mlb_games.id', '=', 'mlb_box_score_lines.mlb_game_id')
-                    ->where('mlb_players.id', $playerId)
-                    ->where('season_id', $seasonId)
-                    ->orderBy('mlb_games.date', 'desc')
-                    ->get();
-    }
-
-    private function getMlbPlayerType($playerId) {
-        $position = DB::table('mlb_players')
-                        ->join('dk_mlb_players', 'dk_mlb_players.mlb_player_id', '=', 'mlb_players.id')
-                        ->where('mlb_players.id', $playerId)
-                        ->orderBy('dk_mlb_players.id', 'desc')
-                        ->pluck('position');
-
-        if ($position == 'SP' || $position == 'RP') {
-            return 'pitcher';
-        } else {
-            return 'hitter';
-        }
-    }
-
-
-    /****************************************************************************************
     PLAYERS (NBA)
     ****************************************************************************************/
 
@@ -557,257 +243,6 @@ class StatBuilder {
         # ddAll($boxScoreLines);  
         
         return array($boxScoreLines, $overviews, $playerInfo, $player, $name, $previousFdFilters, $fptsProfile, $endYears);
-    }
-
-
-
-    /****************************************************************************************
-    DAILY DK MLB
-    ****************************************************************************************/
-
-    public function getPlayersForDkMlbDaily($timePeriod, $date, $contestId) {
-        $players = DB::table('player_pools')
-                     ->select('dk_mlb_players.id as dk_mlb_player_id', 'bat_fpts', 'date', 'buy_in', 'player_pool_id', 'mlb_player_id', 'target_percentage', 'mlb_team_id', 'position', 'salary', 'name', 'abbr_dk')
-                     ->join('dk_mlb_players', 'dk_mlb_players.player_pool_id', '=', 'player_pools.id')
-                     ->join('mlb_players', 'dk_mlb_players.mlb_player_id', '=', 'mlb_players.id')
-                     ->join('mlb_teams', 'mlb_teams.id', '=', 'dk_mlb_players.mlb_team_id')
-                     ->where('player_pools.time_period', $timePeriod)
-                     ->where('player_pools.date', $date)
-                     ->where('player_pools.sport', 'MLB')
-                     ->where('player_pools.site', 'DK')
-                     ->get();
-
-        $boxScoreLines = DB::table('mlb_games')
-                            ->select('*')
-                            ->join('mlb_box_score_lines', 'mlb_box_score_lines.mlb_game_id', '=', 'mlb_games.id')
-                            ->where('mlb_games.date', $date)
-                            ->where(function($query) {
-                                $query->where('link_fg', 'LIKE', '%dh=0%')
-                                      ->orWhere('link_fg', 'LIKE', '%dh=2%');
-                            })
-                            ->get();
-
-        if (!empty($boxScoreLines)) {
-            foreach ($players as $player) {
-                $player->are_there_box_score_lines = 1;
-
-                if ($player->position == 'SP' || $player->position == 'RP') {
-                    $player->pa_or_ip = 0.0;
-                } else {
-                    $player->pa_or_ip = 0;
-                }
-
-                $player->fpts = '0.00';
-                $player->avr = '0.00';
-                $player->link_fg = '#';
-
-                foreach ($boxScoreLines as $boxScoreLine) {
-                    if ($boxScoreLine->mlb_player_id == $player->mlb_player_id) {
-                        $player->link_fg = $boxScoreLine->link_fg;
-
-                        $player->pa = $boxScoreLine->pa;
-                        $player->singles = $boxScoreLine->singles;
-                        $player->doubles = $boxScoreLine->doubles;
-                        $player->triples = $boxScoreLine->triples;
-                        $player->hr = $boxScoreLine->hr;
-                        $player->rbi = $boxScoreLine->rbi;
-                        $player->runs = $boxScoreLine->runs;
-                        $player->bb = $boxScoreLine->bb;
-                        $player->ibb = $boxScoreLine->ibb;
-                        $player->hbp = $boxScoreLine->hbp;
-                        $player->sf = $boxScoreLine->sf;
-                        $player->sh = $boxScoreLine->sh;
-                        $player->gdp = $boxScoreLine->gdp;
-                        $player->sb = $boxScoreLine->sb;
-                        $player->cs = $boxScoreLine->cs;
-
-                        $player->ip = $boxScoreLine->ip;
-                        $player->so = $boxScoreLine->so;
-                        $player->win = $boxScoreLine->win;
-                        $player->er = $boxScoreLine->er;
-                        $player->runs_against = $boxScoreLine->runs_against;
-                        $player->hits_against = $boxScoreLine->hits_against;
-                        $player->bb_against = $boxScoreLine->bb_against;
-                        $player->ibb_against = $boxScoreLine->ibb_against;
-                        $player->hbp_against = $boxScoreLine->hbp_against;
-                        $player->cg = $boxScoreLine->cg;
-                        $player->cg_shutout = $boxScoreLine->cg_shutout;
-                        $player->no_hitter = $boxScoreLine->no_hitter;
-                        
-                        $player->fpts = $boxScoreLine->fpts;
-
-                        $player->avr = numFormat($player->fpts / ($player->salary / 1000));
-
-                        if ($player->position == 'SP' || $player->position == 'RP') {
-                            $player->pa_or_ip = $player->ip;
-                        } else {
-                            $player->pa_or_ip = $player->pa;
-                        }
-
-                        break;
-                    }
-                }
-            }
-        }
-
-        # dd($players);
-
-        if (is_numeric($contestId)) {
-            $numOfContestLineups = DB::table('dk_mlb_contests')
-                                      ->select('*')
-                                      ->join('dk_mlb_contest_lineups', 'dk_mlb_contest_lineups.dk_mlb_contest_id', '=', 'dk_mlb_contests.id')
-                                      ->where('dk_mlb_contests.id', $contestId)
-                                      ->count();
-
-            if ($numOfContestLineups == 0) {
-                echo 'Error: 0 contest lineups were found.';
-                exit();
-            }
-
-            $contestDkMlbPlayers = DB::table('dk_mlb_contests')
-                                      ->select(DB::raw('dk_mlb_player_id, format(count(dk_mlb_player_id) / '.$numOfContestLineups.' * 100, 1) as ownership'))
-                                      ->join('dk_mlb_contest_lineups', 'dk_mlb_contest_lineups.dk_mlb_contest_id', '=', 'dk_mlb_contests.id')
-                                      ->join('dk_mlb_contest_lineup_players', 'dk_mlb_contest_lineup_players.dk_mlb_contest_lineup_id', '=', 'dk_mlb_contest_lineups.id')
-                                      ->where('dk_mlb_contests.id', $contestId)
-                                      ->groupBy('dk_mlb_player_id')
-                                      ->get();
-
-            foreach ($players as $player) {
-                foreach ($contestDkMlbPlayers as $contestDkMlbPlayer) {
-                    if ($contestDkMlbPlayer->dk_mlb_player_id == $player->dk_mlb_player_id) {
-                        $player->ownership = $contestDkMlbPlayer->ownership;
-
-                        break;
-                    }
-                }
-
-                if (!isset($player->ownership)) {
-                    $player->ownership = '0.0';
-                }
-            }
-
-            $contestMlbPlayers = DB::table('dk_mlb_contests')
-                                      ->select(DB::raw('mlb_player_id, format(count(mlb_player_id) / '.$numOfContestLineups.' * 100, 1) as total_ownership'))
-                                      ->join('dk_mlb_contest_lineups', 'dk_mlb_contest_lineups.dk_mlb_contest_id', '=', 'dk_mlb_contests.id')
-                                      ->join('dk_mlb_contest_lineup_players', 'dk_mlb_contest_lineup_players.dk_mlb_contest_lineup_id', '=', 'dk_mlb_contest_lineups.id')
-                                      ->where('dk_mlb_contests.id', $contestId)
-                                      ->groupBy('mlb_player_id')
-                                      ->get();
-
-            foreach ($players as $player) {
-                foreach ($contestMlbPlayers as $contestMlbPlayer) {
-                    if ($contestMlbPlayer->mlb_player_id == $player->mlb_player_id) {
-                        $player->total_ownership = $contestMlbPlayer->total_ownership;
-
-                        break;
-                    }
-                }
-
-                if (!isset($player->total_ownership)) {
-                    $player->total_ownership = '0.0';
-                }
-            }
-
-            foreach ($players as $player) {
-                $player->other_ownership = numFormat($player->total_ownership - $player->ownership, 1);
-            }
-        }
-
-        # ddAll($players);
-
-        foreach ($players as $player) {
-            if ($player->target_percentage > 0) {
-                $player->css_lock_class = 'daily-lock-active';
-            } else {
-                $player->css_lock_class = '';
-            }
-        } unset($player);
-
-        $playerTypes = ['hitters', 'pitchers'];
-
-        $scraper = new Scraper;
-
-        foreach ($playerTypes as $playerType) {
-            $batProjections[$playerType] = $scraper->parseBatCsvFile($playerType, $date);
-        }
-
-        # ddAll($batProjections);
-
-        if ($batProjections['hitters'] == 'No csv files') {
-            foreach ($players as &$player) {
-                $player->bat_vr = 0;
-                $player->bat_fpts = 0;
-            } 
-        } else {
-            foreach ($players as &$player) {
-                list($player->bat_vr, $player->bat_fpts, $player->lineup, $player->platoon, $player->opp) = $this->getBatProjections($batProjections, $player, $date);
-            } 
-            unset($player);            
-        }
-
-        # ddAll($players);
-
-        return $players;
-    }
-
-    private function getBatProjections($batProjections, $player, $date) {
-        if ($player->position != 'SP' && $player->position != 'RP') {
-            $playerType = 'hitters';
-        } else {
-            $playerType = 'pitchers';
-        }
-
-        $name = changeDkNameToBatName($player->name, $playerType);
-
-        // Hitters
-
-        if ($player->position != 'SP' && $player->position != 'RP') {
-            foreach ($batProjections['hitters'] as $batProjection) {
-                if ($batProjection['name'] == $name) {
-                    return $this->getBatProjection($batProjection, $player);
-                }
-            }  
-
-            return array(0, 0, 0, 0, 0);
-        }
-
-        // Pitchers
-
-        foreach ($batProjections['pitchers'] as $batProjection) {
-            if ($batProjection['name'] == $name) {
-                return $this->getBatProjection($batProjection, $player);
-            }
-        }  
-
-        return array(0, 0, 0, 0, 0);
-    }
-
-    private function getBatProjection($batProjection, $player) {
-        $batFpts = $player->bat_fpts;
-        $batVr = numFormat($player->bat_fpts / ($player->salary / 1000), 2);
-
-        if ($batFpts == 0) {
-            return array(0, 0, 0, 0, 0);
-        }
-
-        return array($batVr, $batFpts, $batProjection['lineup'], $batProjection['platoon'], $batProjection['opp']);
-    }
-
-    public function getTeamsForDkMlbDaily($timePeriod, $date) {
-        $teams = DB::table('player_pools')
-                     ->select('abbr_dk')
-                     ->join('dk_mlb_players', 'dk_mlb_players.player_pool_id', '=', 'player_pools.id')
-                     ->join('mlb_players', 'dk_mlb_players.mlb_player_id', '=', 'mlb_players.id')
-                     ->join('mlb_teams', 'mlb_teams.id', '=', 'dk_mlb_players.mlb_team_id')
-                     ->distinct()
-                     ->where('player_pools.time_period', $timePeriod)
-                     ->where('player_pools.date', $date)
-                     ->where('player_pools.sport', 'MLB')
-                     ->where('player_pools.site', 'DK')
-                     ->orderBy('abbr_dk')
-                     ->get();
-
-        return $teams;
     }
 
 
@@ -1540,6 +975,570 @@ class StatBuilder {
         }
 
         return $players;        
+    }
+
+
+    /****************************************************************************************
+    DAILY DK MLB
+    ****************************************************************************************/
+
+    public function getPlayersForDkMlbDaily($timePeriod, $date, $contestId) {
+        $players = DB::table('player_pools')
+                     ->select('dk_mlb_players.id as dk_mlb_player_id', 'bat_fpts', 'date', 'buy_in', 'player_pool_id', 'mlb_player_id', 'target_percentage', 'mlb_team_id', 'position', 'salary', 'name', 'abbr_dk')
+                     ->join('dk_mlb_players', 'dk_mlb_players.player_pool_id', '=', 'player_pools.id')
+                     ->join('mlb_players', 'dk_mlb_players.mlb_player_id', '=', 'mlb_players.id')
+                     ->join('mlb_teams', 'mlb_teams.id', '=', 'dk_mlb_players.mlb_team_id')
+                     ->where('player_pools.time_period', $timePeriod)
+                     ->where('player_pools.date', $date)
+                     ->where('player_pools.sport', 'MLB')
+                     ->where('player_pools.site', 'DK')
+                     ->get();
+
+        $boxScoreLines = DB::table('mlb_games')
+                            ->select('*')
+                            ->join('mlb_box_score_lines', 'mlb_box_score_lines.mlb_game_id', '=', 'mlb_games.id')
+                            ->where('mlb_games.date', $date)
+                            ->where(function($query) {
+                                $query->where('link_fg', 'LIKE', '%dh=0%')
+                                      ->orWhere('link_fg', 'LIKE', '%dh=2%');
+                            })
+                            ->get();
+
+        if (!empty($boxScoreLines)) {
+            foreach ($players as $player) {
+                $player->are_there_box_score_lines = 1;
+
+                if ($player->position == 'SP' || $player->position == 'RP') {
+                    $player->pa_or_ip = 0.0;
+                } else {
+                    $player->pa_or_ip = 0;
+                }
+
+                $player->fpts = '0.00';
+                $player->avr = '0.00';
+                $player->link_fg = '#';
+
+                foreach ($boxScoreLines as $boxScoreLine) {
+                    if ($boxScoreLine->mlb_player_id == $player->mlb_player_id) {
+                        $player->link_fg = $boxScoreLine->link_fg;
+
+                        $player->pa = $boxScoreLine->pa;
+                        $player->singles = $boxScoreLine->singles;
+                        $player->doubles = $boxScoreLine->doubles;
+                        $player->triples = $boxScoreLine->triples;
+                        $player->hr = $boxScoreLine->hr;
+                        $player->rbi = $boxScoreLine->rbi;
+                        $player->runs = $boxScoreLine->runs;
+                        $player->bb = $boxScoreLine->bb;
+                        $player->ibb = $boxScoreLine->ibb;
+                        $player->hbp = $boxScoreLine->hbp;
+                        $player->sf = $boxScoreLine->sf;
+                        $player->sh = $boxScoreLine->sh;
+                        $player->gdp = $boxScoreLine->gdp;
+                        $player->sb = $boxScoreLine->sb;
+                        $player->cs = $boxScoreLine->cs;
+
+                        $player->ip = $boxScoreLine->ip;
+                        $player->so = $boxScoreLine->so;
+                        $player->win = $boxScoreLine->win;
+                        $player->er = $boxScoreLine->er;
+                        $player->runs_against = $boxScoreLine->runs_against;
+                        $player->hits_against = $boxScoreLine->hits_against;
+                        $player->bb_against = $boxScoreLine->bb_against;
+                        $player->ibb_against = $boxScoreLine->ibb_against;
+                        $player->hbp_against = $boxScoreLine->hbp_against;
+                        $player->cg = $boxScoreLine->cg;
+                        $player->cg_shutout = $boxScoreLine->cg_shutout;
+                        $player->no_hitter = $boxScoreLine->no_hitter;
+                        
+                        $player->fpts = $boxScoreLine->fpts;
+
+                        $player->avr = numFormat($player->fpts / ($player->salary / 1000));
+
+                        if ($player->position == 'SP' || $player->position == 'RP') {
+                            $player->pa_or_ip = $player->ip;
+                        } else {
+                            $player->pa_or_ip = $player->pa;
+                        }
+
+                        break;
+                    }
+                }
+            }
+        }
+
+        # dd($players);
+
+        if (is_numeric($contestId)) {
+            $numOfContestLineups = DB::table('dk_mlb_contests')
+                                      ->select('*')
+                                      ->join('dk_mlb_contest_lineups', 'dk_mlb_contest_lineups.dk_mlb_contest_id', '=', 'dk_mlb_contests.id')
+                                      ->where('dk_mlb_contests.id', $contestId)
+                                      ->count();
+
+            if ($numOfContestLineups == 0) {
+                echo 'Error: 0 contest lineups were found.';
+                exit();
+            }
+
+            $contestDkMlbPlayers = DB::table('dk_mlb_contests')
+                                      ->select(DB::raw('dk_mlb_player_id, format(count(dk_mlb_player_id) / '.$numOfContestLineups.' * 100, 1) as ownership'))
+                                      ->join('dk_mlb_contest_lineups', 'dk_mlb_contest_lineups.dk_mlb_contest_id', '=', 'dk_mlb_contests.id')
+                                      ->join('dk_mlb_contest_lineup_players', 'dk_mlb_contest_lineup_players.dk_mlb_contest_lineup_id', '=', 'dk_mlb_contest_lineups.id')
+                                      ->where('dk_mlb_contests.id', $contestId)
+                                      ->groupBy('dk_mlb_player_id')
+                                      ->get();
+
+            foreach ($players as $player) {
+                foreach ($contestDkMlbPlayers as $contestDkMlbPlayer) {
+                    if ($contestDkMlbPlayer->dk_mlb_player_id == $player->dk_mlb_player_id) {
+                        $player->ownership = $contestDkMlbPlayer->ownership;
+
+                        break;
+                    }
+                }
+
+                if (!isset($player->ownership)) {
+                    $player->ownership = '0.0';
+                }
+            }
+
+            $contestMlbPlayers = DB::table('dk_mlb_contests')
+                                      ->select(DB::raw('mlb_player_id, format(count(mlb_player_id) / '.$numOfContestLineups.' * 100, 1) as total_ownership'))
+                                      ->join('dk_mlb_contest_lineups', 'dk_mlb_contest_lineups.dk_mlb_contest_id', '=', 'dk_mlb_contests.id')
+                                      ->join('dk_mlb_contest_lineup_players', 'dk_mlb_contest_lineup_players.dk_mlb_contest_lineup_id', '=', 'dk_mlb_contest_lineups.id')
+                                      ->where('dk_mlb_contests.id', $contestId)
+                                      ->groupBy('mlb_player_id')
+                                      ->get();
+
+            foreach ($players as $player) {
+                foreach ($contestMlbPlayers as $contestMlbPlayer) {
+                    if ($contestMlbPlayer->mlb_player_id == $player->mlb_player_id) {
+                        $player->total_ownership = $contestMlbPlayer->total_ownership;
+
+                        break;
+                    }
+                }
+
+                if (!isset($player->total_ownership)) {
+                    $player->total_ownership = '0.0';
+                }
+            }
+
+            foreach ($players as $player) {
+                $player->other_ownership = numFormat($player->total_ownership - $player->ownership, 1);
+            }
+        }
+
+        # ddAll($players);
+
+        foreach ($players as $player) {
+            if ($player->target_percentage > 0) {
+                $player->css_lock_class = 'daily-lock-active';
+            } else {
+                $player->css_lock_class = '';
+            }
+        } unset($player);
+
+        $playerTypes = ['hitters', 'pitchers'];
+
+        $scraper = new Scraper;
+
+        foreach ($playerTypes as $playerType) {
+            $batProjections[$playerType] = $scraper->parseBatCsvFile($playerType, $date);
+        }
+
+        # ddAll($batProjections);
+
+        if ($batProjections['hitters'] == 'No csv files') {
+            foreach ($players as &$player) {
+                $player->bat_vr = 0;
+                $player->bat_fpts = 0;
+            } 
+        } else {
+            foreach ($players as &$player) {
+                list($player->bat_vr, $player->bat_fpts, $player->lineup, $player->platoon, $player->opp) = $this->getBatProjections($batProjections, $player, $date);
+            } 
+            unset($player);            
+        }
+
+        # ddAll($players);
+
+        return $players;
+    }
+
+    private function getBatProjections($batProjections, $player, $date) {
+        if ($player->position != 'SP' && $player->position != 'RP') {
+            $playerType = 'hitters';
+        } else {
+            $playerType = 'pitchers';
+        }
+
+        $name = changeDkNameToBatName($player->name, $playerType);
+
+        // Hitters
+
+        if ($player->position != 'SP' && $player->position != 'RP') {
+            foreach ($batProjections['hitters'] as $batProjection) {
+                if ($batProjection['name'] == $name) {
+                    return $this->getBatProjection($batProjection, $player);
+                }
+            }  
+
+            return array(0, 0, 0, 0, 0);
+        }
+
+        // Pitchers
+
+        foreach ($batProjections['pitchers'] as $batProjection) {
+            if ($batProjection['name'] == $name) {
+                return $this->getBatProjection($batProjection, $player);
+            }
+        }  
+
+        return array(0, 0, 0, 0, 0);
+    }
+
+    private function getBatProjection($batProjection, $player) {
+        $batFpts = $player->bat_fpts;
+        $batVr = numFormat($player->bat_fpts / ($player->salary / 1000), 2);
+
+        if ($batFpts == 0) {
+            return array(0, 0, 0, 0, 0);
+        }
+
+        return array($batVr, $batFpts, $batProjection['lineup'], $batProjection['platoon'], $batProjection['opp']);
+    }
+
+    public function getTeamsForDkMlbDaily($timePeriod, $date) {
+        $teams = DB::table('player_pools')
+                     ->select('abbr_dk')
+                     ->join('dk_mlb_players', 'dk_mlb_players.player_pool_id', '=', 'player_pools.id')
+                     ->join('mlb_players', 'dk_mlb_players.mlb_player_id', '=', 'mlb_players.id')
+                     ->join('mlb_teams', 'mlb_teams.id', '=', 'dk_mlb_players.mlb_team_id')
+                     ->distinct()
+                     ->where('player_pools.time_period', $timePeriod)
+                     ->where('player_pools.date', $date)
+                     ->where('player_pools.sport', 'MLB')
+                     ->where('player_pools.site', 'DK')
+                     ->orderBy('abbr_dk')
+                     ->get();
+
+        return $teams;
+    }
+    
+
+    /****************************************************************************************
+    PLAYERS (MLB)
+    ****************************************************************************************/
+
+    public function getMlbPlayerStats($playerId) {
+        $playerType = $this->getMlbPlayerType($playerId);
+
+        if ($playerType == 'hitter') {
+            $scraper = new Scraper;
+
+            $dkName = MlbPlayer::where('id', $playerId)->pluck('name');
+            $batName = changeDkNameToBatName($dkName, $playerType);
+        }
+
+        $seasons = [
+            [
+                'id' => 11,
+                'year' => 2015
+            ]
+        ];
+
+        $teams = MlbTeam::all();
+
+        foreach ($seasons as &$season) {
+            $boxScoreLines = $this->getMlbBoxScoreLines($playerId, $playerType, $season['id']);
+
+            $gameLines = $this->getMlbGameLines($playerId, $season['id']);
+            $boxScoreLines = $this->addMlbGameLines($boxScoreLines, $gameLines);
+
+            $boxScoreLines = $this->addMlbTeams($boxScoreLines, $teams);
+
+            $boxScoreLines = $this->addMlbScoreColumns($boxScoreLines);
+            
+            $salaries = $this->getMlbSalaries($playerId, $season['year']);
+            $boxScoreLines = $this->addMlbSalaries($boxScoreLines, $salaries);
+
+            $boxScoreLines = $this->addMlbContests($playerId, $season['year'], $boxScoreLines);
+
+            if ($playerType == 'hitter') {
+                $boxScoreLines = $this->addBatDetails($batName, $boxScoreLines, $scraper);
+            }
+
+            foreach ($boxScoreLines as $key => $boxScoreLine) {
+                if (isset($boxScoreLine->pa) && $boxScoreLine->pa == 0) {
+                    unset($boxScoreLines[$key]);
+
+                    continue;
+                }
+
+                if (isset($boxScoreLine->ip) && $boxScoreLine->ip == 0) {
+                    unset($boxScoreLines[$key]);
+                }
+            }
+
+            $season['box_score_lines'] = $boxScoreLines;
+        }
+        unset($season);
+
+        # ddAll($seasons);        
+
+        return array($seasons, $playerType);
+    }
+
+    private function addBatDetails($batName, $boxScoreLines, $scraper) {
+        foreach ($boxScoreLines as $boxScoreLine) {
+            $boxScoreLine = $scraper->addBatDetail($batName, $boxScoreLine);
+        }
+
+        return $boxScoreLines;
+    }
+
+    private function addMlbContests($playerId, $seasonYear, $boxScoreLines) {
+        $lineupCounts['all'] = DB::table('dk_mlb_contest_lineups')
+                                    ->select(DB::raw('dk_mlb_contest_id, date, name, entry_fee, time_period, count(*) as num_of_lineups'))
+                                    ->join('dk_mlb_contests', 'dk_mlb_contests.id', '=', 'dk_mlb_contest_lineups.dk_mlb_contest_id')
+                                    ->groupBy('dk_mlb_contest_id')
+                                    ->orderBy('date', 'desc')
+                                    ->get();
+
+        $lineupCounts['with_player'] = DB::table('dk_mlb_contest_lineups')
+                                        ->select(DB::raw('dk_mlb_contest_id, date, name, entry_fee, time_period, count(*) as num_of_lineups'))
+                                        ->join('dk_mlb_contests', 'dk_mlb_contests.id', '=', 'dk_mlb_contest_lineups.dk_mlb_contest_id')
+                                        ->join('dk_mlb_contest_lineup_players', 'dk_mlb_contest_lineup_players.dk_mlb_contest_lineup_id', '=', 'dk_mlb_contest_lineups.id')
+                                        ->where('mlb_player_id', $playerId)
+                                        ->where('date', 'LIKE', '%'.$seasonYear.'%')
+                                        ->groupBy('dk_mlb_contest_id')
+                                        ->orderBy('date', 'desc')
+                                        ->get();
+
+        # ddAll($lineupCounts);
+
+        foreach ($boxScoreLines as $boxScoreLine) {
+            list($boxScoreLine->ownership_column_5du, 
+                 $boxScoreLine->ownership_column_3gpp) = $this->addMlbContest($boxScoreLine, $lineupCounts);
+        }
+
+        return $boxScoreLines;
+    }
+
+    private function addMlbContest($boxScoreLine, $lineupsCounts) {
+        if ($boxScoreLine->salary == '-') {
+            return array('-', '-');
+        }
+
+        $types = ['all', 'with_player'];
+
+        foreach ($types as $type) {
+            foreach ($lineupsCounts[$type] as $lineupCount) {
+                if ($boxScoreLine->date == $lineupCount->date && stristr($lineupCount->name, 'double up') !== FALSE) {
+                    $contestId['5du'][$type] = $lineupCount->dk_mlb_contest_id;
+                    $contestTimePeriodUrl['5du'][$type] = ucWordsToUrl($lineupCount->time_period);
+                    $numOfLineups['5du'][$type] = $lineupCount->num_of_lineups;
+                }
+
+                if ($boxScoreLine->date == $lineupCount->date && stristr($lineupCount->name, 'double up') === FALSE) {
+                    $contestId['3gpp'][$type] = $lineupCount->dk_mlb_contest_id;
+                    $contestTimePeriodUrl['3gpp'][$type] = ucWordsToUrl($lineupCount->time_period);
+                    $numOfLineups['3gpp'][$type] = $lineupCount->num_of_lineups;
+                }
+
+                if (isset($numOfLineups['5du'][$type]) && isset($numOfLineups['3gpp'][$type])) {
+                    break;
+                } 
+            }
+        }
+
+        $types = ['5du', '3gpp'];
+
+        foreach ($types as $type) {
+            if (!isset($numOfLineups[$type])) {
+                $ownershipColumn[$type] = '-';
+            } else {
+                if (!isset($numOfLineups[$type]['with_player'])) {
+                    $numOfLineups[$type]['with_player'] = 0;
+                }
+
+                $dailyLink = 'http://dfstools.dev:8000/daily/dk/mlb/'.$contestTimePeriodUrl[$type]['all'].'/'.$boxScoreLine->date.'/'.$contestId[$type]['all'];
+                $ownership = numFormat($numOfLineups[$type]['with_player'] / $numOfLineups[$type]['all'] * 100, 1);
+
+                $ownershipColumn[$type] = '<a target="_blank" href="'.$dailyLink.'">'.$ownership.'</a>';
+            }
+        }
+
+        return array($ownershipColumn['5du'], $ownershipColumn['3gpp']);
+    }
+
+    private function addMlbSalaries($boxScoreLines, $salaries) {
+        foreach ($boxScoreLines as $key => $boxScoreLine) {
+            list($boxScoreLine->salary, $boxScoreLine->avr) = $this->addMlbSalary($boxScoreLine, $salaries);
+        }
+
+        return $boxScoreLines;
+    }
+
+    private function addMlbSalary($boxScoreLine, $salaries) {
+        foreach ($salaries as $salary) {
+            if ($salary->date == $boxScoreLine->date) {
+                $avr = numFormat($boxScoreLine->fpts / ($salary->salary / 1000), 2);
+
+                return array($salary->salary, $avr);
+            }
+        }
+
+        return array('-', '-');
+    }
+
+    private function getMlbSalaries($playerId, $seasonYear) {
+        return DB::table('dk_mlb_players')
+                    ->select('date', 'salary')
+                    ->join('player_pools', 'player_pools.id', '=', 'dk_mlb_players.player_pool_id')
+                    ->where('mlb_player_id', $playerId)
+                    ->where('date', 'LIKE', '%'.$seasonYear.'%')
+                    ->get();
+    }
+
+    private function addMlbScoreColumns($boxScoreLines) {
+        foreach ($boxScoreLines as $key => $boxScoreLine) {
+            $boxScoreLine->score_column = $this->addMlbScoreColumn($boxScoreLine);
+        }
+
+        return $boxScoreLines;
+    }
+
+    private function addMlbScoreColumn($boxScoreLine) {
+        $gameLink = '<a target="_blank" href="'.$boxScoreLine->link_fg.'">'.$boxScoreLine->score.'-'.$boxScoreLine->opp_score.'</a>';
+
+        if ($boxScoreLine->score > $boxScoreLine->opp_score) {
+            return '<span style="color: green">W</span> '.$gameLink;
+        }
+
+        if ($boxScoreLine->score < $boxScoreLine->opp_score) {
+            return '<span style="color: red">L</span> '.$gameLink;
+        }
+
+        return $gameLink;
+    }
+
+    private function addMlbTeams($boxScoreLines, $teams) {
+        foreach ($boxScoreLines as $key => $boxScoreLine) {
+            $boxScoreLine = $this->addMlbTeam($boxScoreLine, $teams);
+        }
+
+        return $boxScoreLines;
+    }
+
+    private function addMlbTeam($boxScoreLine, $teams) {
+        foreach ($teams as $team) {
+            if ($team->id == $boxScoreLine->mlb_team_id) {
+                $boxScoreLine->abbr_dk = $team->abbr_dk;
+            }
+
+            if ($team->id == $boxScoreLine->opp_mlb_team_id) {
+                $boxScoreLine->opp_abbr_dk = $team->abbr_dk;
+
+                if ($boxScoreLine->location == 'road') {
+                    $boxScoreLine->opp_abbr_dk = '@'.$boxScoreLine->opp_abbr_dk;
+                }
+            }
+
+            if (isset($boxScoreLine->abbr_dk) && isset($boxScoreLine->opp_abbr_dk)) {
+                return $boxScoreLine;
+            }
+        }
+    }
+
+    private function addMlbGameLines($boxScoreLines, $gameLines) {
+        foreach ($boxScoreLines as $boxScoreLine) {
+            $boxScoreLine = $this->addMlbGameLine($boxScoreLine, $gameLines);
+        }
+        
+        return $boxScoreLines;
+    }
+
+    private function addMlbGameLine($boxScoreLine, $gameLines) {
+        foreach ($gameLines as $gameLine) {
+            if ($boxScoreLine->mlb_game_id == $gameLine->mlb_game_id && $boxScoreLine->mlb_team_id == $gameLine->mlb_team_id) {
+                $boxScoreLine->location = ($gameLine->home == 1 ? 'home' : 'road');
+                $boxScoreLine->score = $gameLine->score;
+            }
+
+            if ($boxScoreLine->mlb_game_id == $gameLine->mlb_game_id && $boxScoreLine->mlb_team_id != $gameLine->mlb_team_id) {
+                $boxScoreLine->opp_score = $gameLine->score;
+            }
+
+            if (isset($boxScoreLine->location) && isset($boxScoreLine->score) && isset($boxScoreLine->opp_score)) {
+                return $boxScoreLine;
+            }
+        } 
+    }
+
+    private function getMlbGameLines($playerId, $seasonId) {
+        return DB::table('mlb_players')
+                    ->select(DB::raw('mlb_game_lines.mlb_game_id,
+                            home, 
+                            road,
+                            mlb_game_lines.mlb_team_id,
+                            score'))
+                    ->join('mlb_box_score_lines', 'mlb_box_score_lines.mlb_player_id', '=', 'mlb_players.id')
+                    ->join('mlb_games', 'mlb_games.id', '=', 'mlb_box_score_lines.mlb_game_id')
+                    ->join('mlb_game_lines', 'mlb_game_lines.mlb_game_id', '=', 'mlb_games.id')
+                    ->where('mlb_players.id', $playerId)
+                    ->where('season_id', $seasonId)
+                    ->orderBy('mlb_games.date', 'desc')
+                    ->get();
+    }
+
+    private function getMlbBoxScoreLines($playerId, $playerType, $seasonId) {
+        if ($playerType == 'pitcher') {
+            return DB::table('mlb_players')
+                        ->select(DB::raw('mlb_games.date,
+                                mlb_box_score_lines.mlb_game_id,
+                                mlb_box_score_lines.mlb_team_id,
+                                mlb_box_score_lines.opp_mlb_team_id,
+                                ip, so, win, er, runs_against, hits_against, bb_against,
+                                ibb_against, hbp_against, cg, cg_shutout, no_hitter, fpts, 
+                                link_fg'))
+                        ->join('mlb_box_score_lines', 'mlb_box_score_lines.mlb_player_id', '=', 'mlb_players.id')
+                        ->join('mlb_games', 'mlb_games.id', '=', 'mlb_box_score_lines.mlb_game_id')
+                        ->where('mlb_players.id', $playerId)
+                        ->where('season_id', $seasonId)
+                        ->orderBy('mlb_games.date', 'desc')
+                        ->get();
+        }
+
+        return DB::table('mlb_players')
+                    ->select(DB::raw('mlb_games.date,
+                            mlb_box_score_lines.mlb_game_id,
+                            mlb_box_score_lines.mlb_team_id,
+                            mlb_box_score_lines.opp_mlb_team_id,
+                            pa, singles, doubles, triples, hr, rbi, runs, bb, ibb, hbp, sf, sh, gdp, sb, cs, fpts, 
+                            link_fg'))
+                    ->join('mlb_box_score_lines', 'mlb_box_score_lines.mlb_player_id', '=', 'mlb_players.id')
+                    ->join('mlb_games', 'mlb_games.id', '=', 'mlb_box_score_lines.mlb_game_id')
+                    ->where('mlb_players.id', $playerId)
+                    ->where('season_id', $seasonId)
+                    ->orderBy('mlb_games.date', 'desc')
+                    ->get();
+    }
+
+    private function getMlbPlayerType($playerId) {
+        $position = DB::table('mlb_players')
+                        ->join('dk_mlb_players', 'dk_mlb_players.mlb_player_id', '=', 'mlb_players.id')
+                        ->where('mlb_players.id', $playerId)
+                        ->orderBy('dk_mlb_players.id', 'desc')
+                        ->pluck('position');
+
+        if ($position == 'SP' || $position == 'RP') {
+            return 'pitcher';
+        } else {
+            return 'hitter';
+        }
     }
 
 }
