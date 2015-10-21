@@ -117,6 +117,8 @@ class Scraper {
 				       	'opp_team_abbr_fd' => $csvData[9]
 				    );
 
+				    $player[$row]['name'] = fd_name_fix($player[$row]['name']);
+
 				    $homeTeamAbbrFd = preg_replace("/(\S+)(@)(\S+)/", "$3", $csvData[7]);
 
 				    if ($player[$row]['team_abbr_fd'] == $homeTeamAbbrFd) {
@@ -125,102 +127,17 @@ class Scraper {
 				    	$player[$row]['home_game'] = 0;	
 				    }
 
-				    ddAll($player[$row]);
-
 				    $player[$row]['name'] = fixMlbPlayersWithSameName($player[$row]['name'], $player[$row]['position']);
 
-				    $playerExists = MlbPlayer::where('name', $player[$row]['name'])->count();
+				    $playerExists = Player::where('name', $player[$row]['name'])->count();
 
 				    if (!$playerExists) {
-				    	$mlbPlayer = new MlbPlayer;
+						echo 'The player, '.$player[$row]['name'].' does not exist in the database. You can add him <a target="_blank" href="http://dfstools.dev:8000/admin/nba/add_player">here</a>.'; 
 
-				    	$mlbPlayer->name = $player[$row]['name'];
-				    	$mlbPlayer->name_espn = $player[$row]['name'];
+						exit();
+				    } 
 
-				    	$mlbPlayer->save();
-				    } elseif ($playerExists) {
-				    	$player[$row]['name_espn'] = MlbPlayer::where('name', $player[$row]['name'])->pluck('name_espn');
-				    }
-
-				    $locations = ['home', 'road'];
-
-				    foreach ($locations as $location) {
-				    	$teamExists[$location] = MlbTeam::where('abbr_dk', $player[$row][$location.'_team_abbr_dk'])->count();
-
-					    if (!$teamExists[$location]) {
-					    	$mlbTeam = new MlbTeam;
-
-					    	$mlbTeam->abbr_dk = $player[$row][$location.'_team_abbr_dk'];
-
-					    	$mlbTeam->save();
-					    }
-				    }
-
-				    $playerId = MlbPlayer::where('name', $player[$row]['name'])->pluck('id');
-
-				    if (!$this->playerTeamExists($playerId, $request)) {
-				    	$this->addPlayerTeam($locations, $player, $row, $playerId, $request);
-				    }
-
-				    $teamId = MlbPlayerTeam::where('mlb_player_id', $playerId)->where('end_date', '>', $request->input('date'))->pluck('mlb_team_id');
-
-				    $oppTeamId = $this->getOppTeamId($teamId, 
-				    								 $player[$row]['home_team_abbr_dk'], 
-				    								 $player[$row]['road_team_abbr_dk'],
-				    								 $player[$row]['name'],
-				    								 $player[$row]['position']);
-
-				    if (!is_int($teamId) || is_null($teamId)) {
-				    	prf('The following player\'s team id is null');
-					    
-					    prf($player[$row]);		
-
-					    $teamId = 30;	    	
-				    }
-
-				    if (!is_int($oppTeamId) || is_null($oppTeamId)) {
-				    	prf('The following player\'s opp team id is null');
-					    
-					    prf($player[$row]);		
-
-					    $oppTeamId = 30;	    	
-				    }
-
-				    $numOfTimesToSave = 1;
-
-				    if (strpos($player[$row]['position'], '/')) {
-				    	$numOfTimesToSave = 2;
-				    }
-
-				    for ($i = 1; $i <= $numOfTimesToSave; $i++) { 
-				    	if ($numOfTimesToSave == 1) {
-				    		$positionToSave = $player[$row]['position'];
-
-				    		if ($positionToSave == 'RP') {
-				    			$positionToSave = 'SP';
-				    		}
-				    	}
-
-				    	if ($numOfTimesToSave == 2 && $i == 1) {
-				    		$positionToSave = preg_replace('/(\w+)(\/)(\w+)/', '$1', $player[$row]['position']);
-				    	}
-
-				    	if ($numOfTimesToSave == 2 && $i == 2) {
-				    		$positionToSave = preg_replace('/(\w+)(\/)(\w+)/', '$3', $player[$row]['position']);
-				    	}
-
-				    	$dkMlbPlayer = new DkMlbPlayer;
-
-					    $dkMlbPlayer->player_pool_id = $playerPoolId;
-					    $dkMlbPlayer->mlb_player_id = $playerId;
-					    $dkMlbPlayer->target_percentage = 0;
-					    $dkMlbPlayer->mlb_team_id = $teamId;
-					    $dkMlbPlayer->mlb_opp_team_id = $oppTeamId;
-					    $dkMlbPlayer->position = $positionToSave;
-					    $dkMlbPlayer->salary = $player[$row]['salary'];
-
-					    $dkMlbPlayer->save();
-				    }
+				    $playerId = Player::where('name', $player[$row]['name'])->pluck('id');
 				}
 
 				$row++;

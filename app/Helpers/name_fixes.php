@@ -1,5 +1,51 @@
 <?php
 
+/****************************************************************************************
+FD NBA NAME FIX
+****************************************************************************************/
+
+function fd_name_fix($rawName) {
+	switch ($rawName) {
+		case 'Bryce Jones':
+			return 'Bryce Dejean-Jones';
+
+		case 'Brad Beal':
+			return 'Bradley Beal';
+
+		case 'Jakarr Sampson':
+			return 'JaKarr Sampson';
+
+		case 'Luc Richard Mbah a Moute':
+			return 'Luc Mbah a Moute';
+
+		case 'Dennis Schroeder':
+			return 'Dennis Schroder';
+
+		case 'Dennis Schroder':
+			return 'Dennis Schroder';
+
+		case 'Tim Hardaway Jr.':
+			return 'Tim Hardaway';
+
+		case 'Perry Jones III':
+			return 'Perry Jones';
+
+		case 'Ronald Roberts, Jr.':
+			return 'Ronald Roberts';
+
+		case 'Jose Juan Barea':
+			return 'Jose Barea';
+		
+		default:
+			return $rawName;
+	}
+}
+
+
+/****************************************************************************************
+FANGRAPHS MLB NAME FIX
+****************************************************************************************/
+
 function fgNameFix($fgName, $positionType) {
 	switch ($fgName) {
 		case 'Ivan De Jesus':
@@ -100,6 +146,11 @@ function fgNameFix($fgName, $positionType) {
 	}
 }
 
+
+/****************************************************************************************
+DK NAME TO BAT NAME MLB
+****************************************************************************************/
+
 function changeDkNameToBatName($dkName, $playerType) {
     if ($dkName == 'Joe Ross') {
         return 'Joseph Ross';
@@ -188,6 +239,11 @@ function changeDkNameToBatName($dkName, $playerType) {
     return $dkName;
 }
 
+
+/****************************************************************************************
+FIX MLB PLAYERS WITH SAME NAME
+****************************************************************************************/
+
 function fixMlbPlayersWithSameName($name, $position) {
 	if ($name == 'Chris Young' && $position == 'OF') {
 		return 'Chris Young (OF)';
@@ -198,38 +254,4 @@ function fixMlbPlayersWithSameName($name, $position) {
 	}
 
 	return $name;
-}
-
-function fd_name_fix($rawName) {
-	switch ($rawName) {
-		case 'Brad Beal':
-			return 'Bradley Beal';
-
-		case 'Jakarr Sampson':
-			return 'JaKarr Sampson';
-
-		case 'Luc Richard Mbah a Moute':
-			return 'Luc Mbah a Moute';
-
-		case 'Dennis Schroeder':
-			return 'Dennis Schroder';
-
-		case 'Dennis Schroder':
-			return 'Dennis Schroder';
-
-		case 'Tim Hardaway Jr.':
-			return 'Tim Hardaway';
-
-		case 'Perry Jones III':
-			return 'Perry Jones';
-
-		case 'Ronald Roberts, Jr.':
-			return 'Ronald Roberts';
-
-		case 'Jose Juan Barea':
-			return 'Jose Barea';
-		
-		default:
-			return $rawName;
-	}
 }
