@@ -117,6 +117,14 @@ class Scraper {
 				       	'opp_team_abbr_fd' => $csvData[9]
 				    );
 
+				    $homeTeamAbbrFd = preg_replace("/(\S+)(@)(\S+)/", "$3", $csvData[7]);
+
+				    if ($player[$row]['team_abbr_fd'] == $homeTeamAbbrFd) {
+				    	$player[$row]['home_game'] = 1;				    	
+				    } else {
+				    	$player[$row]['home_game'] = 0;	
+				    }
+
 				    ddAll($player[$row]);
 
 				    $player[$row]['name'] = fixMlbPlayersWithSameName($player[$row]['name'], $player[$row]['position']);
