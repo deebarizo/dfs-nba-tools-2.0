@@ -34,7 +34,7 @@ class ScrapersController {
 	FD NBA SALARIES
 	****************************************************************************************/
 
-	public function fd_nba_salaries(RunFDNBASalariesScraperRequest $request) {
+	public function fd_nba_salaries(Request $request) {
 		$scraper = new Scraper;
 
 		$csvFile = $scraper->getCsvFile($request, 'FD', 'NBA');
