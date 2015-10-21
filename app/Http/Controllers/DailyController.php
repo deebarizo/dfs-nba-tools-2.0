@@ -91,7 +91,7 @@ class DailyController {
         
             # ddAll($players);
 
-    		return view('daily_fd_nba', compact('date', 'timePeriod', 'players', 'teamsToday', 'gameTimes'));
+    		return view('daily/fd/nba', compact('date', 'timePeriod', 'players', 'teamsToday', 'gameTimes'));
         }
 
         if ($site == 'dk' && $sport == 'mlb') {

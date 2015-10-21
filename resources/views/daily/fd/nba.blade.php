@@ -221,5 +221,5 @@
 
 	</script>
 
-	<script src="/js/daily_fd_nba.js"></script>
+	<script src="/js/daily/fd/nba.js"></script>
 @stop

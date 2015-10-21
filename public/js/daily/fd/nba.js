@@ -97,7 +97,7 @@ $(document).ready(function() {
 		$('a[data-hasqtip='+dataHasQtip+']').closest('td').siblings('td.target-percentage-amount').html('<img src="/files/spiffygif_16x16.gif" alt="Please wait..." />');
 
 		$.ajax({
-            url: baseUrl+'/daily_fd_nba/update_target_percentage/'+playerFdIndex+'/'+newTargetPercentage,
+            url: baseUrl+'/daily/fd/nba/update_target_percentage/'+playerFdIndex+'/'+newTargetPercentage,
             type: 'POST',
             success: function() {
             	$('a[data-hasqtip='+dataHasQtip+']').closest('td').siblings('td.target-percentage-amount').html('');
@@ -147,7 +147,7 @@ $(document).ready(function() {
 		var $this = $(this);
 		
     	$.ajax({
-            url: baseUrl+'/daily_fd_nba/update_top_plays/'+playerFdIndex+'/'+isPlayerActive,
+            url: baseUrl+'/daily/fd/nba/update_top_plays/'+playerFdIndex+'/'+isPlayerActive,
             type: 'POST',
             success: function() {
             	$this.toggleClass("daily-lock-active");
