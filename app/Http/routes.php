@@ -54,12 +54,12 @@ $router->get('players/mlb/{playerId}', 'PlayersMlbController@getPlayerStats');
 DAILY
 ****************************************************************************************/
 
-$router->get('daily/{site}/{sport}/{timePeriod}/{date}/{contestId}', 'DailyController@daily');
+$router->get('daily/{site}/{sport}/{timePeriod}/{date}/{contestId}', 'DailyController@showDaily');
 
 $router->post('daily/fd/nba/update_top_plays/{playerFdIndex}/{isPlayerActive}', 'DailyController@update_top_plays'); // ajax
 $router->post('daily/fd/nba/update_target_percentage/{playerFdIndex}/{newTargetPercentage}', 'DailyController@updateTargetPercentage'); // ajax
 
-$router->post('daily/dk/mlb/update_target_percentage_for_dk_mlb', 'DailyController@updateTargetPercentageForDkMlb');
+$router->post('daily/dk/mlb/update_target_percentage_for_dk_mlb', 'DailyController@updateTargetPercentageForDkMlb'); // ajax
 
 
 /****************************************************************************************

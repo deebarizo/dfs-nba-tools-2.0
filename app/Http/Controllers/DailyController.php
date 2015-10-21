@@ -31,7 +31,16 @@ date_default_timezone_set('America/Chicago');
 
 class DailyController {
 
-	public function daily($site, $sport, $timePeriod, $date, $contestId) {
+    /****************************************************************************************
+    DAILY
+    ****************************************************************************************/
+
+	public function showDaily($site, $sport, $timePeriod, $date, $contestId) {
+
+        /****************************************************************************************
+        DAILY FD NBA
+        ****************************************************************************************/
+
         if ($site == 'fd' && $sport == 'nba') {
             $seasonId = 11;
 
@@ -94,6 +103,10 @@ class DailyController {
     		return view('daily/fd/nba', compact('date', 'timePeriod', 'players', 'teamsToday', 'gameTimes'));
         }
 
+        /****************************************************************************************
+        DAILY DK MLB
+        ****************************************************************************************/
+
         if ($site == 'dk' && $sport == 'mlb') {
             $statBuilder = new StatBuilder;
 
@@ -130,16 +143,10 @@ class DailyController {
         }
 	}
 
-    public function updateTargetPercentageForDkMlb(Request $request) {
-        $dkMlbPlayersId = $request->input('dkMlbPlayersId');
-        $targetPercentage = $request->input('targetPercentage');
 
-        $dkMlbPlayer = DkMlbPlayer::find($dkMlbPlayersId);
-
-        $dkMlbPlayer->target_percentage = $targetPercentage;
-
-        $dkMlbPlayer->save();
-    }
+    /****************************************************************************************
+    DAILY FD NBA AJAX
+    ****************************************************************************************/
 
     public function update_top_plays($playerFdIndex, $isPlayerActive) {
         $playerFd = PlayerFd::find($playerFdIndex);
@@ -165,6 +172,22 @@ class DailyController {
         }
 
         $playerFd->save();
+    }
+
+
+    /****************************************************************************************
+    DAILY DK MLB AJAX
+    ****************************************************************************************/
+
+    public function updateTargetPercentageForDkMlb(Request $request) {
+        $dkMlbPlayersId = $request->input('dkMlbPlayersId');
+        $targetPercentage = $request->input('targetPercentage');
+
+        $dkMlbPlayer = DkMlbPlayer::find($dkMlbPlayersId);
+
+        $dkMlbPlayer->target_percentage = $targetPercentage;
+
+        $dkMlbPlayer->save();
     }
 
 }
