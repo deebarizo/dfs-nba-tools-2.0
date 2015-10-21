@@ -119,15 +119,29 @@ class Scraper {
 
 				    $player[$row]['name'] = fd_name_fix($player[$row]['name']);
 
-				    $homeTeamAbbrFd = preg_replace("/(\S+)(@)(\S+)/", "$3", $csvData[7]);
+				    $homeAbbrFd = preg_replace("/(\S+)(@)(\S+)/", "$3", $csvData[7]);
 
-				    if ($player[$row]['abbr_fd'] == $homeTeamAbbrFd) {
+				    if ($player[$row]['abbr_fd'] == $homeAbbrFd) {
 				    	$player[$row]['home_game'] = 1;				    	
 				    } else {
 				    	$player[$row]['home_game'] = 0;	
 				    }
 
-				    $playerId = Player::where('name', $player[$row]['name'])->pluck('id');
+					$player[$row]['player_id'] = Player::where('name', $player[$row]['name'])->pluck('id');
+
+					$player[$row]['team_id'] = Team::where('abbr_fd', $player[$row]['abbr_fd'])->pluck('id');
+					$player[$row]['opp_team_id'] = Team::where('abbr_fd', $player[$row]['opp_abbr_fd'])->pluck('id');					
+
+			    	$playerFd = new PlayerFd;
+
+				    $playerFd->player_id = $player[$row]['player_id'];
+				    $playerFd->position = $player[$row]['position'];
+				    $playerFd->salary = $player[$row]['salary'];
+				    $playerFd->team_id = $player[$row]['team_id'];
+				    $playerFd->opp_team_id = $player[$row]['opp_team_id'];
+				    $playerFd->player_pool_id = $player[$row]['player_pool_id'];
+
+				    $playerFd->save();
 				}
 
 				$row++;
