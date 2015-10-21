@@ -27,7 +27,7 @@
 				<select class="form-control" id="team_id" name="team_id" style="width: 22%; margin-bottom: 10px">
 				  	@foreach ($teams as $team)
 				  		<?php 
-				  			if ($team->id == 18) {
+				  			if ($team->id == 1) {
 								$isSelected = 'selected';
 				  			} else {
 				  				$isSelected = '';

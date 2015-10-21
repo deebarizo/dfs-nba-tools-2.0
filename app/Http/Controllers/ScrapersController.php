@@ -30,87 +30,36 @@ use Illuminate\Support\Facades\Session;
 
 class ScrapersController {
 
-	public function dkMlbContests(Request $request) {
-		$date = $request->input('date');
-		$contestName = $request->input('contest');
-		$entryFee = $request->input('entry_fee');
-		$timePeriod = $request->input('time_period');
-		
-		$validator = new Validator;
-		$message = $validator->validateDkMlbContest($date, $contestName, $entryFee, $timePeriod);
+	/****************************************************************************************
+	FD NBA SALARIES
+	****************************************************************************************/
 
-		if ($message != 'Valid') {
-			Session::flash('alert', 'warning');
-
-			return redirect('scrapers/dk_mlb_contests')->with('message', $message);	 
-		}
-
+	public function fd_nba_salaries(RunFDNBASalariesScraperRequest $request) {
 		$scraper = new Scraper;
 
-		$csvFile = $scraper->uploadContestCsvFile($request, $date, $timePeriod, 'DK', 'MLB');
+		$csvFile = $scraper->getCsvFile($request, 'FD', 'NBA');
 
-		$scraper->insertContest($date, $contestName, $entryFee, $timePeriod, $csvFile, 'DK', 'MLB');
-
-		$message = 'Success!';
-		Session::flash('alert', 'info');
-
-		return redirect('scrapers/dk_mlb_contests')->with('message', $message);	 
-	}
-
-	public function dk_mlb_salaries(Request $request) {
-		$scraper = new Scraper;
-
-		$csvFile = $scraper->getCsvFile($request, 'DK', 'MLB');
-
-		list($playerPoolExists, $playerPoolId) = $scraper->insertDataToPlayerPoolsTable($request, 'DK', 'MLB', 'csv file');
+		list($playerPoolExists, $playerPoolId) = $scraper->insertDataToPlayerPoolsTable($request, 'FD', 'NBA', 'csv file');
 
 		if ($playerPoolExists) {
 			$message = 'This player pool is already in the database.';
 			Session::flash('alert', 'info');
 
-			return redirect('scrapers/dk_mlb_salaries')->with('message', $message);				
+			return redirect('scrapers/fd_nba_salaries')->with('message', $message);				
 		}
 
-		$scraper->parseCsvFile($request, $csvFile, 'DK', 'MLB', $playerPoolId);
+		$scraper->parseCsvFile($request, $csvFile, 'FD', 'NBA', $playerPoolId);
 
 		$message = 'Success!';
 		Session::flash('alert', 'info');
 
-		return redirect('scrapers/dk_mlb_salaries')->with('message', $message);	 
+		return redirect('scrapers/fd_nba_salaries')->with('message', $message);	 
 	}
 
-	public function bat_mlb_projections(Request $request) {
-		$scraper = new Scraper;
 
-		$scraper->getBatCsvFile($request, 'DK', 'MLB');
-
-		$playerTypes = ['hitters', 'pitchers'];
-
-		foreach ($playerTypes as $playerType) {
-			$batPlayers = $scraper->parseBatCsvFile($playerType, $request->input('date'));
-			
-			$scraper->addBatFptsToDkMlbPlayers($batPlayers, $request->input('date'), $playerType);
-		}
-
-		# ddAll($batPlayers);
-
-		$message = 'Success!';
-		Session::flash('alert', 'info');
-
-		return redirect('scrapers/bat_mlb_projections')->with('message', $message);	 
-	}
-
-	public function fg_mlb_box_score_lines(Request $request) {
-		$scraper = new Scraper;
-		$date = $request->input('date');
-
-		$scraper->insertGames($date, 'DK', 'MLB');
-
-		$message = 'Success!';
-		Session::flash('alert', 'info');
-
-		return redirect('scrapers/fg_mlb_box_score_lines')->with('message', $message);	 
-	}
+	/****************************************************************************************
+	BASKETBALL REFERENCE NBA BOX SCORE LINES
+	****************************************************************************************/	
 
 	public function br_nba_box_score_lines(Request $request) {
 		$endYear = $request->input('season');
@@ -324,6 +273,11 @@ class ScrapersController {
 		return redirect('scrapers/br_nba_box_score_lines')->with('message', $message);
 	}
 
+
+	/****************************************************************************************
+	BASKETBALL REFERENCE NBA GAMES
+	****************************************************************************************/	
+
 	public function br_nba_games(Request $request) {
 		$endYear = $request->input('season');
 		$gameType = $request->input('game_type');
@@ -408,135 +362,10 @@ class ScrapersController {
 		}
 	}
 
-	public function fd_nba_salaries(RunFDNBASalariesScraperRequest $request) {
-		$metadata['date'] = $request->input('date');
-		$metadata['time_period'] = $request->input('time_period');
-		$metadata['site'] = 'FD';
-		$metadata['url'] = $request->input('url');
 
-		$dupCheck = PlayerPool::whereRaw('date = "'.$metadata['date'].'" and time_period = "'.$metadata['time_period'].'" and site = "FD"')->first();
-
-		if ($dupCheck !== null) {
-			$message = 'This player pool has already been scraped and saved.';
-			Session::flash('alert', 'info');
-
-			return redirect('scrapers/fd_nba_salaries')->with('message', $message);			
-		}
-
-		$players = Player::all();
-		$teams = Team::all();
-
-		$client = new Client();
-		$crawlerFD = $client->request('GET', $metadata['url']);		
-
-		$rowCount = $crawlerFD->filter('table.player-list-table > tbody > tr')->count();
-
-		for ($i = 1; $i <= $rowCount; $i++) { // nth-child does not start with a zero index
-			$rowContents[$i]['position'] = $crawlerFD->filter('table.player-list-table > tbody > tr:nth-child('.$i.') > td.player-position')->text();
-			$rawName = $crawlerFD->filter('table.player-list-table > tbody > tr:nth-child('.$i.') > td.player-name')->text();
-
-			$rawName = preg_replace("/(O)$/", "", $rawName);
-			$rawName = preg_replace("/(GTD)$/", "", $rawName);
-			$name = fd_name_fix($rawName);
-
-			foreach ($players as $player) {
-				if ($player->name == $name) {
-					$rowContents[$i]['player_id'] = $player->id;
-
-					break;
-				}
-			}
-
-			unset($player);
-
-			if (isset($rowContents[$i]['player_id']) === false) {
-				$player = new Player;
-
-				$player->name = $name;
-
-				$player->save();	
-
-				$rowContents[$i]['player_id'] = $player->id;
-			}
-
-			$rawSalary = $crawlerFD->filter('table.player-list-table > tbody > tr:nth-child('.$i.') > td.player-salary')->text();
-
-			$rawSalary = preg_replace("/\\$/", "", $rawSalary);
-			$rowContents[$i]['salary'] = preg_replace("/,/", "", $rawSalary);			
-
-			$abbrFD = $crawlerFD->filter('table.player-list-table > tbody > tr:nth-child('.$i.') > td.player-fixture > b')->text();
-
-			foreach ($teams as $team) {
-				if ($team->abbr_fd == $abbrFD) {
-					$rowContents[$i]['team_id'] = $team->id;
-
-					break;					
-				}
-			}
-
-			if (isset($rowContents[$i]['team_id']) === false) {
-				$message = 'No team ID match for '.$abbrFD.'.';
-				Session::flash('alert', 'danger');
-
-				return redirect('scrapers/fd_nba_salaries')->with('message', $message);	
-			}			
-
-			$rawOppAbbrFD = $crawlerFD->filter('table.player-list-table > tbody > tr:nth-child('.$i.') > td.player-fixture')->text();
-
-			$rawOppAbbrFD = preg_replace("/@/", "", $rawOppAbbrFD);
-			$OppAbbrFD = preg_replace("/".$abbrFD."/", "", $rawOppAbbrFD);
-
-			if ($OppAbbrFD == 'C') {
-				$OppAbbrFD = 'SAC';
-			}
-
-			foreach ($teams as $team) {
-				if ($team->abbr_fd == $OppAbbrFD) {
-					$rowContents[$i]['opp_team_id'] = $team->id;
-
-					break;					
-				}
-			}
-
-	/*		if (isset($rowContents[$i]['opp_team_id']) === false) {
-				$message = 'No team ID match for '.$OppAbbrFD.'.';
-				Session::flash('alert', 'danger');
-
-				return redirect('scrapers/fd_nba_salaries')->with('message', $message);	
-			}			*/
-
-			$rowContents[$i]['top_play_index'] = null;
-		}	
-
-		$playerPool = new PlayerPool;
-
-		$playerPool->date = $metadata['date'];
-		$playerPool->sport = 'NBA';
-		$playerPool->time_period = $metadata['time_period'];
-		$playerPool->site = $metadata['site'];
-		$playerPool->url = $metadata['url'];
-
-		$playerPool->save();
-
-		foreach ($rowContents as $row) {
-			$playerFD = new PlayerFd;
-
-			$playerFD->player_id = $row['player_id'];
-			$playerFD->position = $row['position'];
-			$playerFD->salary = $row['salary'];
-			$playerFD->team_id = $row['team_id'];
-			$playerFD->opp_team_id = $row['opp_team_id'];
-			$playerFD->top_play_index = $row['top_play_index'];
-			$playerFD->player_pool_id = $playerPool->id;
-
-			$playerFD->save();
-		}
-
-		$message = 'Success!';
-		Session::flash('alert', 'info');
-
-		return redirect('scrapers/fd_nba_salaries')->with('message', $message);	 
-	}
+	/****************************************************************************************
+	BASKETBALL REFERENCE NBA PLAYERS
+	****************************************************************************************/
 
 	public function player_scraper() {
 		$teamsAbbrBR = Team::all(['abbr_br'])->toArray();
@@ -571,6 +400,75 @@ class ScrapersController {
 				}
 			}			
 		}
+	}
+
+	/****************************************************************************************
+	DK MLB SALARIES
+	****************************************************************************************/
+
+	public function dk_mlb_salaries(Request $request) {
+		$scraper = new Scraper;
+
+		$csvFile = $scraper->getCsvFile($request, 'DK', 'MLB');
+
+		list($playerPoolExists, $playerPoolId) = $scraper->insertDataToPlayerPoolsTable($request, 'DK', 'MLB', 'csv file');
+
+		if ($playerPoolExists) {
+			$message = 'This player pool is already in the database.';
+			Session::flash('alert', 'info');
+
+			return redirect('scrapers/dk_mlb_salaries')->with('message', $message);				
+		}
+
+		$scraper->parseCsvFile($request, $csvFile, 'DK', 'MLB', $playerPoolId);
+
+		$message = 'Success!';
+		Session::flash('alert', 'info');
+
+		return redirect('scrapers/dk_mlb_salaries')->with('message', $message);	 
+	}
+
+
+	/****************************************************************************************
+	BAT MLB PROJECTIONS
+	****************************************************************************************/
+
+	public function bat_mlb_projections(Request $request) {
+		$scraper = new Scraper;
+
+		$scraper->getBatCsvFile($request, 'DK', 'MLB');
+
+		$playerTypes = ['hitters', 'pitchers'];
+
+		foreach ($playerTypes as $playerType) {
+			$batPlayers = $scraper->parseBatCsvFile($playerType, $request->input('date'));
+			
+			$scraper->addBatFptsToDkMlbPlayers($batPlayers, $request->input('date'), $playerType);
+		}
+
+		# ddAll($batPlayers);
+
+		$message = 'Success!';
+		Session::flash('alert', 'info');
+
+		return redirect('scrapers/bat_mlb_projections')->with('message', $message);	 
+	}
+
+
+	/****************************************************************************************
+	FANGRAPHS MLB BOX SCORE LINES
+	****************************************************************************************/
+
+	public function fg_mlb_box_score_lines(Request $request) {
+		$scraper = new Scraper;
+		$date = $request->input('date');
+
+		$scraper->insertGames($date, 'DK', 'MLB');
+
+		$message = 'Success!';
+		Session::flash('alert', 'info');
+
+		return redirect('scrapers/fg_mlb_box_score_lines')->with('message', $message);	 
 	}
 
 }

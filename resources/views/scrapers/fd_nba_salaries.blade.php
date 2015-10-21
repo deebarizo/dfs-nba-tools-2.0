@@ -20,20 +20,19 @@
 		    </div>
 		@endif
 
-		{!!	Form::open(['url' => 'scrapers/fd_nba_salaries']) !!}
+		{!! Form::open(array('url'=>'scrapers/fd_nba_salaries', 'files'=>true)) !!}
 			<div class="col-lg-2"> 
 				<div class="form-group {{ $errors->has('date') ? 'has-error' : '' }}">
 					{!! Form::label('date', 'Date:') !!}
-					{!! Form::text('date', $today_date, ['class' => 'form-control']) !!}
+					{!! Form::text('date', '2015-10-27', ['class' => 'form-control']) !!}
 					{!! $errors->first('date', '<span class="help-block">:message</span>') !!}
 				</div>
 			</div>
 
-			<div class="col-lg-6"> 
-				<div class="form-group {{ $errors->has('url') ? 'has-error' : '' }}">
-					{!! Form::label('url', 'URL:') !!}
-					{!! Form::text('url', null, ['class' => 'form-control']) !!}
-					{!! $errors->first('url', '<span class="help-block">:message</span>') !!}
+			<div class="col-lg-3 col-lg-offset-1"> 
+				<div class="form-group {{ $errors->has('csv') ? 'has-error' : '' }}">
+					{!! Form::label('csv', 'CSV:') !!}
+					{!! Form::file('csv', '', ['class' => 'form-control']) !!}
 				</div>
 			</div>
 
