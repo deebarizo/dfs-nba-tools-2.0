@@ -48,9 +48,7 @@ class DailyController {
 
             $players = $statBuilder->getPlayersInPlayerPool($site, $sport, $timePeriod, $date);
 
-            ddAll($players);
-
-            $timePeriod = $statBuilder->getTimePeriodOfPlayerPool($players);
+            $timePeriod = $players[0]->time_period;
 
             $players = $statBuilder->matchPlayersToTeams($players, $teams);
 

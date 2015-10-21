@@ -33,274 +33,15 @@ use Illuminate\Support\Facades\Session;
 class StatBuilder {
 
     /****************************************************************************************
-    PLAYERS (NBA)
+    DAILY NBA
     ****************************************************************************************/
 
-    public function getNbaPlayerStats($playerId) {
-        $endYears = [2015, 2014];
-
-        // Player fpts profile
-
-        $fptsProfile['all'] = DB::table('seasons')
-                ->join('games', 'games.season_id', '=', 'seasons.id')
-                ->join('box_score_lines', 'box_score_lines.game_id', '=', 'games.id')
-                ->join('players', 'players.id', '=', 'box_score_lines.player_id')
-                ->selectRaw('FORMAT(SUM(pts) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as pts, 
-                    FORMAT(SUM((fg - threep) * 2) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as 2p,
-                    FORMAT(SUM((threep) * 3) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as 3p,
-                    FORMAT(SUM(ft) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as ft,
-                    FORMAT(SUM(trb * 1.2) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as trb,
-                    FORMAT(SUM(orb * 1.2) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as orb,
-                    FORMAT(SUM(drb * 1.2) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as drb,
-                    FORMAT(SUM(ast * 1.5) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as ast,
-                    FORMAT((SUM(tov) * -1) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as tov,
-                    FORMAT(SUM(stl * 2) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as stl,
-                    FORMAT(SUM(blk * 2) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as blk')
-                ->where('player_id', '=', $playerId)
-                ->where('box_score_lines.status', '=', 'Played')
-                ->where('seasons.end_year', '>=', $endYears[1])
-                ->first();
-
-        foreach ($endYears as $endYear) {
-            $fptsProfile[$endYear] = DB::table('seasons')
-                    ->join('games', 'games.season_id', '=', 'seasons.id')
-                    ->join('box_score_lines', 'box_score_lines.game_id', '=', 'games.id')
-                    ->join('players', 'players.id', '=', 'box_score_lines.player_id')
-                    ->selectRaw('FORMAT(SUM(pts) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as pts, 
-                        FORMAT(SUM((fg - threep) * 2) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as 2p,
-                        FORMAT(SUM((threep) * 3) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as 3p,
-                        FORMAT(SUM(ft) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as ft,
-                        FORMAT(SUM(trb * 1.2) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as trb,
-                        FORMAT(SUM(orb * 1.2) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as orb,
-                        FORMAT(SUM(drb * 1.2) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as drb,
-                        FORMAT(SUM(ast * 1.5) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as ast,
-                        FORMAT((SUM(tov) * -1) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as tov,
-                        FORMAT(SUM(stl * 2) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as stl,
-                        FORMAT(SUM(blk * 2) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as blk')
-                    ->where('player_id', '=', $playerId)
-                    ->where('box_score_lines.status', '=', 'Played')
-                    ->where('seasons.end_year', '=', $endYear)
-                    ->first();
-        }
-
-        $fptsProfile['view'] = [];
-
-        foreach ($fptsProfile[$endYears[0]] as $stat) {
-            $fptsProfile['view'][] = (float)$stat;
-        } 
-
-        # ddAll($fptsProfile);
-
-        // MPG, FPPG, FPPM
-
-        $overviews['all']['mppg'] = DB::table('box_score_lines')
-                ->join('games', 'box_score_lines.game_id', '=', 'games.id')
-                ->join('seasons', 'games.season_id', '=', 'seasons.id')
-                ->join('players', 'box_score_lines.player_id', '=', 'players.id')
-                ->selectRaw('AVG(mp) as mppg')
-                ->where('player_id', '=', $playerId)
-                ->where('box_score_lines.status', '=', 'Played')
-                ->where('seasons.end_year', '>=', $endYears[1])
-                ->pluck('mppg');
-
-        $overviews['all']['fppg'] = DB::table('box_score_lines')
-                ->join('games', 'box_score_lines.game_id', '=', 'games.id')
-                ->join('seasons', 'games.season_id', '=', 'seasons.id')
-                ->join('players', 'box_score_lines.player_id', '=', 'players.id')
-                ->selectRaw('AVG(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) as fppg')
-                ->where('player_id', '=', $playerId)
-                ->where('box_score_lines.status', '=', 'Played')
-                ->where('seasons.end_year', '>=', $endYears[1])
-                ->pluck('fppg'); 
-
-        $overviews['all']['fppm'] = DB::table('box_score_lines')
-                ->join('games', 'box_score_lines.game_id', '=', 'games.id')
-                ->join('seasons', 'games.season_id', '=', 'seasons.id')
-                ->join('players', 'box_score_lines.player_id', '=', 'players.id')
-                ->selectRaw('SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) / SUM(mp) as fppm')
-                ->where('player_id', '=', $playerId)
-                ->where('box_score_lines.status', '=', 'Played')
-                ->where('seasons.end_year', '>=', $endYears[1])
-                ->pluck('fppm'); 
-
-        foreach ($endYears as $endYear) {
-            $overviews[$endYear]['mppg'] = DB::table('box_score_lines')
-                    ->join('games', 'box_score_lines.game_id', '=', 'games.id')
-                    ->join('seasons', 'games.season_id', '=', 'seasons.id')
-                    ->join('players', 'box_score_lines.player_id', '=', 'players.id')
-                    ->selectRaw('AVG(mp) as mppg')
-                    ->where('player_id', '=', $playerId)
-                    ->where('box_score_lines.status', '=', 'Played')
-                    ->where('seasons.end_year', '=', $endYear)
-                    ->pluck('mppg');
-
-            $overviews[$endYear]['fppg'] = DB::table('box_score_lines')
-                    ->join('games', 'box_score_lines.game_id', '=', 'games.id')
-                    ->join('seasons', 'games.season_id', '=', 'seasons.id')
-                    ->join('players', 'box_score_lines.player_id', '=', 'players.id')
-                    ->selectRaw('AVG(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) as fppg')
-                    ->where('player_id', '=', $playerId)
-                    ->where('box_score_lines.status', '=', 'Played')
-                    ->where('seasons.end_year', '=', $endYear)
-                    ->pluck('fppg');
-
-            $overviews[$endYear]['fppm'] = DB::table('box_score_lines')
-                    ->join('games', 'box_score_lines.game_id', '=', 'games.id')
-                    ->join('seasons', 'games.season_id', '=', 'seasons.id')
-                    ->join('players', 'box_score_lines.player_id', '=', 'players.id')
-                    ->selectRaw('SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) / SUM(mp) as fppm')
-                    ->where('player_id', '=', $playerId)
-                    ->where('box_score_lines.status', '=', 'Played')
-                    ->where('seasons.end_year', '=', $endYear)
-                    ->pluck('fppm'); 
-        }
-
-        # ddAll($overviews);
-
-        // Box Score Lines
-
-        $teams = Team::all();
-
-        $statBuilder = new StatBuilder;
-
-        foreach ($endYears as $endYear) {
-            $boxScoreLines[$endYear] = DB::table('games')
-                    ->join('box_score_lines', 'box_score_lines.game_id', '=', 'games.id')
-                    ->join('seasons', 'games.season_id', '=', 'seasons.id')
-                    ->join('players', 'box_score_lines.player_id', '=', 'players.id')
-                    ->join('teams', 'teams.id', '=', 'box_score_lines.team_id')
-                    ->selectRaw('games.date as date, box_score_lines.team_id, abbr_br as team_of_player, home_team_id, home_team_score, road_team_id, road_team_score, vegas_home_team_score, vegas_road_team_score, link_br, DATE_FORMAT(games.date, "%Y%m%d") as date_pm, role, mp, ot_periods, fg, fga, threep, threepa, ft, fta, orb, drb, trb, ast, blk, stl, pf, tov, pts, usg, pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov as fdpts, (pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) / mp as fdppm, status')
-                    ->where('box_score_lines.player_id', '=', $playerId)
-                    ->where('seasons.end_year', '=', $endYear)
-                    ->orderBy('games.date', 'desc')
-                    ->get();
-
-            foreach ($boxScoreLines[$endYear] as $boxScoreLine) {
-                if ($boxScoreLine->team_id == $boxScoreLine->home_team_id) {
-                    $oppTeamId = $boxScoreLine->road_team_id;
-                    
-                    $boxScoreLine->is_road_game = '';
-
-                    $boxScoreLine->game_score = $statBuilder->createGameScore($boxScoreLine->home_team_score, $boxScoreLine->road_team_score);
-
-                    $boxScoreLine->line = $statBuilder->createLine($boxScoreLine->vegas_home_team_score, $boxScoreLine->vegas_road_team_score);
-                } else {
-                    $oppTeamId = $boxScoreLine->home_team_id;
-                    
-                    $boxScoreLine->is_road_game = '@';
-
-                    $boxScoreLine->game_score = $statBuilder->createGameScore($boxScoreLine->road_team_score, $boxScoreLine->home_team_score);
-
-                    $boxScoreLine->line = $statBuilder->createLine($boxScoreLine->vegas_road_team_score, $boxScoreLine->vegas_home_team_score);
-                }
-
-                $boxScoreLine->opp_team = $statBuilder->getTeamAbbrBr($oppTeamId, $teams);
-
-                $boxScoreLine->home_team_abbr_pm = $statBuilder->getTeamAbbrPm($boxScoreLine->home_team_id, $teams);
-                $boxScoreLine->road_team_abbr_pm = $statBuilder->getTeamAbbrPm($boxScoreLine->road_team_id, $teams);
-
-            } unset($boxScoreLine);
-        }
-
-        # ddAll($boxScoreLines);
-
-        // Current Player Filter
-
-        $player = new Player;
-
-        $dailyFdFilters = DB::select('SELECT t1.* FROM daily_fd_filters AS t1
-                                         JOIN (
-                                            SELECT player_id, MAX(created_at) AS latest FROM daily_fd_filters GROUP BY player_id
-                                         ) AS t2
-                                         ON t1.player_id = t2.player_id AND t1.created_at = t2.latest');
-
-        foreach ($dailyFdFilters as $filter) {
-            if ($playerId == $filter->player_id) {
-                $player->filter = $filter;
-
-                break;
-            }
-        }
-
-        // Previous Player Filters
-
-        $previousFdFilters = DB::table('daily_fd_filters')
-            ->select('*')
-            ->where('player_id', '=', $playerId)
-            ->orderBy('created_at', 'desc')
-            ->get();
-
-        $previousFdFilters = array_slice($previousFdFilters, 1, 5);
-
-        // Player Metadata
-
-        $playerMetadata = Player::where('id', '=', $playerId)->first();
-
-        $name = $playerMetadata->name;
-
-        $playerInfo['player_id'] = $playerId;
-
-        # ddAll($boxScoreLines);  
-        
-        return array($boxScoreLines, $overviews, $playerInfo, $player, $name, $previousFdFilters, $fptsProfile, $endYears);
-    }
-
-
-    /****************************************************************************************
-    PLAYERS
-    ****************************************************************************************/
-
-    public function getTeamAbbrBr($teamId, $teams) {
-        foreach ($teams as $team) {
-            if ($teamId == $team->id) {
-                return $team->abbr_br;
-            }
-        }
-    }
-
-    public function getTeamAbbrPm($teamId, $teams) {
-        foreach ($teams as $team) {
-            if ($teamId == $team->id) {
-                return $team->abbr_pm;
-            }
-        }
-    }
-
-    public function createGameScore($teamScore, $oppTeamScore) {
-        if ($teamScore > $oppTeamScore) {
-            return '<span style="color: green">W</span> '.$teamScore.'-'.$oppTeamScore;
-        }
-
-        if ($teamScore < $oppTeamScore) {
-            return '<span style="color: red">L</span> '.$teamScore.'-'.$oppTeamScore;
-        }
-    }
-
-    public function createLine($vegasTeamScore, $oppVegasTeamScore) {
-        $diff = abs($vegasTeamScore - $oppVegasTeamScore);
-
-        if ($vegasTeamScore > $oppVegasTeamScore) {
-            return '-'.$diff;
-        }    
-
-        if ($vegasTeamScore < $oppVegasTeamScore) {
-            return '+'.$diff;
-        }       
-
-        return 'PK';
-    }
-
-
-	/****************************************************************************************
-	DAILY NBA
-	****************************************************************************************/
-
-	public function getPlayersInPlayerPool($site, $sport, $timePeriod, $date) {
+    public function getPlayersInPlayerPool($site, $sport, $timePeriod, $date) {
         $site = strtoupper($site);
         $sport = strtoupper($sport);
         $timePeriod = preg_replace('/-/', ' ', $timePeriod);
 
-		$players = DB::table('player_pools')
+        $players = DB::table('player_pools')
             ->join('players_fd', 'player_pools.id', '=', 'players_fd.player_pool_id')
             ->join('players', 'players_fd.player_id', '=', 'players.id')
             ->select('*', 'players_fd.id as player_fd_index')
@@ -311,21 +52,17 @@ class StatBuilder {
             ->get();
 
         return $players;
-	}
+    }
 
-	public function getTimePeriodOfPlayerPool($players) {
-		return $players[0]->time_period;
-	}
-
-	public function matchPlayersToTeams($players, $teams) {
+    public function matchPlayersToTeams($players, $teams) {
         foreach ($players as &$player) {
-        	$player = $this->matchPlayerToTeam($player, $teams);
+            $player = $this->matchPlayerToTeam($player, $teams);
         } unset($player);
 
         return $players;
-	}
+    }
 
-	private function matchPlayerToTeam($player, $teams) {
+    private function matchPlayerToTeam($player, $teams) {
         foreach ($teams as $team) {
             if ($player->team_id == $team->id) {
                 $player->team_name = $team->name_br;
@@ -347,14 +84,14 @@ class StatBuilder {
         }
 
         return $player;
-	}
+    }
 
-	public function getTeamsToday($players, $teams) {
+    public function getTeamsToday($players, $teams) {
         $teamsAbbr = [];
         $teamsId = [];
 
         foreach ($players as $player) {
-        	$teamsAbbr[] = $player->team_abbr;
+            $teamsAbbr[] = $player->team_abbr;
             $teamsId[] = $player->team_id;
         }
 
@@ -373,7 +110,7 @@ class StatBuilder {
         # ddAll($teamsToday);
 
         return $teamsToday;
-	}
+    }
 
     private function getOppTeamId($players, $teamId) {
         foreach ($players as $player) {
@@ -383,7 +120,7 @@ class StatBuilder {
         }
     }
 
-	public function matchPlayersToFilters($players) {
+    public function matchPlayersToFilters($players) {
         $dailyFdFilters = DB::select('SELECT t1.* FROM daily_fd_filters AS t1
                                          JOIN (
                                             SELECT player_id, MAX(created_at) AS latest FROM daily_fd_filters GROUP BY player_id
@@ -401,7 +138,7 @@ class StatBuilder {
         } unset($player);
 
         return $players;
-	}
+    }
 
     public function addVegasInfoToPlayers($players, $vegasScores) {
         foreach ($players as &$player) {
@@ -771,6 +508,265 @@ class StatBuilder {
         }
 
         return $players;        
+    }
+
+
+    /****************************************************************************************
+    PLAYERS (NBA)
+    ****************************************************************************************/
+
+    public function getNbaPlayerStats($playerId) {
+        $endYears = [2015, 2014];
+
+        // Player fpts profile
+
+        $fptsProfile['all'] = DB::table('seasons')
+                ->join('games', 'games.season_id', '=', 'seasons.id')
+                ->join('box_score_lines', 'box_score_lines.game_id', '=', 'games.id')
+                ->join('players', 'players.id', '=', 'box_score_lines.player_id')
+                ->selectRaw('FORMAT(SUM(pts) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as pts, 
+                    FORMAT(SUM((fg - threep) * 2) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as 2p,
+                    FORMAT(SUM((threep) * 3) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as 3p,
+                    FORMAT(SUM(ft) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as ft,
+                    FORMAT(SUM(trb * 1.2) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as trb,
+                    FORMAT(SUM(orb * 1.2) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as orb,
+                    FORMAT(SUM(drb * 1.2) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as drb,
+                    FORMAT(SUM(ast * 1.5) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as ast,
+                    FORMAT((SUM(tov) * -1) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as tov,
+                    FORMAT(SUM(stl * 2) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as stl,
+                    FORMAT(SUM(blk * 2) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as blk')
+                ->where('player_id', '=', $playerId)
+                ->where('box_score_lines.status', '=', 'Played')
+                ->where('seasons.end_year', '>=', $endYears[1])
+                ->first();
+
+        foreach ($endYears as $endYear) {
+            $fptsProfile[$endYear] = DB::table('seasons')
+                    ->join('games', 'games.season_id', '=', 'seasons.id')
+                    ->join('box_score_lines', 'box_score_lines.game_id', '=', 'games.id')
+                    ->join('players', 'players.id', '=', 'box_score_lines.player_id')
+                    ->selectRaw('FORMAT(SUM(pts) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as pts, 
+                        FORMAT(SUM((fg - threep) * 2) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as 2p,
+                        FORMAT(SUM((threep) * 3) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as 3p,
+                        FORMAT(SUM(ft) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as ft,
+                        FORMAT(SUM(trb * 1.2) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as trb,
+                        FORMAT(SUM(orb * 1.2) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as orb,
+                        FORMAT(SUM(drb * 1.2) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as drb,
+                        FORMAT(SUM(ast * 1.5) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as ast,
+                        FORMAT((SUM(tov) * -1) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as tov,
+                        FORMAT(SUM(stl * 2) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as stl,
+                        FORMAT(SUM(blk * 2) / SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) * 100, 2) as blk')
+                    ->where('player_id', '=', $playerId)
+                    ->where('box_score_lines.status', '=', 'Played')
+                    ->where('seasons.end_year', '=', $endYear)
+                    ->first();
+        }
+
+        $fptsProfile['view'] = [];
+
+        foreach ($fptsProfile[$endYears[0]] as $stat) {
+            $fptsProfile['view'][] = (float)$stat;
+        } 
+
+        # ddAll($fptsProfile);
+
+        // MPG, FPPG, FPPM
+
+        $overviews['all']['mppg'] = DB::table('box_score_lines')
+                ->join('games', 'box_score_lines.game_id', '=', 'games.id')
+                ->join('seasons', 'games.season_id', '=', 'seasons.id')
+                ->join('players', 'box_score_lines.player_id', '=', 'players.id')
+                ->selectRaw('AVG(mp) as mppg')
+                ->where('player_id', '=', $playerId)
+                ->where('box_score_lines.status', '=', 'Played')
+                ->where('seasons.end_year', '>=', $endYears[1])
+                ->pluck('mppg');
+
+        $overviews['all']['fppg'] = DB::table('box_score_lines')
+                ->join('games', 'box_score_lines.game_id', '=', 'games.id')
+                ->join('seasons', 'games.season_id', '=', 'seasons.id')
+                ->join('players', 'box_score_lines.player_id', '=', 'players.id')
+                ->selectRaw('AVG(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) as fppg')
+                ->where('player_id', '=', $playerId)
+                ->where('box_score_lines.status', '=', 'Played')
+                ->where('seasons.end_year', '>=', $endYears[1])
+                ->pluck('fppg'); 
+
+        $overviews['all']['fppm'] = DB::table('box_score_lines')
+                ->join('games', 'box_score_lines.game_id', '=', 'games.id')
+                ->join('seasons', 'games.season_id', '=', 'seasons.id')
+                ->join('players', 'box_score_lines.player_id', '=', 'players.id')
+                ->selectRaw('SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) / SUM(mp) as fppm')
+                ->where('player_id', '=', $playerId)
+                ->where('box_score_lines.status', '=', 'Played')
+                ->where('seasons.end_year', '>=', $endYears[1])
+                ->pluck('fppm'); 
+
+        foreach ($endYears as $endYear) {
+            $overviews[$endYear]['mppg'] = DB::table('box_score_lines')
+                    ->join('games', 'box_score_lines.game_id', '=', 'games.id')
+                    ->join('seasons', 'games.season_id', '=', 'seasons.id')
+                    ->join('players', 'box_score_lines.player_id', '=', 'players.id')
+                    ->selectRaw('AVG(mp) as mppg')
+                    ->where('player_id', '=', $playerId)
+                    ->where('box_score_lines.status', '=', 'Played')
+                    ->where('seasons.end_year', '=', $endYear)
+                    ->pluck('mppg');
+
+            $overviews[$endYear]['fppg'] = DB::table('box_score_lines')
+                    ->join('games', 'box_score_lines.game_id', '=', 'games.id')
+                    ->join('seasons', 'games.season_id', '=', 'seasons.id')
+                    ->join('players', 'box_score_lines.player_id', '=', 'players.id')
+                    ->selectRaw('AVG(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) as fppg')
+                    ->where('player_id', '=', $playerId)
+                    ->where('box_score_lines.status', '=', 'Played')
+                    ->where('seasons.end_year', '=', $endYear)
+                    ->pluck('fppg');
+
+            $overviews[$endYear]['fppm'] = DB::table('box_score_lines')
+                    ->join('games', 'box_score_lines.game_id', '=', 'games.id')
+                    ->join('seasons', 'games.season_id', '=', 'seasons.id')
+                    ->join('players', 'box_score_lines.player_id', '=', 'players.id')
+                    ->selectRaw('SUM(pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) / SUM(mp) as fppm')
+                    ->where('player_id', '=', $playerId)
+                    ->where('box_score_lines.status', '=', 'Played')
+                    ->where('seasons.end_year', '=', $endYear)
+                    ->pluck('fppm'); 
+        }
+
+        # ddAll($overviews);
+
+        // Box Score Lines
+
+        $teams = Team::all();
+
+        $statBuilder = new StatBuilder;
+
+        foreach ($endYears as $endYear) {
+            $boxScoreLines[$endYear] = DB::table('games')
+                    ->join('box_score_lines', 'box_score_lines.game_id', '=', 'games.id')
+                    ->join('seasons', 'games.season_id', '=', 'seasons.id')
+                    ->join('players', 'box_score_lines.player_id', '=', 'players.id')
+                    ->join('teams', 'teams.id', '=', 'box_score_lines.team_id')
+                    ->selectRaw('games.date as date, box_score_lines.team_id, abbr_br as team_of_player, home_team_id, home_team_score, road_team_id, road_team_score, vegas_home_team_score, vegas_road_team_score, link_br, DATE_FORMAT(games.date, "%Y%m%d") as date_pm, role, mp, ot_periods, fg, fga, threep, threepa, ft, fta, orb, drb, trb, ast, blk, stl, pf, tov, pts, usg, pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov as fdpts, (pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) / mp as fdppm, status')
+                    ->where('box_score_lines.player_id', '=', $playerId)
+                    ->where('seasons.end_year', '=', $endYear)
+                    ->orderBy('games.date', 'desc')
+                    ->get();
+
+            foreach ($boxScoreLines[$endYear] as $boxScoreLine) {
+                if ($boxScoreLine->team_id == $boxScoreLine->home_team_id) {
+                    $oppTeamId = $boxScoreLine->road_team_id;
+                    
+                    $boxScoreLine->is_road_game = '';
+
+                    $boxScoreLine->game_score = $statBuilder->createGameScore($boxScoreLine->home_team_score, $boxScoreLine->road_team_score);
+
+                    $boxScoreLine->line = $statBuilder->createLine($boxScoreLine->vegas_home_team_score, $boxScoreLine->vegas_road_team_score);
+                } else {
+                    $oppTeamId = $boxScoreLine->home_team_id;
+                    
+                    $boxScoreLine->is_road_game = '@';
+
+                    $boxScoreLine->game_score = $statBuilder->createGameScore($boxScoreLine->road_team_score, $boxScoreLine->home_team_score);
+
+                    $boxScoreLine->line = $statBuilder->createLine($boxScoreLine->vegas_road_team_score, $boxScoreLine->vegas_home_team_score);
+                }
+
+                $boxScoreLine->opp_team = $statBuilder->getTeamAbbrBr($oppTeamId, $teams);
+
+                $boxScoreLine->home_team_abbr_pm = $statBuilder->getTeamAbbrPm($boxScoreLine->home_team_id, $teams);
+                $boxScoreLine->road_team_abbr_pm = $statBuilder->getTeamAbbrPm($boxScoreLine->road_team_id, $teams);
+
+            } unset($boxScoreLine);
+        }
+
+        # ddAll($boxScoreLines);
+
+        // Current Player Filter
+
+        $player = new Player;
+
+        $dailyFdFilters = DB::select('SELECT t1.* FROM daily_fd_filters AS t1
+                                         JOIN (
+                                            SELECT player_id, MAX(created_at) AS latest FROM daily_fd_filters GROUP BY player_id
+                                         ) AS t2
+                                         ON t1.player_id = t2.player_id AND t1.created_at = t2.latest');
+
+        foreach ($dailyFdFilters as $filter) {
+            if ($playerId == $filter->player_id) {
+                $player->filter = $filter;
+
+                break;
+            }
+        }
+
+        // Previous Player Filters
+
+        $previousFdFilters = DB::table('daily_fd_filters')
+            ->select('*')
+            ->where('player_id', '=', $playerId)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $previousFdFilters = array_slice($previousFdFilters, 1, 5);
+
+        // Player Metadata
+
+        $playerMetadata = Player::where('id', '=', $playerId)->first();
+
+        $name = $playerMetadata->name;
+
+        $playerInfo['player_id'] = $playerId;
+
+        # ddAll($boxScoreLines);  
+        
+        return array($boxScoreLines, $overviews, $playerInfo, $player, $name, $previousFdFilters, $fptsProfile, $endYears);
+    }
+
+
+    /****************************************************************************************
+    PLAYERS
+    ****************************************************************************************/
+
+    public function getTeamAbbrBr($teamId, $teams) {
+        foreach ($teams as $team) {
+            if ($teamId == $team->id) {
+                return $team->abbr_br;
+            }
+        }
+    }
+
+    public function getTeamAbbrPm($teamId, $teams) {
+        foreach ($teams as $team) {
+            if ($teamId == $team->id) {
+                return $team->abbr_pm;
+            }
+        }
+    }
+
+    public function createGameScore($teamScore, $oppTeamScore) {
+        if ($teamScore > $oppTeamScore) {
+            return '<span style="color: green">W</span> '.$teamScore.'-'.$oppTeamScore;
+        }
+
+        if ($teamScore < $oppTeamScore) {
+            return '<span style="color: red">L</span> '.$teamScore.'-'.$oppTeamScore;
+        }
+    }
+
+    public function createLine($vegasTeamScore, $oppVegasTeamScore) {
+        $diff = abs($vegasTeamScore - $oppVegasTeamScore);
+
+        if ($vegasTeamScore > $oppVegasTeamScore) {
+            return '-'.$diff;
+        }    
+
+        if ($vegasTeamScore < $oppVegasTeamScore) {
+            return '+'.$diff;
+        }       
+
+        return 'PK';
     }
 
 
