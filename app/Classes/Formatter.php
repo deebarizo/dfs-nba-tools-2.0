@@ -1,6 +1,10 @@
 <?php namespace App\Classes;
 
+use App\Models\boxScoreLine;
+use App\Models\Game;
 use App\Models\Team;
+
+use Illuminate\Support\Facades\DB;
 
 class Formatter {
 
@@ -37,6 +41,8 @@ class Formatter {
 
 				$game->home_team_abbr_pm = $team->abbr_pm;
 
+				$game->home_team_name_br = $team->name_br;
+
 				break;
 			}
 		}
@@ -46,6 +52,8 @@ class Formatter {
 				$game->road_team_abbr_br = $team->abbr_br;
 
 				$game->road_team_abbr_pm = $team->abbr_pm;
+
+				$game->road_team_name_br = $team->name_br;
 
 				break;
 			}
@@ -101,5 +109,72 @@ class Formatter {
 
 		return $game;
 	}
+
+
+    /****************************************************************************************
+    NBA BOX SCORE
+    ****************************************************************************************/
+
+    public function formatNbaBoxScore($gameId) {
+    	$boxScore = [];
+
+    	$teams = Team::all();
+
+		$boxScore['metadata'] = Game::where('id', $gameId)->first();
+
+		$boxScore['metadata'] = $this->addTeams($teams, $boxScore['metadata']);
+
+		$boxScore = $this->addNbaBoxScoreSubhead($boxScore);
+
+		$boxScore['box_score_lines']['road']['starters'] = DB::table('box_score_lines')
+													->select('*')
+													->join('players', 'players.id', '=', 'box_score_lines.player_id')
+													->where('game_id', $gameId)
+													->where('box_score_lines.team_id', $boxScore['metadata']->road_team_id)
+													->where('box_score_lines.role', 'starter')
+													->get();
+
+		$boxScore['box_score_lines']['road']['reserves'] = DB::table('box_score_lines')
+													->select('*')
+													->join('players', 'players.id', '=', 'box_score_lines.player_id')
+													->where('game_id', $gameId)
+													->where('box_score_lines.team_id', $boxScore['metadata']->road_team_id)
+													->where('box_score_lines.role', 'reserve')
+													->get();
+
+		$boxScore['box_score_lines']['home']['starters'] = DB::table('box_score_lines')
+													->select('*')
+													->join('players', 'players.id', '=', 'box_score_lines.player_id')
+													->where('game_id', $gameId)
+													->where('box_score_lines.team_id', $boxScore['metadata']->home_team_id)
+													->where('box_score_lines.role', 'starter')
+													->get();
+
+		$boxScore['box_score_lines']['home']['reserves'] = DB::table('box_score_lines')
+													->select('*')
+													->join('players', 'players.id', '=', 'box_score_lines.player_id')
+													->where('game_id', $gameId)
+													->where('box_score_lines.team_id', $boxScore['metadata']->home_team_id)
+													->where('box_score_lines.role', 'reserve')
+													->get();
+
+		# ddAll($boxScore);
+
+		return $boxScore;
+    }
+
+    private function addNbaBoxScoreSubhead($boxScore) {
+		if ($boxScore['metadata']->home_team_score > $boxScore['metadata']->road_team_score) {
+			$boxScore['subhead'] = $boxScore['metadata']->home_team_abbr_br.' '.$boxScore['metadata']->home_team_score.', '.$boxScore['metadata']->road_team_abbr_br.' '.$boxScore['metadata']->road_team_score.' | '.$boxScore['metadata']->date;
+
+			return $boxScore;
+		}
+
+		if ($boxScore['metadata']->road_team_score > $boxScore['metadata']->home_team_score) {
+			$boxScore['subhead'] = $boxScore['metadata']->road_team_abbr_br.' '.$boxScore['metadata']->road_team_score.', '.$boxScore['metadata']->home_team_abbr_br.' '.$boxScore['metadata']->home_team_score.' | '.$boxScore['metadata']->date;
+
+			return $boxScore;
+		}
+    }
 
 }
