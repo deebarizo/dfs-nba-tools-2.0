@@ -23,8 +23,8 @@
 							<td>{{ $game->matchup }}</td>
 							<td>{{ $game->result }}</td>
 							<td>{{ $game->line }}</td>
-							<td>{{ $game->links }}</td>
-							<td>{{ $game->ot }}</td>
+							<td>{!! $game->links !!}</td>
+							<td>{!! $game->ot !!}</td>
 						</tr>
 					@endforeach
 				</tbody>
