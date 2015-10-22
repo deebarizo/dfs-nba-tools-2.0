@@ -9,48 +9,69 @@
 
 			@foreach ($boxScore['box_score_lines'] as $locations)
 
-				@foreach ($locations as $roles)
+				<table class="table table-striped table-bordered table-hover table-condensed">
 
-					<table class="table table-striped table-bordered table-hover table-condensed">
+					@foreach ($locations as $roles)
+
 						<thead>
-							<tr>
-								<th>{{ ucfirst($roles[0]->role) }}s</th>
-								<th>Pos</th>
-								<th>Mp</th>
-								<th>Fg</th>
-								<th>3p</th>
-								<th>Ft</th>
-								<th>Or</th>
-								<th>Dr</th>
-								<th>Tr</th>
-								<th>Ast</th>
-								<th>Bl</th>
-								<th>St</th>
-								<th>Pf</th>
-								<th>To</th>
-								<th>Pt</th>
-								<th>Usg</th>
-								<th>Fdpts</th>
-								<th>Fdppm</th>
-							</tr>
-						</thead>
-					</table>
+								<tr>
+									<th style="width: 20%">{{ $roles[0]->abbr_br }} {{ ucfirst($roles[0]->role) }}s</th>
+									<th>Mp</th>
+									<th>Fg</th>
+									<th>3p</th>
+									<th>Ft</th>
+									<th>Or</th>
+									<th>Dr</th>
+									<th>Tr</th>
+									<th>Ast</th>
+									<th>Bl</th>
+									<th>St</th>
+									<th>Pf</th>
+									<th>To</th>
+									<th>Pt</th>
+									<th>Usg</th>
+									<th>Fdpts</th>
+									<th>Fdppm</th>
+								</tr>
+							</thead>
 
-					@foreach ($roles as $boxScoreLine)
+							<tbody>
 
-						<?php prf($boxScoreLine) ?>
+						@foreach ($roles as $boxScoreLine)
 
-						@foreach ($boxScoreLine as $stat)
-
-
-
+								<tr>
+									<td>{{ $boxScoreLine->name }}</td>
+									<td>{{ $boxScoreLine->mp }}</td>
+									<td>{{ $boxScoreLine->fg }}-{{ $boxScoreLine->fga }}</td>
+									<td>{{ $boxScoreLine->threep }}-{{ $boxScoreLine->threepa }}</td>
+									<td>{{ $boxScoreLine->ft }}-{{ $boxScoreLine->fta }}</td>
+									<td>{{ $boxScoreLine->orb }}</td>
+									<td>{{ $boxScoreLine->drb }}</td>
+									<td>{{ $boxScoreLine->trb }}</td>
+									<td>{{ $boxScoreLine->ast }}</td>
+									<td>{{ $boxScoreLine->blk }}</td>
+									<td>{{ $boxScoreLine->stl }}</td>
+									<td>{{ $boxScoreLine->pf }}</td>
+									<td>{{ $boxScoreLine->tov }}</td>
+									<td>{{ $boxScoreLine->pts }}</td>
+									<td>{{ $boxScoreLine->usg }}</td>
+									<td>{{ $boxScoreLine->fdpts }}</td>
+									<td>{{ $boxScoreLine->fdppm }}</td>
+								</tr>
+							
 						@endforeach
 
+							</tbody>
+
 					@endforeach
-				
-				@endforeach
+
+				</table>
+
+				<hr>
 			
 			@endforeach
+
+			
 
 		</div>
 	</div>
