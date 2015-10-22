@@ -21,7 +21,7 @@
 						<tr>
 							<td>{{ $game->date }}</td>
 							<td>{{ $game->matchup }}</td>
-							<td>{{ $game->result }}</td>
+							<td>{!! $game->result !!}</td>
 							<td>{{ $game->line }}</td>
 							<td>{!! $game->links !!}</td>
 							<td>{!! $game->ot !!}</td>
