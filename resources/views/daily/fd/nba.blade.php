@@ -146,7 +146,7 @@
 					    	data-player-position="{{ $player->position }}"
 					    	data-player-team="{{ $player->team_abbr }}"
 					    	class="player-row">
-					    	<td><a target="_blank" href="/players/{{ $player->player_id }}">{{ $player->name }}</a>
+					    	<td><a target="_blank" href="/players/nba/{{ $player->player_id }}">{{ $player->name }}</a>
 			    			</td>
 			    			<td>
 					    		<a {!! $noFilterQtip !!} target="_blank" href="/daily_fd_filters/{{ $player->player_id }}/create">
