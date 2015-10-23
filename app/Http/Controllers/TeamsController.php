@@ -9,12 +9,15 @@ use App\Models\PlayerPool;
 use App\Models\PlayerFd;
 use App\Models\DailyFdFilter;
 use App\Models\TeamFilter;
-use App\Classes\Solver;
-use App\Classes\SolverTopPlays;
+
 use App\Models\Lineup;
 use App\Models\LineupPlayer;
 use App\Models\DefaultLineupBuyIn;
+
+use App\Classes\Solver;
+use App\Classes\SolverTopPlays;
 use App\Classes\LineupBuilder;
+use App\Classes\Formatter;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\RunFDNBASalariesScraperRequest;
@@ -28,7 +31,21 @@ use Illuminate\Support\Facades\Session;
 
 class TeamsController {
 
+    public function showNbaTeams() {
+        $teams = Team::all();
+
+        return view('teams/nba', compact('teams'));
+    }
+
 	public function getTeamStats($abbr_br) {
+        $teamId = Team::where('abbr_br', $abbr_br)->pluck('id');
+
+        $games = Game::where('home_team_id', $teamId)->orWhere('road_team_id', $teamId)->orderBy('date', 'desc')->take(100)->get();
+
+        $formatter = new Formatter;
+
+        $games = $formatter->formatNbaGames($games);
+
         $endYear = 2015;
 
         $name = Team::where('abbr_br', '=', $abbr_br)->pluck('name_br');
@@ -78,7 +95,7 @@ class TeamsController {
 
         # dd($thisTeamPercentages);
 
-        return view('teams', compact('endYear', 'name', 'thisTeamPercentages'));
+        return view('teams/nba_games', compact('games', 'endYear', 'name', 'thisTeamPercentages'));
 	}
 
 }

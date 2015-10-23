@@ -24,6 +24,14 @@ $router->get('games/nba/{gameId}', 'BoxScoresController@showNbaBoxScore');
 
 
 /****************************************************************************************
+TEAMS
+****************************************************************************************/
+
+$router->get('teams', 'TeamsController@showNbaTeams');
+$router->get('teams/nba/{abbr_br}', 'TeamsController@getTeamStats');
+
+
+/****************************************************************************************
 SCRAPERS
 ****************************************************************************************/
 
@@ -176,8 +184,6 @@ $router->get('get_player_name_autocomplete/{sportInUrl}', 'PlayersController@get
 /****************************************************************************************
 MISC
 ****************************************************************************************/
-
-$router->get('teams/{abbr_br}', 'TeamsController@getTeamStats');
 
 $router->get('nbawowy/', 'NbawowyController@nbawowy_form');
 $router->get('nbawowy/{name}/{startDate}/{endDate}/on/{playerOn}/off/{playerOff}/{team}', 'NbawowyController@nbawowy');
