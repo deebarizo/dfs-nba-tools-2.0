@@ -34,6 +34,7 @@
 									<th>Usg</th>
 									<th>Fdpts</th>
 									<th>Fdppm</th>
+									<th>Fdsh</th>
 								</tr>
 							</thead>
 
@@ -59,6 +60,7 @@
 									<td>{{ $boxScoreLine->usg }}</td>
 									<td>{{ $boxScoreLine->fdpts }}</td>
 									<td>{{ $boxScoreLine->fdppm }}</td>
+									<td>{{ numFormat($boxScoreLine->fdsh * 100, 1) }}%</td>
 								</tr>
 
 							@endforeach
@@ -88,6 +90,7 @@
 									<th>&nbsp;</th>
 									<th>Fdpts</th>
 									<th>Fdppm</th>
+									<th>Fdsh</th>
 								</tr>
 							</thead>
 
@@ -112,6 +115,7 @@
 										<td>&nbsp;</td>
 										<td>{{ numFormat($boxScoreLine->fdpts, 2) }}</td>
 										<td>{{ numFormat($boxScoreLine->fdppm, 2) }}</td>
+										<td>100.0%</td>
 									</tr>
 
 									<tr>
@@ -120,6 +124,7 @@
 										<td>{{ numFormat($boxScoreLine->fg / $boxScoreLine->fga * 100, 1) }}%</td>
 										<td>{{ numFormat($boxScoreLine->threep / $boxScoreLine->threepa * 100, 1) }}%</td>
 										<td>{{ numFormat($boxScoreLine->ft / $boxScoreLine->fta * 100, 1) }}%</td>
+										<td>&nbsp;</td>
 										<td>&nbsp;</td>
 										<td>&nbsp;</td>
 										<td>&nbsp;</td>

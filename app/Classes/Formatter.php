@@ -253,6 +253,8 @@ class Formatter {
 	    				} else {
 	    					$boxScoreLine->fdppm = numFormat(0);
 	    				}
+
+	    				$boxScoreLine->fdsh = $boxScoreLine->fdpts / $locations['totals'][0]->fdpts;
 		    		}
     			}
     		}
