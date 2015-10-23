@@ -144,6 +144,31 @@ class Formatter {
 													->where('box_score_lines.role', 'reserve')
 													->get();
 
+		$boxScore['box_score_lines']['road']['totals'] = DB::table('box_score_lines')
+													->selectRaw('SUM(mp) / 5 as mp,
+																 SUM(fg) as fg,
+																 SUM(fga) as fga,
+																 SUM(threep) as threep,
+																 SUM(threepa) as threepa,
+																 SUM(ft) as ft,
+																 SUM(fta) as fta,
+																 SUM(orb) as orb,
+																 SUM(drb) as drb,
+																 SUM(trb) as trb,
+																 SUM(ast) as ast,
+																 SUM(blk) as blk,
+																 SUM(stl) as stl,
+																 SUM(pf) as pf,
+																 SUM(tov) as tov,
+																 SUM(pts) as pts,
+																 SUM(pts + (trb*1.2) + (ast*1.5) + (blk*2) + (stl*2) - tov) as fdpts,
+																 SUM(pts + (trb*1.2) + (ast*1.5) + (blk*2) + (stl*2) - tov) / SUM(mp) as fdppm')
+													->join('players', 'players.id', '=', 'box_score_lines.player_id')
+													->join('teams', 'teams.id', '=', 'box_score_lines.team_id')
+													->where('game_id', $gameId)
+													->where('box_score_lines.team_id', $boxScore['metadata']->road_team_id)
+													->get();													
+
 		$boxScore['box_score_lines']['home']['starters'] = DB::table('box_score_lines')
 													->selectRaw('*')
 													->join('players', 'players.id', '=', 'box_score_lines.player_id')
@@ -161,6 +186,31 @@ class Formatter {
 													->where('box_score_lines.team_id', $boxScore['metadata']->home_team_id)
 													->where('box_score_lines.role', 'reserve')
 													->get();
+
+		$boxScore['box_score_lines']['home']['totals'] = DB::table('box_score_lines')
+													->selectRaw('SUM(mp) / 5 as mp,
+																 SUM(fg) as fg,
+																 SUM(fga) as fga,
+																 SUM(threep) as threep,
+																 SUM(threepa) as threepa,
+																 SUM(ft) as ft,
+																 SUM(fta) as fta,
+																 SUM(orb) as orb,
+																 SUM(drb) as drb,
+																 SUM(trb) as trb,
+																 SUM(ast) as ast,
+																 SUM(blk) as blk,
+																 SUM(stl) as stl,
+																 SUM(pf) as pf,
+																 SUM(tov) as tov,
+																 SUM(pts) as pts,
+																 SUM(pts + (trb*1.2) + (ast*1.5) + (blk*2) + (stl*2) - tov) as fdpts,
+																 SUM(pts + (trb*1.2) + (ast*1.5) + (blk*2) + (stl*2) - tov) / SUM(mp) as fdppm')
+													->join('players', 'players.id', '=', 'box_score_lines.player_id')
+													->join('teams', 'teams.id', '=', 'box_score_lines.team_id')
+													->where('game_id', $gameId)
+													->where('box_score_lines.team_id', $boxScore['metadata']->home_team_id)
+													->get();		
 
 		$boxScore = $this->addNbaFantasyStats($boxScore);
 
@@ -186,22 +236,24 @@ class Formatter {
     private function addNbaFantasyStats($boxScore) {
 
     	foreach ($boxScore['box_score_lines'] as $locations) {
-    		foreach ($locations as $roles) {
-    			foreach ($roles as $boxScoreLine) {
-    				$boxScoreLine->fdpts = $boxScoreLine->pts + 
-    									   ($boxScoreLine->trb * 1.2) + 
-    									   ($boxScoreLine->ast * 1.5) + 
-    									   ($boxScoreLine->stl * 2) +
-    									   ($boxScoreLine->blk * 2) + 
-    									   ($boxScoreLine->tov * -1);
+    		foreach ($locations as $key => $roles) {
+    			if ($key != 'totals') {
+	    			foreach ($roles as $boxScoreLine) {
+	       				$boxScoreLine->fdpts = $boxScoreLine->pts + 
+	    									   ($boxScoreLine->trb * 1.2) + 
+	    									   ($boxScoreLine->ast * 1.5) + 
+	    									   ($boxScoreLine->stl * 2) +
+	    									   ($boxScoreLine->blk * 2) + 
+	    									   ($boxScoreLine->tov * -1);
 
-    				$boxScoreLine->fdpts = numFormat($boxScoreLine->fdpts);
+	    				$boxScoreLine->fdpts = numFormat($boxScoreLine->fdpts);
 
-    				if ($boxScoreLine->mp > 0) {
-    					$boxScoreLine->fdppm = numFormat($boxScoreLine->fdpts / $boxScoreLine->mp);
-    				} else {
-    					$boxScoreLine->fdppm = numFormat(0);
-    				}
+	    				if ($boxScoreLine->mp > 0) {
+	    					$boxScoreLine->fdppm = numFormat($boxScoreLine->fdpts / $boxScoreLine->mp);
+	    				} else {
+	    					$boxScoreLine->fdppm = numFormat(0);
+	    				}
+		    		}
     			}
     		}
     	}
