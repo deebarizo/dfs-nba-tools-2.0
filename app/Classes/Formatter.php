@@ -124,7 +124,15 @@ class Formatter {
 
 		$boxScore['metadata'] = $this->addTeams($teams, $boxScore['metadata']);
 
+		$boxScore['metadata'] = $this->addNbaLine($boxScore['metadata']);
+
 		$boxScore = $this->addNbaBoxScoreSubhead($boxScore);
+
+	    /****************************************************************************************
+	    ROAD
+	    ****************************************************************************************/
+
+		$boxScore['box_score_lines']['road']['abbr_br'] = $boxScore['metadata']->road_team_abbr_br;
 
 		$boxScore['box_score_lines']['road']['starters'] = DB::table('box_score_lines')
 													->selectRaw('*')
@@ -167,7 +175,24 @@ class Formatter {
 													->join('teams', 'teams.id', '=', 'box_score_lines.team_id')
 													->where('game_id', $gameId)
 													->where('box_score_lines.team_id', $boxScore['metadata']->road_team_id)
-													->get();													
+													->get();
+
+		$boxScore['box_score_lines']['road']['fd_totals'] = DB::table('box_score_lines')
+													->selectRaw('SUM(pts) as apts,
+																 SUM(pts + (trb*1.2) + (ast*1.5) + (blk*2) + (stl*2) - tov) as afdpts')
+													->join('players', 'players.id', '=', 'box_score_lines.player_id')
+													->join('teams', 'teams.id', '=', 'box_score_lines.team_id')
+													->where('game_id', $gameId)
+													->where('box_score_lines.team_id', $boxScore['metadata']->road_team_id)
+													->first();
+
+		$boxScore['box_score_lines']['road']['fd_totals']->ppts = Game::where('id', $gameId)->pluck('vegas_road_team_score');
+
+	    /****************************************************************************************
+	    HOME
+	    ****************************************************************************************/
+
+		$boxScore['box_score_lines']['home']['abbr_br'] = $boxScore['metadata']->home_team_abbr_br;												
 
 		$boxScore['box_score_lines']['home']['starters'] = DB::table('box_score_lines')
 													->selectRaw('*')
@@ -212,6 +237,17 @@ class Formatter {
 													->where('box_score_lines.team_id', $boxScore['metadata']->home_team_id)
 													->get();		
 
+		$boxScore['box_score_lines']['home']['fd_totals'] = DB::table('box_score_lines')
+													->selectRaw('SUM(pts) as apts,
+																 SUM(pts + (trb*1.2) + (ast*1.5) + (blk*2) + (stl*2) - tov) as afdpts')
+													->join('players', 'players.id', '=', 'box_score_lines.player_id')
+													->join('teams', 'teams.id', '=', 'box_score_lines.team_id')
+													->where('game_id', $gameId)
+													->where('box_score_lines.team_id', $boxScore['metadata']->home_team_id)
+													->first();
+
+		$boxScore['box_score_lines']['home']['fd_totals']->ppts = Game::where('id', $gameId)->pluck('vegas_home_team_score');
+
 		$boxScore = $this->addNbaFantasyStats($boxScore);
 
 		# ddAll($boxScore);
@@ -221,13 +257,13 @@ class Formatter {
 
     private function addNbaBoxScoreSubhead($boxScore) {
 		if ($boxScore['metadata']->home_team_score > $boxScore['metadata']->road_team_score) {
-			$boxScore['subhead'] = $boxScore['metadata']->home_team_abbr_br.' '.$boxScore['metadata']->home_team_score.', '.$boxScore['metadata']->road_team_abbr_br.' '.$boxScore['metadata']->road_team_score.' | '.$boxScore['metadata']->date;
+			$boxScore['subhead'] = $boxScore['metadata']->home_team_abbr_br.' '.$boxScore['metadata']->home_team_score.', '.$boxScore['metadata']->road_team_abbr_br.' '.$boxScore['metadata']->road_team_score.' | '.$boxScore['metadata']->date.' | '.$boxScore['metadata']->line;
 
 			return $boxScore;
 		}
 
 		if ($boxScore['metadata']->road_team_score > $boxScore['metadata']->home_team_score) {
-			$boxScore['subhead'] = $boxScore['metadata']->road_team_abbr_br.' '.$boxScore['metadata']->road_team_score.', '.$boxScore['metadata']->home_team_abbr_br.' '.$boxScore['metadata']->home_team_score.' | '.$boxScore['metadata']->date;
+			$boxScore['subhead'] = $boxScore['metadata']->road_team_abbr_br.' '.$boxScore['metadata']->road_team_score.', '.$boxScore['metadata']->home_team_abbr_br.' '.$boxScore['metadata']->home_team_score.' | '.$boxScore['metadata']->date.' | '.$boxScore['metadata']->line;
 
 			return $boxScore;
 		}
@@ -237,7 +273,7 @@ class Formatter {
 
     	foreach ($boxScore['box_score_lines'] as $locations) {
     		foreach ($locations as $key => $roles) {
-    			if ($key != 'totals') {
+    			if ($key == 'starters' || $key == 'reserves') {
 	    			foreach ($roles as $boxScoreLine) {
 	       				$boxScoreLine->fdpts = $boxScoreLine->pts + 
 	    									   ($boxScoreLine->trb * 1.2) + 

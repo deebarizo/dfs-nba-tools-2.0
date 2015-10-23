@@ -13,11 +13,11 @@
 
 					@foreach ($locations as $key => $roles)
 
-						@if ($key != 'totals')
+						@if ($key == 'starters' || $key == 'reserves')
 
 							<thead>
 								<tr>
-									<th style="width: 20%">{{ $roles[0]->abbr_br }} {{ ucfirst($roles[0]->role) }}s</th>
+									<th style="width: 20%">{{ $locations['abbr_br'] }} {{ ucfirst($roles[0]->role) }}s</th>
 									<th>Mp</th>
 									<th>Fg</th>
 									<th>3p</th>
@@ -30,7 +30,7 @@
 									<th>St</th>
 									<th>Pf</th>
 									<th>To</th>
-									<th>Pt</th>
+									<th>Pts</th>
 									<th>Usg</th>
 									<th>Fdpts</th>
 									<th>Fdppm</th>
@@ -73,7 +73,7 @@
 
 							<thead>
 								<tr>
-									<th style="width: 20%">Totals</th>
+									<th style="width: 20%">{{ $locations['abbr_br'] }} Totals</th>
 									<th>Mp</th>
 									<th>Fg</th>
 									<th>3p</th>
@@ -86,7 +86,7 @@
 									<th>St</th>
 									<th>Pf</th>
 									<th>To</th>
-									<th>Pt</th>
+									<th>Pts</th>
 									<th>&nbsp;</th>
 									<th>Fdpts</th>
 									<th>Fdppm</th>
@@ -148,11 +148,43 @@
 
 				</table>
 
+				<table class="table table-striped table-bordered table-hover table-condensed">
+
+					<thead>
+						<tr>
+							<th style="width: 20%">{{ $locations['abbr_br'] }} FD Totals</th>
+							<th>aPts</th>
+							<th>aFdpts</th>
+							<th>apFdpts</th>
+							<th>aDiff</th>
+							<th>aDiff%</th>
+							<th>pPts</th>
+							<th>pFdpts</th>
+							<th>pDiff</th>
+							<th>pDiff%</th>
+						</tr>
+					</thead>
+
+					<tbody>
+						<tr>
+							<td style="width: 20%">{{ $locations['abbr_br'] }}</td>
+							<td>{{ $locations['fd_totals']->apts }}</td>
+							<td>{{ numFormat($locations['fd_totals']->afdpts, 2) }}</td>
+							<td>{{ numFormat(($locations['fd_totals']->apts * 1.5560525638751) + 40.088184690875, 2) }}</td>
+							<td>{{ numFormat($locations['fd_totals']->afdpts - (($locations['fd_totals']->apts * 1.5560525638751) + 40.088184690875), 2) }}</td>
+							<td>{{ numFormat(($locations['fd_totals']->afdpts - (($locations['fd_totals']->apts * 1.5560525638751) + 40.088184690875)) / (($locations['fd_totals']->apts * 1.5560525638751) + 40.088184690875) * 100, 2) }}%</td>
+							<td>{{ numFormat($locations['fd_totals']->ppts, 2) }}</td>
+							<td>{{ numFormat(($locations['fd_totals']->ppts * 1.5560525638751) + 40.088184690875, 2) }}</td>
+							<td>{{ numFormat($locations['fd_totals']->afdpts - (($locations['fd_totals']->ppts * 1.5560525638751) + 40.088184690875), 2) }}</td>
+							<td>{{ numFormat(($locations['fd_totals']->afdpts - (($locations['fd_totals']->ppts * 1.5560525638751) + 40.088184690875)) / (($locations['fd_totals']->ppts * 1.5560525638751) + 40.088184690875) * 100, 2) }}%</td>
+						</tr>
+					</tbody>
+
+				</table>
+
 				<hr>
 			
 			@endforeach
-
-			
 
 		</div>
 	</div>
