@@ -648,7 +648,7 @@ class StatBuilder {
                     ->join('seasons', 'games.season_id', '=', 'seasons.id')
                     ->join('players', 'box_score_lines.player_id', '=', 'players.id')
                     ->join('teams', 'teams.id', '=', 'box_score_lines.team_id')
-                    ->selectRaw('games.date as date, box_score_lines.team_id, abbr_br as team_of_player, home_team_id, home_team_score, road_team_id, road_team_score, vegas_home_team_score, vegas_road_team_score, link_br, DATE_FORMAT(games.date, "%Y%m%d") as date_pm, role, mp, ot_periods, fg, fga, threep, threepa, ft, fta, orb, drb, trb, ast, blk, stl, pf, tov, pts, usg, pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov as fdpts, (pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) / mp as fdppm, status')
+                    ->selectRaw('games.id as game_id, games.date as date, box_score_lines.team_id, abbr_br as team_of_player, home_team_id, home_team_score, road_team_id, road_team_score, vegas_home_team_score, vegas_road_team_score, link_br, DATE_FORMAT(games.date, "%Y%m%d") as date_pm, role, mp, ot_periods, fg, fga, threep, threepa, ft, fta, orb, drb, trb, ast, blk, stl, pf, tov, pts, usg, pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov as fdpts, (pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov) / mp as fdppm, status')
                     ->where('box_score_lines.player_id', '=', $playerId)
                     ->where('seasons.end_year', '=', $endYear)
                     ->orderBy('games.date', 'desc')
@@ -660,7 +660,7 @@ class StatBuilder {
                     
                     $boxScoreLine->is_road_game = '';
 
-                    $boxScoreLine->game_score = $statBuilder->createGameScore($boxScoreLine->home_team_score, $boxScoreLine->road_team_score);
+                    $boxScoreLine->game_score = $statBuilder->createGameScore($boxScoreLine->game_id, $boxScoreLine->home_team_score, $boxScoreLine->road_team_score);
 
                     $boxScoreLine->line = $statBuilder->createLine($boxScoreLine->vegas_home_team_score, $boxScoreLine->vegas_road_team_score);
                 } else {
@@ -668,7 +668,7 @@ class StatBuilder {
                     
                     $boxScoreLine->is_road_game = '@';
 
-                    $boxScoreLine->game_score = $statBuilder->createGameScore($boxScoreLine->road_team_score, $boxScoreLine->home_team_score);
+                    $boxScoreLine->game_score = $statBuilder->createGameScore($boxScoreLine->game_id, $boxScoreLine->road_team_score, $boxScoreLine->home_team_score);
 
                     $boxScoreLine->line = $statBuilder->createLine($boxScoreLine->vegas_road_team_score, $boxScoreLine->vegas_home_team_score);
                 }
@@ -745,13 +745,13 @@ class StatBuilder {
         }
     }
 
-    public function createGameScore($teamScore, $oppTeamScore) {
+    public function createGameScore($gameId, $teamScore, $oppTeamScore) {
         if ($teamScore > $oppTeamScore) {
-            return '<span style="color: green">W</span> '.$teamScore.'-'.$oppTeamScore;
+            return '<span style="color: green">W</span> <a href="/games/nba/'.$gameId.'">'.$teamScore.'-'.$oppTeamScore.'</a>';
         }
 
         if ($teamScore < $oppTeamScore) {
-            return '<span style="color: red">L</span> '.$teamScore.'-'.$oppTeamScore;
+            return '<span style="color: red">L</span> <a href="/games/nba/'.$gameId.'">'.$teamScore.'-'.$oppTeamScore.'</a>';
         }
     }
 

@@ -55,6 +55,8 @@ class PlayersController {
 
         list($boxScoreLines, $overviews, $playerInfo, $player, $name, $previousFdFilters, $fptsProfile, $endYears) = $statBuilder->getNbaPlayerStats($playerId);
 
+        # ddAll($boxScoreLines);
+
         return view('players/nba', compact('boxScoreLines', 'overviews', 'playerInfo', 'player', 'name', 'previousFdFilters', 'fptsProfile', 'endYears'));
 	}
 
