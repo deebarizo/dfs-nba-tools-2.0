@@ -35,9 +35,9 @@
 				<ul class="nav navbar-nav">
 					<li class="{!! setActive('daily*') !!}{!! setActive('solver_fd_nba*') !!}{!! setActive('/') !!}{!! setActive('solver_with_top_plays_fd_nba*') !!}{!! setActive('solver_top_plays*') !!}{!! setActive('lineup_builder*') !!}"><a href="/">Daily</a></li>
 					<li class="{!! setActive('games*') !!}"><a href="/games">Games</a></li>
-					<li class="{!! setActive('scrapers*') !!}"><a href="/scrapers">Scrapers</a></li>
-					<li class="{!! setActive('players*') !!}"><a href="/players">Players</a></li>
 					<li class="{!! setActive('teams*') !!}"><a href="/teams/ATL">Teams</a></li>
+					<li class="{!! setActive('players*') !!}"><a href="/players">Players</a></li>
+					<li class="{!! setActive('scrapers*') !!}"><a href="/scrapers">Scrapers</a></li>
 					<li class="{!! setActive('admin*') !!}"><a href="/admin">Admin</a></li>
 					<li class="{!! setActive('nbawowy*') !!}"><a href="/nbawowy">nbawowy!</a></li>
 					<li class="{!! setActive('studies*') !!}"><a href="/studies">Studies</a></li>
