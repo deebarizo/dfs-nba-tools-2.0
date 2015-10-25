@@ -678,6 +678,8 @@ class StatBuilder {
                 $boxScoreLine->home_team_abbr_pm = $statBuilder->getTeamAbbrPm($boxScoreLine->home_team_id, $teams);
                 $boxScoreLine->road_team_abbr_pm = $statBuilder->getTeamAbbrPm($boxScoreLine->road_team_id, $teams);
 
+                $boxScoreLine->fdsh = $this->addFdShare($boxScoreLine);
+
             } unset($boxScoreLine);
         }
 
@@ -722,6 +724,16 @@ class StatBuilder {
         # ddAll($boxScoreLines);  
         
         return array($boxScoreLines, $overviews, $playerInfo, $player, $name, $previousFdFilters, $fptsProfile, $endYears);
+    }
+
+    private function addFdShare($boxScoreLine) {
+        $teamFdpts = DB::table('box_score_lines')
+                        ->selectRaw('SUM(pts + (trb*1.2) + (ast*1.5) + (blk*2) + (stl*2) - tov) as team_fdpts')
+                        ->where('team_id', $boxScoreLine->team_id)
+                        ->where('game_id', $boxScoreLine->game_id)
+                        ->pluck('team_fdpts');
+
+        return numFormat($boxScoreLine->fdpts / $teamFdpts * 100, 1);
     }
 
 

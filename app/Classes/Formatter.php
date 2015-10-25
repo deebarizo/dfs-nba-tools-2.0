@@ -66,13 +66,13 @@ class Formatter {
 		$gameLink = '/games/nba/'.$game->id;
 
 		if ($game->home_team_score > $game->road_team_score) {
-			$game->result = '<a target="_blank" href="'.$gameLink.'">'.$game->home_team_abbr_br.' '.$game->home_team_score.', '.$game->road_team_abbr_br.' '.$game->road_team_score.'</a>';
+			$game->result = '<a href="'.$gameLink.'">'.$game->home_team_abbr_br.' '.$game->home_team_score.', '.$game->road_team_abbr_br.' '.$game->road_team_score.'</a>';
 
 			return $game;
 		}
 
 		if ($game->road_team_score > $game->home_team_score) {
-			$game->result = '<a target="_blank" href="'.$gameLink.'">'.$game->road_team_abbr_br.' '.$game->road_team_score.', '.$game->home_team_abbr_br.' '.$game->home_team_score.'</a>';
+			$game->result = '<a href="'.$gameLink.'">'.$game->road_team_abbr_br.' '.$game->road_team_score.', '.$game->home_team_abbr_br.' '.$game->home_team_score.'</a>';
 
 			return $game;
 		}

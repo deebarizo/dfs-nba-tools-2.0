@@ -191,6 +191,7 @@
 							<th>Usg</th>
 							<th>Fdpts</th>
 							<th>Fdppm</th>
+							<th>Fdsh</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -229,9 +230,10 @@
 								   	@else
 								   		<td>0.00</td>
 								   	@endif
+								   	<td>{{ $row->fdsh }}%</td>
 							    @else
-							    	<td style="text-align: center" colspan="19">{{ $row->status }}</td>
-							    @endif
+							    	<td style="text-align: center" colspan="20">{{ $row->status }}</td>
+							    @endif							    	
 						    </tr>
 						@endforeach
 					</tbody>
