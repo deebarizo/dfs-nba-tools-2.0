@@ -29,6 +29,8 @@ class BoxScoresController {
 
 		$boxScore = $formatter->formatNbaBoxScore($gameId);
 
+		# ddAll($boxScore);
+
 		return view('box_scores/nba', compact('boxScore'));
 	}
 

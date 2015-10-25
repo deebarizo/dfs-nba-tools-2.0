@@ -43,7 +43,7 @@
 							@foreach ($roles as $boxScoreLine)
 
 								<tr>
-									<td>{{ $boxScoreLine->name }}</td>
+									<td><a href="/players/nba/{{ $boxScoreLine->player_id }}">{{ $boxScoreLine->name }}</a></td>
 									<td>{{ $boxScoreLine->mp }}</td>
 									<td>{{ $boxScoreLine->fg }}-{{ $boxScoreLine->fga }}</td>
 									<td>{{ $boxScoreLine->threep }}-{{ $boxScoreLine->threepa }}</td>
