@@ -188,7 +188,7 @@
 			    				@if (isset($player->game_time))
 				    				{{ $player->game_time }}
 				    			@else
-				    				No lines yet.
+				    				NLY
 				    			@endif
 			    			</td>
 					    	<td><a target="_blank" href="/teams/{{ $player->team_abbr }}">{{ $player->team_abbr }}{!! $player->is_player_on_home_team !!}</a> (<a target="_blank" href="http://www.basketball-reference.com/teams/{{ $player->team_abbr }}/2015.html#all_advanced">br</a>)</td>
