@@ -38,7 +38,27 @@ class TeamsController {
     }
 
 	public function getTeamStats($abbr_br) {
+        $endYear = 2015;
+
         $teamId = Team::where('abbr_br', $abbr_br)->pluck('id');
+
+        $players['this_year'] = DB::table('players_teams')
+                        ->select('players_teams.player_id', 'players.name')
+                        ->join('players', 'players.id', '=', 'players_teams.player_id')
+                        ->where('players_teams.end_date', '>', '2015-10-01') // 2014-2015 season
+                        ->where('players_teams.start_date', '<', '2016-06-30') // 2014-2015 season
+                        ->where('players_teams.team_id', $teamId)
+                        ->get();
+
+        $players['last_year'] = DB::table('players_teams')
+                        ->select('players_teams.player_id', 'players.name')
+                        ->join('players', 'players.id', '=', 'players_teams.player_id')
+                        ->where('players_teams.end_date', '>', '2014-10-01') // 2014-2015 season
+                        ->where('players_teams.start_date', '<', '2015-06-30') // 2014-2015 season
+                        ->where('players_teams.team_id', $teamId)
+                        ->get();
+
+        ddAll($players);
 
         $games = Game::where('home_team_id', $teamId)->orWhere('road_team_id', $teamId)->orderBy('date', 'desc')->take(100)->get();
 
@@ -46,7 +66,9 @@ class TeamsController {
 
         $games = $formatter->formatNbaGames($games);
 
-        $endYear = 2015;
+        /****************************************************************************************
+        OPP TEAM FDPTS PROFILE
+        ****************************************************************************************/
 
         $name = Team::where('abbr_br', '=', $abbr_br)->pluck('name_br');
         $teamId = Team::where('abbr_br', '=', $abbr_br)->pluck('id');
