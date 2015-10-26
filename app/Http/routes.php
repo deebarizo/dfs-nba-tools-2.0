@@ -53,10 +53,10 @@ $router->get('admin/{sport}/add_player', 'AdminController@addPlayerForm');
 $router->post('admin/{sport}/add_player', 'AdminController@addPlayer');
 
 $router->get('admin/nba/update_player', function() {
-	return View::make('admin/nba/update_player');
+	return View::make('admin/nba/update_player_autocomplete');
 });
-$router->get('admin/nba/get_player_name_autocomplete/{sportInUrl}', 'AdminController@getNbaPlayerNameAutocompleteAdmin');
-$router->get('admin/{sport}/update_player', 'AdminController@addPlayerForm');
+$router->get('admin/nba/update_player/get_player_name_autocomplete/{sportInUrl}', 'AdminController@getNbaPlayerNameAutocompleteAdmin');
+$router->get('admin/{sportInUrl}/update_player/{playerId}', 'AdminController@updatePlayerForm');
 
 
 /****************************************************************************************

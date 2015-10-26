@@ -97,16 +97,6 @@ class AdminController {
     UPDATE PLAYER (NBA)
     ****************************************************************************************/
 
-    public function updatePlayerForm($sport) {
-        if ($sport == 'nba') {
-            $teams = Team::all();
-
-            $startDate = date('Y-m-d', time());
-
-            return view('/admin/'.$sport.'/add_player', compact('teams', 'startDate'));
-        }
-    }
-
     public function getNbaPlayerNameAutocompleteAdmin(Request $request) {
         $formInput = $request->input('term');
         $formInput = Str::lower($formInput);
@@ -127,5 +117,29 @@ class AdminController {
         }
 
         return Response::json($result);
+    }
+
+    public function updatePlayerForm($sport, $playerId) {
+        if ($sport == 'nba') {
+            $teams = Team::all();
+
+            $playerTeams = DB::table('players_teams')
+                            ->select('players_teams.id',
+                                     'players.name', 
+                                     'players_teams.player_id',
+                                     'teams.abbr_br', 
+                                     'players_teams.team_id',
+                                     'players_teams.start_date',
+                                     'players_teams.end_date')
+                            ->join('players', 'players.id', '=', 'players_teams.player_id')
+                            ->join('teams', 'teams.id', '=', 'players_teams.team_id')
+                            ->where('player_id', $playerId)
+                            ->orderBy('players_teams.start_date', 'asc')
+                            ->get();
+
+            # ddAll($playerTeams);
+
+            return view('/admin/'.$sport.'/update_player', compact('teams', 'playerTeams'));
+        }
     }
 }
