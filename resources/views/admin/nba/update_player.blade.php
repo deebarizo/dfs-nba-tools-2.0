@@ -56,6 +56,10 @@
 			</div>
 
 		{!!	Form::close() !!}
+
+		<div class="col-lg-12" style="margin-bottom: 15px">
+			<a href="/admin/nba/update_player">Update another player</a>
+		</div>
 	</div>
 
 	<script type="text/javascript">
