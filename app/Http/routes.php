@@ -57,6 +57,7 @@ $router->get('admin/nba/update_player', function() {
 });
 $router->get('admin/nba/update_player/get_player_name_autocomplete/{sportInUrl}', 'AdminController@getNbaPlayerNameAutocompleteAdmin');
 $router->get('admin/{sportInUrl}/update_player/{playerId}', 'AdminController@updatePlayerForm');
+$router->post('admin/{sportInUrl}/update_player/{playerId}', 'AdminController@updatePlayer');
 
 
 /****************************************************************************************

@@ -142,4 +142,27 @@ class AdminController {
             return view('/admin/'.$sport.'/update_player', compact('teams', 'playerTeams'));
         }
     }
+
+    public function updatePlayer(Request $request, $sportInUrl, $playerId) {
+        if ($sportInUrl == 'nba') {
+            $playerTeams = PlayerTeam::where('player_id', $playerId)->get();
+
+            # ddAll($playerTeams);
+
+            foreach ($playerTeams as $playerTeam) {
+                $playerTeam->team_id = $request->get('team_id_'.$playerTeam->id);
+                $playerTeam->start_date = $request->get('start_date_'.$playerTeam->id);
+                $playerTeam->end_date = $request->get('end_date_'.$playerTeam->id);
+
+                $playerTeam->save();
+            }
+
+            $message = 'Success!';
+            Session::flash('alert', 'info');
+
+            return redirect('admin/nba/update_player/'.$playerId)->with('message', $message);          
+        }
+        
+    }
+
 }

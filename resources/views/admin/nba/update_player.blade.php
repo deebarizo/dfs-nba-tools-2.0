@@ -23,7 +23,7 @@
 		    </div>
 		@endif
 
-		{!!	Form::open(['url' => 'admin/nba/update_player', 'class' => 'form-inline']) !!}
+		{!!	Form::open(['url' => 'admin/nba/update_player/'.$playerTeams[0]->player_id, 'class' => 'form-inline']) !!}
 
 			@foreach ($playerTeams as $playerTeam)
 
@@ -43,10 +43,10 @@
 					</select>
 
 					<label>Start Date</label>
-					<input class="form-control" id="start_date_{{ $playerTeam->id }}" name="start_date_{{ $playerTeam->id }}" type="date" style="width: 15%; margin-right: 30px" value="{{ $playerTeam->start_date }}">	
+					<input class="form-control" id="start_date_{{ $playerTeam->id }}" name="start_date_{{ $playerTeam->id }}" type="text" style="width: 15%; margin-right: 30px" value="{{ $playerTeam->start_date }}">	
 
 					<label>End Date</label>
-					<input class="form-control" id="end_date_{{ $playerTeam->id }}" name="end_dat_{{ $playerTeam->id }}e" type="date" style="width: 15%; margin-right: 30px" value="{{ $playerTeam->end_date }}">
+					<input class="form-control" id="end_date_{{ $playerTeam->id }}" name="end_date_{{ $playerTeam->id }}" type="text" style="width: 15%; margin-right: 30px" value="{{ $playerTeam->end_date }}">
 				</div>
 
 			@endforeach
@@ -57,4 +57,8 @@
 
 		{!!	Form::close() !!}
 	</div>
+
+	<script type="text/javascript">
+		$(document).off('.datepicker.data-api');
+	</script>
 @stop
