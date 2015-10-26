@@ -46,6 +46,20 @@ $router->post('scrapers/dk_mlb_contests', 'ScrapersController@dkMlbContests');
 
 
 /****************************************************************************************
+ADMIN
+****************************************************************************************/
+
+$router->get('admin/{sport}/add_player', 'AdminController@addPlayerForm');
+$router->post('admin/{sport}/add_player', 'AdminController@addPlayer');
+
+$router->get('admin/nba/update_player', function() {
+	return View::make('admin/nba/update_player');
+});
+$router->get('admin/nba/get_player_name_autocomplete/{sportInUrl}', 'AdminController@getNbaPlayerNameAutocompleteAdmin');
+$router->get('admin/{sport}/update_player', 'AdminController@addPlayerForm');
+
+
+/****************************************************************************************
 STUDIES (NBA)
 ****************************************************************************************/
 
@@ -60,6 +74,7 @@ $router->get('studies/general/classifying_projected_fpts/', 'StudiesController@c
 PLAYERS
 ****************************************************************************************/
 
+$router->get('get_player_name_autocomplete/{sportInUrl}', 'PlayersController@getNbaPlayerNameAutocomplete');
 $router->get('players/nba/{playerId}', 'PlayersController@getPlayerStats');
 
 $router->get('players/mlb/{playerId}', 'PlayersMlbController@getPlayerStats');
@@ -175,13 +190,6 @@ $router->get('lineup_builder/{siteInUrl}/mlb/{timePeriodInUrl}/{date}/{hash}', '
 
 
 /****************************************************************************************
-AUTOCOMPLETE
-****************************************************************************************/
-
-$router->get('get_player_name_autocomplete/{sportInUrl}', 'PlayersController@getNbaPlayerNameAutocomplete');
-
-
-/****************************************************************************************
 MISC
 ****************************************************************************************/
 
@@ -191,9 +199,3 @@ $router->get('nbawowy/{name}/{startDate}/{endDate}/on/{playerOn}/off/{playerOff}
 $router->get('one-of', 'OneOfController@run');
 
 
-/****************************************************************************************
-ADMIN
-****************************************************************************************/
-
-$router->get('admin/{sport}/add_player', 'AdminController@addPlayerForm');
-$router->post('admin/{sport}/add_player', 'AdminController@addPlayer');

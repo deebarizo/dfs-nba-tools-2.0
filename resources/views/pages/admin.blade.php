@@ -9,6 +9,7 @@
 
 			<ul>
 				<li><a href="/admin/nba/add_player">Add Player</a></li>
+				<li><a href="/admin/nba/update_player">Update Player</a></li>
 			</ul>
 		</div>
 	</div>

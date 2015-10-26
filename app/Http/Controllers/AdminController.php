@@ -28,9 +28,17 @@ use Goutte\Client;
 
 use Illuminate\Support\Facades\Session;
 
+use Illuminate\Support\Str;
+
+use Illuminate\Support\Facades\Response;
+
 date_default_timezone_set('America/Chicago');
 
 class AdminController {
+
+    /****************************************************************************************
+    ADD PLAYER (NBA)
+    ****************************************************************************************/
 
 	public function addPlayerForm($sport) {
         if ($sport == 'nba') {
@@ -82,5 +90,42 @@ class AdminController {
         Session::flash('alert', 'info');
 
         return redirect('admin/nba/add_player')->with('message', $message);      
+    }
+
+
+    /****************************************************************************************
+    UPDATE PLAYER (NBA)
+    ****************************************************************************************/
+
+    public function updatePlayerForm($sport) {
+        if ($sport == 'nba') {
+            $teams = Team::all();
+
+            $startDate = date('Y-m-d', time());
+
+            return view('/admin/'.$sport.'/add_player', compact('teams', 'startDate'));
+        }
+    }
+
+    public function getNbaPlayerNameAutocompleteAdmin(Request $request) {
+        $formInput = $request->input('term');
+        $formInput = Str::lower($formInput);
+
+        $players = Player::all();
+
+        $result = [];
+
+        foreach ($players as $player) {
+            if (strpos(Str::lower($player->name), $formInput) !== false) {
+                $playerUrl = url().'/admin/nba/update_player/'.$player->id;
+
+                $result[] = [
+                    'value' => $player->name,
+                    'url' => $playerUrl
+                ]; 
+            }
+        }
+
+        return Response::json($result);
     }
 }
