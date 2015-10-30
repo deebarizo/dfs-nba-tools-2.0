@@ -214,6 +214,21 @@ class SolverTopPlays {
 
 
 	/****************************************************************************************
+	CALCULATE UNSPENT BUYIN
+	****************************************************************************************/
+
+	public function calculateUnspentBuyIn($timePeriod, $date, $buyIn, $activeLineups) {
+		$spentBuyIn = 0;
+
+		foreach ($activeLineups as $activeLineup) {
+			$spentBuyIn += $activeLineup['buy_in'];
+		}
+
+		return $buyIn - $spentBuyIn;
+	}
+
+
+	/****************************************************************************************
 	I 
 	DON'T 
 	USE 
@@ -531,7 +546,7 @@ class SolverTopPlays {
 
 		return 0;
 	}
-
+/*
 	public function calculateUnspentBuyIn($areThereActiveLineups, $lineups, $buyIn) {
 		if ($areThereActiveLineups == 0) {
 			return $buyIn;
@@ -545,7 +560,7 @@ class SolverTopPlays {
 
 		return $buyIn - $spentBuyIn;
 	}
-
+*/
 	private function addBuyInOfActiveLineup($lineup) {
 		if ($lineup['active'] == 0) {
 			return 0;
