@@ -21,12 +21,15 @@ function scrapeForOdds($client, $date) {
 
 		$time = $crawlerSAO->filter('div#nba')->nextAll()->filter('tr.time > td')->eq($timeIndex)->text();
 		$time = preg_replace("/ EST/", "", $time);
+		$time = preg_replace("/ EDT/", "", $time);
 		$vegasScores[$i]['time'] = date('g:i A', strtotime('-65 minutes', strtotime($time)));
 
 		if ($vegasScores[$i]['line'] == '') {
 			return 'No lines yet.';
 		}
 	}
+
+	# dd($vegasScores);
 
 	foreach ($vegasScores as &$vegasScore) {
 		$vegasScore['team'] = preg_replace("/^(\d* )(\D+)/", "$2", $vegasScore['team']);
