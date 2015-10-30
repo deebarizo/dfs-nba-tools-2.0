@@ -306,6 +306,8 @@ class ScrapersController {
 				break;
 		}
 
+
+
 		$teams = Team::all();
 
 		$client = new Client();
@@ -315,7 +317,9 @@ class ScrapersController {
 		$status_code = $client->getResponse()->getStatus();
 
 		if ($status_code == 200) {
-			$rowCount = $crawler->filter('table#'.$tableIDinBR.' > tbody > tr > td:nth-child(2) > a')->count();
+			$rowCount = $crawler->filter('table#'.$tableIDinBR.' > tbody > tr > td:nth-child(3) > a')->count();
+
+			# dd($rowCount);
 
 			if ($gamesCount == $rowCount) {
 				$scrapeGamesToggle = false;

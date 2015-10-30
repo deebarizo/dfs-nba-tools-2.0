@@ -6,6 +6,12 @@ FD NBA NAME FIX
 
 function fd_name_fix($rawName) {
 	switch ($rawName) {
+		case 'Larry Nance Jr.':
+			return 'Larry Nance';
+
+		case 'RJ Hunter':
+			return 'R.J. Hunter';
+
 		case 'Bryce Jones':
 			return 'Bryce Dejean-Jones';
 

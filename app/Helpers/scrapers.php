@@ -84,74 +84,85 @@ function scrapeForGamesTable($client, $crawler, $tableIDinBR, $teams, $seasonId,
 	$rowContents = array();
 
 	$tableNames[1] = 'date';
-	$tableNames[2] = 'link_br';
-	$tableNames[3] = 'road_team_id';
-	$tableNames[4] = 'road_team_score';
-	$tableNames[5] = 'home_team_id';
-	$tableNames[6] = 'home_team_score';
-	$tableNames[7] = 'ot_periods';
-	$tableNames[8] = 'notes';
+	$tableNames[2] = 'time';
+	$tableNames[3] = 'link_br';
+	$tableNames[4] = 'road_team_id';
+	$tableNames[5] = 'road_team_score';
+	$tableNames[6] = 'home_team_id';
+	$tableNames[7] = 'home_team_score';
+	$tableNames[8] = 'ot_periods';
+	$tableNames[9] = 'notes';
 
 	$startingGame = $gamesCount + 1;
-	$endingGame = $rowCount;
+	$i = $startingGame;
 
-	for ($i = $startingGame; $i <= $endingGame; $i++) { // nth-child does not start with a zero index
-		for ($n=1; $n <= 8; $n++) { // nth-child does not start with a zero index
-			switch ($n) {
-				case 1: // Date
-					$scrapedDate = $crawler->filter('table#'.$tableIDinBR.' > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->text();
-					$scrapedDate = substr($scrapedDate, 5);
-					$rowContents[$i]['date'] = date('Y-m-d', strtotime(str_replace('-', '/', $scrapedDate)));
-					break;
+	do {
+		$gameRow = $crawler->filter('table#'.$tableIDinBR.' > tbody > tr:nth-child('.$i.') > td')->count(); // as opposed to month row
 
-				case 2: // URL
-					$rowContents[$i][$tableNames[$n]] = $crawler->filter('table#'.$tableIDinBR.' > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->selectLink('Box Score')->link()->getUri();
-					break;
+		if ($gameRow) {
+			for ($n=1; $n <= 9; $n++) { // nth-child does not start with a zero index
+				switch ($n) {
+					case 1: // Date
+						$scrapedDate = $crawler->filter('table#'.$tableIDinBR.' > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->text();
+						$scrapedDate = substr($scrapedDate, 5);
+						$rowContents[$i]['date'] = date('Y-m-d', strtotime(str_replace('-', '/', $scrapedDate)));
+						break;
 
-				case 3: // Road Team
-					$roadTeam = $crawler->filter('table#'.$tableIDinBR.' > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->text();
-					foreach ($teams as $team) {
-						if ($team->name_br == $roadTeam) {
-							$rowContents[$i][$tableNames[$n]] = $team->id;
+					case 3: // URL
+						$rowContents[$i][$tableNames[$n]] = $crawler->filter('table#'.$tableIDinBR.' > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->selectLink('Box Score')->link()->getUri();
+						break;
+
+					case 4: // Road Team
+						$roadTeam = $crawler->filter('table#'.$tableIDinBR.' > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->text();
+						foreach ($teams as $team) {
+							if ($team->name_br == $roadTeam) {
+								$rowContents[$i][$tableNames[$n]] = $team->id;
+							}
 						}
-					}
-					break;
+						break;
 
-				case 5: // Home Team
-					$homeTeam = $crawler->filter('table#'.$tableIDinBR.' > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->text();
-					foreach ($teams as $team) {
-						if ($team->name_br == $homeTeam) {
-							$rowContents[$i][$tableNames[$n]] = $team->id;
+					case 6: // Home Team
+						$homeTeam = $crawler->filter('table#'.$tableIDinBR.' > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->text();
+						foreach ($teams as $team) {
+							if ($team->name_br == $homeTeam) {
+								$rowContents[$i][$tableNames[$n]] = $team->id;
+							}
 						}
-					}
-					break;
+						break;
 
-				case 7: // OT Periods
-					$scrapedOTField = $crawler->filter('table#'.$tableIDinBR.' > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->text();
-					if ($scrapedOTField == '') {
-						$rowContents[$i]['ot_periods'] = 0;
-					} elseif ($scrapedOTField == 'OT') {
-						$rowContents[$i]['ot_periods'] = 1;
-					} elseif ($scrapedOTField != 'OT' && $scrapedOTField != '') {
-						$rowContents[$i]['ot_periods'] = substr($scrapedOTField, 0, 1);
-					}
-					break;
+					case 8: // OT Periods
+						$scrapedOTField = $crawler->filter('table#'.$tableIDinBR.' > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->text();
+						if ($scrapedOTField == '') {
+							$rowContents[$i]['ot_periods'] = 0;
+						} elseif ($scrapedOTField == 'OT') {
+							$rowContents[$i]['ot_periods'] = 1;
+						} elseif ($scrapedOTField != 'OT' && $scrapedOTField != '') {
+							$rowContents[$i]['ot_periods'] = substr($scrapedOTField, 0, 1);
+						}
+						break;
 
-				case 8: // Notes
-					$scrapedNotesField = $crawler->filter('table#'.$tableIDinBR.' > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->text();
-					if ($scrapedNotesField == '') {
-						$rowContents[$i]['notes'] = null;
-					} else {
-						$rowContents[$i]['notes'] = $scrapedNotesField;
-					}
-					break;
+					case 9: // Notes
+						$scrapedNotesField = $crawler->filter('table#'.$tableIDinBR.' > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->text();
+						if ($scrapedNotesField == '') {
+							$rowContents[$i]['notes'] = null;
+						} else {
+							$rowContents[$i]['notes'] = $scrapedNotesField;
+						}
+						break;
 
-				default:
-					$rowContents[$i][$tableNames[$n]] = $crawler->filter('table#'.$tableIDinBR.' > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->text();
-					break;
+					default:
+						$rowContents[$i][$tableNames[$n]] = $crawler->filter('table#'.$tableIDinBR.' > tbody > tr:nth-child('.$i.') > td:nth-child('.$n.')')->text();
+						break;
+				}
 			}
+
+			$startingGame++;
 		}
-	}
+
+		$i++;	
+	} while ($startingGame <= $rowCount);
+
+	# dd($rowContents);
 
 	foreach ($rowContents as &$row) {
 		$dateSAO = str_replace('-', '', $row['date']);
