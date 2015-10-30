@@ -99,8 +99,14 @@ function scrapeForGamesTable($client, $crawler, $tableIDinBR, $teams, $seasonId,
 	$startingGame = $gamesCount + 1;
 	$i = $startingGame;
 
+	$rowCount++;
+
 	do {
 		$gameRow = $crawler->filter('table#'.$tableIDinBR.' > tbody > tr:nth-child('.$i.') > td')->count(); // as opposed to month row
+
+		if (!$gameRow) {
+			$rowCount--;
+		}
 
 		if ($gameRow) {
 			for ($n=1; $n <= 9; $n++) { // nth-child does not start with a zero index
