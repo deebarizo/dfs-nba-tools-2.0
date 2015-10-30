@@ -44,7 +44,7 @@ class SolverFdNbaController {
 
         $solverTopPlays = new SolverTopPlays;
 
-        $activeLineups = $solverTopPlaysMlb->getActiveLineups($timePeriod, $date, $sorter);
+        $activeLineups = $solverTopPlays->getActiveLineups($timePeriod, $date);
 
         $playerPoolId = getPlayerPoolId($date);
         $buyIn = getBuyIn($playerPoolId);

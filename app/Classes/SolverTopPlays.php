@@ -3,6 +3,33 @@
 class SolverTopPlays {
 
 	/****************************************************************************************
+	GET ACTIVE LINEUPS
+	****************************************************************************************/
+
+	public function getActiveLineups($timePeriod, $date) {
+		$activeLineupPlayers = DB::table('player_pools')
+							->select(DB::raw('player_pools.buy_in as daily_buy_in, 
+											  lineup_dk_mlb_players.mlb_player_id, 
+											  lineup_dk_mlb_players.position, 
+											  name, 
+											  lineups.player_pool_id, 
+											  total_salary, 
+											  hash, 
+											  money, 
+											  lineups.buy_in as lineup_buy_in, 
+											  CONCAT_WS("", lineup_dk_mlb_players.mlb_player_id, lineup_dk_mlb_players.position) as id_position'))
+							->join('lineups', 'player_pools.id', '=', 'lineups.player_pool_id')
+							->join('lineup_dk_mlb_players', 'lineup_dk_mlb_players.lineup_id', '=', 'lineups.id')
+							->leftJoin('mlb_players', 'mlb_players.id', '=', 'lineup_dk_mlb_players.mlb_player_id')
+							->where('player_pools.time_period', $timePeriod)
+							->where('player_pools.date', $date)
+							->where('lineups.active', 1)
+							->get();
+
+
+	}
+
+	/****************************************************************************************
 	GLOBAL VARIABLES
 	****************************************************************************************/
 
