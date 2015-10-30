@@ -522,7 +522,7 @@ class StatBuilder {
     ****************************************************************************************/
 
     public function getNbaPlayerStats($playerId) {
-        $endYears = [2015, 2014];
+        $endYears = [2016, 2015];
 
         // Player fpts profile
 
