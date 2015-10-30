@@ -59,6 +59,14 @@ class LineupBuilder {
 
         $lineup['players'] = $this->getPlayersInLineup($lineup['metadata']->id, $lineup['metadata']->player_pool_id);
 
+        $lineup['metadata']->total_fdpts = 0;
+
+        foreach ($lineup['players'] as $key => $lineupPlayer) {
+            $lineup['metadata']->total_fdpts += $lineupPlayer->fppg_minus1;
+        }
+
+        $lineup['metadata']->total_fdpts = numFormat($lineup['metadata']->total_fdpts, 2);
+
         return $lineup;
     }
 
