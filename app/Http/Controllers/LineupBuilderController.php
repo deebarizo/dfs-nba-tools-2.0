@@ -100,6 +100,7 @@ class LineupBuilderController {
 
         $lineup['metadata'] = new \stdClass();
         $lineup['metadata']->total_salary = 0;
+        $lineup['metadata']->total_fdpts = 0;
         $lineup['metadata']->lineup_buy_in = getDefaultLineupBuyIn();
 
         $fdPositions = ['PG', 'PG', 'SG', 'SG', 'SF', 'SF', 'PF', 'PF', 'C'];
@@ -111,6 +112,7 @@ class LineupBuilderController {
             $lineup['players'][$i]->player_id = '';
             $lineup['players'][$i]->name = '';
             $lineup['players'][$i]->salary = '';
+            $lineup['players'][$i]->fppg_minus1 = '';
             $lineup['players'][$i]->remove_player_icon = '';
         }
 

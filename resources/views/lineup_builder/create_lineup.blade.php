@@ -23,6 +23,7 @@
 						<th>Pos</th>					
 						<th>Name</th>
 						<th>Salary</th>
+						<th>Fdpts</th>
 						<th>Update</th>
 					</tr>
 				</thead>
@@ -32,6 +33,7 @@
 							<td class="available-player-position">{{ $player->position }}</td>
 							<td class="available-player-name">{{ $player->name }}</td>
 							<td class="available-player-salary">{{ $player->salary }}</td>
+							<td class="available-player-fdpts">{{ $player->fppg_minus1 }}</td>
 							<td class="available-player-update" style="width: 10%"><a class="update-available-player-link" href="">{!! $player->update_icon !!}</a></td>
 						</tr>		
 					@endforeach		
@@ -48,6 +50,7 @@
 						<th>Pos</th>					
 						<th>Name</th>
 						<th>Salary</th>
+						<th>Fdpts</th>
 						<th>Remove</th>
 					</tr>
 				</thead>
@@ -57,6 +60,7 @@
 							<td style="width: 10%" class="lineup-player-position">{{ $player->position }}</td>
 							<td class="lineup-player-name">{{ $player->name }}</td>
 							<td style="width: 15%" class="lineup-player-salary">{{ $player->salary }}</td>
+							<td style="width: 15%" class="lineup-player-fdpts">{{ $player->fppg_minus1 }}</td>
 							<td style="width: 10%"><a href="" class="remove-lineup-player-link">{!! $player->remove_player_icon !!}</a></td>
 						</tr>
 					@endforeach
@@ -70,6 +74,7 @@
 							</div>
 						</td>
 						<td><span class="lineup-salary-total">{{ $lineup['metadata']->total_salary }}</span></td>
+						<td><span class="lineup-fdpts-total">{{ $lineup['metadata']->total_fdpts }}</td>
 						<td></td>
 					</tr>	
 				</tbody>

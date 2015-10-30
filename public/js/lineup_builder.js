@@ -52,6 +52,7 @@ $(document).ready(function() {
 		var position = availablePlayerRow.children('td.available-player-position').text();
 		var name = availablePlayerRow.children('td.available-player-name').text();
 		var salary = availablePlayerRow.children('td.available-player-salary').text();
+		var fdpts = availablePlayerRow.children('td.available-player-fdpts').text();
 
 		if (!isPositionFull(position) && status) {
 			alert('The '+position+' position is full.');
@@ -59,7 +60,7 @@ $(document).ready(function() {
 		}
 
 		updateAvailablePlayerRow(availablePlayerRow, iconDiv, status);
-		updateLineupPlayerRow(status, playerPoolId, playerId, position, name, salary);
+		updateLineupPlayerRow(status, playerPoolId, playerId, position, name, salary, fdpts);
 
 		calculateAvgSalaryPerPlayerLeft();
 	});
@@ -138,13 +139,14 @@ $(document).ready(function() {
 	UPDATE LINEUP PLAYER ROW
 	****************************************************************************************/
 
-	function updateLineupPlayerRow(status, playerPoolId, playerId, position, name, salary) {
+	function updateLineupPlayerRow(status, playerPoolId, playerId, position, name, salary, fdpts) {
 		if (status) {
 			var lineupPlayerRow = $('td.lineup-player-position:contains("'+position+'")').next('td.lineup-player-name:empty').first().closest('tr.lineup-player-row');
 			lineupPlayerRow.attr('data-player-pool-id', playerPoolId);
 			lineupPlayerRow.attr('data-player-id', playerId);
 			lineupPlayerRow.find('td.lineup-player-name').text(name);
 			lineupPlayerRow.find('td.lineup-player-salary').text(salary);
+			lineupPlayerRow.find('td.lineup-player-fdpts').text(fdpts);
 			lineupPlayerRow.find('a.remove-lineup-player-link').append('<div class="circle-minus-icon"><span class="glyphicon glyphicon-minus"></span></div>');
 		}
 
@@ -154,7 +156,8 @@ $(document).ready(function() {
 			emptyLineupPlayerRow(lineupPlayerRow);
 		}
 
-		updateTotalSalary();		
+		updateTotalSalary();
+		updateTotalFdpts();	
 	}
 
 	function updateTotalSalary() {
@@ -172,6 +175,25 @@ $(document).ready(function() {
 		addColorForTotalSalary(totalSalary);
 	}
 
+	function updateTotalFdpts() {
+		var totalFdpts = 0;
+
+		$('td.lineup-player-fdpts').each(function() {
+			var fdpts = $(this).text();
+			if (fdpts == '') {
+				fdpts = parseFloat(0);
+			} else {
+				fdpts = parseFloat(fdpts);
+			}
+
+			console.log(fdpts);
+
+			totalFdpts += fdpts;
+		});
+
+		$('span.lineup-fdpts-total').text(totalFdpts.toFixed(2));
+	}
+
 	function checkSalaryForBlank(salaryText) {
 		if (salaryText == '') {
 			return parseInt(0);
@@ -185,6 +207,7 @@ $(document).ready(function() {
 		lineupPlayerRow.removeData('player-id');
 		lineupPlayerRow.find('td.lineup-player-name').empty();
 		lineupPlayerRow.find('td.lineup-player-salary').empty();
+		lineupPlayerRow.find('td.lineup-player-fdpts').empty();
 		lineupPlayerRow.find('a.remove-lineup-player-link').empty();	
 	}
 
@@ -256,6 +279,7 @@ $(document).ready(function() {
             	emptyLineupPlayerRow(lineupPlayerRow);
 
             	updateTotalSalary();
+            	updateTotalFdpts();
 
             	availablePlayerRowWithStrikethrough = $('tr.available-player-row-strikethrough');
             	

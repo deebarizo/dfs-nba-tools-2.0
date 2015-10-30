@@ -353,6 +353,12 @@ class StatBuilder {
 
             $player->svr = numFormat($this->calculateSvr($player->vr, $player->salary));
 
+            $playerFd = PlayerFd::find($player->player_fd_index);
+            $playerFd->fppg_minus1 = $player->fppgWithAllFilters;
+            $playerFd->save();
+
+            # dd($playerFd);
+
         } unset($player);
 
         # ddAll($players);
