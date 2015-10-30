@@ -1,6 +1,20 @@
 <?php namespace App\Classes;
 
+use Illuminate\Support\Facades\DB;
+
 class SolverTopPlays {
+
+	/****************************************************************************************
+	GLOBAL FUNCTIONS
+	****************************************************************************************/
+
+	private function getActiveLineupHashes($timePeriod, $date) {
+		return DB::table('lineups')
+					->join('player_pools', 'player_pools.id', '=', 'lineups.player_pool_id')
+					->where('time_period', $timePeriod)
+					->where('date', $date)
+					->lists('hash');
+	}
 
 	/****************************************************************************************
 	GET ACTIVE LINEUPS
@@ -9,25 +23,207 @@ class SolverTopPlays {
 	public function getActiveLineups($timePeriod, $date) {
 		$activeLineupPlayers = DB::table('player_pools')
 							->select(DB::raw('player_pools.buy_in as daily_buy_in, 
-											  lineup_dk_mlb_players.mlb_player_id, 
-											  lineup_dk_mlb_players.position, 
-											  name, 
+											  lineup_players.player_fd_id, 
+											  players.name, 
 											  lineups.player_pool_id, 
-											  total_salary, 
-											  hash, 
-											  money, 
-											  lineups.buy_in as lineup_buy_in, 
-											  CONCAT_WS("", lineup_dk_mlb_players.mlb_player_id, lineup_dk_mlb_players.position) as id_position'))
-							->join('lineups', 'player_pools.id', '=', 'lineups.player_pool_id')
-							->join('lineup_dk_mlb_players', 'lineup_dk_mlb_players.lineup_id', '=', 'lineups.id')
-							->leftJoin('mlb_players', 'mlb_players.id', '=', 'lineup_dk_mlb_players.mlb_player_id')
+											  lineups.total_salary, 
+											  lineups.hash, 
+											  lineups.money, 
+											  lineups.buy_in as lineup_buy_in'))
+							->join('lineups', 'lineups.player_pool_id', '=', 'player_pools.id')
+							->join('lineup_players', 'lineup_players.lineup_id', '=', 'lineups.id')
+							->leftJoin('players', 'players.id', '=', 'lineup_players.player_fd_id')
 							->where('player_pools.time_period', $timePeriod)
 							->where('player_pools.date', $date)
 							->where('lineups.active', 1)
 							->get();
 
+		$playersFd = DB::table('player_pools')
+						->select('*')
+						->join('players_fd', 'players_fd.player_pool_id', '=', 'player_pools.id')
+						->leftJoin('teams', 'teams.id', '=', 'players_fd.team_id')
+						->where('player_pools.time_period', $timePeriod)
+						->where('player_pools.date', $date)
+						->get();
 
+		foreach ($activeLineupPlayers as $activeLineupPlayer) {
+			foreach ($playersFd as $playerFd) {
+				if ($activeLineupPlayer->player_fd_id == $playerFd->player_id) {
+					$activeLineupPlayer->position = $playerFd->position;
+					$activeLineupPlayer->target_percentage = $playerFd->target_percentage;
+					$activeLineupPlayer->abbr_br = $playerFd->abbr_br;
+					$activeLineupPlayer->team_id = $playerFd->team_id;
+					$activeLineupPlayer->salary = $playerFd->salary;
+					$activeLineupPlayer->fppg_minus1 = $playerFd->fppg_minus1;
+				}
+			}
+		}
+
+		# dd($activeLineupPlayers);
+
+		$activeLineupHashes = $this->getActiveLineupHashes($timePeriod, $date);
+
+		$activeLineups = [];
+
+		foreach ($activeLineupHashes as $hash) {
+			foreach ($activeLineupPlayers as $player) {
+				if ($player->hash == $hash) {
+					if ($player->money == 0) {
+						$moneyLineupCss = '';
+						$playOrUnplayAnchorText = 'Play';
+					}
+
+					if ($player->money == 1) {
+						$moneyLineupCss = 'money-lineup';
+						$playOrUnplayAnchorText = 'Unplay';
+					}
+
+					$activeLineups[] = [
+						'total_salary' => $player->total_salary,
+						'hash' => $hash,
+						'css_class_edit_info' => '',
+						'css_class_active_lineup' => 'active-lineup',
+						'css_class_money_lineup' => $moneyLineupCss,
+						'add_or_remove_anchor_text' => 'Remove',
+						'buy_in' => $player->lineup_buy_in,
+						'buy_in_percentage' => numFormat($player->lineup_buy_in / $player->daily_buy_in * 100, 2),
+						'play_or_unplay_anchor_text' => $playOrUnplayAnchorText
+					];	
+
+					break;				
+				}
+			}
+		}
+
+		foreach ($activeLineups as &$lineup) {
+			foreach ($activeLineupPlayers as $player) {
+				if ($player->hash == $lineup['hash']) {
+					$lineup['players'][] = $player;
+				}
+			}
+		}
+		unset($lineup);
+
+		foreach ($activeLineups as &$lineup) {
+			$lineup = $this->addTotalFdpts($lineup);
+		}
+		unset($lineup);
+
+		$activeLineups = $this->sortActiveLineups($activeLineups);
+
+		# ddAll($activeLineups);
+
+		return $activeLineups;
 	}
+
+	private function addTotalFdpts($lineup) {
+		$totalFdpts = 0;
+
+		foreach ($lineup['players'] as $lineupPlayer) {
+			$totalFdpts += $lineupPlayer->fppg_minus1;
+		}
+
+		$lineup['total_fdpts'] = numFormat($totalFdpts, 2);
+
+		return $lineup;
+	}
+
+	private function sortActiveLineups($activeLineups) {
+		foreach ($activeLineups as $key => $activeLineup) {
+			$moneyLineup[$key] = $activeLineup['css_class_money_lineup'];
+			$buyIn[$key] = $activeLineup['buy_in'];
+		}		
+
+		array_multisort($moneyLineup, SORT_ASC, $buyIn, SORT_DESC, $activeLineups);
+
+		return $activeLineups;
+	}
+
+
+	/****************************************************************************************
+	GENERATE LINEUPS
+	****************************************************************************************/
+
+	public function generateLineups($timePeriod, $date, $activeLineups) {
+		foreach ($activeLineups as $activeLineup) {
+			foreach ($activeLineup['players'] as $activeLineupPlayer) {
+				$activeLineupPlayer->unspent_target_percentage = $activeLineupPlayer->target_percentage - numFormat($activeLineupPlayer->lineup_buy_in / $activeLineupPlayer->daily_buy_in * 100, 0);
+			}
+		}
+
+		# ddAll($activeLineups);
+
+		$players = DB::table('player_pools')
+				->select('buy_in', 
+						 'player_id', 
+						 'target_percentage', 
+						 'team_id', 
+						 'opp_team_id', 
+						 'position', 
+						 'salary', 
+						 'name', 
+						 'player_pool_id', 'abbr_br')
+				->join('players_fd', 'players_fd.player_pool_id', '=', 'player_pools.id')
+				->join('players', 'players.id', '=', 'players_fd.player_id')
+				->join('teams', 'teams.id', '=', 'players_fd.team_id')
+				->where('time_period', $timePeriod)
+				->where('date', $date)
+				->where('target_percentage', '>', 0)
+				->orderBy('name', 'asc')
+				->get();
+
+		foreach ($players as $key => $player) {
+			$player->unspent_target_percentage = $this->addUnspentTargetPercentage($player, $activeLineups);
+		}
+
+		foreach ($players as $player) {
+			$buyIn = $player->buy_in;
+			break;
+		}
+
+		return array($activeLineups, $players);
+	}	
+
+	private function calculateUnspentTargetPercentage($idPosition, $activeLineups) {
+		$targetPercentage = $this->getTargetPercentage($idPosition, $activeLineups);
+
+		$unspentTargetPercentage = $targetPercentage;
+
+		foreach ($activeLineups as $activeLineup) {
+			foreach ($activeLineup['players'] as $activeLineupPlayer) {
+				if ($activeLineupPlayer->id_position == $idPosition) {
+					$unspentTargetPercentage -= numFormat($activeLineupPlayer->lineup_buy_in / $activeLineupPlayer->daily_buy_in * 100, 0);
+				}
+			}
+		}
+
+		return $unspentTargetPercentage;
+	}
+
+	private function addUnspentTargetPercentage($player, $activeLineups) {
+		foreach ($activeLineups as $activeLineup) {
+			foreach ($activeLineup['players'] as $activeLineupPlayer) {
+				if ($activeLineupPlayer->player_fd_id == $player->player_id) {
+					return $activeLineupPlayer->unspent_target_percentage;
+				}
+			}
+		}
+
+		return $player->target_percentage;
+	}
+
+
+	/****************************************************************************************
+	I 
+	DON'T 
+	USE 
+	THE 
+	CODE 
+	BELOW
+	****************************************************************************************/
+
+
+
 
 	/****************************************************************************************
 	GLOBAL VARIABLES
@@ -62,7 +258,7 @@ class SolverTopPlays {
 	/****************************************************************************************
 	GET ACTIVE LINEUPS
 	****************************************************************************************/
-
+/*
 	public function getActiveLineups($metadataOfActiveLineups, $playerPoolId) {
 		$activeLineups = [];
 
@@ -86,7 +282,7 @@ class SolverTopPlays {
 
 		return $activeLineups;
 	}
-
+*/
 
 	/****************************************************************************************
 	FILTER UNSPENT PLAYERS

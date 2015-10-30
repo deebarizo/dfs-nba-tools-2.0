@@ -46,14 +46,16 @@ class SolverFdNbaController {
 
         $activeLineups = $solverTopPlays->getActiveLineups($timePeriod, $date);
 
+        list($lineups, $players) = $solverTopPlays->generateLineups($timePeriod, $date, $activeLineups);
+
         $playerPoolId = getPlayerPoolId($date);
         $buyIn = getBuyIn($playerPoolId);
 
-        $unspentBuyIn = $solverTopPlays->calculateUnspentBuyIn($areThereActiveLineups, $lineups, $buyIn);
+        $unspentBuyIn = $solverTopPlays->calculateUnspentBuyIn($timePeriod, $date, $buyIn, $activeLineups);
 
         $defaultLineupBuyIn = getDefaultLineupBuyIn();
 
-        # ddAll($lineups);
+        # ddAll($players);
 
         return view('solver_with_top_plays_fd_nba', 
                      compact('date', 
@@ -62,7 +64,6 @@ class SolverFdNbaController {
                              'buyIn', 
                              'unspentBuyIn',
                              'lineups', 
-                             'areThereActiveLineups',
                              'buyInPercentage',
                              'defaultLineupBuyIn',
                              'players'));

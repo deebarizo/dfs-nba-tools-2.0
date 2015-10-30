@@ -3,7 +3,7 @@
 @section('content')
 	<div class="row" style="font-size: 90%">
 		<div class="col-lg-12">
-			<h2 id="heading">FD NBA | Solver With Top Plays | {{ $date }} {{ $timePeriod }}</h2>
+			<h2 id="heading">FD NBA | Solver | {{ $date }} {{ $timePeriod }}</h2>
 		</div>
 
 		<div class="col-lg-4">
@@ -142,7 +142,7 @@
 					   		  table-hover 
 					   		  table-condensed 
 					   		  lineup 
-					   		  {{ $lineup['css_class_blue_border'] }} 
+					   		  {{ $lineup['css_class_active_lineup'] }} 
 					   		  {{ $lineup['css_class_money_lineup'] }}">
 					<thead>
 						<tr>
@@ -153,15 +153,15 @@
 						</tr>
 					</thead>
 					<tbody>
-						@foreach ($lineup['roster_spots'] as $key => $rosterSpot)
+						@foreach ($lineup['players'] as $key => $player)
 							<tr class="roster-spot" 
-								data-player-id="{{ $rosterSpot->player_id }}"
-								data-target-percentage="{{ $rosterSpot->target_percentage }}" 
-								data-team-abbr-br="{{ $rosterSpot->abbr_br }}">
-								<td class="position">{{ $rosterSpot->position }}</td>	
-								<td class="{{ $lineup['team_css_classes'][$key] }}">{{ $rosterSpot->abbr_br }}</td>
-								<td class="roster-spot-name">{{ $rosterSpot->name }}</td>
-								<td>{{ $rosterSpot->salary }}</td>
+								data-player-id="{{ $player->player_fd_id }}"
+								data-target-percentage="{{ $player->target_percentage }}" 
+								data-team-abbr-br="{{ $player->abbr_br }}">
+								<td class="position">{{ $player->position }}</td>	
+								<td>{{ $player->abbr_br }}</td>
+								<td class="roster-spot-name">{{ $player->name }}</td>
+								<td>{{ $player->salary }}</td>
 							</tr>
 						@endforeach
 
@@ -173,7 +173,7 @@
 									<a href="#" class="edit-lineup-buy-in-link">Edit</a> | 
 									<a href="#" class="play-or-unplay-lineup-link"><span class="play-or-unplay-lineup-anchor-text">{{ $lineup['play_or_unplay_anchor_text'] }}</span></a> | <a href="{{ url() }}/lineup_builder/{{ $date }}/create/{{ $lineup['hash'] }}" target="_blank"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a> | 
 								</span>
-								<a href="#" class="add-or-remove-lineup-link"><span class="add-or-remove-lineup-anchor-text">{{ $lineup['anchor_text'] }}</span></a>
+								<a href="#" class="add-or-remove-lineup-link"><span class="add-or-remove-lineup-anchor-text">{{ $lineup['add_or_remove_anchor_text'] }}</span></a>
 								<span class="add-or-remove-lineup-link-loading-gif">
 									<img src="/files/spiffygif_16x16.gif" alt="Please wait..." />
 								</span>
@@ -199,8 +199,8 @@
 		HIDE NAVBAR
 		****************************************************************************************/
 
-		$(".navbar").hide();
-		$("h2").css({"margin-top":"10px"});
+		// $(".navbar").hide();
+		// $("h2").css({"margin-top":"10px"});
 
 			
 		/****************************************************************************************
@@ -211,7 +211,7 @@
 		var playerPoolId = <?php echo json_encode($playerPoolId); ?>;
 		var buyIn = $("span.buy-in-amount").text();
 		var defaultLineupBuyIn = $("span.default-lineup-buy-in-amount").text();
-		var areThereActiveLineups = <?php echo $areThereActiveLineups; ?>;
+		// var areThereActiveLineups = <?php // echo $areThereActiveLineups; ?>;
 		var topPlays = <?php echo json_encode($players); ?>;
 
 	</script>
