@@ -41,34 +41,17 @@ class SolverFdNbaController {
         }
 
         $timePeriod = 'All Day';
-        $playerPoolId = getPlayerPoolId($date);
-        $buyIn = getBuyIn($playerPoolId);
-
-        $players = getTopPlays($date);
-
-        $metadataOfActiveLineups = getMetadataOfActiveLineups($playerPoolId);
 
         $solverTopPlays = new SolverTopPlays;
 
-        $metadataOfActiveLineups = $solverTopPlays->appendMoreMetadataToActiveLineups($metadataOfActiveLineups, $buyIn);
+        $activeLineups = $solverTopPlaysMlb->getActiveLineups($timePeriod, $date, $sorter);
 
-        $activeLineups = $solverTopPlays->getActiveLineups($metadataOfActiveLineups, $playerPoolId);
-
-        $unspentPlayers = $solverTopPlays->filterUnspentPlayers($players, $activeLineups, $buyIn);
-
-        $solverTopPlays->validateTopPlays($unspentPlayers, $metadataOfActiveLineups);
-
-        $lineups = $solverTopPlays->buildLineupsWithTopPlays($unspentPlayers);
-
-        $lineups = $solverTopPlays->markAndAppendActiveLineups($lineups, $playerPoolId, $buyIn);
-
-        $areThereActiveLineups = $solverTopPlays->areThereActiveLineups($lineups);
+        $playerPoolId = getPlayerPoolId($date);
+        $buyIn = getBuyIn($playerPoolId);
 
         $unspentBuyIn = $solverTopPlays->calculateUnspentBuyIn($areThereActiveLineups, $lineups, $buyIn);
 
         $defaultLineupBuyIn = getDefaultLineupBuyIn();
-
-        $players = $solverTopPlays->sortPlayers($players); // for select options
 
         # ddAll($lineups);
 
