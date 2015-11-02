@@ -85,6 +85,10 @@ $(document).ready(function() {
 		var iconDiv = getIconDiv(availablePlayerRow);
 		var status = getStatus(iconDiv);
 
+		console.log(availablePlayerRow);
+		console.log(iconDiv);
+		console.log(status);
+
 		updateAvailablePlayerRow(availablePlayerRow, iconDiv, status);
 		updateLineupPlayerRow(status, null, playerId, null, null, null);
 
@@ -97,7 +101,7 @@ $(document).ready(function() {
 	****************************************************************************************/
 
 	function getAvailablePlayerRow(playerId) {
-		return $('tr.available-player-row[data-player-id*='+playerId+']').first();
+		return $('tr.available-player-row[data-player-id='+playerId+']').first();
 	}
 
 	function getIconDiv(availablePlayerRow) {
@@ -151,7 +155,7 @@ $(document).ready(function() {
 		}
 
 		if (!status) {
-			var lineupPlayerRow = $('tr.lineup-player-row[data-player-id*='+playerId+']').first();
+			var lineupPlayerRow = $('tr.lineup-player-row[data-player-id='+playerId+']').first();
 
 			emptyLineupPlayerRow(lineupPlayerRow);
 		}
@@ -185,8 +189,6 @@ $(document).ready(function() {
 			} else {
 				fdpts = parseFloat(fdpts);
 			}
-
-			console.log(fdpts);
 
 			totalFdpts += fdpts;
 		});
