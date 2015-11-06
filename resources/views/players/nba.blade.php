@@ -149,7 +149,7 @@
 				@endif
 			@endforeach
 
-			<div class="fpts-profile-chart"></div>
+			<!-- <div class="fpts-profile-chart"></div> -->
 
 		</div>
 

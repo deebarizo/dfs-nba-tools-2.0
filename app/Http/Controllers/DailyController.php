@@ -83,8 +83,6 @@ class DailyController {
 
             $players = $statBuilder->generateProjections($players, $playerStats);
 
-            $players = $statBuilder->removeInactivePlayers($players);
-
             $gameTimes = [];
 
             if ($vegasScores == 'No lines yet.') {
