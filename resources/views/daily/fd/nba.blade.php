@@ -72,6 +72,21 @@
 			</form>
 		</div>
 
+		<div class="col-lg-12" style="margin: 2px 0 3px 0">
+			<p>
+				<span style="margin-right: 20px"><strong>PG: </strong> <span class="total-target-percentage-PG"></span>%</span>
+				<span style="margin-right: 20px"><strong>SG: </strong> <span class="total-target-percentage-SG"></span>%</span>
+				<span style="margin-right: 20px"><strong>SF: </strong> <span class="total-target-percentage-SF"></span>%</span>
+				<span style="margin-right: 20px"><strong>PF: </strong> <span class="total-target-percentage-PF"></span>%</span>
+				<span style="margin-right: 40px"><strong>C: </strong> <span class="total-target-percentage-C"></span>%</span>
+				<span style="margin-right: 20px"><strong>+6500: </strong> <span class="total-target-percentage-plus"></span>%</span>
+				<span style="margin-right: 40px"><strong>-6500: </strong> <span class="total-target-percentage-minus"></span>%</span>
+				<span style="margin-right: 60px"><strong>Total: </strong> <span class="total-target-percentage"></span>%</span>
+
+				<span><strong>Weighted Salary: </strong> <span class="total-weighted-salary"></span></span>
+			</p>
+		</div>
+
 		<div class="col-lg-12">
 			<table style="font-size: 85%" id="daily" class="table table-striped table-bordered table-hover table-condensed">
 				<thead>

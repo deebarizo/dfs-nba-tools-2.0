@@ -3,7 +3,7 @@
 @section('content')
 	<div class="row" style="font-size: 90%">
 		<div class="col-lg-12">
-			<h2 id="heading">FD NBA | Solver | {{ $date }} {{ $timePeriod }}</h2>
+			<h2 id="heading">FD NBA | Solver | {{ $date }} {{ $timePeriod }} | <a target="_blank" href="/lineup_builder/{{ $date }}/create/">Lineup Builder</a></h2>
 		</div>
 
 		<div class="col-lg-4">
@@ -110,9 +110,9 @@
 				<label>Sort</label>
 				<select class="form-control player-percentages-filter" style="margin-right: 20px">
 					<option value="Unspent Target Percentage (Desc)">Unspent Target Percentage (Desc)</option>
-					<option value="Unspent Target Percentage (Asc)">Unspent Target Percentage (Asc)</option>
+					<option value="Unspent Target Percentage (Asc)" selected>Unspent Target Percentage (Asc)</option>
 				  	<option value="Target Percentage">Target Percentage</option>
-				  	<option value="Actual Percentage" selected>Actual Percentage</option>
+				  	<option value="Actual Percentage">Actual Percentage</option>
 				  	<option value="First Name">First Name</option>
 				  	<option value="Position">Position</option>
 				  	<option value="Team">Team</option>

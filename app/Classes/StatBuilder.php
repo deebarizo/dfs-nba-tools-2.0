@@ -299,7 +299,11 @@ class StatBuilder {
                 // FPPG Source
 
                 if (is_numeric($player->filter->fppg_source) ) {
-                    $player->mp_mod = (($player->filter->fppg_source * count($playerStats[$player->player_id]['cs'])) - $player->filter->mp_ot_filter) / count($playerStats[$player->player_id]['cs']);
+                    if (count($playerStats[$player->player_id]['cs']) > 0) {
+                        $player->mp_mod = (($player->filter->fppg_source * count($playerStats[$player->player_id]['cs'])) - $player->filter->mp_ot_filter) / count($playerStats[$player->player_id]['cs']);
+                    } else {
+                        $player->mp_mod = 0;
+                    }
                 } 
 
                 if ($player->filter->fppg_source == 'mp cs') {
