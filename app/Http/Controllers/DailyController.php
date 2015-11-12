@@ -81,6 +81,8 @@ class DailyController {
 
             $playerStats = $statBuilder->getBoxScoreLinesOfPlayers($players, $date);
 
+            # ddAll($players);
+
             $players = $statBuilder->generateProjections($players, $playerStats);
 
             $gameTimes = [];

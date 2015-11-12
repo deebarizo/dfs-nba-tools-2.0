@@ -51,6 +51,34 @@ class StatBuilder {
             ->where('player_pools.date', '=', $date)
             ->get();
 
+        $boxScoreLines = DB::table('box_score_lines')
+                            ->join('games', 'games.id', '=', 'box_score_lines.game_id')
+                            ->selectRaw('*, pts+(trb*1.2)+(ast*1.5)+(stl*2)+(blk*2)-tov as fdpts')
+                            ->where('games.date', '=', $date)
+                            ->get();
+
+        # ddAll($boxScoreLines);
+
+        if (empty($boxScoreLines)) {
+            return $players;
+        }
+
+        foreach ($players as $player) {
+            foreach ($boxScoreLines as $boxScoreLine) {
+                if ($player->player_id == $boxScoreLine->player_id) {
+                    $player->box_score_line = $boxScoreLine;
+
+                    break;
+                }
+            }
+
+            if (!isset($player->box_score_line)) {
+                $player->box_score_line = 'DNP';
+            }
+        }
+
+        # ddAll($players);
+
         return $players;
     }
 

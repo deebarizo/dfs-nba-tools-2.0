@@ -105,7 +105,7 @@
 						<th>FP</th>
 						<th>Sal</th>
 						<th>VR</th>
-						<!-- <th>sVR</th> -->
+						<th>aVR</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -201,7 +201,15 @@
 					    	<td>{{ $player->fppgWithAllFilters }}</td>
 					    	<td class="salary">{{ $player->salary }}</td>
 					    	<td>{{ $player->vr }}</td>
-					    	<!-- <td>{{ $player->svr }}</td> -->
+							@if (isset($player->box_score_line))
+								@if ($player->box_score_line == 'DNP')
+									<td>0.00</th>
+								@else
+									<td><a target="_blank" href="/games/nba/{{ $player->box_score_line->id }}">{{ numFormat($player->box_score_line->fdpts / ($player->salary / 1000), 2) }}</a></td>
+								@endif
+							@else
+								<td>NA</th>
+							@endif
 					    </tr>
 
 					    <?php unset($line); ?>
