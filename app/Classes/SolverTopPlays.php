@@ -5,6 +5,16 @@ use Illuminate\Support\Facades\DB;
 class SolverTopPlays {
 
 	/****************************************************************************************
+	GLOBAL VARIABLES
+	****************************************************************************************/
+
+	private $lineupBuilderIterations = 200;
+	private $targetPercentageModifier = 0;
+	private $minimumTotalSalary = 59400; 
+	private $maximumTotalSalary = 60000;
+
+
+	/****************************************************************************************
 	GLOBAL FUNCTIONS
 	****************************************************************************************/
 
@@ -109,7 +119,9 @@ class SolverTopPlays {
 		}
 		unset($lineup);
 
-		$activeLineups = $this->sortActiveLineups($activeLineups);
+		if (!empty($activeLineups)) {
+			$activeLineups = $this->sortActiveLineups($activeLineups);
+		}
 
 		# ddAll($activeLineups);
 
@@ -226,28 +238,6 @@ class SolverTopPlays {
 
 		return $buyIn - $spentBuyIn;
 	}
-
-
-	/****************************************************************************************
-	I 
-	DON'T 
-	USE 
-	THE 
-	CODE 
-	BELOW
-	****************************************************************************************/
-
-
-
-
-	/****************************************************************************************
-	GLOBAL VARIABLES
-	****************************************************************************************/
-
-	private $lineupBuilderIterations = 200;
-	private $targetPercentageModifier = 0;
-	private $minimumTotalSalary = 59400; 
-	private $maximumTotalSalary = 60000;
 
 
 	/****************************************************************************************
