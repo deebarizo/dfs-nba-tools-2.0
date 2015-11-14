@@ -144,7 +144,7 @@ class SolverTopPlays {
 	GENERATE LINEUPS
 	****************************************************************************************/
 
-	public function generateLineups($timePeriod, $date, $activeLineups) {
+	public function generateActiveLineupsAndPlayers($timePeriod, $date, $activeLineups) {
 		foreach ($activeLineups as $activeLineup) {
 			foreach ($activeLineup['players'] as $activeLineupPlayer) {
 				$activeLineupPlayer->unspent_target_percentage = $activeLineupPlayer->target_percentage - numFormat($activeLineupPlayer->lineup_buy_in / $activeLineupPlayer->daily_buy_in * 100, 0);
@@ -288,7 +288,7 @@ class SolverTopPlays {
 		foreach ($playersInActiveLineups as $player) {
 			foreach ($activeLineups as &$activeLineup) {
 				if ($activeLineup['hash'] == $player->hash) {
-					$activeLineup['roster_spots'][] = $player;
+					$activeLineup['players'][] = $player;
 				}
 			}
 
@@ -333,8 +333,8 @@ class SolverTopPlays {
 	}
 
 	private function getSpentPercentageForLineup($spentPercentage, $activeLineup, $player, $buyIn) {
-		foreach ($activeLineup['roster_spots'] as $rosterSpot) {
-			$spentPercentage += $this->addSpentPercentage($rosterSpot->player_id, $player->player_id, $rosterSpot->buy_in, $buyIn);
+		foreach ($activeLineup['players'] as $rosterSpot) {
+			$spentPercentage += $this->addSpentPercentage($rosterSpot->player_fd_id, $player->player_id, $activeLineup['buy_in'], $buyIn);
 		}
 
 		return $spentPercentage;
@@ -386,7 +386,7 @@ class SolverTopPlays {
 
 			foreach ($playersInActiveLineups as $player) {
 				if ($activeLineup['hash'] == $player->hash) {
-					$activeLineupsNotInSolver['roster_spots'][] = $player;
+					$activeLineupsNotInSolver['players'][] = $player;
 				}
 			}
 
@@ -397,9 +397,10 @@ class SolverTopPlays {
 			$activeLineupsNotInSolver['active'] = 1;
 			$activeLineupsNotInSolver['css_class_blue_border'] = 'active-lineup';
 			$activeLineupsNotInSolver['css_class_edit_info'] = '';
-			$activeLineupsNotInSolver['anchor_text'] = 'Remove';
+			$activeLineupsNotInSolver['add_or_remove_anchor_text'] = 'Remove';
 
 			$activeLineupsNotInSolver['money'] = $activeLineup['money'];
+			$activeLineupsNotInSolver['css_class_active_lineup'] = 'active-lineup';
 			$activeLineupsNotInSolver['css_class_money_lineup'] = $this->getMoneyCssClass($activeLineup['money']);
 			$activeLineupsNotInSolver['play_or_unplay_anchor_text'] = $this->getMoneyAnchorText($activeLineup['money']);
 
@@ -410,13 +411,13 @@ class SolverTopPlays {
 		}
 
 		foreach ($lineups as &$lineup) {
-			$lineup['num_of_unique_teams'] = $this->getNumOfUniqueTeams($lineup['roster_spots']);
+			$lineup['num_of_unique_teams'] = $this->getNumOfUniqueTeams($lineup['players']);
 		}
 
 		unset($lineup);
 
 		foreach ($lineups as &$lineup) {
-			$lineup['team_css_classes'] = $this->getTeamCssClasses($lineup['num_of_unique_teams'], $lineup['roster_spots']);
+			$lineup['team_css_classes'] = $this->getTeamCssClasses($lineup['num_of_unique_teams'], $lineup['players']);
 		}
 
 		unset($lineup);
@@ -525,9 +526,10 @@ class SolverTopPlays {
 		$lineup['active'] = 0;
 		$lineup['css_class_blue_border'] = '';
 		$lineup['css_class_edit_info'] = 'edit-lineup-buy-in-hidden';
-		$lineup['anchor_text'] = 'Add';
+		$lineup['add_or_remove_anchor_text'] = 'Add';
 
 		$lineup['money'] = 0;
+		$lineup['css_class_active_lineup'] = '';
 		$lineup['css_class_money_lineup'] = '';
 		$lineup['play_or_unplay_anchor_text'] = 'Play';
 
@@ -670,16 +672,16 @@ class SolverTopPlays {
 		}
 
 		foreach ($randomNumPerPosition as $position => $rosterSpotsWithinPosition) {
-			list($lineup['roster_spots'][$position.'1'], $lineup['roster_spots'][$position.'2']) = 
+			list($lineup['players'][$position.'1'], $lineup['players'][$position.'2']) = 
 				$this->getPlayersPerPosition($players, $position, $rosterSpotsWithinPosition);
 		}
 
-		unset($lineup['roster_spots']['C2']); // only one center per lineup
+		unset($lineup['players']['C2']); // only one center per lineup
 
 		$lineup['total_salary'] = 0;
 		$lineup['hash'] = '';
 
-		foreach ($lineup['roster_spots'] as $rosterSpot) {
+		foreach ($lineup['players'] as $rosterSpot) {
 			$lineup['total_salary'] += $rosterSpot->salary;
 			$lineup['hash'] .= $rosterSpot->player_id;
 		}

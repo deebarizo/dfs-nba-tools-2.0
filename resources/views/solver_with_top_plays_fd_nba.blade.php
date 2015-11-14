@@ -155,7 +155,7 @@
 					<tbody>
 						@foreach ($lineup['players'] as $key => $player)
 							<tr class="roster-spot" 
-								data-player-id="{{ $player->player_fd_id }}"
+								data-player-id="<?php if (isset($player->player_id)) { $player->player_id; } if (isset($player->player_fd_id)) { $player->player_fd_id; } ?>"
 								data-target-percentage="{{ $player->target_percentage }}" 
 								data-team-abbr-br="{{ $player->abbr_br }}">
 								<td class="position">{{ $player->position }}</td>	
