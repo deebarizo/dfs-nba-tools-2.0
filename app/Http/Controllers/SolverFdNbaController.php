@@ -55,13 +55,9 @@ class SolverFdNbaController {
 
         $solverLineups = $solverTopPlays->buildLineupsWithTopPlays($unspentPlayers);
 
-        $solverLineups = $solverTopPlays->markAndAppendActiveLineups($solverLineups, $playerPoolId, $buyIn);
+        $lineups = $solverTopPlays->markAndAppendActiveLineups($solverLineups, $playerPoolId, $buyIn);
 
-        # ddAll($solverLineups);
-
-        list($activeLineups, $players) = $solverTopPlays->generateActiveLineupsAndPlayers($timePeriod, $date, $activeLineups);
-
-        $lineups = array_merge($activeLineups, $solverLineups);
+        $players = $solverTopPlays->getPlayers($timePeriod, $date, $activeLineups);
 
         # ddAll($lineups);
 

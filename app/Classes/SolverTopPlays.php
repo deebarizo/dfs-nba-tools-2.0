@@ -144,7 +144,7 @@ class SolverTopPlays {
 	GENERATE LINEUPS
 	****************************************************************************************/
 
-	public function generateActiveLineupsAndPlayers($timePeriod, $date, $activeLineups) {
+	public function getPlayers($timePeriod, $date, $activeLineups) {
 		foreach ($activeLineups as $activeLineup) {
 			foreach ($activeLineup['players'] as $activeLineupPlayer) {
 				$activeLineupPlayer->unspent_target_percentage = $activeLineupPlayer->target_percentage - numFormat($activeLineupPlayer->lineup_buy_in / $activeLineupPlayer->daily_buy_in * 100, 0);
@@ -181,7 +181,7 @@ class SolverTopPlays {
 			break;
 		}
 
-		return array($activeLineups, $players);
+		return $players;
 	}	
 
 	private function calculateUnspentTargetPercentage($idPosition, $activeLineups) {
