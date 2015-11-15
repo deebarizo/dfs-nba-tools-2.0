@@ -8,8 +8,8 @@ class SolverTopPlays {
 	GLOBAL VARIABLES
 	****************************************************************************************/
 
-	private $lineupBuilderIterations = 200;
-	private $targetPercentageModifier = 0;
+	private $lineupBuilderIterations = 1;
+	private $targetPercentageModifier = -200;
 	private $minimumTotalSalary = 59400; 
 	private $maximumTotalSalary = 60000;
 
@@ -402,6 +402,10 @@ class SolverTopPlays {
 
 		foreach ($lineups as &$lineup) {
 			$lineup['num_of_unique_teams'] = $this->getNumOfUniqueTeams($lineup['players']);
+
+			if (!isset($lineup['buy_in'])) {
+				$lineup['buy_in'] = 1;
+			}
 		}
 
 		unset($lineup);
@@ -412,15 +416,19 @@ class SolverTopPlays {
 
 		unset($lineup);
 
+		# ddAll($lineups);
+
 		foreach ($lineups as $key => $lineup) {
 			$active[$key] = $lineup['active'];
 			$money[$key] = $lineup['money'];
+			$lineupBuyIn[$key] = $lineup['buy_in'];
 			$numOfUniqueTeams[$key] = $lineup['num_of_unique_teams'];
 			$totalSalary[$key] = $lineup['total_salary'];
 		}
 
 		array_multisort($active, SORT_ASC, 
 						$money, SORT_ASC, 
+						$lineupBuyIn, SORT_DESC, 
 						$numOfUniqueTeams, SORT_DESC,
 						$totalSalary, SORT_DESC, 
 						$lineups);
