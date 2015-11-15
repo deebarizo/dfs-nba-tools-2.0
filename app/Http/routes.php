@@ -147,8 +147,7 @@ $router->get('solver_fd_nba/{date}/{numTopLineups}', 'SolverFdNbaController@solv
 SOLVER TOP PLAYS (NBA)
 ****************************************************************************************/
 
-$router->get('solver_with_top_plays_fd_nba/', 'SolverFdNbaController@solver_with_top_plays');
-$router->get('solver_with_top_plays_fd_nba/{date}', 'SolverFdNbaController@solver_with_top_plays');
+$router->get('solver_top_plays/fd/nba/all-day/{date}', 'SolverFdNbaController@solver_with_top_plays');
 
 $router->post('solver_top_plays/update_buy_in/{playerPoolId}/{buyIn}', 'SolverFdNbaController@updateBuyIn');
 $router->post('solver_top_plays/add_default_lineup_buy_in/{addDefaultLineupBuyIn}', 'SolverFdNbaController@addDefaultLineupBuyIn');

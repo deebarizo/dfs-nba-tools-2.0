@@ -65,6 +65,8 @@ class SolverFdNbaController {
 
         $defaultLineupBuyIn = getDefaultLineupBuyIn();
 
+        $name = 'Solver NBA'; // title tag
+
         return view('solver_with_top_plays_fd_nba', 
                      compact('date', 
                              'timePeriod', 
@@ -74,7 +76,8 @@ class SolverFdNbaController {
                              'lineups', 
                              'buyInPercentage',
                              'defaultLineupBuyIn',
-                             'players'));
+                             'players',
+                             'name'));
     }
 
 
