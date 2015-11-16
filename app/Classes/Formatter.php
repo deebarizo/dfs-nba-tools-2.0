@@ -3,6 +3,8 @@
 use App\Models\boxScoreLine;
 use App\Models\Game;
 use App\Models\Team;
+use App\Models\PlayerPool;
+use App\Models\PlayerFd;
 
 use Illuminate\Support\Facades\DB;
 
@@ -248,7 +250,7 @@ class Formatter {
 
 		$boxScore['box_score_lines']['home']['fd_totals']->ppts = Game::where('id', $gameId)->pluck('vegas_home_team_score');
 
-		$boxScore = $this->addNbaFantasyStats($boxScore);
+		$boxScore = $this->addNbaFantasyStats($boxScore, $gameId);
 
 		# ddAll($boxScore);
 
@@ -269,7 +271,16 @@ class Formatter {
 		}
     }
 
-    private function addNbaFantasyStats($boxScore) {
+    private function addNbaFantasyStats($boxScore, $gameId) {
+    	$date = Game::where('id', $gameId)->pluck('date');
+
+    	$fdPlayers = DB::table('players_fd')
+    					->select('*')
+    					->join('player_pools', 'player_pools.id', '=', 'players_fd.player_pool_id')
+    					->where('date', $date)
+    					->get();
+
+    	# ddAll($fdPlayers);
 
     	foreach ($boxScore['box_score_lines'] as $locations) {
     		foreach ($locations as $key => $roles) {
@@ -291,6 +302,21 @@ class Formatter {
 	    				}
 
 	    				$boxScoreLine->fdsh = $boxScoreLine->fdpts / $locations['totals'][0]->fdpts;
+
+			    		foreach ($fdPlayers as $fdPlayer) {
+			    			if ($fdPlayer->player_id == $boxScoreLine->player_id) {
+			    				$boxScoreLine->salary = $fdPlayer->salary;
+
+			    				$boxScoreLine->avr = numFormat($boxScoreLine->fdpts / ($boxScoreLine->salary / 1000), 2);
+
+			    				break;
+			    			}
+						}
+
+						if (!isset($boxScoreLine->salary)) {
+							$boxScoreLine->salary = '0';
+							$boxScoreLine->avr = numFormat(0, 2);
+						}
 		    		}
     			}
     		}
