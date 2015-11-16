@@ -93,7 +93,7 @@
 					<tr>
 						<th>Name</th>
 						<th>Mods</th>
-						<th>Target %</th>
+						<th>T%</th>
 						<th>Time</th>
 						<th>Team</th>
 						<th>Opp</th>
@@ -105,6 +105,7 @@
 						<th>FP</th>
 						<th>Sal</th>
 						<th>VR</th>
+						<th>aFP</th>
 						<th>aVR</th>
 					</tr>
 				</thead>
@@ -203,12 +204,21 @@
 					    	<td>{{ $player->vr }}</td>
 							@if (isset($player->box_score_line))
 								@if ($player->box_score_line == 'DNP')
-									<td>0.00</th>
+									<td>0.00</td>
+								@else
+									<td><a target="_blank" href="/games/nba/{{ $player->box_score_line->id }}">{{ numFormat($player->box_score_line->fdpts, 2) }}</a></td>
+								@endif
+							@else
+								<td>NA</td>
+							@endif
+							@if (isset($player->box_score_line))
+								@if ($player->box_score_line == 'DNP')
+									<td>0.00</td>
 								@else
 									<td><a target="_blank" href="/games/nba/{{ $player->box_score_line->id }}">{{ numFormat($player->box_score_line->fdpts / ($player->salary / 1000), 2) }}</a></td>
 								@endif
 							@else
-								<td>NA</th>
+								<td>NA</td>
 							@endif
 					    </tr>
 
