@@ -20,7 +20,7 @@
 		@endif
 
 		<div class="col-lg-12">
-			<h3>{{ $date }} {{ $timePeriod }} | <a target="_blank" href="/solver_with_top_plays_fd_nba/{{ $date }}">Solver</a> | <a target="_blank" href="/lineup_builder/{{ $date }}/create/">Lineup Builder</a></h3>
+			<h3>{{ $date }} {{ $timePeriod }} | <a target="_blank" href="/solver_top_plays/fd/nba/all-day/{{ $date }}">Solver</a> | <a target="_blank" href="/lineup_builder/{{ $date }}/create/">Lineup Builder</a></h3>
 
 			<form class="form-inline" style="margin: 0 0 10px 0">
 
