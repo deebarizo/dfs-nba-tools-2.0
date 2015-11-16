@@ -9,7 +9,7 @@ class SolverTopPlays {
 	****************************************************************************************/
 
 	private $lineupBuilderIterations = 200;
-	private $targetPercentageModifier = -200;
+	private $targetPercentageModifier = 1;
 	private $minimumTotalSalary = 59400; 
 	private $maximumTotalSalary = 60000;
 
@@ -504,6 +504,7 @@ class SolverTopPlays {
 		foreach ($activeLineups as $key => $activeLineup) {
 			if ($lineup['hash'] == $activeLineup['hash']) {
 				$lineup['active'] = 1;
+				$lineup['css_class_active_lineup'] = 'active-lineup';
 				$lineup['css_class_blue_border'] = 'active-lineup';
 				$lineup['css_class_edit_info'] = '';
 				$lineup['anchor_text'] = 'Remove';
