@@ -141,8 +141,8 @@
 					   		  table-bordered 
 					   		  table-hover 
 					   		  table-condensed 
-					   		  lineup 
-					   		  {{ $lineup['css_class_active_lineup'] }} 
+					   		  lineup
+					   		  <?php if (isset($lineup['css_class_active_lineup'])) { echo $lineup['css_class_active_lineup']; } ?> 
 					   		  {{ $lineup['css_class_money_lineup'] }}">
 					<thead>
 						<tr>
@@ -173,7 +173,7 @@
 									<a href="#" class="edit-lineup-buy-in-link">Edit</a> | 
 									<a href="#" class="play-or-unplay-lineup-link"><span class="play-or-unplay-lineup-anchor-text">{{ $lineup['play_or_unplay_anchor_text'] }}</span></a> | <a href="{{ url() }}/lineup_builder/{{ $date }}/create/{{ $lineup['hash'] }}" target="_blank"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a> | 
 								</span>
-								<a href="#" class="add-or-remove-lineup-link"><span class="add-or-remove-lineup-anchor-text">{{ $lineup['add_or_remove_anchor_text'] }}</span></a>
+								<a href="#" class="add-or-remove-lineup-link"><span class="add-or-remove-lineup-anchor-text"><?php if (isset($lineup['add_or_remove_anchor_text'])) { echo $lineup['add_or_remove_anchor_text']; } else { echo 'Add'; } ?></span></a>
 								<span class="add-or-remove-lineup-link-loading-gif">
 									<img src="/files/spiffygif_16x16.gif" alt="Please wait..." />
 								</span>

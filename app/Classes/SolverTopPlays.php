@@ -435,12 +435,6 @@ class SolverTopPlays {
 
 		# ddAll($lineups);
 
-		foreach ($lineups as $lineup) {
-			if (!isset($lineup['css_class_active_lineup'])) {
-				$lineup['css_class_active_lineup'] = '';
-			}
-		} unset($lineup);
-
         return $lineups;
 	}
 
