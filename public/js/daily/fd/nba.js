@@ -18,10 +18,10 @@ $(document).ready(function() {
 		"columns": [
 		    { "width": "44%" },
 		    { "width": "2%" },
-		    { "width": "7%", "orderDataType": "dom-text-numeric" },
+		    { "width": "5%", "orderDataType": "dom-text-numeric" },
 		    { "width": "7%" },
-		   	{ "width": "15%" },
-		   	{ "width": "15%" },
+		   	{ "width": "16%" },
+		   	{ "width": "16%" },
 		   	{ "width": "1%" },
 		   	{ "width": "1%" },
 		   	{ "width": "1%" },
