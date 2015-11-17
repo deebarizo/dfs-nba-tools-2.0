@@ -6,8 +6,17 @@ FD NBA NAME FIX
 
 function fd_name_fix($rawName) {
 	switch ($rawName) {
-		case 'Larry Nance Jr.':
-			return 'Larry Nance';
+		case 'Louis Williams':
+			return 'Lou Williams';
+
+		case 'Phil (Flip) Pressey':
+			return 'Phil (Flip) Pressey';
+
+		case 'Jose Barea':
+			return 'J.J. Barea';
+
+		case 'Larry Nance':
+			return 'Larry Nance Jr.';
 
 		case 'RJ Hunter':
 			return 'R.J. Hunter';
@@ -39,9 +48,6 @@ function fd_name_fix($rawName) {
 		case 'Ronald Roberts, Jr.':
 			return 'Ronald Roberts';
 
-		case 'Jose Juan Barea':
-			return 'Jose Barea';
-		
 		default:
 			return $rawName;
 	}
