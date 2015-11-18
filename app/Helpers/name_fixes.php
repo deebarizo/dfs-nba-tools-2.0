@@ -12,7 +12,7 @@ function fd_name_fix($rawName) {
 		case 'Phil (Flip) Pressey':
 			return 'Phil (Flip) Pressey';
 
-		case 'Jose Barea':
+		case 'Jose Juan Barea':
 			return 'J.J. Barea';
 
 		case 'Larry Nance':
