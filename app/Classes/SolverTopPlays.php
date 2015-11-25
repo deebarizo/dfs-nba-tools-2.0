@@ -248,7 +248,7 @@ class SolverTopPlays {
 		foreach ($metadataOfActiveLineups as &$metadataOfActiveLineup) {
 			$metadataOfActiveLineup['css_class_blue_border'] = 'active-lineup';
 			$metadataOfActiveLineup['css_class_edit_info'] = '';
-			$metadataOfActiveLineup['anchor_text'] = 'Remove';
+			$metadataOfActiveLineup['add_or_remove_anchor_text'] = 'Remove';
 			$metadataOfActiveLineup['css_class_money_lineup'] = $this->getMoneyCssClass($metadataOfActiveLineup['money']);
 			$metadataOfActiveLineup['play_or_unplay_anchor_text'] = $this->getMoneyAnchorText($metadataOfActiveLineup['money']);
 			$metadataOfActiveLineup['buy_in_percentage'] = numFormat($metadataOfActiveLineup['buy_in'] / $buyIn * 100, 2);
@@ -507,7 +507,7 @@ class SolverTopPlays {
 				$lineup['css_class_active_lineup'] = 'active-lineup';
 				$lineup['css_class_blue_border'] = 'active-lineup';
 				$lineup['css_class_edit_info'] = '';
-				$lineup['anchor_text'] = 'Remove';
+				$lineup['add_or_remove_anchor_text'] = 'Remove';
 
 				$lineup['money'] = $activeLineup['money'];
 				$lineup['css_class_money_lineup'] = $this->getMoneyCssClass($activeLineup['money']);

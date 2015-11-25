@@ -59,7 +59,7 @@ class DailyController {
             $client = new Client;
             $vegasScores = scrapeForOdds($client, $date);
 
-            $seasonId = 11;
+            $seasonId = 12;
 
             if ($vegasScores != 'No lines yet.') {
                 $players = $statBuilder->addVegasInfoToPlayers($players, $vegasScores);
@@ -79,7 +79,7 @@ class DailyController {
                 $areThereVegasScores = false;
             } unset($player);
 
-            $playerStats = $statBuilder->getBoxScoreLinesOfPlayers($players, $date);
+            $playerStats = $statBuilder->getBoxScoreLinesOfPlayers($players, $date, $seasonId);
 
             # ddAll($players);
 

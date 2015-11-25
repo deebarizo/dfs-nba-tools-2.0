@@ -291,16 +291,18 @@ class StatBuilder {
         return $players;
     }
 
-    public function getBoxScoreLinesOfPlayers($players, $date) {
+    public function getBoxScoreLinesOfPlayers($players, $date, $seasonId) {
         foreach ($players as $player) {
             if (isset($player->filter)) {
                 if ($player->filter->filter == 1) {
-                    $playerStats[$player->player_id]['cs'] = getBoxScoreLinesForPlayer(11, $player->player_id, $date);
+                    $playerStats[$player->player_id]['cs'] = getBoxScoreLinesForPlayer($seasonId, $player->player_id, $date);
                 }
             }
 
-            $playerStats[$player->player_id]['all'] = getBoxScoreLinesForPlayer(10, $player->player_id, $date);
+            $playerStats[$player->player_id]['all'] = getBoxScoreLinesForPlayer($seasonId - 1, $player->player_id, $date);
         }
+
+        # ddAll($players);
 
         return $playerStats;
     }

@@ -6,6 +6,9 @@ FD NBA NAME FIX
 
 function fd_name_fix($rawName) {
 	switch ($rawName) {
+		case 'Ishmael Smith':
+			return 'Ish Smith';
+
 		case 'Louis Williams':
 			return 'Lou Williams';
 
