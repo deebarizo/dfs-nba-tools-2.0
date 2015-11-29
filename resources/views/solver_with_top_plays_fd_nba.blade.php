@@ -121,8 +121,8 @@
 
 				<label>Show</label>
 				<select class="form-control player-percentages-show-filter">
-					<option value="All" selected>All</option>
-				  	<option value="Only Actual Percentage">Actual Percentage</option>
+					<option value="All">All</option>
+				  	<option value="Only Actual Percentage" selected>Actual Percentage</option>
 				</select>
 			</form>
 
