@@ -99,7 +99,7 @@ function scrapeForGamesTable($client, $crawler, $tableIDinBR, $teams, $seasonId,
 	$startingGame = $gamesCount + 1;
 	$i = $startingGame;
 
-	$rowCount += 2; // number = number of month rows on basketball reference
+	$rowCount += 3; // number = number of month rows on basketball reference
 
 	do {
 		$gameRow = $crawler->filter('table#'.$tableIDinBR.' > tbody > tr:nth-child('.$i.') > td')->count(); // as opposed to month row
