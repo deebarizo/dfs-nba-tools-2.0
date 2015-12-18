@@ -36,6 +36,7 @@ SCRAPERS
 ****************************************************************************************/
 
 $router->post('scrapers/fd_nba_salaries', 'ScrapersController@fd_nba_salaries');
+$router->post('scrapers/dk_nba_salaries', 'ScrapersController@dkNbaSalaries');
 $router->post('scrapers/br_nba_games', 'ScrapersController@br_nba_games');
 $router->post('scrapers/br_nba_box_score_lines', 'ScrapersController@br_nba_box_score_lines');
 $router->post('scrapers/dk_nba_ownerships', 'ScrapersController@dkNbaOwnerships');
@@ -100,6 +101,9 @@ STATIC PAGES
 
 $router->get('scrapers/fd_nba_salaries', function() {
 	return View::make('scrapers/fd_nba_salaries');
+});
+$router->get('scrapers/dk_nba_salaries', function() {
+	return View::make('scrapers/dk_nba_salaries');
 });
 $router->get('scrapers/br_nba_games', function() {
 	return View::make('scrapers/br_nba_games');
