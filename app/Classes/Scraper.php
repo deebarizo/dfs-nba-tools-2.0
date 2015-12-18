@@ -34,7 +34,22 @@ use Illuminate\Support\Facades\Session;
 class Scraper {
 
 	/****************************************************************************************
-	CSV FILES
+	CSV FILES (OWNERSHIPS)
+	****************************************************************************************/
+
+	public function getOwnershipCsvFile($request, $site, $sport) {
+		$csvDirectory = 'files/'.strtolower($site).'/'.strtolower($sport).'/ownerships/';
+		$csvName = $request->input('date').'.csv';
+		$csvFile = $csvDirectory . $csvName;
+ 
+		Input::file('csv')->move($csvDirectory, $csvName);
+
+		return $csvFile;
+	}
+
+
+	/****************************************************************************************
+	CSV FILES (SALARIES)
 	****************************************************************************************/
 
 	public function getCsvFile($request, $site, $sport) {

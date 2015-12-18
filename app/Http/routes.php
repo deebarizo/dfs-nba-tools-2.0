@@ -35,9 +35,10 @@ $router->get('teams/nba/{abbr_br}', 'TeamsController@getTeamStats');
 SCRAPERS
 ****************************************************************************************/
 
-$router->post('scrapers/br_nba_box_score_lines', 'ScrapersController@br_nba_box_score_lines');
-$router->post('scrapers/br_nba_games', 'ScrapersController@br_nba_games');
 $router->post('scrapers/fd_nba_salaries', 'ScrapersController@fd_nba_salaries');
+$router->post('scrapers/br_nba_games', 'ScrapersController@br_nba_games');
+$router->post('scrapers/br_nba_box_score_lines', 'ScrapersController@br_nba_box_score_lines');
+$router->post('scrapers/dk_nba_ownerships', 'ScrapersController@dkNbaOwnerships');
 
 $router->post('scrapers/dk_mlb_salaries', 'ScrapersController@dk_mlb_salaries');
 $router->post('scrapers/bat_mlb_projections', 'ScrapersController@bat_mlb_projections');
@@ -97,15 +98,19 @@ $router->post('daily/dk/mlb/update_target_percentage_for_dk_mlb', 'DailyControll
 STATIC PAGES
 ****************************************************************************************/
 
-$router->get('scrapers/br_nba_box_score_lines', function() {
-	return View::make('scrapers/br_nba_box_score_lines');
+$router->get('scrapers/fd_nba_salaries', function() {
+	return View::make('scrapers/fd_nba_salaries');
 });
 $router->get('scrapers/br_nba_games', function() {
 	return View::make('scrapers/br_nba_games');
 });
-$router->get('scrapers/fd_nba_salaries', function() {
-	return View::make('scrapers/fd_nba_salaries');
+$router->get('scrapers/br_nba_box_score_lines', function() {
+	return View::make('scrapers/br_nba_box_score_lines');
 });
+$router->get('scrapers/dk_nba_ownerships', function() {
+	return View::make('scrapers/dk_nba_ownerships');
+});
+
 
 $router->get('scrapers/dk_mlb_salaries', function() {
 	return View::make('scrapers/dk_mlb_salaries');

@@ -31,6 +31,24 @@ use Illuminate\Support\Facades\Session;
 class ScrapersController {
 
 	/****************************************************************************************
+	DK NBA OWNERSHIPS
+	****************************************************************************************/
+
+	public function dkNbaOwnerships(Request $request) {
+		$scraper = new Scraper;
+
+		$csvFile = $scraper->getOwnershipCsvFile($request, 'DK', 'NBA');
+
+		
+
+		$message = 'Success!';
+		Session::flash('alert', 'info');
+
+		return redirect('scrapers/dk_nba_onwerships')->with('message', $message);	 
+	}
+
+
+	/****************************************************************************************
 	FD NBA SALARIES
 	****************************************************************************************/
 
