@@ -44,6 +44,60 @@ class Validator {
 
 			return $message;
 		}
+
+		if ($site == 'DK' && $sport == 'NBA') {
+
+			$message = $this->validateCsvFileDkNba($request, $csvFile);
+
+			return $message;
+		}
+	}
+
+
+	/****************************************************************************************
+	VALIDATE CSV FILE (DK NBA)
+	****************************************************************************************/	
+
+	private function validateCsvFileDkNba($request, $csvFile) {
+		if (($handle = fopen($csvFile, 'r')) !== false) {
+			$row = 0;
+
+			while (($csvData = fgetcsv($handle, 5000, ',')) !== false) {
+				if ($row != 0) {
+				    $player[$row] = array(
+				       	'name' => $csvData[1],
+				       	'abbr_dk' => $csvData[5]
+				    );
+
+				    $gameInfo = $csvData[3];
+				    $gameInfo = preg_replace("/(\w+@\w+)(\s)(.*)/", "$1", $gameInfo);
+				    $gameInfo = preg_replace("/@/", "", $gameInfo);
+				    $player[$row]['opp_abbr_dk'] = preg_replace("/".$player[$row]['abbr_dk']."/", "", $gameInfo);
+
+				    # dd($player[$row]);
+
+				    $player[$row]['name'] = dk_name_fix($player[$row]['name']);
+
+				    $playerId = Player::where('name', $player[$row]['name'])->pluck('id');
+
+				    # dd($playerId);
+
+				    if (is_null($playerId)) {
+						return 'The player name, <strong>'.$player[$row]['name'].'</strong>, does not exist in the database. You can add him <a target="_blank" href="http://dfstools.dev:8000/admin/nba/add_player">here</a>.'; 
+				    } 
+
+				    $teamExists = Team::where('abbr_dk', $player[$row]['abbr_dk'])->count();
+
+				    if (!$teamExists) {
+						return 'The team DK abbreviation, <strong>'.$player[$row]['abbr_dk'].'</strong>, does not exist in the database.'; 
+				    }				    
+				}
+
+				$row++;
+			}
+		}
+
+		return 'Valid';
 	}
 
 

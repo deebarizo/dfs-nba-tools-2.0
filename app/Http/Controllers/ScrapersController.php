@@ -53,8 +53,37 @@ class ScrapersController {
 	****************************************************************************************/
 
 	public function dkNbaSalaries(Request $request) {
+		$scraper = new Scraper;
 
-		echo 'bob';
+		$csvFile = $scraper->getCsvFile($request, 'DK', 'NBA');
+
+		$validator = new Validator;
+
+		$validationMessage = $validator->validateCsvFile($request, $csvFile, 'DK', 'NBA');
+
+		if ($validationMessage != 'Valid') {
+			Session::flash('alert', 'warning');
+
+			return redirect('scrapers/dk_nba_salaries')->with('message', $validationMessage);				
+		}
+
+		dd('bob');
+
+		list($playerPoolExists, $playerPoolId) = $scraper->insertDataToPlayerPoolsTable($request, 'FD', 'NBA', 'csv file');
+
+		if ($playerPoolExists) {
+			$message = 'This player pool is already in the database.';
+			Session::flash('alert', 'info');
+
+			return redirect('scrapers/dk_nba_salaries')->with('message', $message);				
+		}
+
+		$scraper->parseCsvFile($request, $csvFile, 'FD', 'NBA', $playerPoolId);
+
+		$message = 'Success!';
+		Session::flash('alert', 'info');
+
+		return redirect('scrapers/dk_nba_salaries')->with('message', $message);	 
 	}
 
 
