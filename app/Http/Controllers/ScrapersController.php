@@ -39,7 +39,7 @@ class ScrapersController {
 
 		$csvFile = $scraper->getOwnershipCsvFile($request, 'DK', 'NBA');
 
-		
+		$scarper->parseNbaOnwershipCsvFile($request, $csvFile, 'DK', 'NBA');
 
 		$message = 'Success!';
 		Session::flash('alert', 'info');
