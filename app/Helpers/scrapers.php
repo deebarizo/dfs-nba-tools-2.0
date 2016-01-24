@@ -99,16 +99,20 @@ function scrapeForGamesTable($client, $crawler, $tableIDinBR, $teams, $seasonId,
 	$startingGame = $gamesCount + 1;
 	$i = $startingGame;
 
-	$rowCount += 3; // number = number of month rows on basketball reference
+	$rowCount += 4; // number = number of month rows on basketball reference
 
 	do {
-		$gameRow = $crawler->filter('table#'.$tableIDinBR.' > tbody > tr:nth-child('.$i.') > td')->count(); // as opposed to month row
+		$gameRowAnchorText = $crawler->filter('table#'.$tableIDinBR.' > tbody > tr:nth-child('.$i.') > td:nth-child(3)')->text(); // as opposed to month row
 
-		if (!$gameRow) {
-			$rowCount--;
-		}
+		if ($gameRowAnchorText == '') {
+			$rowCount++;
+			// prf('bob');
+		} 
 
-		if ($gameRow) {
+		// prf($gameRowAnchorText);
+		// prf($crawler->filter('table#'.$tableIDinBR.' > tbody > tr:nth-child('.$i.')')->text());
+
+		if ($gameRowAnchorText != '') {
 			for ($n=1; $n <= 9; $n++) { // nth-child does not start with a zero index
 				switch ($n) {
 					case 1: // Date
@@ -164,9 +168,9 @@ function scrapeForGamesTable($client, $crawler, $tableIDinBR, $teams, $seasonId,
 						break;
 				}
 			}
+		} 
 
-			$startingGame++;
-		}
+		$startingGame++;
 
 		$i++;	
 	} while ($startingGame <= $rowCount);

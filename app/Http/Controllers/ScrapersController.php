@@ -376,6 +376,7 @@ class ScrapersController {
 		if ($status_code == 200) {
 			$rowCount = $crawler->filter('table#'.$tableIDinBR.' > tbody > tr > td:nth-child(3) > a')->count();
 
+			# prf($gamesCount);
 			# dd($rowCount);
 
 			if ($gamesCount == $rowCount) {

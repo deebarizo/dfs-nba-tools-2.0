@@ -16,10 +16,10 @@ $(document).ready(function() {
 		"paging": false,
 		"order": [[13, "desc"]],
 		"columns": [
-		    { "width": "44%" },
+		    { "width": "42%" },
 		    { "width": "2%" },
 		    { "width": "5%", "orderDataType": "dom-text-numeric" },
-		    { "width": "7%" },
+		    { "width": "9%" },
 		   	{ "width": "16%" },
 		   	{ "width": "16%" },
 		   	{ "width": "1%" },
